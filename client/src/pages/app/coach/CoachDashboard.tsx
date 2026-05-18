@@ -3,20 +3,13 @@
  *
  * IA hierarchy (top → bottom):
  *   1. CommandStrip     — today's session context + next game countdown
- *   2. TriagePanel      — everything needing attention RIGHT NOW (unified)
+ *   2. ActionLanes      — grouped, filterable attention lanes (replaces flat TriagePanel)
  *   3. TeamSnapshotRow  — compact readiness + WOD completion, not a table
  *   4. UpcomingEvents   — next 3 sessions (practice / game / tournament)
  *   Sidebar:
  *   5. FilmQueue        — top pending reviews with AI confidence
  *   6. DevelopmentAlerts— IDP + streak gaps by player name
  *   7. QuickActions     — 4 high-frequency coach actions
- *
- * Removed vs v1:
- *   ✗ Roster count card (drives no decision)
- *   ✗ Film Assigned count card (queue section replaces it)
- *   ✗ Streak Leaders (vanity)
- *   ✗ 7-Day Streak History table (detail view → /coach/roster)
- *   ✗ Compliance Grid as primary section (TriagePanel supersedes)
  */
 import { useState } from "react";
 import { Link } from "wouter";
@@ -28,7 +21,6 @@ import {
   ChevronRight,
   Sparkles,
   MessageSquare,
-  Heart,
   Moon,
   Zap,
   CheckCircle2,
@@ -39,8 +31,6 @@ import {
   Clock,
   Swords,
   TrendingUp,
-  UserX,
-  HelpCircle,
   Bell,
   Dumbbell,
   Target,
@@ -58,13 +48,8 @@ import {
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
 import { roster, athleteUploads } from "@/lib/mock/data";
-import {
-  MOCK_TEAM_READINESS,
-  statusColor,
-  REASON_LABELS,
-  type ReadinessStatus,
-} from "@/lib/readiness";
-import { ReadinessStatusBadge } from "@/components/readiness/ReadinessStatusBadge";
+import { MOCK_TEAM_READINESS } from "@/lib/readiness";
+import { ActionLanes } from "@/components/app/ActionLanes";
 
 /* -------------------------------------------------------------------------- */
 /* Mock data — command-center specific                                         */
@@ -92,11 +77,6 @@ const UPCOMING_EVENTS = [
   { id: "e3", type: "practice" as const, label: "Walkthrough",         date: "Friday",   time: "4:00 PM",  location: "Barnegat HS"        },
 ];
 
-const OVERDUE_ASSIGNMENTS = [
-  { id: "a1", player: "Malik Henderson", playerId: "p10", type: "Film review",       daysOverdue: 3 },
-  { id: "a2", player: "Jaylen Scott",    playerId: "p6",  type: "Shot chart upload",  daysOverdue: 1 },
-  { id: "a3", player: "Cam Porter",      playerId: "p7",  type: "Recovery WOD",       daysOverdue: 2 },
-];
 
 const DEVELOPMENT_ALERTS = [
   { id: "d1", player: "Tyler Brooks",  playerId: "p3",  note: "No IDP activity in 9 days",        href: "/app/coach/players/p3/idp"   },
@@ -331,198 +311,7 @@ function CommandStrip({
   );
 }
 
-/* -------------------------------------------------------------------------- */
-/* Zone 2 — TriagePanel                                                        */
-/* Unified view: restricted players + missing check-ins + overdue assignments  */
-/* -------------------------------------------------------------------------- */
-
-type TriageItem =
-  | { kind: "restricted"; playerId: string; name: string; position?: string; reason: string }
-  | { kind: "flagged";    playerId: string; name: string; position?: string; reason: string }
-  | { kind: "no_checkin"; playerId: string; name: string; position?: string }
-  | { kind: "overdue";    assignmentId: string; player: string; type: string; daysOverdue: number };
-
-function TriagePanel({ onDismiss }: { onDismiss: (key: string) => void }) {
-  const items: TriageItem[] = [
-    // Restricted athletes — highest priority
-    ...MOCK_TEAM_READINESS
-      .filter((p) => p.status === "RESTRICTED")
-      .map<TriageItem>((p) => ({
-        kind: "restricted",
-        playerId: p.playerId,
-        name: p.playerName,
-        position: p.position,
-        reason: p.reasons[0] ? REASON_LABELS[p.reasons[0]] : p.summary,
-      })),
-    // Flagged athletes
-    ...MOCK_TEAM_READINESS
-      .filter((p) => p.status === "FLAGGED")
-      .map<TriageItem>((p) => ({
-        kind: "flagged",
-        playerId: p.playerId,
-        name: p.playerName,
-        position: p.position,
-        reason: p.reasons[0] ? REASON_LABELS[p.reasons[0]] : p.summary,
-      })),
-    // Missing check-ins
-    ...MOCK_TEAM_READINESS
-      .filter((p) => !p.checkinSubmitted && p.status !== "RESTRICTED")
-      .map<TriageItem>((p) => ({
-        kind: "no_checkin",
-        playerId: p.playerId,
-        name: p.playerName,
-        position: p.position,
-      })),
-    // Overdue assignments
-    ...OVERDUE_ASSIGNMENTS.map<TriageItem>((a) => ({
-      kind: "overdue",
-      assignmentId: a.id,
-      player: a.player,
-      type: a.type,
-      daysOverdue: a.daysOverdue,
-    })),
-  ];
-
-  const badgeProps = (kind: TriageItem["kind"]) => {
-    if (kind === "restricted") return { bg: "oklch(0.68 0.22 25 / 0.1)", text: "oklch(0.68 0.22 25)", label: "Restricted" };
-    if (kind === "flagged")    return { bg: "oklch(0.72 0.17 75 / 0.1)", text: "oklch(0.72 0.17 75)", label: "Flagged" };
-    if (kind === "no_checkin") return { bg: "oklch(0.55 0.04 240 / 0.1)", text: "oklch(0.55 0.04 240)", label: "No check-in" };
-    return { bg: "oklch(0.72 0.18 290 / 0.1)", text: "oklch(0.72 0.18 290)", label: "Overdue" };
-  };
-
-  function kindIcon(kind: TriageItem["kind"]) {
-    if (kind === "restricted") return <UserX className="w-3.5 h-3.5" />;
-    if (kind === "flagged")    return <AlertTriangle className="w-3.5 h-3.5" />;
-    if (kind === "no_checkin") return <HelpCircle className="w-3.5 h-3.5" />;
-    return <ClipboardList className="w-3.5 h-3.5" />;
-  }
-
-  const summaryText =
-    items.length === 0
-      ? "All clear"
-      : `${items.length} item${items.length !== 1 ? "s" : ""} need review`;
-
-  return (
-    <CollapsibleSection
-      title="Needs Attention"
-      count={items.length}
-      href="/app/coach/readiness"
-      linkLabel="Full readiness"
-      defaultOpen
-      summary={summaryText}
-    >
-      {items.length === 0 ? (
-        <div className="px-5 py-4 flex items-center gap-2 text-[13px]" style={{ color: "oklch(0.65 0.18 150)" }}>
-          <CheckCircle2 className="w-4 h-4" />
-          All clear — no items need your attention right now
-        </div>
-      ) : (
-      <div className="divide-y divide-border/40">
-        {items.map((item) => {
-          const key = item.kind === "overdue" ? item.assignmentId : item.playerId + item.kind;
-          const bp = badgeProps(item.kind);
-
-          if (item.kind === "overdue") {
-            return (
-              <div key={key} className="px-5 py-3 flex items-center gap-3">
-                <div
-                  className="w-8 h-8 rounded-full flex items-center justify-center shrink-0"
-                  style={{ background: bp.bg, color: bp.text }}
-                >
-                  <ClipboardList className="w-3.5 h-3.5" />
-                </div>
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-1.5 flex-wrap">
-                    <span className="text-[13px] font-medium">{item.player}</span>
-                    <span className="text-[11px] text-muted-foreground">· {item.type}</span>
-                  </div>
-                  <div className="text-[11px] mt-0.5" style={{ color: bp.text }}>
-                    {item.daysOverdue}d overdue
-                  </div>
-                </div>
-                <div className="flex items-center gap-1.5 shrink-0">
-                  <span
-                    className="text-[10px] font-semibold px-2 py-0.5 rounded-full"
-                    style={{ background: bp.bg, color: bp.text }}
-                  >
-                    {bp.label}
-                  </span>
-                  <Link href="/app/coach/assignments">
-                    <a className="h-6 px-2 inline-flex items-center text-[10.5px] rounded border border-border hover:bg-muted transition gap-1">
-                      View <ChevronRight className="w-3 h-3" />
-                    </a>
-                  </Link>
-                </div>
-              </div>
-            );
-          }
-
-          return (
-            <div key={key} className="px-5 py-3 flex items-center gap-3" style={{ background: `${bp.bg}` }}>
-              <div
-                className="w-8 h-8 rounded-full flex items-center justify-center shrink-0"
-                style={{ background: bp.bg, color: bp.text, border: `1px solid ${bp.text}40` }}
-              >
-                {kindIcon(item.kind)}
-              </div>
-              <div className="flex-1 min-w-0">
-                <div className="flex items-center gap-1.5 flex-wrap">
-                  <span className="text-[13px] font-medium">{item.name}</span>
-                  {item.position && (
-                    <span className="text-[10px] text-muted-foreground bg-muted rounded px-1 py-0.5">
-                      {item.position}
-                    </span>
-                  )}
-                </div>
-                <div className="text-[11px] text-muted-foreground mt-0.5">
-                  {"reason" in item ? item.reason : "Check-in not submitted"}
-                </div>
-              </div>
-              <div className="flex items-center gap-1.5 shrink-0">
-                <span
-                  className="text-[10px] font-semibold px-2 py-0.5 rounded-full"
-                  style={{ background: bp.bg, color: bp.text }}
-                >
-                  {bp.label}
-                </span>
-                {item.kind === "flagged" && (
-                  <Button
-                    size="sm"
-                    variant="outline"
-                    className="h-6 px-2 text-[10.5px]"
-                    onClick={() => toast.success(`Modified WOD sent to ${item.name}`)}
-                  >
-                    <Zap className="w-3 h-3 mr-1" />
-                    Modify WOD
-                  </Button>
-                )}
-                {item.kind === "no_checkin" && (
-                  <Button
-                    size="sm"
-                    variant="outline"
-                    className="h-6 px-2 text-[10.5px]"
-                    onClick={() => toast.success(`Nudge sent to ${"name" in item ? item.name : ""}`)}
-                  >
-                    <Bell className="w-3 h-3 mr-1" />
-                    Nudge
-                  </Button>
-                )}
-                <button
-                  onClick={() => onDismiss(key)}
-                  className="text-muted-foreground hover:text-foreground transition"
-                  aria-label="Dismiss"
-                >
-                  <X className="w-3.5 h-3.5" />
-                </button>
-              </div>
-            </div>
-          );
-        })}
-      </div>
-      )}
-    </CollapsibleSection>
-  );
-}
+/* Zone 2 — ActionLanes (imported from @/components/app/ActionLanes) */
 
 /* -------------------------------------------------------------------------- */
 /* Zone 3 — TeamSnapshotRow                                                    */
@@ -721,12 +510,6 @@ export function CoachDashboard() {
   const [practiceNotesOpen, setPracticeNotesOpen] = useState(false);
   const [phaseRatings, setPhaseRatings] = useState([0, 0, 0, 0]);
   const [practiceNotes, setPracticeNotes] = useState("");
-  const [dismissed, setDismissed] = useState<Set<string>>(new Set());
-
-  function handleDismiss(key: string) {
-    setDismissed((s) => new Set(Array.from(s).concat(key)));
-  }
-
   function submitPracticeNotes() {
     setPracticeNotesOpen(false);
     setShowPracticePrompt(false);
@@ -764,8 +547,8 @@ export function CoachDashboard() {
           {/* ---------------------------------------------------------------- */}
           <div className="lg:col-span-2 space-y-5">
 
-            {/* Zone 2 — Triage panel */}
-            <TriagePanel onDismiss={handleDismiss} />
+            {/* Zone 2 — Action Lanes */}
+            <ActionLanes />
 
             {/* Zone 3 — Team snapshot */}
             <TeamSnapshotRow />
