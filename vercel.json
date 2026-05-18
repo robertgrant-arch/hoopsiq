@@ -1,7 +1,7 @@
 {
   "buildCommand": "npx vite build",
   "outputDirectory": "dist/public",
-    "installCommand": "pnpm install --no-frozen-lockfile",
+    "installCommand": "pnpm install --frozen-lockfile",
   "rewrites": [
     { "source": "/api/plans",        "destination": "/api/plan-sync" },
     { "source": "/api/wods/:path*",  "destination": "/api/wods/generate" },
