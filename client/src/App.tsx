@@ -50,6 +50,12 @@ const FilmUploadPage      = React.lazy(() => import("@/pages/app/coach/FilmAnaly
 const FilmSessionPage     = React.lazy(() => import("@/pages/app/coach/FilmAnalysisPages").then(m => ({ default: m.FilmSessionPage })));
 const PlayerHighlightsPage = React.lazy(() => import("@/pages/app/coach/FilmAnalysisPages").then(m => ({ default: m.PlayerHighlightsPage })));
 
+// Film-to-Action pages
+const FilmLibraryPage     = React.lazy(() => import("@/pages/app/coach/FilmLibraryPage"));
+const FilmQueuePage       = React.lazy(() => import("@/pages/app/coach/FilmQueuePage"));
+const FilmQueueDetailPage = React.lazy(() => import("@/pages/app/coach/FilmQueueDetailPage"));
+const CoachClipPage       = React.lazy(() => import("@/pages/app/coach/CoachClipPage"));
+
 // Coach pages
 const MessagesPage             = React.lazy(() => import("@/pages/app/coach/MessagesPage"));
 const CoachInboxPage           = React.lazy(() => import("@/pages/app/coach/CoachInboxPage"));
@@ -324,8 +330,7 @@ function Router() {
         <Route path="/app/coach/players/:id" component={guard(PlayerProfilePage)} />
         <Route path="/app/coach/roster" component={guard(CoachRoster)} />
         <Route path="/app/coach/parents" component={guard(CoachParents)} />
-        <Route path="/app/coach/queue" component={guard(CoachQueue)} />
-        <Route path="/app/coach/queue/:id" component={guard(CoachQueueDetail)} />
+        {/* /app/coach/queue and /app/coach/queue/:videoId handled in Film-to-Action section below */}
         <Route path="/app/coach/actions" component={guard(CoachActionsPage)} />
         <Route path="/app/coach/readiness" component={guard(TeamReadinessPage)} />
         <Route path="/app/coach/scouting" component={guard(ScoutingHubPage)} />
@@ -391,10 +396,14 @@ function Router() {
         <Route path="/app/film" component={FilmRoomHome} />
         <Route path="/app/film/clips/:id" component={FilmClipDetail} />
         <Route path="/app/film/inbox" component={FilmInbox} />
-        <Route path="/app/coach/film" component={guard(FilmRoomPage)} />
         <Route path="/app/coach/film/upload" component={guard(FilmUploadPage)} />
         <Route path="/app/coach/film/sessions/:id" component={guard(FilmSessionDetail)} />
         <Route path="/app/coach/film/playlists/:id" component={guard(FilmPlaylistPage)} />
+        {/* Film-to-Action routes — ordered specific before general */}
+        <Route path="/app/coach/film" component={guard(FilmLibraryPage)} />
+        <Route path="/app/coach/queue/:videoId" component={guard(FilmQueueDetailPage)} />
+        <Route path="/app/coach/queue" component={guard(FilmQueuePage)} />
+        <Route path="/app/coach/clips/:clipId" component={guard(CoachClipPage)} />
         <Route path="/app/player/highlights/:playerId" component={PlayerHighlightsPage} />
         <Route path="/app/player/highlights" component={PlayerHighlightsPage} />
         <Route path="/app/player/plays/:id/study" component={PlayStudyPage} />
