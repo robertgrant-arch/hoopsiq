@@ -8,7 +8,7 @@ export default function DocsSidebar({ currentSlug }: { currentSlug?: string }) {
 
   return (
     <nav className="h-full overflow-y-auto doc-scroll py-8 px-5 text-[13.5px]">
-      <Link href="/docs">
+      <Link href="/docs" asChild>
         <a
           className={cn(
             "block px-3 py-1.5 rounded-md transition-colors mb-4",
@@ -34,7 +34,7 @@ export default function DocsSidebar({ currentSlug }: { currentSlug?: string }) {
               const active = currentSlug === doc.slug;
               return (
                 <li key={doc.slug}>
-                  <Link href={`/docs/${doc.slug}`}>
+                  <Link href={`/docs/${doc.slug}`} asChild>
                     <a
                       className={cn(
                         "group relative flex items-center gap-2.5 pl-3 pr-2 py-1.5 rounded-md transition-all duration-150",

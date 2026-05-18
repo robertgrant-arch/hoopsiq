@@ -90,7 +90,7 @@ return (
           </div>
 
           <div className="text-center mt-10 text-[12.5px] text-muted-foreground">
-            <Link href="/">
+            <Link href="/" asChild>
               <a className="hover:text-foreground">← Back to the main site</a>
             </Link>
           </div>

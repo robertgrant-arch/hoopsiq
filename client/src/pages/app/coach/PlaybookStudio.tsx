@@ -479,7 +479,7 @@ export function CoachPlaybookStudio() {
           subtitle="Diagram every phase of every play. Animate it, version it, ship it to your team."
           actions={
             <div className="flex items-center gap-2">
-              <Link href="/app/coach">
+              <Link href="/app/coach" asChild>
                 <a className="text-[12px] text-muted-foreground hover:text-foreground inline-flex items-center gap-1">
                   Coach HQ <ChevronRight className="w-3 h-3" />
                 </a>

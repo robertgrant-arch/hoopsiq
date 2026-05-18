@@ -428,7 +428,7 @@ function NotFoundCard() {
       <p className="text-[13px] text-muted-foreground">
         No scout report exists for this opponent, or the opponent wasn't found.
       </p>
-      <Link href="/app/coach/scouting">
+      <Link href="/app/coach/scouting" asChild>
         <a className="text-[13px] font-semibold" style={{ color: ACCENT }}>
           ← Back to scouting
         </a>
@@ -476,14 +476,14 @@ export default function GameDayPage(): React.ReactElement {
       <div className="px-4 lg:px-8 pb-24 max-w-4xl mx-auto pt-4 space-y-5">
         {/* Breadcrumb */}
         <div className="flex items-center gap-2 text-[12px] flex-wrap" style={{ color: MUTED }}>
-          <Link href="/app/coach/scouting">
+          <Link href="/app/coach/scouting" asChild>
             <a className="hover:text-foreground transition-colors flex items-center gap-1">
               <ChevronLeft className="w-3.5 h-3.5" />
               Scouting
             </a>
           </Link>
           <span>·</span>
-          <Link href={`/app/coach/scouting/${opponentId}`}>
+          <Link href={`/app/coach/scouting/${opponentId}`} asChild>
             <a className="hover:text-foreground transition-colors">{opponent.name}</a>
           </Link>
           <span>·</span>
@@ -595,7 +595,7 @@ export default function GameDayPage(): React.ReactElement {
             {/* Quick actions */}
             <div className="rounded-xl border border-border bg-card p-4 space-y-2">
               <SectionHead label="Quick actions" icon={<Zap className="w-3.5 h-3.5" />} />
-              <Link href={`/app/coach/scouting/${opponentId}`}>
+              <Link href={`/app/coach/scouting/${opponentId}`} asChild>
                 <a
                   className="flex items-center gap-2.5 px-3 py-2.5 rounded-xl border border-border hover:bg-muted/20 transition-colors text-[12px] font-medium"
                 >
@@ -604,7 +604,7 @@ export default function GameDayPage(): React.ReactElement {
                   <ArrowRight className="w-3.5 h-3.5 ml-auto shrink-0" style={{ color: MUTED }} />
                 </a>
               </Link>
-              <Link href="/app/coach/practice-plans">
+              <Link href="/app/coach/practice-plans" asChild>
                 <a
                   className="flex items-center gap-2.5 px-3 py-2.5 rounded-xl border border-border hover:bg-muted/20 transition-colors text-[12px] font-medium"
                 >

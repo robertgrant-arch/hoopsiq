@@ -510,7 +510,7 @@ export default function PublicRecruitingProfilePage() {
             HoopsOS
           </div>
 
-          <Link href="/sign-in">
+          <Link href="/sign-in" asChild>
             <a
               className="text-[12px] font-semibold px-3 py-1.5 rounded-lg transition-colors"
               style={{
@@ -1223,7 +1223,7 @@ export default function PublicRecruitingProfilePage() {
               HoopsOS
             </span>{" "}
             — Basketball Operations Platform ·{" "}
-            <Link href="/privacy">
+            <Link href="/privacy" asChild>
               <a style={{ color: "oklch(0.50 0.02 260)" }}>Privacy Policy</a>
             </Link>
           </p>

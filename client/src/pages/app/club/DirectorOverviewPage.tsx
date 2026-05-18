@@ -344,7 +344,7 @@ function TeamStatusGrid() {
         {TEAMS.map((team) => {
           const statusColor = team.status === "on-track" ? SUCCESS : WARNING;
           return (
-            <Link key={team.id} href={team.href}>
+            <Link key={team.id} href={team.href} asChild>
               <a className="block border-b border-border last:border-0 hover:bg-muted/30 transition-colors cursor-pointer">
                 {/* Desktop row */}
                 <div
@@ -580,7 +580,7 @@ function RecentActivityFeed() {
                   <div className="flex items-center gap-2 mt-1">
                     <span className="text-[11px] text-muted-foreground">{event.time}</span>
                     {event.href && (
-                      <Link href={event.href}>
+                      <Link href={event.href} asChild>
                         <a className="text-[11px] font-medium flex items-center gap-0.5 opacity-0 group-hover:opacity-100 transition-opacity" style={{ color: PRIMARY }}>
                           View <ChevronRight className="w-3 h-3" />
                         </a>

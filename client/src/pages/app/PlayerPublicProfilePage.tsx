@@ -233,7 +233,7 @@ export default function PlayerPublicProfilePage() {
       <nav className="sticky top-0 z-30 bg-background/95 backdrop-blur border-b border-border">
         <div className="max-w-3xl mx-auto px-4 h-14 flex items-center justify-between">
           <Logo size={26} />
-          <Link href="/sign-in">
+          <Link href="/sign-in" asChild>
             <a className="text-[13px] font-medium text-muted-foreground hover:text-foreground transition-colors">
               Sign in
             </a>

@@ -577,7 +577,7 @@ function PlayerCard({
 
       {/* Actions */}
       <div className="flex items-center gap-2">
-        <Link href={`/app/recruiter/players/${player.id}`}>
+        <Link href={`/app/recruiter/players/${player.id}`} asChild>
           <a
             className="flex-1 text-center text-[12px] font-semibold py-2 rounded-lg transition-colors"
             style={{ background: PRIMARY, color: "white" }}

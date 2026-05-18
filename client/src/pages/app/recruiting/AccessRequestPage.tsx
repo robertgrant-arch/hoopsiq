@@ -271,7 +271,7 @@ function RequestCard({
       <div className="flex items-start justify-between gap-3 flex-wrap">
         <div className="min-w-0">
           <div className="flex items-center gap-2 flex-wrap">
-            <Link href={`/app/recruiter/players/${request.playerId}`}>
+            <Link href={`/app/recruiter/players/${request.playerId}`} asChild>
               <a className="text-[15px] font-bold hover:underline" style={{ color: "var(--text-primary)" }}>
                 {request.playerName}
               </a>
@@ -371,7 +371,7 @@ function RequestCard({
       {/* Actions */}
       <div className="flex items-center gap-2 flex-wrap pt-1 border-t" style={{ borderColor: "var(--border)" }}>
         {request.status === "approved" && (
-          <Link href={`/app/recruiter/players/${request.playerId}`}>
+          <Link href={`/app/recruiter/players/${request.playerId}`} asChild>
             <a
               className="flex items-center gap-1.5 text-[12px] font-semibold px-3.5 py-2 rounded-lg transition-colors"
               style={{ background: PRIMARY, color: "white" }}
@@ -497,7 +497,7 @@ export default function AccessRequestPage() {
           title="Access Requests"
           subtitle="Track your profile access requests and active grants"
           actions={
-            <Link href="/app/recruiter/search">
+            <Link href="/app/recruiter/search" asChild>
               <a
                 className="flex items-center gap-2 text-[13px] font-semibold px-4 py-2.5 rounded-xl transition-colors"
                 style={{ background: `${PRIMARY}22`, color: PRIMARY }}
@@ -601,7 +601,7 @@ export default function AccessRequestPage() {
 
         {/* New request CTA */}
         <div className="mt-8">
-          <Link href="/app/recruiter/search">
+          <Link href="/app/recruiter/search" asChild>
             <a
               className="flex items-center justify-between rounded-xl border px-5 py-4 transition-colors"
               style={{ background: "var(--bg-surface)", borderColor: "var(--border)" }}
@@ -636,7 +636,7 @@ export default function AccessRequestPage() {
                     style={{ background: "var(--bg-surface)", borderColor: "var(--border)" }}
                   >
                     <div className="min-w-0">
-                      <Link href={`/app/recruiter/players/${req.playerId}`}>
+                      <Link href={`/app/recruiter/players/${req.playerId}`} asChild>
                         <a className="text-[13px] font-bold hover:underline" style={{ color: "var(--text-primary)" }}>
                           {req.playerName}
                         </a>

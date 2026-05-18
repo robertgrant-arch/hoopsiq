@@ -34,7 +34,7 @@ export default function DocsTopBar({ currentSlug }: { currentSlug?: string }) {
               </SheetContent>
             </Sheet>
 
-            <Link href="/">
+            <Link href="/" asChild>
               <a className="flex items-center gap-2.5 group">
                 <LogoMark />
                 <div className="leading-none">

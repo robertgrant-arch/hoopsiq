@@ -712,7 +712,7 @@ export default function StaffRolesPage(): React.ReactElement {
         style={{ background: "oklch(0.14 0.01 260)", borderColor: "oklch(0.22 0.01 260)" }}
       >
         <div className="flex items-center gap-3">
-          <Link href="/app/coach">
+          <Link href="/app/coach" asChild>
             <a className="p-1.5 rounded-lg hover:bg-white/5 transition-colors">
               <ArrowLeft className="w-4 h-4" style={{ color: MUTED }} />
             </a>

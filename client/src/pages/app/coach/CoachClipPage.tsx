@@ -604,7 +604,7 @@ function IDPEvidenceSection({ clipId, goalId, goalTitle, goalPlayerId }: {
             </div>
           </div>
           {goalPlayerId && (
-            <Link href={`/app/coach/players/${goalPlayerId}/idp`}>
+            <Link href={`/app/coach/players/${goalPlayerId}/idp`} asChild>
               <a
                 className="flex items-center gap-1 text-[11px] font-semibold shrink-0"
                 style={{ color: SUCCESS }}
@@ -663,7 +663,7 @@ function NotFoundCard() {
       <p className="text-[13px] text-muted-foreground">
         This clip doesn't exist or may have been removed.
       </p>
-      <Link href="/app/coach/queue">
+      <Link href="/app/coach/queue" asChild>
         <a className="text-[13px] font-semibold" style={{ color: ACCENT }}>
           ← Back to review queue
         </a>
@@ -714,7 +714,7 @@ export default function CoachClipPage(): React.ReactElement {
       <div className="px-4 lg:px-8 pb-24 max-w-5xl mx-auto pt-4 space-y-5">
         {/* Breadcrumb */}
         <div className="flex items-center gap-2 text-[12px] flex-wrap" style={{ color: MUTED }}>
-          <Link href="/app/coach/queue">
+          <Link href="/app/coach/queue" asChild>
             <a className="hover:text-foreground transition-colors flex items-center gap-1">
               <ChevronLeft className="w-3.5 h-3.5" />
               Review Queue
@@ -723,7 +723,7 @@ export default function CoachClipPage(): React.ReactElement {
           {film && (
             <>
               <span>·</span>
-              <Link href={`/app/coach/queue/${film.id}`}>
+              <Link href={`/app/coach/queue/${film.id}`} asChild>
                 <a className="hover:text-foreground transition-colors truncate max-w-[160px]">
                   {film.title}
                 </a>
@@ -800,8 +800,7 @@ export default function CoachClipPage(): React.ReactElement {
                     {clip.detectedPlayerNames.map((name, i) => (
                       <Link
                         key={name}
-                        href={`/app/coach/players/${clip.detectedPlayerIds[i] ?? "#"}`}
-                      >
+                        href={`/app/coach/players/${clip.detectedPlayerIds[i] ?? "#"}`} asChild>
                         <a
                           className="flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[12px] font-medium transition-colors hover:brightness-110"
                           style={{ background: ACCENT.replace(")", " / 0.10)"), color: ACCENT }}
@@ -965,7 +964,7 @@ export default function CoachClipPage(): React.ReactElement {
 
             {/* Source film link */}
             {film && (
-              <Link href={`/app/coach/queue/${film.id}`}>
+              <Link href={`/app/coach/queue/${film.id}`} asChild>
                 <a
                   className="flex items-center gap-2.5 rounded-xl border border-border px-4 py-3 hover:bg-muted/20 transition-colors"
                 >

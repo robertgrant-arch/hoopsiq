@@ -2359,7 +2359,7 @@ export default function OpponentScoutPage() {
   return (
     <AppShell>
       <div className="mb-5">
-        <Link href="/app/coach/scouting">
+        <Link href="/app/coach/scouting" asChild>
           <a className="inline-flex items-center gap-1 text-[12px] text-muted-foreground hover:text-foreground mb-3 transition-colors">
             <ChevronLeft className="w-3.5 h-3.5" /> Scouting
           </a>

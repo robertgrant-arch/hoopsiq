@@ -174,9 +174,9 @@ function DailyStatusStrip() {
   return (
     <div className="flex gap-2 mb-6">
       {/* Check-in card */}
-      <Link href="/app/player/checkin" className="flex-1">
+      <Link href="/app/player/checkin" asChild>
         <a
-          className="flex items-center gap-2.5 rounded-xl border px-3 py-3 hover:brightness-110 transition-all min-h-[52px]"
+          className="flex-1 flex items-center gap-2.5 rounded-xl border px-3 py-3 hover:brightness-110 transition-all min-h-[52px]"
           style={{
             borderColor: checkinColor.replace(")", " / 0.30)"),
             background: checkinColor.replace(")", " / 0.07)"),
@@ -196,9 +196,9 @@ function DailyStatusStrip() {
       </Link>
 
       {/* WOD card */}
-      <Link href="/app/player/wod" className="flex-1">
+      <Link href="/app/player/wod" asChild>
         <a
-          className="flex items-center gap-2.5 rounded-xl border px-3 py-3 hover:brightness-110 transition-all min-h-[52px]"
+          className="flex-1 flex items-center gap-2.5 rounded-xl border px-3 py-3 hover:brightness-110 transition-all min-h-[52px]"
           style={{
             borderColor: wodColor.replace(")", " / 0.30)"),
             background: wodColor.replace(")", " / 0.07)"),
@@ -236,7 +236,7 @@ export function PlayerDashboard() {
           title={`Let's get it, ${user?.name.split(" ")[0]}.`}
           subtitle="Your daily blueprint is ready. Hit your WOD, log film, stack reps."
           actions={
-            <Link href="/app/messages">
+            <Link href="/app/messages" asChild>
               <a className="relative inline-flex items-center gap-2 h-9 px-3 rounded-md border border-border text-[13px] hover:bg-muted transition">
                 <Bell className="w-4 h-4" />
                 Inbox
@@ -310,7 +310,7 @@ export function PlayerDashboard() {
                       <Sparkles className="w-3.5 h-3.5" /> +{todaysWod.xp} XP
                     </span>
                   </div>
-                  <Link href="/app/player/workout">
+                  <Link href="/app/player/workout" asChild>
                     <a className="inline-flex items-center gap-2 h-11 px-5 rounded-md bg-primary text-primary-foreground font-semibold text-[13px] uppercase tracking-[0.08em] hover:brightness-110 transition">
                       <Play className="w-4 h-4" /> Start Session
                     </a>
@@ -346,7 +346,7 @@ export function PlayerDashboard() {
             <div className="mt-6">
               <div className="flex items-center justify-between mb-3">
                 <h3 className="display text-xl">Recent uploads</h3>
-                <Link href="/app/player/uploads">
+                <Link href="/app/player/uploads" asChild>
                   <a className="text-[12.5px] text-muted-foreground hover:text-foreground flex items-center gap-1">
                     View all <ArrowRight className="w-3 h-3" />
                   </a>
@@ -366,7 +366,7 @@ export function PlayerDashboard() {
             <div className="rounded-xl border border-border bg-card p-5">
               <div className="flex items-center justify-between mb-4">
                 <h3 className="display text-[16px]">Skill Tracks</h3>
-                <Link href="/app/player/skills">
+                <Link href="/app/player/skills" asChild>
                   <a className="text-[11px] text-muted-foreground hover:text-foreground">
                     Details →
                   </a>
@@ -399,7 +399,7 @@ export function PlayerDashboard() {
             <div className="rounded-xl border border-border bg-card p-5">
               <div className="flex items-center justify-between mb-4">
                 <h3 className="display text-[16px]">Film Assigned</h3>
-                <Link href="/app/film/inbox">
+                <Link href="/app/film/inbox" asChild>
                   <a className="text-[11px] text-muted-foreground hover:text-foreground">
                     All →
                   </a>
@@ -407,7 +407,7 @@ export function PlayerDashboard() {
               </div>
               <div className="space-y-2.5">
                 {filmRoom.clips.slice(0, 3).map((c) => (
-                  <Link key={c.id} href={`/app/film/clips/${c.id}`}>
+                  <Link key={c.id} href={`/app/film/clips/${c.id}`} asChild>
                     <a className="block rounded-md border border-border p-3 hover:border-primary/50 transition group">
                       <div className="flex items-start justify-between gap-3 mb-1.5">
                         <span className="text-[12.5px] font-medium leading-tight group-hover:text-primary transition">
@@ -468,7 +468,7 @@ function statusMeta(s: VideoUpload["status"]) {
 function UploadRow({ upload }: { upload: VideoUpload }) {
   const s = statusMeta(upload.status);
   return (
-    <Link href={`/app/player/uploads/${upload.id}`}>
+    <Link href={`/app/player/uploads/${upload.id}`} asChild>
       <a className="flex items-center gap-4 rounded-lg border border-border p-3 hover:border-primary/50 transition group">
         <div className="w-20 h-12 rounded bg-gradient-to-br from-[oklch(0.25_0.01_260)] to-[oklch(0.17_0.01_260)] flex items-center justify-center shrink-0">
           <Play className="w-4 h-4 text-muted-foreground" />
@@ -668,7 +668,7 @@ export function PlayerWorkout() {
             <p className="text-[13.5px] text-muted-foreground mb-4">
               +{todaysWod.xp} XP earned. Streak protected. Don't stop.
             </p>
-            <Link href="/app/player">
+            <Link href="/app/player" asChild>
               <a className="inline-flex items-center gap-2 h-10 px-5 rounded-md bg-primary text-primary-foreground font-semibold text-[12.5px] uppercase tracking-[0.08em] hover:brightness-110 transition">
                 Back to dashboard
               </a>
@@ -718,7 +718,7 @@ function PendingReuploadBanner({ requests }: { requests: ReuploadRequest[] }) {
                 </p>
               )}
             </div>
-            <Link href={`/app/player/uploads?resolves=${r.id}`}>
+            <Link href={`/app/player/uploads?resolves=${r.id}`} asChild>
               <a className="shrink-0 inline-flex items-center gap-1.5 h-8 px-3 rounded-md bg-violet-500 text-white text-[11.5px] font-semibold hover:bg-violet-600 transition">
                 <RotateCcw className="w-3 h-3" /> Record & Upload
               </a>
@@ -787,7 +787,7 @@ export function PlayerUploadDetail() {
     <AppShell>
       <div className="px-6 lg:px-10 py-8 max-w-[1200px] mx-auto">
         <div className="flex items-center gap-2 text-[12px] text-muted-foreground mb-4">
-          <Link href="/app/player/uploads">
+          <Link href="/app/player/uploads" asChild>
             <a className="hover:text-foreground">Uploads</a>
           </Link>
           <ChevronRight className="w-3 h-3" />
@@ -1055,7 +1055,7 @@ export function Messages() {
         />
         <div className="space-y-2">
           {notifications.map((n) => (
-            <Link key={n.id} href={n.href}>
+            <Link key={n.id} href={n.href} asChild>
               <a
                 className={`flex items-start gap-4 rounded-lg border p-4 transition ${
                   n.read

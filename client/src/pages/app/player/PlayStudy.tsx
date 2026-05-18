@@ -184,7 +184,7 @@ export function PlayStudyPage() {
     <AppShell>
       <div className="px-6 lg:px-10 py-8 max-w-[860px] mx-auto">
         {/* Back link */}
-        <Link href="/app/player/plays">
+        <Link href="/app/player/plays" asChild>
           <a className="inline-flex items-center gap-1.5 text-[12.5px] text-muted-foreground hover:text-foreground transition-colors mb-5">
             <ArrowLeft className="w-3.5 h-3.5" />
             Back to Plays

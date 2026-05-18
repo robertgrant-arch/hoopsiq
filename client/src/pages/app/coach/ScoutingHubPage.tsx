@@ -130,7 +130,7 @@ function OpponentCard({ opp }: { opp: Opponent }) {
   const sm = latestReport ? statusMeta(latestReport.status) : null;
 
   return (
-    <Link href={`/app/coach/scouting/${opp.id}`}>
+    <Link href={`/app/coach/scouting/${opp.id}`} asChild>
       <a className="block rounded-xl border border-border bg-card hover:shadow-md hover:-translate-y-0.5 transition-all duration-150">
         <div className="p-4">
           <div className="flex items-start gap-3">
@@ -269,7 +269,7 @@ export default function ScoutingHubPage() {
             const hue = opp?.primaryColor ? Number(opp.primaryColor) : 200;
             const c = teamColor(hue);
             return (
-              <Link key={report.id} href={`/app/coach/scouting/${report.opponentId}`}>
+              <Link key={report.id} href={`/app/coach/scouting/${report.opponentId}`} asChild>
                 <a className="flex items-center gap-3 px-5 py-3.5 hover:bg-muted/30 transition-colors">
                   <div
                     className="w-8 h-8 rounded-lg flex items-center justify-center text-[10px] font-bold border shrink-0"

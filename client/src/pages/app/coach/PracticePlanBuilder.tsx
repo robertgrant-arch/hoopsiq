@@ -701,7 +701,7 @@ function TeamReadinessPanel() {
             </div>
           )}
           <div className="px-4 py-2 border-t border-border/40">
-            <Link href="/app/coach/readiness">
+            <Link href="/app/coach/readiness" asChild>
               <a className="text-[11px] text-primary hover:underline">View full readiness report →</a>
             </Link>
           </div>
@@ -1972,7 +1972,7 @@ export function CoachPracticePlanBuilder() {
           subtitle="Drag drills from the library, sequence them, watch the clock. Print to PDF for your staff or share a read-only link."
           actions={
             <div className="flex items-center gap-2">
-              <Link href="/app/coach">
+              <Link href="/app/coach" asChild>
                 <a className="text-[12px] text-muted-foreground hover:text-foreground inline-flex items-center gap-1">
                   Coach HQ <ChevronRight className="w-3 h-3" />
                 </a>

@@ -240,7 +240,7 @@ export function TeamDashboard() {
                 <Bell className="w-3.5 h-3.5" />
                 Send Broadcast
               </Button>
-              <Link href="/app/team/roster">
+              <Link href="/app/team/roster" asChild>
                 <a className="inline-flex items-center gap-1.5 h-9 px-4 rounded-md bg-primary text-primary-foreground font-semibold text-[12.5px] uppercase tracking-[0.07em] hover:brightness-110 transition">
                   <Plus className="w-3.5 h-3.5" />
                   Add Player
@@ -305,7 +305,7 @@ export function TeamDashboard() {
                   <h3 className="display text-[17px]">Roster</h3>
                   <span className="font-mono text-[11px] text-muted-foreground">{ROSTER.length} total</span>
                 </div>
-                <Link href="/app/team/roster">
+                <Link href="/app/team/roster" asChild>
                   <a className="text-[12px] text-primary hover:underline flex items-center gap-1">
                     Manage <ChevronRight className="w-3 h-3" />
                   </a>
@@ -379,7 +379,7 @@ export function TeamDashboard() {
                         </td>
                         <td className="px-5 py-3">
                           <div className="flex items-center justify-end gap-2">
-                            <Link href={`/app/coach/players/${player.id}`}>
+                            <Link href={`/app/coach/players/${player.id}`} asChild>
                               <a className="text-[11.5px] text-primary hover:underline">View</a>
                             </Link>
                             <button
@@ -479,7 +479,7 @@ export function TeamDashboard() {
                   <div className="text-[12px] text-muted-foreground">
                     {TEAM.nextPractice.time} · {TEAM.nextPractice.location}
                   </div>
-                  <Link href="/app/coach/practice-plans">
+                  <Link href="/app/coach/practice-plans" asChild>
                     <a className="mt-2.5 inline-block text-[11.5px] text-primary hover:underline">
                       View Plan →
                     </a>
@@ -608,7 +608,7 @@ export function TeamDashboard() {
                 </div>
 
                 <div className="flex items-center justify-between py-1.5 text-[12.5px]">
-                  <Link href="/app/team/roster">
+                  <Link href="/app/team/roster" asChild>
                     <a className="flex items-center gap-2 hover:underline">
                       <span className="w-2 h-2 rounded-full bg-[oklch(0.72_0.17_75)] shrink-0" />
                       Partial
@@ -660,7 +660,7 @@ export function TeamDashboard() {
                   <ChevronRight className="w-3.5 h-3.5 text-muted-foreground" />
                 </button>
 
-                <Link href="/app/team/schedule">
+                <Link href="/app/team/schedule" asChild>
                   <a className="flex items-center justify-between p-2.5 rounded-md hover:bg-muted transition text-[13px]">
                     <span className="flex items-center gap-2.5">
                       <Calendar className="w-4 h-4 text-primary" />
@@ -670,7 +670,7 @@ export function TeamDashboard() {
                   </a>
                 </Link>
 
-                <Link href="/app/coach/messages">
+                <Link href="/app/coach/messages" asChild>
                   <a className="flex items-center justify-between p-2.5 rounded-md hover:bg-muted transition text-[13px]">
                     <span className="flex items-center gap-2.5">
                       <MessageSquare className="w-4 h-4 text-primary" />

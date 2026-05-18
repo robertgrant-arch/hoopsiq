@@ -67,7 +67,7 @@ function QueueRow({ film, rank }: { film: FilmEntry; rank: number }) {
     : "oklch(0.12 0.005 260)";
 
   return (
-    <Link href={`/app/coach/queue/${film.id}`}>
+    <Link href={`/app/coach/queue/${film.id}`} asChild>
       <a
         className="flex items-start gap-4 rounded-2xl border px-4 py-4 hover:brightness-110 transition-all active:scale-[0.99]"
         style={{ borderColor, background: bgColor }}
@@ -192,7 +192,7 @@ function AllClearCard() {
       <p className="text-[13px] text-muted-foreground max-w-xs mx-auto">
         All clips have been reviewed and actioned. Check back after your next upload.
       </p>
-      <Link href="/app/coach/film">
+      <Link href="/app/coach/film" asChild>
         <a
           className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-[13px] font-semibold"
           style={{ background: ACCENT, color: "white" }}
@@ -225,7 +225,7 @@ export default function FilmQueuePage(): React.ReactElement {
               : "All clips reviewed."
           }
           actions={
-            <Link href="/app/coach/film">
+            <Link href="/app/coach/film" asChild>
               <a className="inline-flex items-center gap-1.5 h-9 px-3 rounded-xl border border-border text-[13px] font-medium hover:bg-muted/30 transition-colors">
                 <Film className="w-3.5 h-3.5" />
                 Library

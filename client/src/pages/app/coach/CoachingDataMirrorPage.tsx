@@ -346,7 +346,7 @@ function MetricCard({ metric }: { metric: BehavioralMetric }) {
 
       {/* Module recommendation */}
       {(metric.status === "lagging" || metric.status === "developing") && metric.moduleRecommendationId && (
-        <Link href={`/app/learn/courses/${metric.moduleRecommendationId}`}>
+        <Link href={`/app/learn/courses/${metric.moduleRecommendationId}`} asChild>
           <a className="flex items-center gap-1.5 text-[11.5px] font-semibold mt-auto"
              style={{ color: C.primary }}>
             <BookOpen className="w-3.5 h-3.5" />
@@ -560,7 +560,7 @@ function PatternsInsightsSection() {
                     <p className="text-[13px] leading-snug">{card.text}</p>
                     <p className="text-[10.5px] text-muted-foreground/60 mt-1.5">{card.source}</p>
                     <div className="flex items-center gap-3 mt-3 flex-wrap">
-                      <Link href={card.actionHref}>
+                      <Link href={card.actionHref} asChild>
                         <a
                           className="text-[12px] font-semibold flex items-center gap-1"
                           style={{ color: C.primary }}
@@ -695,7 +695,7 @@ export default function CoachingDataMirrorPage() {
           title="Your Coaching Mirror"
           subtitle="Here's what the data shows about your coaching patterns this season. You decide what to do with it."
           actions={
-            <Link href="/app/coach/impact-report">
+            <Link href="/app/coach/impact-report" asChild>
               <a
                 className="inline-flex items-center gap-2 h-9 px-4 rounded-md font-semibold text-[12.5px] uppercase tracking-[0.07em] transition hover:brightness-110"
                 style={{ background: C.primary, color: "#fff" }}

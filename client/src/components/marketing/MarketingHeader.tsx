@@ -19,7 +19,7 @@ export function MarketingHeader() {
   return (
     <div className="sticky top-0 z-40">
       {/* Demo banner */}
-      <Link href="/sign-in">
+      <Link href="/sign-in" asChild>
         <a
           className="block w-full bg-primary text-primary-foreground text-center text-[12px] font-mono uppercase tracking-[0.14em] py-2 hover:brightness-110 transition"
         >
@@ -33,7 +33,7 @@ export function MarketingHeader() {
           {links.map((l) => {
             const active = loc === l.href;
             return (
-              <Link key={l.href} href={l.href}>
+              <Link key={l.href} href={l.href} asChild>
                 <a
                   className={`text-[13.5px] font-medium transition-colors ${
                     active
@@ -48,25 +48,25 @@ export function MarketingHeader() {
           })}
         </nav>
         <div className="hidden md:flex items-center gap-3 ml-auto">
-          <Link href="/docs">
+          <Link href="/docs" asChild>
             <a className="text-[13px] text-muted-foreground hover:text-foreground">
               Docs
             </a>
           </Link>
           {user ? (
-            <Link href={ROLE_META[user.role].home}>
+            <Link href={ROLE_META[user.role].home} asChild>
               <a className="inline-flex items-center gap-2 h-9 px-4 rounded-md bg-primary text-primary-foreground font-semibold text-[12.5px] uppercase tracking-[0.08em] hover:brightness-110 transition">
                 Open {ROLE_META[user.role].label} App
               </a>
             </Link>
           ) : (
             <>
-              <Link href="/sign-in">
+              <Link href="/sign-in" asChild>
                 <a className="text-[13px] font-medium text-foreground hover:text-primary transition-colors">
                   Sign in
                 </a>
               </Link>
-              <Link href="/sign-in">
+              <Link href="/sign-in" asChild>
                 <a className="inline-flex items-center gap-2 h-9 px-4 rounded-md bg-primary text-primary-foreground font-semibold text-[12.5px] uppercase tracking-[0.08em] hover:brightness-110 transition">
                   Open Demo App
                 </a>

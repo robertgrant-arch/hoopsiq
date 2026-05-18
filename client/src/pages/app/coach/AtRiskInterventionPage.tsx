@@ -609,7 +609,7 @@ function PlayerDetailModal({
                 <MessageSquare className="w-5 h-5" style={{ color: PRIMARY }} />
                 <span className="text-[11px] font-medium leading-tight">Send Personal Message</span>
               </button>
-              <Link href="/app/coach/wods">
+              <Link href="/app/coach/wods" asChild>
                 <a
                   className="flex flex-col items-center gap-2 p-3 rounded-xl border border-border hover:border-[oklch(0.78_0.16_75/0.5)] transition-colors text-center"
                   style={{ minHeight: 44 }}

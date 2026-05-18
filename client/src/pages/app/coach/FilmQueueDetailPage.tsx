@@ -303,7 +303,7 @@ function InlineActionBar({ clip }: { clip: ExtractedClip }) {
         {CLIP_ACTIONS.map((act) => {
           const done = completed.has(act.id);
           return act.id === "note" ? (
-            <Link key={act.id} href={`/app/coach/clips/${clip.id}`}>
+            <Link key={act.id} href={`/app/coach/clips/${clip.id}`} asChild>
               <a
                 className="flex items-center gap-1 px-2.5 py-1.5 rounded-lg border text-[11px] font-medium transition-colors hover:bg-muted/30"
                 style={{ borderColor: "oklch(0.24 0.01 260)", color: MUTED }}
@@ -636,7 +636,7 @@ function NotFoundCard() {
       <AlertCircle className="w-8 h-8 mx-auto" style={{ color: DANGER }} />
       <p className="text-[15px] font-semibold">Film not found</p>
       <p className="text-[13px] text-muted-foreground">This entry doesn't exist or was deleted.</p>
-      <Link href="/app/coach/queue">
+      <Link href="/app/coach/queue" asChild>
         <a className="text-[13px] font-semibold" style={{ color: ACCENT }}>
           ← Back to queue
         </a>
@@ -709,7 +709,7 @@ export default function FilmQueueDetailPage(): React.ReactElement {
       <div className="px-4 lg:px-8 pb-24 max-w-5xl mx-auto pt-4 space-y-5">
         {/* Breadcrumb */}
         <div className="flex items-center gap-2 text-[12px]" style={{ color: MUTED }}>
-          <Link href="/app/coach/queue">
+          <Link href="/app/coach/queue" asChild>
             <a className="hover:text-foreground transition-colors flex items-center gap-1">
               <ChevronLeft className="w-3.5 h-3.5" />
               Review Queue

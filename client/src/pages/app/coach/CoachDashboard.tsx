@@ -114,7 +114,7 @@ function SectionHeader({
     <div className="px-5 py-4 border-b border-border flex items-center justify-between">
       <h3 className="font-bold text-[15px]">{title}</h3>
       {href && (
-        <Link href={href}>
+        <Link href={href} asChild>
           <a className="text-[12px] text-muted-foreground hover:text-foreground flex items-center gap-1 transition-colors">
             {linkLabel} <ArrowRight className="w-3 h-3" />
           </a>
@@ -134,7 +134,7 @@ function QuickAction({
   label: string;
 }) {
   return (
-    <Link href={href}>
+    <Link href={href} asChild>
       <a className="flex items-center justify-between p-2.5 rounded-md hover:bg-muted transition text-[13px]">
         <span className="flex items-center gap-2.5">
           <span className="text-primary">{icon}</span>
@@ -262,7 +262,7 @@ function CommandStrip({
               <div className="text-[13px] font-medium mt-0.5">vs {NEXT_GAME.opponent}</div>
               <div className="text-[11.5px] text-muted-foreground mt-0.5">{NEXT_GAME.date} · {NEXT_GAME.location}</div>
               {!NEXT_GAME.scoutingReady && NEXT_GAME.daysOut <= 2 && (
-                <Link href="/app/coach/scouting/opp_westbury/game-plan">
+                <Link href="/app/coach/scouting/opp_westbury/game-plan" asChild>
                   <a
                     className="mt-2 flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg border text-[11px] font-semibold w-full transition-colors hover:brightness-110"
                     style={{
@@ -437,7 +437,7 @@ function FilmQueue() {
       ) : (
         <div className="divide-y divide-border/40">
           {pending.slice(0, 4).map((u) => (
-            <Link key={u.id} href={`/app/coach/queue/${u.id}`}>
+            <Link key={u.id} href={`/app/coach/queue/${u.id}`} asChild>
               <a className="px-5 py-3 flex items-start gap-3 hover:bg-muted/30 transition block">
                 <Film
                   className="w-4 h-4 mt-0.5 shrink-0"
@@ -486,7 +486,7 @@ function DevelopmentAlerts() {
       ) : (
         <div className="divide-y divide-border/40">
           {DEVELOPMENT_ALERTS.map((d) => (
-            <Link key={d.id} href={d.href}>
+            <Link key={d.id} href={d.href} asChild>
               <a className="px-5 py-3 flex items-start gap-3 hover:bg-muted/30 transition block">
                 <TrendingUp
                   className="w-4 h-4 mt-0.5 shrink-0"
@@ -531,7 +531,7 @@ export function CoachDashboard() {
           title="Command Center"
           subtitle="What needs your attention before practice starts."
           actions={
-            <Link href="/app/coach/practice-plans">
+            <Link href="/app/coach/practice-plans" asChild>
               <a className="inline-flex items-center gap-2 h-9 px-4 rounded-md bg-primary text-primary-foreground font-semibold text-[12.5px] uppercase tracking-[0.08em] hover:brightness-110 transition">
                 <Calendar className="w-4 h-4" /> Practice Plan
               </a>

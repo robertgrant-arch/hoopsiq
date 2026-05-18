@@ -389,7 +389,7 @@ function PlayerSpotlightSection() {
             </blockquote>
           </div>
 
-          <Link href={p.timelineHref}>
+          <Link href={p.timelineHref} asChild>
             <a
               className="inline-flex items-center gap-1.5 text-[12.5px] font-semibold"
               style={{ color: C.primary }}
@@ -459,7 +459,7 @@ function LaggingAreasSection() {
                       {MODULE_NAMES[area.suggestedModule] ?? area.suggestedModule}
                     </div>
                   </div>
-                  <Link href={`/app/learn/courses/${area.suggestedModule}`}>
+                  <Link href={`/app/learn/courses/${area.suggestedModule}`} asChild>
                     <a
                       className="shrink-0 flex items-center gap-1 text-[12px] font-semibold"
                       style={{ color: C.primary }}
@@ -576,7 +576,7 @@ export default function CoachingImpactReportPage() {
           title="Impact Report"
           subtitle="Did coaching better make your players better? Here's the evidence."
           actions={
-            <Link href="/app/coach/data-mirror">
+            <Link href="/app/coach/data-mirror" asChild>
               <a
                 className="inline-flex items-center gap-2 h-9 px-4 rounded-md border border-border font-semibold text-[12.5px] uppercase tracking-[0.07em] hover:bg-muted/50 transition"
               >

@@ -294,7 +294,7 @@ function SubmittedCard({ today }: { today: ReadinessEntry }) {
           View History
           <ChevronRight className="w-4 h-4" />
         </a>
-        <Link href="/app/player/wod">
+        <Link href="/app/player/wod" asChild>
           <a
             className="flex-1 flex items-center justify-center gap-1.5 py-3 rounded-xl text-[13px] font-semibold min-h-[48px]"
             style={{ background: ACCENT, color: "white" }}

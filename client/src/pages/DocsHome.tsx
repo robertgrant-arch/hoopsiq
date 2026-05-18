@@ -44,12 +44,12 @@ export default function DocsHome() {
             </p>
 
             <div className="flex flex-wrap gap-3 mb-16">
-              <Link href="/docs/architecture">
+              <Link href="/docs/architecture" asChild>
                 <a className="inline-flex items-center gap-2 h-11 px-5 rounded-md bg-primary text-primary-foreground font-semibold text-[13px] uppercase tracking-[0.08em] hover:brightness-110 transition">
                   Start with Architecture <ArrowRight className="w-4 h-4" />
                 </a>
               </Link>
-              <Link href="/docs/schema">
+              <Link href="/docs/schema" asChild>
                 <a className="inline-flex items-center gap-2 h-11 px-5 rounded-md border border-border bg-background hover:bg-[oklch(0.18_0.005_260)] text-[13px] font-semibold uppercase tracking-[0.08em] transition">
                   Jump to Schema
                 </a>
@@ -87,7 +87,7 @@ export default function DocsHome() {
                 </div>
                 <div className="grid md:grid-cols-2 gap-3">
                   {c.docs.map((d) => (
-                    <Link key={d.slug} href={`/docs/${d.slug}`}>
+                    <Link key={d.slug} href={`/docs/${d.slug}`} asChild>
                       <a className="block rounded-md border border-border bg-card hover:bg-[oklch(0.18_0.005_260)] p-4 transition group">
                         <div className="flex items-center justify-between mb-1.5">
                           <span className="font-mono text-[10.5px] tabular-nums text-muted-foreground">

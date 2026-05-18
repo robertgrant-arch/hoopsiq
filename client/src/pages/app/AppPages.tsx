@@ -158,7 +158,7 @@ export function CoachRoster() {
           subtitle="12 athletes · 2025–2026 season"
           actions={
             <div className="flex items-center gap-2">
-              <Link href="/app/coach/parents">
+              <Link href="/app/coach/parents" asChild>
                 <a className="inline-flex items-center gap-2 h-9 px-4 rounded-md border border-border text-[12.5px] font-semibold hover:bg-muted transition">
                   <Heart className="w-4 h-4" /> Parents
                 </a>
@@ -204,7 +204,7 @@ export function CoachRoster() {
                   className="border-b border-border last:border-0 hover:bg-muted/40 transition"
                 >
                   <Td>
-                    <Link href={`/app/coach/players/${a.id}`}>
+                    <Link href={`/app/coach/players/${a.id}`} asChild>
                       <a className="flex items-center gap-2.5 hover:opacity-80 transition">
                         <div className="w-7 h-7 rounded-md bg-primary/15 text-primary font-semibold text-[11px] flex items-center justify-center shrink-0">
                           {a.initials}
@@ -303,7 +303,7 @@ export function CoachParents() {
           subtitle={`${totalContacts} contacts across ${minorCount} minor athletes`}
           actions={
             <div className="flex items-center gap-2">
-              <Link href="/app/coach/roster">
+              <Link href="/app/coach/roster" asChild>
                 <a className="inline-flex items-center gap-2 h-9 px-4 rounded-md border border-border text-[12.5px] font-semibold hover:bg-muted transition">
                   <Users className="w-4 h-4" /> Roster
                 </a>
@@ -505,7 +505,7 @@ export function CoachQueue() {
         />
         <div className="rounded-xl border border-border bg-card divide-y divide-border">
           {athleteUploads.map((u) => (
-            <Link key={u.id} href={`/app/coach/queue/${u.id}`}>
+            <Link key={u.id} href={`/app/coach/queue/${u.id}`} asChild>
               <a className="flex items-center gap-4 p-4 hover:bg-muted/40 transition">
                 <div className="w-32 h-20 rounded-md bg-[oklch(0.15_0.005_260)] flex items-center justify-center text-muted-foreground">
                   <Film className="w-7 h-7" />
@@ -573,7 +573,7 @@ export function CoachQueueDetail() {
   return (
     <AppShell>
       <div className="px-6 lg:px-10 py-8 max-w-[1600px] mx-auto">
-        <Link href="/app/coach/queue">
+        <Link href="/app/coach/queue" asChild>
           <a className="text-[12px] text-muted-foreground hover:text-foreground flex items-center gap-1 mb-4">
             ← Review Queue
           </a>
@@ -1053,7 +1053,7 @@ export function CoachBookings() {
           <StatCard label="Rating" value="4.94" trend="54 reviews" icon={<Star className="w-4 h-4" />} />
         </div>
         <div className="rounded-xl border border-border bg-card p-8 text-center text-muted-foreground">
-          No bookings this week. <Link href="/app/marketplace"><a className="text-primary hover:underline">Browse the marketplace →</a></Link>
+          No bookings this week. <Link href="/app/marketplace" asChild><a className="text-primary hover:underline">Browse the marketplace →</a></Link>
         </div>
       </div>
     </AppShell>
@@ -1243,7 +1243,7 @@ export function MarketplaceHome() {
         </div>
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
           {experts.map((e) => (
-            <Link key={e.id} href={`/app/marketplace/${e.slug}`}>
+            <Link key={e.id} href={`/app/marketplace/${e.slug}`} asChild>
               <a className="rounded-xl border border-border bg-card overflow-hidden hover:border-primary/50 transition group">
                 <div
                   className="h-48 relative"
@@ -1299,7 +1299,7 @@ export function MarketplaceProfile() {
   return (
     <AppShell>
       <div className="px-6 lg:px-10 py-8 max-w-[1400px] mx-auto">
-        <Link href="/app/marketplace">
+        <Link href="/app/marketplace" asChild>
           <a className="text-[12px] text-muted-foreground hover:text-foreground flex items-center gap-1 mb-4">
             ← Marketplace
           </a>
@@ -1450,7 +1450,7 @@ export function FilmRoomHome() {
             <div className="w-32">Watch Rate</div>
           </div>
           {filmRoom.clips.map((c) => (
-            <Link key={c.id} href={`/app/film/clips/${c.id}`}>
+            <Link key={c.id} href={`/app/film/clips/${c.id}`} asChild>
               <a className="grid grid-cols-[auto_1fr_auto_auto_auto_auto] items-center px-5 py-3.5 border-b border-border last:border-0 hover:bg-muted/40 transition text-[13px]">
                 <Film className="w-4 h-4 text-primary mr-3" />
                 <div className="min-w-0">
@@ -1487,7 +1487,7 @@ export function FilmClipDetail() {
   return (
     <AppShell>
       <div className="px-6 lg:px-10 py-8 max-w-[1600px] mx-auto">
-        <Link href="/app/film">
+        <Link href="/app/film" asChild>
           <a className="text-[12px] text-muted-foreground hover:text-foreground flex items-center gap-1 mb-4">
             ← Film Room
           </a>
@@ -1559,7 +1559,7 @@ export function FilmInbox() {
         />
         <div className="space-y-3">
           {filmRoom.clips.map((c) => (
-            <Link key={c.id} href={`/app/film/clips/${c.id}`}>
+            <Link key={c.id} href={`/app/film/clips/${c.id}`} asChild>
               <a className="flex items-center gap-4 p-4 rounded-lg border border-border bg-card hover:border-primary/40 transition">
                 <div className="w-32 h-20 rounded-md bg-[oklch(0.15_0.005_260)] flex items-center justify-center text-muted-foreground">
                   <Film className="w-7 h-7" />
@@ -1602,7 +1602,7 @@ export function LiveHome() {
         />
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
           {upcoming.map((e) => (
-            <Link key={e.id} href={`/app/live/${e.id}`}>
+            <Link key={e.id} href={`/app/live/${e.id}`} asChild>
               <a className="rounded-xl overflow-hidden border border-border group hover:border-primary/40 transition">
                 <div
                   className="aspect-[4/3] relative"
@@ -1666,7 +1666,7 @@ export function LiveEventDetail() {
   return (
     <AppShell>
       <div className="px-6 lg:px-10 py-8 max-w-[1200px] mx-auto">
-        <Link href="/app/live">
+        <Link href="/app/live" asChild>
           <a className="text-[12px] text-muted-foreground hover:text-foreground flex items-center gap-1 mb-4">
             ← Live Classes
           </a>
@@ -1815,7 +1815,7 @@ export function LearnHome() {
                 const total = c.lessons.length;
                 const pct = total > 0 ? Math.round((completed / total) * 100) : 0;
                 return (
-                  <Link key={c.id} href={`/app/learn/courses/${c.id}`}>
+                  <Link key={c.id} href={`/app/learn/courses/${c.id}`} asChild>
                     <a className="shrink-0 w-[280px] sm:w-[320px] flex flex-col gap-3 p-4 rounded-xl border border-border bg-card hover:border-[oklch(0.72_0.18_290)/0.5] transition-all duration-150 group">
                       <div className="flex items-start justify-between gap-2">
                         <div className="min-w-0">
@@ -1926,7 +1926,7 @@ export function LearnHome() {
                       </div>
                     </div>
                   ) : (
-                    <Link href={`/app/learn/courses/${c.id}`}>
+                    <Link href={`/app/learn/courses/${c.id}`} asChild>
                       <a className="ml-auto text-[12px] font-semibold px-3.5 py-1.5 rounded-full transition-colors"
                         style={{ background: "oklch(0.72 0.18 290 / 0.12)", color: "oklch(0.72 0.18 290)" }}>
                         Start course →
@@ -1934,7 +1934,7 @@ export function LearnHome() {
                     </Link>
                   )}
                   {completed > 0 && (
-                    <Link href={`/app/learn/courses/${c.id}`}>
+                    <Link href={`/app/learn/courses/${c.id}`} asChild>
                       <a className="shrink-0 text-[11px] font-semibold px-3 py-1.5 rounded-full transition-colors"
                         style={{ background: "oklch(0.72 0.18 290 / 0.12)", color: "oklch(0.72 0.18 290)" }}>
                         Continue
@@ -2076,7 +2076,7 @@ export function LearnCourseDetail() {
   return (
     <AppShell>
       <div className="max-w-[1200px] mx-auto px-4 sm:px-6 lg:px-10 py-7">
-        <Link href="/app/learn">
+        <Link href="/app/learn" asChild>
           <a className="inline-flex items-center gap-1.5 text-[12px] text-muted-foreground hover:text-foreground mb-6 transition-colors">
             ← Back to Learn
           </a>
@@ -2150,7 +2150,7 @@ export function LearnCourseDetail() {
                 <p className="text-[14px] text-muted-foreground leading-relaxed max-w-md mx-auto">
                   You've completed <strong>{course.title}</strong>. Apply what you've learned in your next session.
                 </p>
-                <Link href="/app/learn">
+                <Link href="/app/learn" asChild>
                   <a className="inline-block mt-6 px-5 py-2.5 rounded-full text-[13px] font-semibold transition-colors"
                     style={{ background: "oklch(0.72 0.18 290)", color: "#fff" }}>
                     Browse More Courses
@@ -2185,7 +2185,7 @@ export function LearnCourseDetail() {
                     <p className="text-[13px] text-muted-foreground leading-relaxed mb-4">
                       This lesson ends with an action — apply what you just learned directly in your account.
                     </p>
-                    <Link href={activeLesson.actionHref}>
+                    <Link href={activeLesson.actionHref} asChild>
                       <a className="inline-flex items-center gap-2 px-4 py-2 rounded-lg text-[13px] font-semibold transition-colors"
                         style={{ background: "oklch(0.72 0.18 290)", color: "#fff" }}>
                         {activeLesson.actionLabel ?? "Open in HoopsOS"}

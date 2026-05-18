@@ -146,7 +146,7 @@ function ActionNeeded() {
       </div>
       <div className="space-y-2">
         {items.map((item) => (
-          <Link key={item.id} href={item.href}>
+          <Link key={item.id} href={item.href} asChild>
             <a className="flex items-center gap-3 rounded-lg border border-border bg-card px-3 py-2.5 hover:bg-muted/30 transition-colors">
               <div className="flex-1 min-w-0">
                 <div className="text-[12px] font-medium truncate">{item.label}</div>
@@ -183,7 +183,7 @@ function QuickLinks() {
   return (
     <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
       {links.map((l) => (
-        <Link key={l.href} href={l.href}>
+        <Link key={l.href} href={l.href} asChild>
           <a className="relative rounded-xl border border-border bg-card p-4 flex flex-col items-center gap-2 hover:shadow-sm hover:-translate-y-0.5 transition-all">
             <div
               className="w-10 h-10 rounded-xl flex items-center justify-center"
@@ -230,7 +230,7 @@ function AthletesSection() {
           const profile = GUARDIAN_PLAYER_PROFILES[pid];
           if (!profile) return null;
           return (
-            <Link key={pid} href={`/app/parent/player/${pid}/summary`}>
+            <Link key={pid} href={`/app/parent/player/${pid}/summary`} asChild>
               <a className="flex items-center gap-3 px-4 py-3 hover:bg-muted/30 transition-colors">
                 <div
                   className="w-9 h-9 rounded-xl flex items-center justify-center text-[11px] font-bold text-white shrink-0"
@@ -278,7 +278,7 @@ function NextEvent() {
   const color = typeColor[upcoming.type] ?? "oklch(0.72 0.18 290)";
 
   return (
-    <Link href="/app/parent/schedule">
+    <Link href="/app/parent/schedule" asChild>
       <a className="block rounded-xl border bg-card p-4 hover:shadow-sm transition-all"
         style={{ borderColor: `${color}40` }}>
         <div className="text-[11px] font-mono uppercase tracking-wider text-muted-foreground mb-2 flex items-center gap-1.5">
@@ -309,7 +309,7 @@ function DevSummary() {
         <div className="flex items-center gap-1.5 font-semibold text-[13px]">
           <TrendingUp className="w-4 h-4" /> Development
         </div>
-        <Link href="/app/parent/child">
+        <Link href="/app/parent/child" asChild>
           <a className="text-[11px] text-muted-foreground hover:text-foreground transition-colors flex items-center gap-0.5">
             Full view <ChevronRight className="w-3 h-3" />
           </a>
@@ -363,7 +363,7 @@ function AnnouncementsPreview() {
         <div className="flex items-center gap-1.5 font-semibold text-[13px]">
           <Bell className="w-4 h-4" /> Announcements
         </div>
-        <Link href="/app/parent/announcements">
+        <Link href="/app/parent/announcements" asChild>
           <a className="text-[11px] text-muted-foreground hover:text-foreground transition-colors flex items-center gap-0.5">
             All <ChevronRight className="w-3 h-3" />
           </a>
@@ -371,7 +371,7 @@ function AnnouncementsPreview() {
       </div>
       <div className="divide-y divide-border/50">
         {items.map((a) => (
-          <Link key={a.id} href="/app/parent/announcements">
+          <Link key={a.id} href="/app/parent/announcements" asChild>
             <a className="flex items-start gap-3 px-4 py-3 hover:bg-muted/30 transition-colors">
               {a.priority === "urgent" ? (
                 <AlertCircle className="w-4 h-4 mt-0.5 shrink-0" style={{ color: "oklch(0.68 0.22 25)" }} />
@@ -418,7 +418,7 @@ export default function ParentDashboard() {
 
         {/* Player summary quick link (single-child) */}
         {ACTIVE_GUARDIAN.linkedPlayerIds.length === 1 && (
-          <Link href={`/app/parent/player/${ACTIVE_GUARDIAN.linkedPlayerIds[0]}/summary`}>
+          <Link href={`/app/parent/player/${ACTIVE_GUARDIAN.linkedPlayerIds[0]}/summary`} asChild>
             <a
               className="flex items-center justify-between rounded-xl border px-4 py-3.5 hover:border-primary/40 transition-all"
               style={{

@@ -188,7 +188,7 @@ function EventListItem({
 }) {
   const color = TYPE_COLORS[event.type];
   return (
-    <Link href={event.eventPath}>
+    <Link href={event.eventPath} asChild>
       <a
         className={`flex items-start gap-3 p-3 rounded-xl border transition-colors hover:bg-muted/40 ${
           event.isPast ? "opacity-50" : ""

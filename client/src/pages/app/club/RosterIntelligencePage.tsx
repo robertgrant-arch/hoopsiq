@@ -368,7 +368,7 @@ function MultiSeasonTable({ searchQuery, ageFilter }: { searchQuery: string; age
                 : <span className="text-[11px] text-muted-foreground">—</span>
               }
             </span>
-            <Link href={`/app/player`}>
+            <Link href={`/app/player`} asChild>
               <a
                 className="text-[12px] font-medium flex items-center gap-0.5"
                 style={{ color: PRIMARY }}

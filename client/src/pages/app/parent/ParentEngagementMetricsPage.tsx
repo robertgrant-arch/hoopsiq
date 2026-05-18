@@ -362,7 +362,7 @@ export default function ParentEngagementMetricsPage() {
                   <div className="text-[14px] font-semibold">{o.title}</div>
                   <div className="text-[13px] text-muted-foreground mt-1">{o.body}</div>
                 </div>
-                <Link href={o.href ?? "#"}>
+                <Link href={o.href ?? "#"} asChild>
                   <a
                     onClick={() => handleAction(`Navigating to: ${o.action}`)}
                     className="shrink-0 flex items-center gap-1.5 px-4 py-2 rounded-lg text-[13px] font-medium transition-colors whitespace-nowrap"
@@ -503,7 +503,7 @@ export default function ParentEngagementMetricsPage() {
                 <div className="flex items-center gap-2">
                   <AlertCircle className="w-4 h-4" style={{ color: WARNING }} />
                   <span className="text-[14px] font-semibold" style={{ color: WARNING }}>1 pending</span>
-                  <Link href="/app/family/access-requests">
+                  <Link href="/app/family/access-requests" asChild>
                     <a
                       className="text-[12px] font-medium underline"
                       style={{ color: PRIMARY }}
@@ -557,7 +557,7 @@ export default function ParentEngagementMetricsPage() {
                 <Clock className="w-4 h-4 shrink-0" />
                 Last privacy review: <strong>45 days ago</strong> — consider reviewing your settings
               </div>
-              <Link href="/app/family/privacy">
+              <Link href="/app/family/privacy" asChild>
                 <a
                   className="shrink-0 flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[12px] font-medium border transition-colors whitespace-nowrap"
                   style={{
@@ -572,7 +572,7 @@ export default function ParentEngagementMetricsPage() {
             </div>
 
             <div className="text-right">
-              <Link href="/app/family/privacy">
+              <Link href="/app/family/privacy" asChild>
                 <a className="text-[13px] font-medium" style={{ color: PRIMARY }}>
                   View full privacy settings →
                 </a>

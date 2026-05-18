@@ -816,7 +816,7 @@ export default function RecruiterPlayerViewPage() {
       <AppShell>
         <div className="max-w-3xl mx-auto px-4 py-16 text-center">
           <p className="text-[16px]" style={{ color: MUTED }}>Player profile not found.</p>
-          <Link href="/app/recruiter/search">
+          <Link href="/app/recruiter/search" asChild>
             <a className="inline-flex items-center gap-2 mt-4 text-[13px] font-semibold" style={{ color: PRIMARY }}>
               <ArrowLeft className="w-4 h-4" />
               Back to search
@@ -879,7 +879,7 @@ export default function RecruiterPlayerViewPage() {
     <AppShell>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
         {/* Back nav */}
-        <Link href="/app/recruiter/search">
+        <Link href="/app/recruiter/search" asChild>
           <a className="inline-flex items-center gap-2 text-[12px] mb-6" style={{ color: MUTED }}>
             <ArrowLeft className="w-4 h-4" />
             Back to search

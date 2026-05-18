@@ -810,7 +810,7 @@ export function EventDetailPage() {
 
               {/* Tournament bracket link */}
               {event.tournamentBracketUrl && (
-                <Link href={event.tournamentBracketUrl}>
+                <Link href={event.tournamentBracketUrl} asChild>
                   <a className="flex items-center gap-2 text-[13px] font-medium py-2 border-t border-border pt-4" style={{ color: PRIMARY }}>
                     <Trophy className="w-4 h-4" />
                     View Tournament Bracket

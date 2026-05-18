@@ -521,7 +521,7 @@ export default function PlayerSummaryPage(): React.ReactElement {
             <p className="text-[13px] text-muted-foreground">
               You don't have access to this player's profile.
             </p>
-            <Link href="/app/parent">
+            <Link href="/app/parent" asChild>
               <a className="text-[13px] font-semibold" style={{ color: ACCENT }}>
                 ← Back to dashboard
               </a>
@@ -537,7 +537,7 @@ export default function PlayerSummaryPage(): React.ReactElement {
       <div className="px-4 pb-24 max-w-lg mx-auto pt-4 space-y-5">
         {/* Breadcrumb */}
         <div className="flex items-center gap-2 text-[12px]" style={{ color: MUTED }}>
-          <Link href="/app/parent">
+          <Link href="/app/parent" asChild>
             <a className="hover:text-foreground transition-colors">Dashboard</a>
           </Link>
           <ChevronRight className="w-3 h-3" />
@@ -564,7 +564,7 @@ export default function PlayerSummaryPage(): React.ReactElement {
 
         {/* Quick links */}
         <div className="grid grid-cols-2 gap-2">
-          <Link href="/app/parent/schedule">
+          <Link href="/app/parent/schedule" asChild>
             <a
               className="flex items-center justify-between rounded-xl border px-4 py-3 hover:border-primary/40 transition-all"
               style={{ borderColor: "oklch(0.22 0.01 260)", background: "oklch(0.11 0.005 260)" }}
@@ -576,7 +576,7 @@ export default function PlayerSummaryPage(): React.ReactElement {
               <ChevronRight className="w-3.5 h-3.5" style={{ color: MUTED }} />
             </a>
           </Link>
-          <Link href="/app/parent/messages">
+          <Link href="/app/parent/messages" asChild>
             <a
               className="flex items-center justify-between rounded-xl border px-4 py-3 hover:border-primary/40 transition-all"
               style={{ borderColor: "oklch(0.22 0.01 260)", background: "oklch(0.11 0.005 260)" }}

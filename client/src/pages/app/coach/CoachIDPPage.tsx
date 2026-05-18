@@ -869,7 +869,7 @@ export function CoachIDPPage() {
       <div className="px-6 lg:px-10 py-8 max-w-[1400px] mx-auto">
         {/* Back link */}
         <div className="mb-4">
-          <Link href={`/app/coach/players/${playerId}`}>
+          <Link href={`/app/coach/players/${playerId}`} asChild>
             <a className="inline-flex items-center gap-1.5 text-[12.5px] text-muted-foreground hover:text-foreground transition">
               <ArrowLeft className="w-3.5 h-3.5" />
               Back to {player?.name ?? "Player"} Profile
@@ -1093,19 +1093,19 @@ export function CoachIDPPage() {
                     Quick Links
                   </div>
                   <div className="flex flex-col gap-2">
-                    <Link href={`/app/coach/players/${playerId}`}>
+                    <Link href={`/app/coach/players/${playerId}`} asChild>
                       <a className="flex items-center gap-2 text-[12.5px] hover:text-primary transition">
                         <ChevronRight className="w-3.5 h-3.5" />
                         Player Profile
                       </a>
                     </Link>
-                    <Link href="/app/coach/drill-library">
+                    <Link href="/app/coach/drill-library" asChild>
                       <a className="flex items-center gap-2 text-[12.5px] hover:text-primary transition">
                         <Dumbbell className="w-3.5 h-3.5" />
                         Drill Library
                       </a>
                     </Link>
-                    <Link href="/app/coach/film">
+                    <Link href="/app/coach/film" asChild>
                       <a className="flex items-center gap-2 text-[12.5px] hover:text-primary transition">
                         <Film className="w-3.5 h-3.5" />
                         Film Room

@@ -666,7 +666,7 @@ export default function PlayerPublicProgramPage() {
           <p className="text-[12px] text-muted-foreground text-center">
             {PROGRAM.name} · {PROGRAM.location} · Powered by HoopsOS
           </p>
-          <Link href="/sign-in">
+          <Link href="/sign-in" asChild>
             <a className="text-[12px] text-muted-foreground hover:text-foreground transition-colors">
               Staff Sign In
             </a>

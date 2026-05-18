@@ -63,7 +63,7 @@ function FooterCol({
       <ul className="space-y-2">
         {links.map((l) => (
           <li key={l.href}>
-            <Link href={l.href}>
+            <Link href={l.href} asChild>
               <a className="text-[13px] text-foreground/80 hover:text-primary transition-colors">
                 {l.label}
               </a>

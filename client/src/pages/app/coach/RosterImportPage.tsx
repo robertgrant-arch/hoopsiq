@@ -269,7 +269,7 @@ export default function RosterImportPage(): React.ReactElement {
           className="sticky top-0 z-10 flex items-center gap-3 px-4 py-3 border-b"
           style={{ background: "oklch(0.14 0.01 260)", borderColor: "oklch(0.22 0.01 260)" }}
         >
-          <Link href="/app/coach/program">
+          <Link href="/app/coach/program" asChild>
             <a className="p-1.5 rounded-lg hover:bg-white/5 transition-colors">
               <ArrowLeft className="w-4 h-4" style={{ color: MUTED }} />
             </a>
@@ -292,7 +292,7 @@ export default function RosterImportPage(): React.ReactElement {
             </p>
           </div>
           <div className="flex flex-col gap-3 w-full max-w-sm">
-            <Link href="/app/coach/program">
+            <Link href="/app/coach/program" asChild>
               <a
                 className="w-full text-center py-2.5 rounded-lg text-[13px] font-semibold transition-colors"
                 style={{ background: PRIMARY, color: "#fff" }}
@@ -330,7 +330,7 @@ export default function RosterImportPage(): React.ReactElement {
               <ArrowLeft className="w-4 h-4" style={{ color: MUTED }} />
             </button>
           ) : (
-            <Link href="/app/coach/program">
+            <Link href="/app/coach/program" asChild>
               <a className="p-1.5 rounded-lg hover:bg-white/5 transition-colors">
                 <ArrowLeft className="w-4 h-4" style={{ color: MUTED }} />
               </a>

@@ -840,7 +840,7 @@ function DevelopmentTab({ skills, focusAreas, aiRecs, onAcceptRec, onOverrideRec
             <h2 className="text-[16px] font-semibold">Individual Development Plan</h2>
             <p className="text-[12px] text-muted-foreground mt-0.5">{focusAreas.length} active focus areas · Updated May 5, 2025</p>
           </div>
-          <Link href={`/app/coach/players/${playerId}/idp`}>
+          <Link href={`/app/coach/players/${playerId}/idp`} asChild>
             <a className="inline-flex items-center gap-1.5 h-8 px-3 rounded-md border border-border text-[12px] hover:bg-muted transition font-medium">
               <ClipboardList className="w-3.5 h-3.5" /> Manage IDP
             </a>
@@ -1629,7 +1629,7 @@ function TimelineTab({ playerId }: { playerId: string }) {
                   {/* Open action CTA */}
                   {entry.status === "open" && (
                     <div className="flex gap-2 pt-1">
-                      <Link href="/app/coach/queue">
+                      <Link href="/app/coach/queue" asChild>
                         <a className="inline-flex items-center gap-1.5 h-7 px-3 rounded-md border border-border text-[11.5px] hover:bg-muted transition font-medium">
                           <Film className="w-3 h-3" /> Open in Queue
                         </a>
@@ -1704,7 +1704,7 @@ export function PlayerProfilePage() {
       <div className="p-6 max-w-[1200px] mx-auto">
 
         {/* Back link */}
-        <Link href="/app/coach/roster">
+        <Link href="/app/coach/roster" asChild>
           <a className="inline-flex items-center gap-1.5 text-[12.5px] text-muted-foreground hover:text-foreground transition mb-5">
             <ArrowLeft className="w-3.5 h-3.5" /> Roster
           </a>

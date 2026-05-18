@@ -816,7 +816,7 @@ export default function FamilyGrowthReportPage() {
               . All full-profile access requires your individual approval.
             </p>
 
-            <Link href="/app/family/access-requests">
+            <Link href="/app/family/access-requests" asChild>
               <a
                 className="inline-flex items-center gap-2 text-[13px] font-semibold px-4 py-2 rounded-lg transition-colors"
                 style={{

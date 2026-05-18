@@ -222,7 +222,7 @@ function PlayerCard({ playerId, playerName, position, initials, issues, laneId,
       {/* Action bar */}
       <div className="px-4 py-2.5 bg-muted/30 border-t border-border flex gap-1.5 flex-wrap items-center">
         {topIssue.recommendedAction === "open_idp" ? (
-          <Link href={`/app/coach/players/${playerId}/idp`}>
+          <Link href={`/app/coach/players/${playerId}/idp`} asChild>
             <a className={primary} style={{ background: "oklch(0.72 0.18 290)" }}>
               <ArrowRight size={12} />{topIssue.recommendedActionLabel}
             </a>
@@ -245,7 +245,7 @@ function PlayerCard({ playerId, playerName, position, initials, issues, laneId,
           <button type="button" onClick={onAssignFilm} className={ghost}><Film size={11} />Assign Film</button>
         )}
         {laneId === "development" && (
-          <Link href={`/app/coach/players/${playerId}/idp`}>
+          <Link href={`/app/coach/players/${playerId}/idp`} asChild>
             <a className={ghost}><ArrowRight size={11} />Open IDP</a>
           </Link>
         )}

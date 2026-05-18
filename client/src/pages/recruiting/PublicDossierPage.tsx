@@ -381,7 +381,7 @@ function NotFoundDossier(): React.ReactElement {
       <p className="text-[14px] text-center" style={{ color: MUTED }}>
         This recruiting profile doesn't exist or may have been unpublished.
       </p>
-      <Link href="/">
+      <Link href="/" asChild>
         <a className="text-[13px] font-semibold" style={{ color: PRIMARY }}>← Back to HoopsOS</a>
       </Link>
     </div>
@@ -443,7 +443,7 @@ export default function PublicDossierPage(): React.ReactElement {
           <span className="hidden sm:block text-[11.5px]" style={{ color: MUTED }}>
             Recruiting profile
           </span>
-          <Link href="/sign-in">
+          <Link href="/sign-in" asChild>
             <a
               className="px-3 py-1.5 rounded-lg text-[12px] font-semibold border transition-colors"
               style={{ borderColor: "oklch(0.28 0.015 260)", color: "oklch(0.80 0.01 260)" }}

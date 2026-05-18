@@ -98,7 +98,7 @@ export default function DocPage() {
           <div className="max-w-[780px] mx-auto px-6 lg:px-12 py-12 fade-in">
             {/* Breadcrumb */}
             <div className="flex items-center gap-2 text-[12.5px] text-muted-foreground mb-6">
-              <Link href="/">
+              <Link href="/" asChild>
                 <a className="hover:text-foreground transition-colors">HoopsOS</a>
               </Link>
               <ChevronRight className="w-3.5 h-3.5 opacity-60" />
@@ -157,7 +157,7 @@ export default function DocPage() {
             {/* Prev / Next */}
             <div className="mt-16 grid grid-cols-1 md:grid-cols-2 gap-4">
               {neighbors.prev ? (
-                <Link href={`/docs/${neighbors.prev.slug}`}>
+                <Link href={`/docs/${neighbors.prev.slug}`} asChild>
                   <a className="group rounded-lg border border-border p-5 hover:border-primary/40 hover:bg-[oklch(0.17_0.005_260)] transition-all">
                     <div className="flex items-center gap-2 text-[12px] text-muted-foreground mb-2">
                       <ArrowLeft className="w-3.5 h-3.5" /> Previous
@@ -171,7 +171,7 @@ export default function DocPage() {
                 <div />
               )}
               {neighbors.next && (
-                <Link href={`/docs/${neighbors.next.slug}`}>
+                <Link href={`/docs/${neighbors.next.slug}`} asChild>
                   <a className="group rounded-lg border border-border p-5 hover:border-primary/40 hover:bg-[oklch(0.17_0.005_260)] transition-all text-right">
                     <div className="flex items-center gap-2 text-[12px] text-muted-foreground mb-2 justify-end">
                       Next <ArrowRight className="w-3.5 h-3.5" />

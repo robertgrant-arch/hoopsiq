@@ -309,7 +309,7 @@ function GoalCard({ goal, playerId }: { goal: DevelopmentGoal; playerId: string 
             </span>
           </div>
         </div>
-        <Link href={`/app/coach/players/${playerId}/idp/goals/${goal.id}`}>
+        <Link href={`/app/coach/players/${playerId}/idp/goals/${goal.id}`} asChild>
           <a className="text-[11px] shrink-0 hover:underline" style={{ color: PRIMARY }}>
             View detail →
           </a>
@@ -529,7 +529,7 @@ function RecommendationPanel({ profile, goals, evidence, prescriptions }: {
           </span>
         </div>
         <p className="text-[13px] leading-snug mb-3" style={{ color: MUTED }}>{rec.reason}</p>
-        <Link href={rec.actionHref}>
+        <Link href={rec.actionHref} asChild>
           <a
             className="inline-flex items-center gap-1.5 text-[12px] font-semibold px-3 py-1.5 rounded-lg transition-opacity hover:opacity-80"
             style={{ background: priorityColor, color: "#fff" }}
@@ -564,7 +564,7 @@ export default function PlayerIDPPage(): React.ReactElement {
             <UserX className="w-12 h-12 mx-auto mb-3" style={{ color: MUTED }} />
             <p className="font-bold text-[16px] mb-1">Player not found</p>
             <p className="text-[13px] mb-4" style={{ color: MUTED }}>No development profile exists for this player ID.</p>
-            <Link href="/app/coach/roster">
+            <Link href="/app/coach/roster" asChild>
               <a className="text-[13px] font-medium hover:underline" style={{ color: PRIMARY }}>← Back to Roster</a>
             </Link>
           </div>
@@ -582,7 +582,7 @@ export default function PlayerIDPPage(): React.ReactElement {
       <PageHeader
         title={profile.playerName}
         actions={
-          <Link href="/app/coach/roster">
+          <Link href="/app/coach/roster" asChild>
             <a className="flex items-center gap-1 text-[13px] hover:underline" style={{ color: MUTED }}>
               <ArrowLeft className="w-3.5 h-3.5" /> Roster
             </a>
@@ -680,7 +680,7 @@ export default function PlayerIDPPage(): React.ReactElement {
               Start by setting goals or prescribing a skill drill
             </p>
             <div className="flex items-center justify-center gap-3 flex-wrap">
-              <Link href={`/app/coach/players/${playerId}/idp/goals/new`}>
+              <Link href={`/app/coach/players/${playerId}/idp/goals/new`} asChild>
                 <a
                   className="text-[13px] font-semibold px-4 py-2 rounded-lg"
                   style={{ background: PRIMARY, color: "#fff" }}
@@ -689,7 +689,7 @@ export default function PlayerIDPPage(): React.ReactElement {
                   Set First Goal
                 </a>
               </Link>
-              <Link href="/app/coach/drill-library">
+              <Link href="/app/coach/drill-library" asChild>
                 <a
                   className="text-[13px] font-semibold px-4 py-2 rounded-lg border"
                   style={{ borderColor: `${PRIMARY}50`, color: PRIMARY }}
@@ -734,7 +734,7 @@ export default function PlayerIDPPage(): React.ReactElement {
               {allEvidence.length === 0 ? (
                 <div className="px-5 py-8 text-center text-[13px]" style={{ color: MUTED }}>
                   No evidence recorded yet.{" "}
-                  <Link href="/app/coach/film/upload">
+                  <Link href="/app/coach/film/upload" asChild>
                     <a className="underline hover:no-underline" style={{ color: PRIMARY }}>Add film evidence →</a>
                   </Link>
                 </div>
@@ -786,7 +786,7 @@ export default function PlayerIDPPage(): React.ReactElement {
                   { label: "Drill library",      href: "/app/coach/drill-library" },
                   { label: "Assign WOD",         href: "/app/coach/assignments"  },
                 ].map(({ label, href }) => (
-                  <Link key={href} href={href}>
+                  <Link key={href} href={href} asChild>
                     <a
                       className="flex items-center justify-between px-3 py-2 rounded-lg text-[13px] hover:opacity-80 transition-opacity"
                       style={{ background: `${PRIMARY}0a`, color: PRIMARY }}

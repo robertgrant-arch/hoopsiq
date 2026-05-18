@@ -141,7 +141,7 @@ export function CollapsibleSection({
           <div className="shrink-0 flex items-center gap-2">
             {actionsSlot ??
               (href != null && (
-                <Link href={href}>
+                <Link href={href} asChild>
                   <a className="text-[12px] text-muted-foreground hover:text-foreground flex items-center gap-1 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded">
                     {linkLabel}
                     <ArrowRight className="w-3 h-3" aria-hidden="true" />

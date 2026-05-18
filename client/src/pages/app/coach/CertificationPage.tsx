@@ -688,7 +688,7 @@ function FoundationCard({ credential }: { credential: Credential }) {
       </div>
 
       {/* CTA */}
-      <Link href="/app/coach/education/paths">
+      <Link href="/app/coach/education/paths" asChild>
         <a
           className="flex items-center justify-center gap-2 w-full py-3 rounded-xl text-[14px] font-semibold transition-all min-h-[44px]"
           style={{

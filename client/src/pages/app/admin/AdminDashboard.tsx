@@ -112,7 +112,7 @@ function AlertStrip({ overview }: { overview: ReturnType<typeof useAdminOverview
       </div>
       <div className="space-y-2">
         {alerts.map((a) => (
-          <Link key={a.label} href={a.href}>
+          <Link key={a.label} href={a.href} asChild>
             <a className="flex items-center gap-3 rounded-lg border border-border bg-card px-3 py-2.5 hover:bg-muted/30 transition-colors">
               <div
                 className="w-1.5 h-1.5 rounded-full shrink-0"
@@ -215,7 +215,7 @@ export default function AdminDashboard() {
                 <h3 className="font-semibold text-[13px] flex items-center gap-1.5">
                   <Users className="w-4 h-4" /> Registration Pipeline
                 </h3>
-                <Link href="/app/admin/registrations">
+                <Link href="/app/admin/registrations" asChild>
                   <a className="text-[11px] text-muted-foreground hover:text-foreground transition-colors flex items-center gap-0.5">
                     Manage <ChevronRight className="w-3 h-3" />
                   </a>
@@ -251,7 +251,7 @@ export default function AdminDashboard() {
                 <h3 className="font-semibold text-[13px] flex items-center gap-1.5">
                   <DollarSign className="w-4 h-4" /> Billing Health
                 </h3>
-                <Link href="/app/admin/billing">
+                <Link href="/app/admin/billing" asChild>
                   <a className="text-[11px] text-muted-foreground hover:text-foreground transition-colors flex items-center gap-0.5">
                     Full view <ChevronRight className="w-3 h-3" />
                   </a>
@@ -314,7 +314,7 @@ export default function AdminDashboard() {
                 <h3 className="font-semibold text-[13px] flex items-center gap-1.5">
                   <UserCheck className="w-4 h-4" /> Active Teams
                 </h3>
-                <Link href="/app/admin/teams">
+                <Link href="/app/admin/teams" asChild>
                   <a className="text-[11px] text-muted-foreground hover:text-foreground transition-colors flex items-center gap-0.5">
                     Manage <ChevronRight className="w-3 h-3" />
                   </a>

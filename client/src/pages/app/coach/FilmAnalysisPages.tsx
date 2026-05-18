@@ -477,7 +477,7 @@ function PlayerStatsPanel({ session }: { session: FilmSession }) {
                 {p.minutes} min · {p.points} pts · {p.rebounds} reb · {p.assists} ast
               </div>
             </div>
-            <Link href={`/app/player/highlights/${p.playerId}`}>
+            <Link href={`/app/player/highlights/${p.playerId}`} asChild>
               <a className="text-sm text-blue-600 hover:underline">
                 View highlights →
               </a>

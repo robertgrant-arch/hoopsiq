@@ -370,7 +370,7 @@ function FocusAreaCard({
 
       {/* Film clip link */}
       {area.linkedClip && (
-        <Link href={area.linkedClip.href}>
+        <Link href={area.linkedClip.href} asChild>
           <a className="inline-flex items-center gap-1.5 text-[12px] text-primary hover:underline">
             <Film className="w-3.5 h-3.5" />
             {area.linkedClip.title}
@@ -606,7 +606,7 @@ export function PlayerDevelopmentView() {
                           )}
 
                           {action.actionType === "assign_clip" && action.status === "open" && (
-                            <Link href="/app/player/uploads">
+                            <Link href="/app/player/uploads" asChild>
                               <a className="inline-flex items-center gap-1.5 self-start h-7 px-3 rounded-md border border-border hover:bg-muted text-[11.5px] font-medium transition">
                                 <Film className="w-3 h-3" />
                                 Review Clip
@@ -761,7 +761,7 @@ export function PlayerDevelopmentView() {
                       {fb.text}
                     </p>
                     {fb.linkedClip && (
-                      <Link href={fb.linkedClip.href}>
+                      <Link href={fb.linkedClip.href} asChild>
                         <a className="inline-flex items-center gap-1.5 text-[11.5px] text-primary hover:underline pl-8">
                           <Film className="w-3 h-3" />
                           {fb.linkedClip.title}

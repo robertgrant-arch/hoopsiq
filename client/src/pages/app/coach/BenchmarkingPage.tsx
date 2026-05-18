@@ -588,7 +588,7 @@ export default function BenchmarkingPage() {
                   {selected.topPriority.length} priority area{selected.topPriority.length !== 1 ? "s" : ""} to address
                 </p>
               </div>
-              <Link href={`/app/coach/idp-generator?player=${selected.playerId}`}>
+              <Link href={`/app/coach/idp-generator?player=${selected.playerId}`} asChild>
                 <a
                   className="shrink-0 h-9 px-4 rounded-lg text-[13px] font-semibold flex items-center gap-1.5 transition-opacity hover:opacity-90"
                   style={{ background: PRIMARY, color: "oklch(0.98 0.005 260)" }}
@@ -660,8 +660,7 @@ export default function BenchmarkingPage() {
                         <p className="text-[12px] text-muted-foreground">{g.recommendation}</p>
                       </div>
                       <Link
-                        href={`/app/coach/idp-generator?player=${selected.playerId}&skill=${g.skill}`}
-                      >
+                        href={`/app/coach/idp-generator?player=${selected.playerId}&skill=${g.skill}`} asChild>
                         <a
                           className="shrink-0 h-8 px-3 rounded-lg text-[12px] font-semibold flex items-center gap-1 transition-opacity hover:opacity-80 whitespace-nowrap"
                           style={{ background: `${PRIMARY.replace(")", " / 0.14)")}`, color: PRIMARY }}

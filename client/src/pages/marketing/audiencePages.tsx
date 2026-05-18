@@ -59,13 +59,13 @@ function AudienceShell({
             {lede}
           </p>
           <div className="flex flex-wrap gap-3 mt-10">
-            <Link href={primaryHref}>
+            <Link href={primaryHref} asChild>
               <a className="inline-flex items-center gap-2 h-12 px-6 rounded-md bg-primary text-primary-foreground font-semibold text-[13px] uppercase tracking-[0.08em] hover:brightness-110 transition">
                 {primaryCta} <ArrowRight className="w-4 h-4" />
               </a>
             </Link>
             {secondaryCta && secondaryHref && (
-              <Link href={secondaryHref}>
+              <Link href={secondaryHref} asChild>
                 <a className="inline-flex items-center gap-2 h-12 px-6 rounded-md border border-border bg-card hover:bg-[oklch(0.17_0.005_260)] text-[13px] font-semibold uppercase tracking-[0.08em] transition">
                   {secondaryCta}
                 </a>
@@ -131,7 +131,7 @@ export function PlayersPage() {
               they're on the roster.
             </p>
           </div>
-          <Link href="/sign-in">
+          <Link href="/sign-in" asChild>
             <a className="shrink-0 inline-flex items-center gap-2 h-11 px-5 rounded-md bg-primary text-primary-foreground font-semibold text-[13px] uppercase tracking-[0.08em] hover:brightness-110 transition">
               Join My Team
             </a>
@@ -283,7 +283,7 @@ export function ExpertsPage() {
       <section className="max-w-[1400px] mx-auto px-5 lg:px-8 mt-16" id="marketplace">
         <div className="flex items-baseline justify-between mb-8">
           <h2 className="display text-3xl">Currently on the platform.</h2>
-          <Link href="/experts/directory">
+          <Link href="/experts/directory" asChild>
             <a className="text-[13px] text-primary hover:brightness-110">
               View all 142 →
             </a>
@@ -378,7 +378,7 @@ export function PricingPage() {
                 </li>
               ))}
             </ul>
-            <Link href="/sign-in">
+            <Link href="/sign-in" asChild>
               <a
                 className={`inline-flex items-center justify-center gap-2 h-11 rounded-md text-[13px] font-semibold uppercase tracking-[0.08em] transition ${
                   i === 2
@@ -423,7 +423,7 @@ export function LiveLanding() {
             Sign in to see the full live class schedule, reserve your spot, and
             join waitlists for sold-out sessions.
           </p>
-          <Link href="/sign-in">
+          <Link href="/sign-in" asChild>
             <a className="inline-flex items-center gap-2 h-11 px-5 mt-6 rounded-md bg-primary text-primary-foreground font-semibold text-[12.5px] uppercase tracking-[0.08em]">
               Sign In to See Schedule
             </a>

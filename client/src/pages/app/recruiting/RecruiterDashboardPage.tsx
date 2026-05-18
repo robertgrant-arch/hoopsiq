@@ -553,7 +553,7 @@ function BoardPlayerCard({
 
       {/* Actions */}
       <div className="flex items-center gap-2 pt-1 border-t" style={{ borderColor: "var(--border)" }}>
-        <Link href={`/app/recruiter/players/${player.id}`}>
+        <Link href={`/app/recruiter/players/${player.id}`} asChild>
           <a
             className="flex-1 text-center text-[12px] font-semibold py-2 rounded-lg transition-colors"
             style={{ background: `${PRIMARY}22`, color: PRIMARY }}
@@ -632,7 +632,7 @@ function DiscoverCard({ player }: { player: VerifiedPlayer }) {
         </span>
       </div>
 
-      <Link href={`/app/recruiter/players/${player.id}`}>
+      <Link href={`/app/recruiter/players/${player.id}`} asChild>
         <a
           className="text-center text-[12px] font-semibold py-2 rounded-lg transition-colors"
           style={{ background: `${PRIMARY}22`, color: PRIMARY }}
@@ -662,7 +662,7 @@ function RecentCard({ player }: { player: VerifiedPlayer }) {
           {player.position} · {player.gradYear}
         </div>
       </div>
-      <Link href={`/app/recruiter/players/${player.id}`}>
+      <Link href={`/app/recruiter/players/${player.id}`} asChild>
         <a
           className="text-center text-[11px] font-semibold py-1.5 rounded-lg transition-colors"
           style={{ background: `${PRIMARY}22`, color: PRIMARY }}
@@ -845,7 +845,7 @@ export default function RecruiterDashboardPage() {
           title="Recruiting Dashboard"
           subtitle="Verified athlete profiles from development-focused programs"
           actions={
-            <Link href="/app/recruiter/search">
+            <Link href="/app/recruiter/search" asChild>
               <a
                 className="flex items-center gap-2 text-[13px] font-semibold px-4 py-2.5 rounded-xl transition-colors"
                 style={{ background: PRIMARY, color: "white" }}
@@ -894,7 +894,7 @@ export default function RecruiterDashboardPage() {
             <h2 className="text-[18px] font-bold" style={{ color: "var(--text-primary)" }}>
               Your Board
             </h2>
-            <Link href="/app/recruiter/access-requests">
+            <Link href="/app/recruiter/access-requests" asChild>
               <a className="flex items-center gap-1 text-[12px] font-medium" style={{ color: MUTED }}>
                 Access requests
                 <ChevronRight className="w-3.5 h-3.5" />
@@ -934,7 +934,7 @@ export default function RecruiterDashboardPage() {
                   ? "Search for verified players to start evaluating."
                   : "Try a different filter tab."}
               </p>
-              <Link href="/app/recruiter/search">
+              <Link href="/app/recruiter/search" asChild>
                 <a
                   className="inline-flex items-center gap-2 text-[12px] font-semibold px-4 py-2 rounded-lg transition-colors"
                   style={{ background: `${PRIMARY}22`, color: PRIMARY }}
@@ -1043,7 +1043,7 @@ export default function RecruiterDashboardPage() {
                   </div>
                 ))}
               </div>
-              <Link href="/app/recruiter/access-requests">
+              <Link href="/app/recruiter/access-requests" asChild>
                 <a
                   className="inline-flex items-center gap-1 text-[11px] font-medium mt-2"
                   style={{ color: MUTED }}
@@ -1067,7 +1067,7 @@ export default function RecruiterDashboardPage() {
                 New verified profiles this week — highest tier + most active
               </p>
             </div>
-            <Link href="/app/recruiter/search">
+            <Link href="/app/recruiter/search" asChild>
               <a
                 className="flex items-center gap-1 text-[12px] font-semibold"
                 style={{ color: PRIMARY }}
@@ -1086,7 +1086,7 @@ export default function RecruiterDashboardPage() {
 
         {/* Search CTA */}
         <section className="mb-10">
-          <Link href="/app/recruiter/search">
+          <Link href="/app/recruiter/search" asChild>
             <a
               className="flex items-center justify-between w-full rounded-xl border px-6 py-5 transition-colors group"
               style={{

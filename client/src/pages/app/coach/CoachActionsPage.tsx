@@ -205,7 +205,7 @@ function ActionCard({
           </div>
           <div className="flex items-center gap-2 text-[12px] text-muted-foreground flex-wrap">
             <Film className="w-3 h-3 shrink-0" />
-            <Link href={`/app/coach/film/sessions/${action.sessionId}`}>
+            <Link href={`/app/coach/film/sessions/${action.sessionId}`} asChild>
               <a className="hover:text-foreground transition-colors">Session {action.sessionId}</a>
             </Link>
             {action.timestampMs != null && (
@@ -262,7 +262,7 @@ function ActionCard({
       {/* Footer CTAs */}
       {action.status === "open" && (
         <div className="flex gap-2 pt-1">
-          <Link href={`/app/coach/film/sessions/${action.sessionId}`}>
+          <Link href={`/app/coach/film/sessions/${action.sessionId}`} asChild>
             <a className="inline-flex items-center gap-1.5 h-7 px-3 rounded-md border border-border text-[11.5px] hover:bg-muted transition font-medium">
               <Film className="w-3 h-3" /> Open in Film Room
             </a>

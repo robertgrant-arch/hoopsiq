@@ -274,7 +274,7 @@ export default function TournamentWeekendPage(): React.ReactElement {
         className="sticky top-0 z-10 flex items-center gap-3 px-4 py-3 border-b"
         style={{ background: "oklch(0.14 0.01 260)", borderColor: "oklch(0.22 0.01 260)" }}
       >
-        <Link href="/app/coach/program">
+        <Link href="/app/coach/program" asChild>
           <a className="p-1.5 rounded-lg hover:bg-white/5 transition-colors">
             <ArrowLeft className="w-4 h-4" style={{ color: MUTED }} />
           </a>

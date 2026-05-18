@@ -488,16 +488,16 @@ function CompletedView({
       </div>
 
       <div className="flex gap-2">
-        <Link href="/app/player" className="flex-1">
+        <Link href="/app/player" asChild>
           <a
-            className="flex items-center justify-center gap-2 w-full rounded-xl border border-border text-[13px] font-medium min-h-[48px] hover:bg-muted/30 transition-colors"
+            className="flex-1 flex items-center justify-center gap-2 w-full rounded-xl border border-border text-[13px] font-medium min-h-[48px] hover:bg-muted/30 transition-colors"
           >
             Back to Home
           </a>
         </Link>
-        <Link href="/app/player/checkin" className="flex-1">
+        <Link href="/app/player/checkin" asChild>
           <a
-            className="flex items-center justify-center gap-2 w-full rounded-xl text-[13px] font-semibold min-h-[48px]"
+            className="flex-1 flex items-center justify-center gap-2 w-full rounded-xl text-[13px] font-semibold min-h-[48px]"
             style={{ background: ACCENT, color: "white" }}
           >
             <CheckCircle2 className="w-4 h-4" />
@@ -546,7 +546,7 @@ function SkippedView({ reason, note }: { reason: SkipReason; note: string }) {
         </p>
       </div>
 
-      <Link href="/app/player">
+      <Link href="/app/player" asChild>
         <a
           className="flex items-center justify-center gap-2 w-full rounded-xl border border-border text-[13px] font-medium min-h-[48px] hover:bg-muted/30 transition-colors"
         >
@@ -612,7 +612,7 @@ export default function PlayerWodPage(): React.ReactElement {
 
         {/* ── Header ───────────────────────────────────────────────────────── */}
         <div className="flex items-center gap-3">
-          <Link href="/app/player">
+          <Link href="/app/player" asChild>
             <a className="w-8 h-8 rounded-lg border border-border flex items-center justify-center hover:bg-muted/30 transition-colors">
               <ArrowLeft className="w-4 h-4" />
             </a>

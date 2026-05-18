@@ -55,13 +55,13 @@ export default function Home() {
               </p>
 
               <div className="mt-9 flex flex-wrap items-center gap-3">
-                <Link href="/docs/architecture">
+                <Link href="/docs/architecture" asChild>
                   <a className="inline-flex items-center gap-2 h-11 px-5 rounded-md bg-primary text-primary-foreground hover:bg-[oklch(0.82_0.17_75)] transition-colors text-[14px] font-semibold uppercase tracking-[0.05em]">
                     Start with Architecture
                     <ArrowRight className="w-4 h-4" />
                   </a>
                 </Link>
-                <Link href="/docs/schema">
+                <Link href="/docs/schema" asChild>
                   <a className="inline-flex items-center gap-2 h-11 px-5 rounded-md border border-border text-foreground hover:bg-[oklch(0.18_0.005_260)] transition-colors text-[14px] font-semibold uppercase tracking-[0.05em]">
                     Jump to Schema
                   </a>
@@ -109,7 +109,7 @@ export default function Home() {
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                       {chapter.docs.map((doc) => (
-                        <Link key={doc.slug} href={`/docs/${doc.slug}`}>
+                        <Link key={doc.slug} href={`/docs/${doc.slug}`} asChild>
                           <a className="group relative block rounded-lg border border-border bg-[oklch(0.15_0.005_260)] p-5 hover:border-primary/40 hover:bg-[oklch(0.17_0.005_260)] transition-all duration-200">
                             <div className="absolute top-0 left-5 right-5 h-[2px] bg-gradient-to-r from-transparent via-primary/0 to-transparent group-hover:via-primary/60 transition-all" />
                             <div className="flex items-center justify-between mb-3">
@@ -151,16 +151,16 @@ export default function Home() {
                 Built as the source of truth for every module, prompt, and surface.
               </div>
               <div className="flex items-center gap-5 text-[12px] text-muted-foreground">
-                <Link href="/docs/architecture">
+                <Link href="/docs/architecture" asChild>
                   <a className="hover:text-foreground">Architecture</a>
                 </Link>
-                <Link href="/docs/schema">
+                <Link href="/docs/schema" asChild>
                   <a className="hover:text-foreground">Schema</a>
                 </Link>
-                <Link href="/docs/design-system">
+                <Link href="/docs/design-system" asChild>
                   <a className="hover:text-foreground">Design System</a>
                 </Link>
-                <Link href="/docs/billing">
+                <Link href="/docs/billing" asChild>
                   <a className="hover:text-foreground">Billing</a>
                 </Link>
               </div>

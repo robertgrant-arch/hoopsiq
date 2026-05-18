@@ -324,7 +324,7 @@ export default function GoalDetailPage() {
       <div className="px-4 sm:px-6 lg:px-10 py-6 max-w-[1400px] mx-auto">
         {/* Back nav */}
         <div className="mb-4">
-          <Link href={`/app/coach/players/${playerId}/idp`}>
+          <Link href={`/app/coach/players/${playerId}/idp`} asChild>
             <a className="text-[13px] text-muted-foreground hover:text-foreground flex items-center gap-1 w-fit transition-colors">
               ← IDP
             </a>

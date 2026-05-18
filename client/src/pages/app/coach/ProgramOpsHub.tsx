@@ -207,7 +207,7 @@ function RosterStrip({ program }: { program: Program }) {
         ))}
       </div>
       <div className="flex gap-2 pt-1 border-t border-border">
-        <Link href="/app/coach/program/roster-import">
+        <Link href="/app/coach/program/roster-import" asChild>
           <a
             className="flex items-center gap-1.5 text-[11px] font-semibold px-3 py-1.5 rounded-lg border border-border hover:bg-muted/30 transition-colors"
           >
@@ -215,7 +215,7 @@ function RosterStrip({ program }: { program: Program }) {
             Import players
           </a>
         </Link>
-        <Link href="/app/team/roster-detail">
+        <Link href="/app/team/roster-detail" asChild>
           <a
             className="flex items-center gap-1.5 text-[11px] px-3 py-1.5 rounded-lg border border-border hover:bg-muted/30 transition-colors"
           >
@@ -265,7 +265,7 @@ function EventsStrip({ programId }: { programId: string }) {
           <Calendar className="w-4 h-4" style={{ color: MUTED }} />
           <span className="text-[12px] font-semibold">Upcoming Events</span>
         </div>
-        <Link href="/app/team/schedule">
+        <Link href="/app/team/schedule" asChild>
           <a className="text-[11px]" style={{ color: ACCENT }}>View all</a>
         </Link>
       </div>
@@ -340,7 +340,7 @@ function QuickActions({ program }: { program: Program }) {
           color: MUTED,
         },
       ].map((a) => (
-        <Link key={a.label} href={a.href}>
+        <Link key={a.label} href={a.href} asChild>
           <a
             className="flex items-center gap-2.5 px-3 py-2.5 rounded-xl border border-border hover:bg-muted/20 transition-colors text-[12px] font-medium"
           >
@@ -367,7 +367,7 @@ function RecentBroadcasts({ programId }: { programId: string }) {
           <Megaphone className="w-4 h-4" style={{ color: MUTED }} />
           <span className="text-[12px] font-semibold">Recent Broadcasts</span>
         </div>
-        <Link href="/app/coach/program/broadcast">
+        <Link href="/app/coach/program/broadcast" asChild>
           <a className="text-[11px]" style={{ color: ACCENT }}>Compose</a>
         </Link>
       </div>

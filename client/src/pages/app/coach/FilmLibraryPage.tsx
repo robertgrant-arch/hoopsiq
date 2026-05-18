@@ -309,7 +309,7 @@ function FilmCard({ film }: { film: FilmEntry }) {
             </span>
           )}
           {isActionable && (
-            <Link href={`/app/coach/queue/${film.id}`}>
+            <Link href={`/app/coach/queue/${film.id}`} asChild>
               <a
                 className="flex items-center gap-1.5 text-[12px] font-semibold px-3 py-1.5 rounded-lg transition-colors"
                 style={{ background: ACCENT.replace(")", " / 0.12)"), color: ACCENT }}
@@ -530,7 +530,7 @@ export default function FilmLibraryPage(): React.ReactElement {
         </div>
 
         {/* Queue shortcut */}
-        <Link href="/app/coach/queue">
+        <Link href="/app/coach/queue" asChild>
           <a
             className="flex items-center justify-between rounded-xl border px-4 py-3 transition-all hover:border-primary/40"
             style={{

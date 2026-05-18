@@ -593,7 +593,7 @@ function CoachHeader({
           {subNav.tabs.map((tab) => {
             const active = loc.startsWith(tab.href);
             return (
-              <Link key={tab.href} href={tab.href}>
+              <Link key={tab.href} href={tab.href} asChild>
                 <a
                   onClick={() => { hapticLight(); }}
                   className="shrink-0 px-3.5 py-1.5 rounded-full text-[12px] font-medium transition-all duration-150 whitespace-nowrap"
@@ -738,7 +738,7 @@ function CoachProfileSheet({
           {COACH_OVERFLOW_ITEMS.map((item) => {
             const active = loc.startsWith(item.href);
             return (
-              <Link key={item.href} href={item.href}>
+              <Link key={item.href} href={item.href} asChild>
                 <a
                   onClick={onClose}
                   className="flex items-center justify-between px-3 py-3 rounded-xl text-[14px] transition-colors mb-0.5 hover:bg-muted/50"
@@ -835,7 +835,7 @@ function CoachDesktopSidebar({
             {section.items.map((item) => {
               const active = isItemActive(item);
               return (
-                <Link key={item.href} href={item.href}>
+                <Link key={item.href} href={item.href} asChild>
                   <a
                     className="flex items-center gap-2.5 px-2.5 py-2 rounded-lg text-[13px] transition-all duration-150 relative"
                     style={
@@ -863,7 +863,7 @@ function CoachDesktopSidebar({
       </nav>
 
       <div className="border-t border-border px-3 py-2 shrink-0 space-y-0.5">
-        <Link href="/">
+        <Link href="/" asChild>
           <a className="flex items-center gap-2.5 px-2.5 py-2 rounded-lg text-[12.5px] text-muted-foreground/60 hover:text-muted-foreground transition-colors">
             ← Marketing site
           </a>
@@ -938,7 +938,7 @@ function GenericMoreSheet({
           {nav.map((item) => {
             const active = isActive(item);
             return (
-              <Link key={item.href} href={item.href}>
+              <Link key={item.href} href={item.href} asChild>
                 <a
                   onClick={onClose}
                   className="flex items-center gap-3 px-3 py-3 rounded-xl text-[13.5px] transition-colors mb-0.5 hover:bg-muted/50"
@@ -1035,7 +1035,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
           {nav.map((item) => {
             const active = isActive(item);
             return (
-              <Link key={item.href} href={item.href}>
+              <Link key={item.href} href={item.href} asChild>
                 <a
                   className="flex items-center gap-2.5 px-2.5 py-2.5 rounded-lg text-[13px] transition-colors mb-0.5"
                   style={
@@ -1052,7 +1052,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
           })}
         </nav>
         <div className="border-t border-border px-3 py-2 shrink-0">
-          <Link href="/">
+          <Link href="/" asChild>
             <a className="flex items-center gap-2.5 px-2.5 py-2 rounded-lg text-[12.5px] text-muted-foreground/60 hover:text-muted-foreground transition-colors">
               ← Back to marketing
             </a>
@@ -1101,7 +1101,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
         {nav.slice(0, tabCount).map((item) => {
           const active = isActive(item);
           return (
-            <Link key={item.href} href={item.href}>
+            <Link key={item.href} href={item.href} asChild>
               <a
                 role="tab"
                 aria-selected={active}
