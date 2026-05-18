@@ -2,7 +2,7 @@ import { Link } from "wouter";
 import {
   Calendar, CreditCard, FileText, MessageSquare,
   Bell, ChevronRight, CheckCircle2, AlertCircle,
-  Clock, Trophy, TrendingUp, Users,
+  Clock, Trophy, TrendingUp, Users, BarChart3,
 } from "lucide-react";
 import { AppShell, PageHeader } from "@/components/app/AppShell";
 import { Button } from "@/components/ui/button";
@@ -10,10 +10,16 @@ import { Badge } from "@/components/ui/badge";
 import { useAuth } from "@/lib/auth";
 import {
   mockScheduleEvents, mockBillingItems,
-  mockForms, mockDevelopmentSummary,
+  mockForms, mockDevelopmentSummary, mockAnnouncements,
 } from "@/lib/mock/parent";
 import { useAnnouncements } from "@/lib/api/hooks/useAnnouncements";
 import { useGuardianChildren } from "@/lib/api/hooks/useParent";
+import {
+  ACTIVE_GUARDIAN,
+  GUARDIAN_PLAYER_PROFILES,
+  getThreadsForGuardian,
+  isAnnouncementRead,
+} from "@/lib/mock/guardian";
 
 /* -------------------------------------------------------------------------- */
 /* Helpers                                                                     */
@@ -159,32 +165,94 @@ function ActionNeeded() {
 /* Quick links                                                                  */
 /* -------------------------------------------------------------------------- */
 
-const QUICK_LINKS = [
-  { href: "/app/parent/schedule", label: "Schedule", icon: Calendar, color: "oklch(0.72 0.18 290)" },
-  { href: "/app/parent/billing", label: "Billing", icon: CreditCard, color: "oklch(0.78 0.17 75)" },
-  { href: "/app/parent/forms", label: "Forms", icon: FileText, color: "oklch(0.75 0.12 140)" },
-  { href: "/app/messages", label: "Messages", icon: MessageSquare, color: "oklch(0.68 0.22 25)" },
-];
-
 function QuickLinks() {
+  const guardian = ACTIVE_GUARDIAN;
+  const unreadMessages = getThreadsForGuardian(guardian.id).filter((t) => !t.isRead).length;
+  const unreadAnnouncements = mockAnnouncements.filter(
+    (a) => !isAnnouncementRead(a.id, guardian.id)
+  ).length;
+  const totalUnread = unreadMessages + unreadAnnouncements;
+
+  const links = [
+    { href: "/app/parent/schedule", label: "Schedule", Icon: Calendar, color: "oklch(0.72 0.18 290)", badge: 0 },
+    { href: "/app/parent/billing", label: "Billing", Icon: CreditCard, color: "oklch(0.78 0.17 75)", badge: 0 },
+    { href: "/app/parent/forms", label: "Forms", Icon: FileText, color: "oklch(0.75 0.12 140)", badge: mockForms.filter((f) => f.status === "pending").length },
+    { href: "/app/parent/messages", label: "Messages", Icon: MessageSquare, color: "oklch(0.68 0.22 25)", badge: totalUnread },
+  ];
+
   return (
     <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-      {QUICK_LINKS.map((l) => {
-        const Icon = l.icon;
-        return (
-          <Link key={l.href} href={l.href}>
-            <a className="rounded-xl border border-border bg-card p-4 flex flex-col items-center gap-2 hover:shadow-sm hover:-translate-y-0.5 transition-all">
-              <div
-                className="w-10 h-10 rounded-xl flex items-center justify-center"
-                style={{ background: `${l.color}20`, color: l.color }}
+      {links.map((l) => (
+        <Link key={l.href} href={l.href}>
+          <a className="relative rounded-xl border border-border bg-card p-4 flex flex-col items-center gap-2 hover:shadow-sm hover:-translate-y-0.5 transition-all">
+            <div
+              className="w-10 h-10 rounded-xl flex items-center justify-center"
+              style={{ background: `${l.color}20`, color: l.color }}
+            >
+              <l.Icon className="w-5 h-5" />
+            </div>
+            <span className="text-[12px] font-medium">{l.label}</span>
+            {l.badge > 0 && (
+              <span
+                className="absolute top-2 right-2 text-[10px] font-bold rounded-full w-4 h-4 flex items-center justify-center text-white"
+                style={{ background: "oklch(0.68 0.22 25)" }}
               >
-                <Icon className="w-5 h-5" />
-              </div>
-              <span className="text-[12px] font-medium">{l.label}</span>
-            </a>
-          </Link>
-        );
-      })}
+                {l.badge}
+              </span>
+            )}
+          </a>
+        </Link>
+      ))}
+    </div>
+  );
+}
+
+/* -------------------------------------------------------------------------- */
+/* Athletes section (multi-child support)                                       */
+/* -------------------------------------------------------------------------- */
+
+function AthletesSection() {
+  const guardian = ACTIVE_GUARDIAN;
+  if (guardian.linkedPlayerIds.length <= 1) return null;
+
+  return (
+    <div className="rounded-xl border border-border bg-card overflow-hidden">
+      <div className="flex items-center justify-between px-4 py-3 border-b border-border">
+        <div className="flex items-center gap-1.5 font-semibold text-[13px]">
+          <Users className="w-4 h-4" /> Your Athletes
+        </div>
+        <span className="text-[11px] text-muted-foreground">
+          {guardian.linkedPlayerIds.length} linked
+        </span>
+      </div>
+      <div className="divide-y divide-border/50">
+        {guardian.linkedPlayerIds.map((pid) => {
+          const profile = GUARDIAN_PLAYER_PROFILES[pid];
+          if (!profile) return null;
+          return (
+            <Link key={pid} href={`/app/parent/player/${pid}/summary`}>
+              <a className="flex items-center gap-3 px-4 py-3 hover:bg-muted/30 transition-colors">
+                <div
+                  className="w-9 h-9 rounded-xl flex items-center justify-center text-[11px] font-bold text-white shrink-0"
+                  style={{ background: "oklch(0.72 0.18 290)" }}
+                >
+                  {profile.initials}
+                </div>
+                <div className="flex-1 min-w-0">
+                  <p className="text-[13px] font-semibold">{profile.name}</p>
+                  <p className="text-[11px] text-muted-foreground">
+                    #{profile.jerseyNumber} · {profile.position} · {profile.team}
+                  </p>
+                </div>
+                <div className="flex items-center gap-2 shrink-0">
+                  <BarChart3 className="w-3.5 h-3.5 text-muted-foreground" />
+                  <ChevronRight className="w-3.5 h-3.5 text-muted-foreground/50" />
+                </div>
+              </a>
+            </Link>
+          );
+        })}
+      </div>
     </div>
   );
 }
@@ -344,8 +412,33 @@ export default function ParentDashboard() {
 
       <div className="space-y-5">
         <ChildHero />
+        <AthletesSection />
         <ActionNeeded />
         <QuickLinks />
+
+        {/* Player summary quick link (single-child) */}
+        {ACTIVE_GUARDIAN.linkedPlayerIds.length === 1 && (
+          <Link href={`/app/parent/player/${ACTIVE_GUARDIAN.linkedPlayerIds[0]}/summary`}>
+            <a
+              className="flex items-center justify-between rounded-xl border px-4 py-3.5 hover:border-primary/40 transition-all"
+              style={{
+                borderColor: "oklch(0.22 0.01 260)",
+                background: "oklch(0.12 0.005 260)",
+              }}
+            >
+              <div className="flex items-center gap-3">
+                <BarChart3 className="w-4 h-4" style={{ color: "oklch(0.72 0.18 290)" }} />
+                <div>
+                  <p className="text-[13px] font-semibold">
+                    {GUARDIAN_PLAYER_PROFILES[ACTIVE_GUARDIAN.linkedPlayerIds[0]]?.name ?? "Athlete"} — Development Summary
+                  </p>
+                  <p className="text-[11px] text-muted-foreground">Goals, progress, and upcoming milestones</p>
+                </div>
+              </div>
+              <ChevronRight className="w-4 h-4 text-muted-foreground shrink-0" />
+            </a>
+          </Link>
+        )}
 
         <div className="grid lg:grid-cols-2 gap-5">
           <div className="space-y-5">

@@ -167,6 +167,8 @@ const ParentFormsPage         = React.lazy(() => import("@/pages/app/parent/Pare
 const ParentAnnouncementsPage = React.lazy(() => import("@/pages/app/parent/ParentAnnouncementsPage"));
 const ParentRegistrationPage  = React.lazy(() => import("@/pages/app/parent/ParentRegistrationPage"));
 const ParentDigestPage        = React.lazy(() => import("@/pages/app/parent/ParentDigestPage"));
+const ParentMessagesPage      = React.lazy(() => import("@/pages/app/parent/ParentMessagesPage"));
+const PlayerSummaryPage       = React.lazy(() => import("@/pages/app/parent/PlayerSummaryPage"));
 
 // Club operations (TEAM_ADMIN)
 const ClubDashboard         = React.lazy(() => import("@/pages/app/admin/AdminDashboard"));
@@ -443,8 +445,10 @@ function Router() {
         <Route path="/app/parent/billing" component={ParentBillingPage} />
         <Route path="/app/parent/forms" component={ParentFormsPage} />
         <Route path="/app/parent/announcements" component={ParentAnnouncementsPage} />
+        <Route path="/app/parent/messages" component={ParentMessagesPage} />
         <Route path="/app/parent/register" component={ParentRegistrationPage} />
         <Route path="/app/parent/digest" component={ParentDigestPage} />
+        <Route path="/app/parent/player/:playerId/summary" component={PlayerSummaryPage} />
 
         {/* Family recruiting / privacy portal */}
         <Route path="/app/family/privacy" component={FamilyPrivacyPage} />
