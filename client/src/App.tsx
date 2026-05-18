@@ -59,6 +59,12 @@ const CoachClipPage       = React.lazy(() => import("@/pages/app/coach/CoachClip
 // Scout-to-Practice pages
 const GameDayPage         = React.lazy(() => import("@/pages/app/coach/GameDayPage"));
 
+// Program Operations pages
+const ProgramOpsHub          = React.lazy(() => import("@/pages/app/coach/ProgramOpsHub"));
+const RosterImportPage       = React.lazy(() => import("@/pages/app/coach/RosterImportPage"));
+const BroadcastPage          = React.lazy(() => import("@/pages/app/coach/BroadcastPage"));
+const TournamentWeekendPage  = React.lazy(() => import("@/pages/app/coach/TournamentWeekendPage"));
+
 // Coach pages
 const MessagesPage             = React.lazy(() => import("@/pages/app/coach/MessagesPage"));
 const CoachInboxPage           = React.lazy(() => import("@/pages/app/coach/CoachInboxPage"));
@@ -339,6 +345,11 @@ function Router() {
         <Route path="/app/coach/scouting" component={guard(ScoutingHubPage)} />
         <Route path="/app/coach/scouting/:opponentId/game-plan" component={guard(GameDayPage)} />
         <Route path="/app/coach/scouting/:opponentId" component={guard(OpponentScoutPage)} />
+        {/* Program Operations — specific sub-routes before the hub catch-all */}
+        <Route path="/app/coach/program/roster-import" component={guard(RosterImportPage)} />
+        <Route path="/app/coach/program/broadcast" component={guard(BroadcastPage)} />
+        <Route path="/app/coach/program/tournament/:id" component={guard(TournamentWeekendPage)} />
+        <Route path="/app/coach/program" component={guard(ProgramOpsHub)} />
         <Route path="/app/coach/assignments" component={guard(CoachAssignments)} />
         <Route path="/app/coach/practice-plans" component={guard(CoachPracticePlanBuilder)} />
         <Route path="/app/coach/practice-plans/:id/execute" component={guard(PracticeExecutionPage)} />
