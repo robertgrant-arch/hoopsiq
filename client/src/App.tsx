@@ -146,6 +146,10 @@ const FamilyGrowthReportPage      = React.lazy(() => import("@/pages/app/family/
 // Public recruiting profile (no auth)
 const PublicRecruitingProfilePage = React.lazy(() => import("@/pages/recruiting/PublicRecruitingProfilePage"));
 
+// Recruiting & Showcase Dossier
+const DossierBuilderPage  = React.lazy(() => import("@/pages/app/coach/DossierBuilderPage"));
+const PublicDossierPage   = React.lazy(() => import("@/pages/recruiting/PublicDossierPage"));
+
 // Team Management Platform (all 5 phases)
 const TeamSchedulePage    = React.lazy(() => import("@/pages/app/team/TeamSchedulePage"));
 const RosterDetailPage    = React.lazy(() => import("@/pages/app/team/RosterDetailPage"));
@@ -336,6 +340,7 @@ function Router() {
         <Route path="/app/coach/inbox" component={guard(CoachInboxPage)} />
         <Route path="/app/coach/players/:id/idp/goals/:goalId" component={guard(GoalDetailPage)} />
         <Route path="/app/coach/players/:id/idp" component={guard(PlayerIDPPage)} />
+        <Route path="/app/coach/players/:id/dossier" component={guard(DossierBuilderPage)} />
         <Route path="/app/coach/players/:id" component={guard(PlayerProfilePage)} />
         <Route path="/app/coach/roster" component={guard(CoachRoster)} />
         <Route path="/app/coach/parents" component={guard(CoachParents)} />
@@ -483,6 +488,8 @@ function Router() {
         <Route path="/profile/:id" component={PlayerPublicProfilePage} />
         <Route path="/profile/program/:slug" component={PlayerPublicProgramPage} />
         <Route path="/recruiting/:slug" component={PublicRecruitingProfilePage} />
+        {/* Showcase Dossier public profile (no auth) */}
+        <Route path="/p/:slug" component={PublicDossierPage} />
 
         {/* Club operations */}
         <Route path="/app/club" component={guard(ClubDashboard)} />
