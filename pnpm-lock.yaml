@@ -16,6 +16,9 @@ importers:
 
   .:
     dependencies:
+      '@capacitor/core':
+        specifier: ^8.0.2
+        version: 8.3.4
       '@capacitor/haptics':
         specifier: ^8.0.2
         version: 8.0.2(@capacitor/core@8.3.4)
