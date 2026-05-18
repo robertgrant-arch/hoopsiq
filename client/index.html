@@ -28,6 +28,27 @@
       href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap"
       rel="stylesheet" />
 
+    <script>
+      window.__appErrors = [];
+      window.onerror = function(msg, src, line, col, err) {
+        window.__appErrors.push({msg, src, line, stack: err && err.stack});
+        var el = document.getElementById('root');
+        if (el && el.children.length === 0) {
+          el.style.cssText = 'padding:20px;font-family:monospace;color:#fff;background:#1a1a1a;';
+          el.innerHTML = '<h2 style="color:#f87171">App failed to load</h2><pre style="white-space:pre-wrap;font-size:12px;color:#fca5a5">' + msg + '\n' + (err && err.stack || '') + '</pre>';
+        }
+        return false;
+      };
+      window.addEventListener('unhandledrejection', function(e) {
+        window.__appErrors.push({msg: String(e.reason), stack: e.reason && e.reason.stack});
+        var el = document.getElementById('root');
+        if (el && el.children.length === 0) {
+          el.style.cssText = 'padding:20px;font-family:monospace;color:#fff;background:#1a1a1a;';
+          el.innerHTML = '<h2 style="color:#f87171">App failed to load (promise)</h2><pre style="white-space:pre-wrap;font-size:12px;color:#fca5a5">' + String(e.reason) + '\n' + (e.reason && e.reason.stack || '') + '</pre>';
+        }
+      });
+    </script>
+
     <style>
       /* CSS custom properties for safe area insets — consumed in Tailwind via arbitrary values */
       :root {
