@@ -59,6 +59,9 @@ const CoachClipPage       = React.lazy(() => import("@/pages/app/coach/CoachClip
 // Scout-to-Practice pages
 const GameDayPage         = React.lazy(() => import("@/pages/app/coach/GameDayPage"));
 
+// Staff Roles & Audit Trail
+const StaffRolesPage      = React.lazy(() => import("@/pages/app/coach/StaffRolesPage"));
+
 // Program Operations pages
 const ProgramOpsHub          = React.lazy(() => import("@/pages/app/coach/ProgramOpsHub"));
 const RosterImportPage       = React.lazy(() => import("@/pages/app/coach/RosterImportPage"));
@@ -403,6 +406,7 @@ function Router() {
         <Route path="/app/team/calendar" component={guard(TeamCalendarPage)} />
         <Route path="/app/team/roster-detail" component={guard(RosterDetailPage)} />
         <Route path="/app/team/staff" component={guard(StaffDirectoryPage)} />
+        <Route path="/app/coach/staff-roles" component={guard(StaffRolesPage)} />
         <Route path="/app/team/documents" component={guard(DocumentLibraryPage)} />
         <Route path="/app/team/messaging" component={guard(TeamMessagingPage)} />
         <Route path="/app/team/events/:id" component={guard(EventDetailPage)} />
