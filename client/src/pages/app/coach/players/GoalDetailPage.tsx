@@ -13,7 +13,7 @@ import {
   SKILL_RUBRIC,
   type DevelopmentGoal,
   type DevelopmentEvidence,
-} from "@/lib/mock/player-development";
+} from "@/features/player-development/mock";
 import {
   computeGoalProgress,
   goalRisk,

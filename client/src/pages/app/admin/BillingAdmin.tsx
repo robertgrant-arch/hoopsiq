@@ -33,16 +33,13 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { toast } from "sonner";
+import { computeKPIs, useBillingStore, dispatchWebhook, type SimulatedEvent, formatCents, expireGrandfathers, grantCoachLink, revokeCoachLink } from "@/lib/billing";
 
-import { computeKPIs } from "@/lib/billing/analytics";
-import { useBillingStore } from "@/lib/billing/store";
-import { dispatchWebhook, type SimulatedEvent } from "@/lib/billing/webhooks";
-import { formatCents } from "@/lib/billing/catalog";
-import {
-  expireGrandfathers,
-  grantCoachLink,
-  revokeCoachLink,
-} from "@/lib/billing/entitlements";
+
+
+
+
+
 
 export function BillingAdmin() {
   const subs = useBillingStore((s) => s.subscriptions);

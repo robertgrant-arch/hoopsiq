@@ -19,7 +19,7 @@ import {
   useRegistrations, useUpdateRegistrationStatus, useSeasons,
   useAdminCompliance,
 } from "@/lib/api/hooks/useAdmin";
-import type { Registration } from "@/lib/mock/admin";
+import type { Registration } from "@/features/admin/mock";
 
 /* -------------------------------------------------------------------------- */
 /* Helpers                                                                     */

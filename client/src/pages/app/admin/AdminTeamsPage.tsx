@@ -13,7 +13,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { useTeams, useSeasons, useCreateTeam, useUpdateTeam } from "@/lib/api/hooks/useAdmin";
-import type { Team } from "@/lib/mock/admin";
+import type { Team } from "@/features/admin/mock";
 
 /* -------------------------------------------------------------------------- */
 /* Helpers                                                                     */

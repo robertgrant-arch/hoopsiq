@@ -22,7 +22,7 @@ import {
 } from "lucide-react";
 import { AppShell, PageHeader } from "@/components/app/AppShell";
 import { apiGet, apiPatch } from "@/lib/api/client";
-import { useRoster } from "@/lib/hooks/useRoster";
+import { useRosterForFilm } from "@/lib/api/hooks/useRoster";
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 
@@ -102,7 +102,7 @@ function GroupDrillDown({
   action: CoachingAction;
   allActions: CoachingAction[];
 }) {
-  const { roster } = useRoster();
+  const { roster } = useRosterForFilm();
 
   // Find individual player actions for the same session + category (excluding "team" action itself)
   const related = allActions.filter(
@@ -326,7 +326,7 @@ export default function CoachActionsPage() {
   const [loading, setLoading]         = useState(true);
   const [filterType, setFilterType]   = useState<ActionType | "all">("all");
   const [filterPlayer, setFilterPlayer] = useState<string>("all");
-  const { roster } = useRoster();
+  const { roster } = useRosterForFilm();
 
   useEffect(() => {
     setLoading(true);

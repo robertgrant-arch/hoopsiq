@@ -2,7 +2,7 @@ import { Router } from "express";
 import { requireOrg } from "../../auth/tenant";
 import { createRepository } from "@shared/db";
 import { inngest } from "../../inngest/client";
-import { computeReadiness, type ReadinessStatus } from "../../lib/readinessScore";
+import { computeReadiness, type ReadinessStatus } from "./score";
 
 export function registerReadinessRoutes(router: Router) {
   // ── Player submits their own check-in ──────────────────────────────────────

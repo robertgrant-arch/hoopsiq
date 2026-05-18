@@ -27,7 +27,7 @@ import {
   type WeeklyVitalSign,
   type ProgramQualityScore,
   type VDVDataPoint,
-} from "@/lib/mock/analytics-kpi";
+} from "@/features/analytics/kpi";
 
 /* -------------------------------------------------------------------------- */
 /* Design tokens                                                               */

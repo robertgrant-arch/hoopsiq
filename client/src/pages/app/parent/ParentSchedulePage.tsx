@@ -9,7 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { useAuth } from "@/lib/auth";
 import { useChildSchedule, useRsvpForChild } from "@/lib/api/hooks/useParent";
-import type { ScheduleEvent } from "@/lib/mock/parent";
+import type { ScheduleEvent } from "@/features/parent/mock";
 
 /* -------------------------------------------------------------------------- */
 /* Helpers                                                                     */

@@ -36,7 +36,7 @@ import {
   type WodState,
   type SkipReason,
   type WodCompletion,
-} from "@/lib/mock/player-checkin";
+} from "@/features/readiness/checkin";
 
 // ─── Constants ────────────────────────────────────────────────────────────────
 

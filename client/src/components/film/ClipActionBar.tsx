@@ -35,7 +35,7 @@ import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { apiPost, apiGet } from "@/lib/api/client";
 import { useDrillTemplateStore } from "@/lib/drillTemplateStore";
-import { useRoster } from "@/lib/hooks/useRoster";
+import { useRosterForFilm } from "@/lib/api/hooks/useRoster";
 
 // ── Types ────────────────────────────────────────────────────────────────────
 
@@ -97,7 +97,7 @@ const ACTION_META: Record<ActionType, { label: string; icon: React.ReactNode; co
 };
 
 // ── Roster helpers ────────────────────────────────────────────────────────────
-import type { RosterEntry } from "@/lib/hooks/useRoster";
+import type { RosterEntry } from "@/lib/api/hooks/useRoster";
 
 function rosterLabel(p: RosterEntry) {
   return p.position ? `${p.name} · ${p.position}` : p.name;
@@ -607,7 +607,7 @@ export function ClipActionBar({
 }: ClipActionBarProps) {
   const [openAction,   setOpenAction]   = useState<ActionType | null>(null);
   const [takenActions, setTakenActions] = useState<Set<ActionType>>(new Set());
-  const { roster } = useRoster();
+  const { roster } = useRosterForFilm();
 
   function toggleAction(type: ActionType) {
     if (type === "mark_addressed") {

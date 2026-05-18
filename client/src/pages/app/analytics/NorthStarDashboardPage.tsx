@@ -26,7 +26,7 @@ import {
   VDV_TARGET,
   type WarningSignal,
   type LeadingIndicator,
-} from "@/lib/mock/analytics-kpi";
+} from "@/features/analytics/kpi";
 
 /* -------------------------------------------------------------------------- */
 /* Design tokens                                                               */

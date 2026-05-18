@@ -1,5 +1,5 @@
 import { inngest } from "../client";
-import { sendCoachAlert } from "../../lib/notifications";
+import { sendCoachAlert } from "../../modules/readiness/notifications";
 
 export const readinessAlertFn = inngest.createFunction(
   { id: "readiness-alert", name: "Readiness Flag → Coach Alert" },

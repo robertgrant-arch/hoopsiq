@@ -52,7 +52,7 @@ import {
   type DrillIntensity,
   type DrillSurface,
   type DrillVisibility,
-} from "@/lib/mock/practice";
+} from "@/features/practice-plan/mock";
 import {
   useCustomDrillsStore,
   type CustomDrillInput,

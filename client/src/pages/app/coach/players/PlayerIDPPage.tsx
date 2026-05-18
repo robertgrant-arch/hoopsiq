@@ -32,7 +32,7 @@ import {
   type DevelopmentEvidence,
   type DrillPrescription,
   type SkillArea,
-} from "@/lib/mock/player-development";
+} from "@/features/player-development/mock";
 import {
   computeGoalProgress,
   isPlayerStale,

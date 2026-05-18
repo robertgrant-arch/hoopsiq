@@ -26,7 +26,7 @@ import {
 import {
   todayCheckinDone,
   todayWodRecord,
-} from "@/lib/mock/player-checkin";
+} from "@/features/readiness/checkin";
 import { apiGet } from "@/lib/api/client";
 import { AppShell, PageHeader } from "@/components/app/AppShell";
 import { useAuth } from "@/lib/auth";

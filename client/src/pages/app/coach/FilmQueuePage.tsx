@@ -27,7 +27,7 @@ import {
   STATUS_CONFIG,
   EXTRACTED_CLIPS,
   type FilmEntry,
-} from "@/lib/mock/film";
+} from "@/features/film/mock";
 
 // ─── Constants ────────────────────────────────────────────────────────────────
 

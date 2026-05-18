@@ -6,8 +6,8 @@ import {
 import { toast } from "sonner";
 import { AppShell, PageHeader } from "@/components/app/AppShell";
 import { Badge } from "@/components/ui/badge";
-import { mockScheduleEvents, type ScheduleEvent } from "@/lib/mock/parent";
-import { mockAvailability, type AvailabilityEntry } from "@/lib/mock/athlete";
+import { mockScheduleEvents, type ScheduleEvent } from "@/features/parent/mock";
+import { mockAvailability, type AvailabilityEntry } from "@/features/player/mock";
 
 /* -------------------------------------------------------------------------- */
 /* Helpers                                                                     */

@@ -12,14 +12,11 @@ import { Button } from "@/components/ui/button";
 import { NumericInput } from "@/components/ui/numeric-input";
 import { toast } from "sonner";
 
-import {
-  formatCents,
-  prices,
-  products,
-} from "@/lib/billing/catalog";
-import { useBillingStore } from "@/lib/billing/store";
-import { createCheckout } from "@/lib/billing/service";
+
+
+
 import { useAuth } from "@/lib/auth";
+import { formatCents, prices, products, useBillingStore, createCheckout } from "@/lib/billing";
 
 const TIER_ORDER: ReturnType<typeof getTierOrder> = getTierOrder();
 

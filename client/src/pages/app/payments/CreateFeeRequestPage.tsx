@@ -21,7 +21,7 @@ import {
   FileText,
 } from "lucide-react";
 import { AppShell, PageHeader } from "@/components/app/AppShell";
-import { MOCK_FEE_REQUESTS, formatCents, type FeeType, type FeeScope, type FeeStructure } from "@/lib/mock/payments";
+import { MOCK_FEE_REQUESTS, formatCents, type FeeType, type FeeScope, type FeeStructure } from "@/features/payments/mock";
 
 /* ─── Mock roster for scope selection ─────────────────────────────────────── */
 

@@ -20,7 +20,7 @@ import {
   teamDocuments,
   getDocumentAcknowledgmentRate,
   type TeamDocument,
-} from "@/lib/mock/team-management";
+} from "@/features/team-management/mock";
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Constants

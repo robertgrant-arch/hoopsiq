@@ -57,18 +57,18 @@ import {
   type PhaseLabel,
   type Play,
   type PlayPhase,
-} from "@/lib/mock/playbook";
+} from "@/features/playbook/mock";
 import type {
   CutStyle,
   EditorMode,
   PassType,
   Role,
-} from "@/lib/mock/playbookSchema";
-import { actionForPathId, describeAction } from "@/lib/playbookActions";
-import { usePlaybook } from "@/lib/playbookStore";
-import PlayCanvas from "@/components/playbook/PlayCanvas";
+} from "@/features/playbook/schema";
+import { actionForPathId, describeAction } from "@/features/playbook/actions";
+import { usePlaybook } from "@/features/playbook/store";
+import PlayCanvas from "@/features/playbook/PlayCanvas";
 import { PlayThumbnail } from "@/components/court/PlayThumbnail";
-import { usePlayback } from "@/components/playbook/usePlayback";
+import { usePlayback } from "@/features/playbook/usePlayback";
 
 const PHASE_LABELS: { key: PhaseLabel; label: string; color: string }[] = [
   { key: "ENTRY", label: "Entry", color: "oklch(0.7 0.13 200)" },

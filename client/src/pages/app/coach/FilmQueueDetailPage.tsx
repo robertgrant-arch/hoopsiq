@@ -42,8 +42,8 @@ import {
   type ExtractedClip,
   type FilmEntry,
   type ClipCategory,
-} from "@/lib/mock/film";
-import { MOCK_ISSUES } from "@/lib/mock/action-lanes";
+} from "@/features/film/mock";
+import { MOCK_ISSUES } from "@/features/coach-hq/action-lanes";
 
 // ─── Constants ────────────────────────────────────────────────────────────────
 

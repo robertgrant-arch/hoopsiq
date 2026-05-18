@@ -48,7 +48,7 @@ import {
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
 import { roster, athleteUploads } from "@/lib/mock/data";
-import { MOCK_TEAM_READINESS } from "@/lib/readiness";
+import { MOCK_TEAM_READINESS } from "@/features/readiness";
 import { ActionLanes } from "@/components/app/ActionLanes";
 
 /* -------------------------------------------------------------------------- */

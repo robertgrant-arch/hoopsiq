@@ -27,7 +27,7 @@ import {
   monthlySnapshots,
   type PlayerVelocityRecord,
   type DevelopmentTrend,
-} from "@/lib/mock/analytics";
+} from "@/features/analytics/mock";
 
 /* -------------------------------------------------------------------------- */
 /* Design tokens                                                               */

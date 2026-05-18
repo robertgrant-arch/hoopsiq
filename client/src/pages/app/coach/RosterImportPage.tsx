@@ -28,7 +28,7 @@ import {
   parseRosterCsv,
   type ImportedPlayer,
   type ImportSource,
-} from "@/lib/mock/program-ops";
+} from "@/features/program-ops/mock";
 
 /* ─── Types ──────────────────────────────────────────────────────────────────── */
 

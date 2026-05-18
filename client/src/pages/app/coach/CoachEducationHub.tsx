@@ -38,8 +38,8 @@ import {
   getNextModule,
   journalPrompts,
   type EducationModule,
-} from "@/lib/mock/coach-education";
-import { coachEffectivenessBreakdown } from "@/lib/mock/coach-metrics";
+} from "@/features/coach-education/education";
+import { coachEffectivenessBreakdown } from "@/features/coach-metrics/mock";
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Derived data helpers

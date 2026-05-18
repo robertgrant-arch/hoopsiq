@@ -35,7 +35,7 @@ import {
   type LearningPath,
   type EducationModule,
   type ModuleSection,
-} from "@/lib/mock/coach-education";
+} from "@/features/coach-education/education";
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
 

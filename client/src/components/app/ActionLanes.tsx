@@ -5,7 +5,7 @@ import { CollapsibleSection } from "@/components/ui/CollapsibleSection";
 import {
   MOCK_ISSUES, LANE_META, LANE_PRIORITY_ORDER, getTopSeverity,
   type LaneIssue, type LaneId, type DayType, type Severity, type ActionType,
-} from "@/lib/mock/action-lanes";
+} from "@/features/coach-hq/action-lanes";
 import {
   Shield, Activity, Calendar, TrendingUp, Film, Swords, MessageSquare,
   CheckCircle2, X, Zap, MessageCircle, BellOff, ChevronDown, SlidersHorizontal,

@@ -15,7 +15,7 @@ import { Badge } from "@/components/ui/badge";
 import {
   useMembershipPlans, useSeasons, useCreateMembershipPlan, useUpdateMembershipPlan,
 } from "@/lib/api/hooks/useAdmin";
-import type { MembershipPlan } from "@/lib/mock/admin";
+import type { MembershipPlan } from "@/features/admin/mock";
 
 /* -------------------------------------------------------------------------- */
 /* Helpers                                                                     */

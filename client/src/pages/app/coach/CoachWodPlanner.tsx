@@ -44,7 +44,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import {
   Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
 } from "@/components/ui/select";
-import { drillLibrary, type Drill } from "@/lib/mock/practice";
+import { drillLibrary, type Drill } from "@/features/practice-plan/mock";
 import { useCustomDrillsStore } from "@/lib/customDrillsStore";
 import { useAuth } from "@/lib/auth";
 import { apiFetch } from "@/lib/api/client";

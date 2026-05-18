@@ -25,7 +25,7 @@ import {
   prospectPlayers,
   type RosterPlayer,
   type HouseholdMember,
-} from "@/lib/mock/team-management";
+} from "@/features/team-management/mock";
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Constants

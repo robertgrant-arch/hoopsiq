@@ -12,7 +12,7 @@ import { Input } from "@/components/ui/input";
 import {
   mockOpponents, mockScoutReports, mockUpcomingGames,
   teamColor, statusMeta, type Opponent, type ScoutReportStatus,
-} from "@/lib/mock/scouting";
+} from "@/features/scouting/mock";
 
 // ── Helpers ────────────────────────────────────────────────────────────────
 

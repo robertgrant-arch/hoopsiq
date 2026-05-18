@@ -29,7 +29,7 @@ import {
   type StaffRole,
   type PermissionAction,
 } from "@/lib/permissions";
-import { recordAuditEvent } from "@/lib/mock/audit";
+import { recordAuditEvent } from "@/features/admin/audit";
 
 /* ─── Colour tokens ──────────────────────────────────────────────────────── */
 

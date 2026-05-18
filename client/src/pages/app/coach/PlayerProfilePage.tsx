@@ -12,8 +12,8 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
-import { computePlayerReadiness, REASON_LABELS as READINESS_REASON_LABELS } from "@/lib/readiness";
-import { ReadinessStatusBadge } from "@/components/readiness/ReadinessStatusBadge";
+import { computePlayerReadiness, REASON_LABELS as READINESS_REASON_LABELS } from "@/features/readiness";
+import { ReadinessStatusBadge } from "@/features/readiness";
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 

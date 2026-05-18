@@ -29,7 +29,7 @@ import {
   type AssessmentType,
   type AssessmentResult,
   type SkillAssessment,
-} from "@/lib/mock/assessments";
+} from "@/features/skill-assessment/mock";
 
 // ─── Demo roster pulled from analytics mock shape ────────────────────────────
 

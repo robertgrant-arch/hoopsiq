@@ -29,7 +29,7 @@ import {
 import { AppShell, PageHeader } from "@/components/app/AppShell";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
-import { mockAnnouncements } from "@/lib/mock/parent";
+import { mockAnnouncements } from "@/features/parent/mock";
 import {
   ACTIVE_GUARDIAN,
   DIRECT_MESSAGES,
@@ -38,7 +38,7 @@ import {
   getReadAt,
   type DirectMessage,
   type MessageThread,
-} from "@/lib/mock/guardian";
+} from "@/features/parent/guardian";
 
 // ─── Constants ────────────────────────────────────────────────────────────────
 

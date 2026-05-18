@@ -13,7 +13,7 @@
 import { Router } from "express";
 import { createRepository } from "@shared/db";
 import { HttpError, requireOrgRole, ORG_ROLES } from "../../auth/tenant";
-import { validateParentChildAccess, getGuardianPlayerIds } from "../../lib/parentAccess";
+import { validateParentChildAccess, getGuardianPlayerIds } from "../parent/access";
 
 export function registerParentRoutes(router: Router) {
 

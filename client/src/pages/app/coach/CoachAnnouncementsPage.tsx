@@ -29,7 +29,7 @@ import {
   type Announcement,
   type AnnouncementAudience,
   type AnnouncementPriority,
-} from "@/lib/mock/announcements";
+} from "@/features/announcements/mock";
 
 /* -------------------------------------------------------------------------- */
 /* Constants                                                                   */

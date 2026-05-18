@@ -2,7 +2,7 @@ import { Link } from "wouter";
 import { ArrowRight, Check, Flame, Shield, Trophy, Zap, Star } from "lucide-react";
 import { MarketingHeader } from "@/components/marketing/MarketingHeader";
 import { MarketingFooter } from "@/components/marketing/MarketingFooter";
-import { fullPlans } from "@/lib/mock/plans";
+import { fullPlans } from "@/features/club-ops/mock";
 import { experts } from "@/lib/mock/data";
 
 // ------------- shared shell -------------

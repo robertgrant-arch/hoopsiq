@@ -9,7 +9,7 @@ import { Link } from "wouter";
 import { AppShell, PageHeader } from "@/components/app/AppShell";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { mockPlayerAssignments, type PlayerAssignment, type AssignmentType, type AssignmentStatus } from "@/lib/mock/athlete";
+import { mockPlayerAssignments, type PlayerAssignment, type AssignmentType, type AssignmentStatus } from "@/features/player/mock";
 
 /* -------------------------------------------------------------------------- */
 /* Helpers                                                                     */

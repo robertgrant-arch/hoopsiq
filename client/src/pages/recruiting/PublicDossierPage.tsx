@@ -53,7 +53,7 @@ import {
   type DossierMilestone,
   type DossierTeam,
   type DossierStat,
-} from "@/lib/mock/dossier";
+} from "@/features/recruiting/dossier";
 
 /* ─── Colour tokens ──────────────────────────────────────────────────────────── */
 

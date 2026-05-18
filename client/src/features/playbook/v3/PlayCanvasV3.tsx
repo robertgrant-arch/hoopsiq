@@ -33,7 +33,7 @@ import type {
 } from "../../../../src/playbook/types";
 import { resolvePlay } from "../../../../src/playbook/resolver";
 import { snapToCourt } from "../../../../src/playbook/snap";
-import type { ToolMode } from "@/lib/playbookV3/store";
+import type { ToolMode } from "./store";
 
 const STAGE_W = 800;
 const STAGE_H = 600;

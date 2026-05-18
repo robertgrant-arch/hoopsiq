@@ -31,7 +31,7 @@ import {
   springImpactReport,
   type SeasonComparison,
   type OutcomeCorrelation,
-} from "@/lib/mock/coach-metrics";
+} from "@/features/coach-metrics/mock";
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Colors

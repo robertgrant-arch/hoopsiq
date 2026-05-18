@@ -9,7 +9,7 @@ import {
   getPlayerTimeline,
   type TimelineEvent,
   type PlayerSeasonSummary,
-} from "@/lib/mock/seasons";
+} from "@/features/club-ops/mock";
 
 /* -------------------------------------------------------------------------- */
 /* Constants                                                                   */

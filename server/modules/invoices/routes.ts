@@ -8,7 +8,7 @@
 import { Router } from "express";
 import { createRepository } from "@shared/db";
 import { requireOrg, requireOrgRole, ORG_ROLES } from "../../auth/tenant";
-import { validateParentChildAccess } from "../../lib/parentAccess";
+import { validateParentChildAccess } from "../parent/access";
 import { generateInvoiceNumber } from "../../lib/invoiceNumber";
 
 export function registerInvoiceRoutes(router: Router) {

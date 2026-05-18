@@ -14,7 +14,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useInvoices, useSeasons, useRecordPayment } from "@/lib/api/hooks/useAdmin";
-import type { Invoice } from "@/lib/mock/admin";
+import type { Invoice } from "@/features/admin/mock";
 
 /* -------------------------------------------------------------------------- */
 /* Helpers                                                                     */

@@ -5,7 +5,7 @@
  *  - Quiz preview tiles
  */
 import { HalfCourt } from "./HalfCourt";
-import type { PlayPhase, PlayPath } from "@/lib/mock/playbook";
+import type { PlayPhase, PlayPath } from "@/features/playbook/mock";
 
 const PATH_STYLE: Record<PlayPath["type"], { stroke: string; dash?: string; arrow: boolean; label: string }> = {
   PASS: { stroke: "oklch(0.85 0.18 80)", dash: "8 6", arrow: true, label: "P" },

@@ -16,7 +16,7 @@ import {
   sampleBenchmarkReports,
   SKILL_LABELS,
   SKILL_ICONS,
-} from "@/lib/mock/benchmarks";
+} from "@/features/benchmarks/mock";
 
 /* -------------------------------------------------------------------------- */
 /* Color helpers                                                               */

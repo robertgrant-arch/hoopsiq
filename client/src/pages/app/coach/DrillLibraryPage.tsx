@@ -10,7 +10,7 @@ import {
   drillLibrary,
   findCategory,
   type Drill,
-} from "@/lib/mock/practice";
+} from "@/features/practice-plan/mock";
 import { useCustomDrillsStore } from "@/lib/customDrillsStore";
 import { useAuth } from "@/lib/auth";
 import { CustomDrillEditor } from "@/components/coach/CustomDrillEditor";

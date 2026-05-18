@@ -34,15 +34,10 @@ import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
 
 import { useAuth } from "@/lib/auth";
-import { useBillingStore } from "@/lib/billing/store";
-import {
-  addSeat,
-  onRosterJoin,
-  onRosterRemove,
-  removeSeat,
-  swapSeat,
-} from "@/lib/billing/service";
-import { findPrice, findProduct, formatCents } from "@/lib/billing/catalog";
+import { useBillingStore, addSeat, onRosterJoin, onRosterRemove, removeSeat, swapSeat, findPrice, findProduct, formatCents } from "@/lib/billing";
+
+
+
 
 export function SeatManager() {
   const { user } = useAuth();

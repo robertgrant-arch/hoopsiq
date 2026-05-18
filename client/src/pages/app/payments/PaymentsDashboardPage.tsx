@@ -34,7 +34,7 @@ import {
   type PaymentAccount,
   type PaymentStatus,
   type FeeType,
-} from "@/lib/mock/payments";
+} from "@/features/payments/mock";
 
 /* ─── Types ────────────────────────────────────────────────────────────────── */
 

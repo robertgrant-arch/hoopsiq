@@ -17,7 +17,7 @@ import {
   getPlayerPrivacySettings,
   type PrivacySettings,
   type AccessRequest,
-} from "@/lib/mock/recruiting";
+} from "@/features/recruiting/mock";
 
 const DEMO_PLAYER_ID = "rp_001";
 

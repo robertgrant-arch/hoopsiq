@@ -24,8 +24,9 @@ import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
 
 import { useAuth } from "@/lib/auth";
-import { useBillingStore } from "@/lib/billing/store";
-import { formatCents } from "@/lib/billing/catalog";
+import { useBillingStore, formatCents } from "@/lib/billing";
+
+
 
 const PLATFORM_FEE_PCT = 15;
 

@@ -36,7 +36,7 @@ import {
   getMetricTrend,
   type BehavioralMetric,
   type TrendPoint,
-} from "@/lib/mock/coach-metrics";
+} from "@/features/coach-metrics/mock";
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Colors

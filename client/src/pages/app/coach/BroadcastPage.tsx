@@ -40,7 +40,7 @@ import {
   type BroadcastTargetRole,
   type AnnouncementChannel,
   type BroadcastRecipient,
-} from "@/lib/mock/program-ops";
+} from "@/features/program-ops/mock";
 
 /* ─── Colour tokens ──────────────────────────────────────────────────────────── */
 

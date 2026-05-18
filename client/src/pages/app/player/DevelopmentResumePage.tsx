@@ -22,8 +22,8 @@ import {
   getPlayerSynthesis,
   type RecruitingPlayer,
   type BadgeInstance,
-} from "@/lib/mock/recruiting";
-import { CATEGORY_LABELS, type SkillCategory } from "@/lib/mock/assessments";
+} from "@/features/recruiting/mock";
+import { CATEGORY_LABELS, type SkillCategory } from "@/features/skill-assessment/mock";
 
 const DEMO_PLAYER_ID = "rp_001";
 

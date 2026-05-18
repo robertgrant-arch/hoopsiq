@@ -99,15 +99,15 @@ import {
   type PracticeIntensity,
   type PracticeReflection,
   type DrillFeedback,
-} from "@/lib/mock/practice";
+} from "@/features/practice-plan/mock";
 import { usePracticePlans } from "@/lib/practicePlanStore";
 import { apiGet } from "@/lib/api/client";
 import { usePracticePlanSync } from "@/lib/api/hooks/usePracticePlanSync";
 import { useCustomDrillsStore } from "@/lib/customDrillsStore";
 import { CustomDrillEditor } from "@/components/coach/CustomDrillEditor";
 import { useAuth } from "@/lib/auth";
-import { MOCK_TEAM_READINESS, statusColor, REASON_LABELS as READINESS_REASON_LABELS } from "@/lib/readiness";
-import { ReadinessStatusBadge } from "@/components/readiness/ReadinessStatusBadge";
+import { MOCK_TEAM_READINESS, statusColor, REASON_LABELS as READINESS_REASON_LABELS } from "@/features/readiness";
+import { ReadinessStatusBadge } from "@/features/readiness";
 
 /**
  * Resolve a drill against both the global library and the persisted custom

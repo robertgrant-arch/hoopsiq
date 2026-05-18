@@ -10,9 +10,9 @@ import { Play as PlayIcon, Pause, RotateCcw, Plus, Trash2 } from "lucide-react";
 import { AppShell, PageHeader } from "@/components/app/AppShell";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { useV3, type ToolMode } from "@/lib/playbookV3/store";
-import { PlayCanvasV3 } from "@/components/playbookV3/PlayCanvasV3";
-import { usePlaybackV3 } from "@/components/playbookV3/usePlaybackV3";
+import { useV3, type ToolMode } from "@/features/playbook/v3/store";
+import { PlayCanvasV3 } from "@/features/playbook/v3/PlayCanvasV3";
+import { usePlaybackV3 } from "@/features/playbook/v3/usePlaybackV3";
 
 const TOOLS: { key: ToolMode; label: string; shortcut: string }[] = [
   { key: "SELECT", label: "Select", shortcut: "V" },

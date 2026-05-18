@@ -15,8 +15,8 @@ import { toast } from "sonner";
 import {
   type PlayerReadiness, type ReadinessStatus,
   MOCK_TEAM_READINESS, REASON_LABELS, statusColor, statusLabel,
-} from "@/lib/readiness";
-import { ReadinessStatusBadge } from "@/components/readiness/ReadinessStatusBadge";
+} from "@/features/readiness";
+import { ReadinessStatusBadge } from "@/features/readiness";
 
 // ── Helpers ────────────────────────────────────────────────────────────────
 

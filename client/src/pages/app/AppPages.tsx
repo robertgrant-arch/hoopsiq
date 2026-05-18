@@ -74,7 +74,7 @@ import {
   CATEGORY_LABELS,
   LEVEL_LABELS,
   type LessonBlock,
-} from "@/lib/mock/education";
+} from "@/features/coach-education/education";
 
 /* ==========================================================================
    Shared primitives

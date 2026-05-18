@@ -52,7 +52,7 @@ import {
   type AuditEvent,
   type AuditAction,
   type StaffRecord,
-} from "@/lib/mock/audit";
+} from "@/features/admin/audit";
 import { PermissionGate, RequestAccess } from "@/components/PermissionGate";
 
 /* ─── Colour tokens ──────────────────────────────────────────────────────── */

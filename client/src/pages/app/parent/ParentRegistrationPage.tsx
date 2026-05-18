@@ -23,7 +23,7 @@ import { Badge } from "@/components/ui/badge";
 import { useAuth } from "@/lib/auth";
 import { useGuardianChildren } from "@/lib/api/hooks/useParent";
 import { useSeasons, useMembershipPlans, useTeams, useSubmitRegistration } from "@/lib/api/hooks/useAdmin";
-import type { Season, MembershipPlan, Team } from "@/lib/mock/admin";
+import type { Season, MembershipPlan, Team } from "@/features/admin/mock";
 
 /* -------------------------------------------------------------------------- */
 /* Helpers                                                                     */

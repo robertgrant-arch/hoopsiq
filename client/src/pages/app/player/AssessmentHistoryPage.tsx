@@ -22,7 +22,7 @@ import {
   type SkillCategory,
   type AssessmentResult,
   type SkillAssessment,
-} from "@/lib/mock/assessments";
+} from "@/features/skill-assessment/mock";
 
 // Demo: player viewing their own history (p10 = Malik Henderson for demo)
 const DEMO_PLAYER_ID = "p10";

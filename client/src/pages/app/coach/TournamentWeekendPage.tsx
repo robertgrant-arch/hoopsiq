@@ -26,7 +26,7 @@ import {
   AlertTriangle,
   CalendarDays,
 } from "lucide-react";
-import { SOUTH_TEXAS_SHOWCASE, type TournamentGame, type TournamentWeekend } from "@/lib/mock/program-ops";
+import { SOUTH_TEXAS_SHOWCASE, type TournamentGame, type TournamentWeekend } from "@/features/program-ops/mock";
 
 /* ─── Colour tokens ──────────────────────────────────────────────────────────── */
 

@@ -45,7 +45,7 @@ import {
   type ClipCategory,
   type AssignmentState,
   type ClipAssignment,
-} from "@/lib/mock/film";
+} from "@/features/film/mock";
 
 // ─── Constants ────────────────────────────────────────────────────────────────
 

@@ -47,7 +47,7 @@ import {
   type ScoutReport,
   type Severity,
   type TendencyCategory,
-} from "@/lib/mock/scouting";
+} from "@/features/scouting/mock";
 
 // ─── Constants ────────────────────────────────────────────────────────────────
 

@@ -33,7 +33,7 @@ import {
   BarChart3,
 } from "lucide-react";
 import { AppShell, PageHeader } from "@/components/app/AppShell";
-import { mockAttendance } from "@/lib/mock/parent";
+import { mockAttendance } from "@/features/parent/mock";
 import {
   ACTIVE_GUARDIAN,
   GUARDIAN_PLAYER_PROFILES,
@@ -41,7 +41,7 @@ import {
   getVisibility,
   type ParentGoalSummary,
   type VisibilityControls,
-} from "@/lib/mock/guardian";
+} from "@/features/parent/guardian";
 
 // ─── Constants ────────────────────────────────────────────────────────────────
 

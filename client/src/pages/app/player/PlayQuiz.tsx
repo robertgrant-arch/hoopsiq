@@ -44,7 +44,7 @@ import {
   type QuizQuestion,
   type Play,
   type PlayToken,
-} from "@/lib/mock/playbook";
+} from "@/features/playbook/mock";
 
 /* -------------------------------------------------------------------------- */
 /* Helpers                                                                     */

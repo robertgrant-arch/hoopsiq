@@ -18,7 +18,7 @@ import {
   getSeasonYearOverYear,
   type Season,
   type SeasonType,
-} from "@/lib/mock/seasons";
+} from "@/features/club-ops/mock";
 
 /* -------------------------------------------------------------------------- */
 /* Constants                                                                   */

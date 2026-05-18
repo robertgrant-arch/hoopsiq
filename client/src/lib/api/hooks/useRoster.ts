@@ -57,3 +57,57 @@ export function useDeletePlayer() {
     onSuccess: () => qc.invalidateQueries({ queryKey: ["roster"] }),
   });
 }
+
+// ── Film / clip UI shape ───────────────────────────────────────────────────
+// A slimmer view of a roster player used in film tagging and coaching-action
+// pickers. Adds `initials` for avatar rendering and includes a "Full Team"
+// sentinel entry at index 0.
+
+export type RosterEntry = {
+  id: string;
+  name: string;
+  position: string;
+  initials: string;
+};
+
+const FALLBACK_ROSTER: RosterEntry[] = [
+  { id: "team", name: "Full Team",    position: "",   initials: "" },
+  { id: "p1",   name: "Marcus Davis", position: "PG", initials: "MD" },
+  { id: "p2",   name: "Jordan Smith", position: "SG", initials: "JS" },
+  { id: "p3",   name: "Tyler Brown",  position: "SF", initials: "TB" },
+  { id: "p4",   name: "Chris Evans",  position: "PF", initials: "CE" },
+  { id: "p5",   name: "Devon Carter", position: "C",  initials: "DC" },
+];
+
+/**
+ * Returns the roster in the shape needed by film/coaching-action pickers:
+ *  - "Full Team" sentinel as the first entry
+ *  - Each player mapped to { id, name, position, initials }
+ *  - Falls back to demo data when the API is unavailable (unauthenticated / demo mode)
+ *
+ * Replaces the standalone @/lib/hooks/useRoster hook which is now deleted.
+ */
+export function useRosterForFilm(): { roster: RosterEntry[]; isLoading: boolean } {
+  const { data: players, isLoading } = useRoster();
+
+  if (!players || players.length === 0) {
+    return { roster: FALLBACK_ROSTER, isLoading };
+  }
+
+  const entries: RosterEntry[] = players.map((p) => ({
+    id:       p.id,
+    name:     p.name,
+    position: p.position ?? "",
+    initials: p.name
+      .split(" ")
+      .map((w) => w[0] ?? "")
+      .slice(0, 2)
+      .join("")
+      .toUpperCase(),
+  }));
+
+  return {
+    roster: [{ id: "team", name: "Full Team", position: "", initials: "" }, ...entries],
+    isLoading,
+  };
+}

@@ -25,7 +25,7 @@ import {
   formatCents,
   daysOverdue,
   type PaymentAccount,
-} from "@/lib/mock/payments";
+} from "@/features/payments/mock";
 
 /* ─── Priority tier ────────────────────────────────────────────────────────── */
 

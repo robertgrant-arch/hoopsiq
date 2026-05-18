@@ -17,7 +17,7 @@ import { toast } from "sonner";
 import {
   staffMembers,
   type StaffMember,
-} from "@/lib/mock/team-management";
+} from "@/features/team-management/mock";
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Constants

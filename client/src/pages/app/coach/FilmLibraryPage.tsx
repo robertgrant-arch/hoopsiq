@@ -34,7 +34,7 @@ import {
   type FilmEntry,
   type ProcessingStatus,
   type FilmType,
-} from "@/lib/mock/film";
+} from "@/features/film/mock";
 
 // ─── Constants ────────────────────────────────────────────────────────────────
 

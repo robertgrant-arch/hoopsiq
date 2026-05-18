@@ -13,8 +13,8 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { PlayThumbnail } from "@/components/court/PlayThumbnail";
-import { allPlays, getPlay, getQuizzesForPlay } from "@/lib/mock/playbook";
-import type { PlayPath } from "@/lib/mock/playbook";
+import { allPlays, getPlay, getQuizzesForPlay } from "@/features/playbook/mock";
+import type { PlayPath } from "@/features/playbook/mock";
 
 /* -------------------------------------------------------------------------- */
 /* Path legend helpers                                                         */

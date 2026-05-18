@@ -31,7 +31,7 @@ import {
   type MatchupNote, type ScoutAssignment, type Severity,
   type TendencyCategory, type ThreatLevel, type ScoutPlayCategory,
   type AITendencySuggestion, type GeneratedPracticeBlock,
-} from "@/lib/mock/scouting";
+} from "@/features/scouting/mock";
 
 // ── Tab definition ─────────────────────────────────────────────────────────
 

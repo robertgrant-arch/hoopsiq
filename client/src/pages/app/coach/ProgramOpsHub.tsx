@@ -41,7 +41,7 @@ import {
   getProgramById,
   type Program,
   type ProgramLevel,
-} from "@/lib/mock/program-ops";
+} from "@/features/program-ops/mock";
 
 // ─── Constants ────────────────────────────────────────────────────────────────
 

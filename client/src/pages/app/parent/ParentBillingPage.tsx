@@ -7,7 +7,7 @@ import { toast } from "sonner";
 import { AppShell, PageHeader } from "@/components/app/AppShell";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { mockBillingItems, type BillingLineItem } from "@/lib/mock/parent";
+import { mockBillingItems, type BillingLineItem } from "@/features/parent/mock";
 
 /* -------------------------------------------------------------------------- */
 /* Helpers                                                                     */

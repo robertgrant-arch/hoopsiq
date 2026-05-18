@@ -28,7 +28,7 @@ import {
   computeReadiness,
   type ReadinessEntry,
   type ReadinessFlag,
-} from "@/lib/mock/readiness";
+} from "@/features/readiness/team-mock";
 import {
   myCheckinHistory,
   todayCheckinDone,
@@ -36,7 +36,7 @@ import {
   GUARDRAIL_MESSAGES,
   type Availability,
   type ExtendedCheckin,
-} from "@/lib/mock/player-checkin";
+} from "@/features/readiness/checkin";
 import { useAuth } from "@/lib/auth";
 import { toast } from "sonner";
 

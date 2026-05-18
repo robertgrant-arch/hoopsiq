@@ -61,7 +61,7 @@ import {
   type DossierSectionKey,
   type SectionVisibility,
   type DossierReviewState,
-} from "@/lib/mock/dossier";
+} from "@/features/recruiting/dossier";
 
 /* ─── Colour tokens ──────────────────────────────────────────────────────────── */
 

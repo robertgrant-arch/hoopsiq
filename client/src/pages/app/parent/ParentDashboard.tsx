@@ -11,7 +11,7 @@ import { useAuth } from "@/lib/auth";
 import {
   mockScheduleEvents, mockBillingItems,
   mockForms, mockDevelopmentSummary, mockAnnouncements,
-} from "@/lib/mock/parent";
+} from "@/features/parent/mock";
 import { useAnnouncements } from "@/lib/api/hooks/useAnnouncements";
 import { useGuardianChildren } from "@/lib/api/hooks/useParent";
 import {
@@ -19,7 +19,7 @@ import {
   GUARDIAN_PLAYER_PROFILES,
   getThreadsForGuardian,
   isAnnouncementRead,
-} from "@/lib/mock/guardian";
+} from "@/features/parent/guardian";
 
 /* -------------------------------------------------------------------------- */
 /* Helpers                                                                     */
