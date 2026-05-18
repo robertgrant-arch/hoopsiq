@@ -245,7 +245,16 @@ const pwaPlugin = VitePWA({
   },
 });
 
-const plugins = [react(), tailwindcss(), jsxLocPlugin(), vitePluginManusRuntime(), vitePluginManusDebugCollector(), vitePluginStorageProxy(), pwaPlugin];
+const isDev = process.env.NODE_ENV !== "production";
+const plugins = [
+  react(),
+  tailwindcss(),
+  ...(isDev ? [jsxLocPlugin()] : []),
+  ...(isDev ? [vitePluginManusRuntime()] : []),
+  vitePluginManusDebugCollector(),
+  vitePluginStorageProxy(),
+  pwaPlugin,
+];
 
 export default defineConfig({
   plugins,
