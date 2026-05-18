@@ -19,7 +19,14 @@ import {
   Star,
   RotateCcw,
   AlertCircle,
+  Dumbbell,
+  AlertTriangle,
+  XCircle,
 } from "lucide-react";
+import {
+  todayCheckinDone,
+  todayWodRecord,
+} from "@/lib/mock/player-checkin";
 import { apiGet } from "@/lib/api/client";
 import { AppShell, PageHeader } from "@/components/app/AppShell";
 import { useAuth } from "@/lib/auth";
@@ -115,6 +122,106 @@ function ProgressRing({
   );
 }
 
+/* ─── Daily Status Strip ───────────────────────────────────────────────────── */
+
+const CHECKIN_ACCENT = "oklch(0.72 0.18 290)";
+const SUCCESS_CLR = "oklch(0.75 0.12 140)";
+const WARNING_CLR = "oklch(0.78 0.16 75)";
+const DANGER_CLR = "oklch(0.68 0.22 25)";
+const MUTED_CLR = "oklch(0.55 0.02 260)";
+
+function DailyStatusStrip() {
+  const checkinDone = todayCheckinDone;
+  const wodState = todayWodRecord.state;
+
+  const checkinColor = checkinDone ? SUCCESS_CLR : WARNING_CLR;
+  const checkinLabel = checkinDone ? "Check-in done" : "Check-in needed";
+  const checkinIcon = checkinDone ? (
+    <CheckCircle2 className="w-4 h-4" style={{ color: SUCCESS_CLR }} />
+  ) : (
+    <AlertTriangle className="w-4 h-4" style={{ color: WARNING_CLR }} />
+  );
+
+  const wodColor =
+    wodState === "completed"
+      ? SUCCESS_CLR
+      : wodState === "skipped"
+      ? DANGER_CLR
+      : wodState === "modified_by_coach"
+      ? WARNING_CLR
+      : wodState === "in_progress"
+      ? CHECKIN_ACCENT
+      : MUTED_CLR;
+  const wodLabel =
+    wodState === "completed"
+      ? "WOD complete"
+      : wodState === "skipped"
+      ? "WOD skipped"
+      : wodState === "modified_by_coach"
+      ? "WOD modified"
+      : wodState === "in_progress"
+      ? "WOD in progress"
+      : "WOD not started";
+  const wodIcon =
+    wodState === "completed" ? (
+      <CheckCircle2 className="w-4 h-4" style={{ color: SUCCESS_CLR }} />
+    ) : wodState === "skipped" ? (
+      <XCircle className="w-4 h-4" style={{ color: DANGER_CLR }} />
+    ) : (
+      <Dumbbell className="w-4 h-4" style={{ color: wodColor }} />
+    );
+
+  return (
+    <div className="flex gap-2 mb-6">
+      {/* Check-in card */}
+      <Link href="/app/player/checkin" className="flex-1">
+        <a
+          className="flex items-center gap-2.5 rounded-xl border px-3 py-3 hover:brightness-110 transition-all min-h-[52px]"
+          style={{
+            borderColor: checkinColor.replace(")", " / 0.30)"),
+            background: checkinColor.replace(")", " / 0.07)"),
+          }}
+        >
+          {checkinIcon}
+          <div className="flex-1 min-w-0">
+            <p className="text-[11px] font-semibold uppercase tracking-wide" style={{ color: checkinColor }}>
+              {checkinLabel}
+            </p>
+            <p className="text-[10px]" style={{ color: MUTED_CLR }}>
+              {checkinDone ? "Submitted today" : "Tap to check in"}
+            </p>
+          </div>
+          <ChevronRight className="w-3.5 h-3.5 shrink-0" style={{ color: MUTED_CLR }} />
+        </a>
+      </Link>
+
+      {/* WOD card */}
+      <Link href="/app/player/wod" className="flex-1">
+        <a
+          className="flex items-center gap-2.5 rounded-xl border px-3 py-3 hover:brightness-110 transition-all min-h-[52px]"
+          style={{
+            borderColor: wodColor.replace(")", " / 0.30)"),
+            background: wodColor.replace(")", " / 0.07)"),
+          }}
+        >
+          {wodIcon}
+          <div className="flex-1 min-w-0">
+            <p className="text-[11px] font-semibold uppercase tracking-wide" style={{ color: wodColor }}>
+              {wodLabel}
+            </p>
+            <p className="text-[10px]" style={{ color: MUTED_CLR }}>
+              {wodState === "completed"
+                ? `${todayWodRecord.drillsCompleted}/${todayWodRecord.drillsTotal} drills`
+                : `${todayWodRecord.plannedMinutes} min · ${todayWodRecord.drillsTotal} drills`}
+            </p>
+          </div>
+          <ChevronRight className="w-3.5 h-3.5 shrink-0" style={{ color: MUTED_CLR }} />
+        </a>
+      </Link>
+    </div>
+  );
+}
+
 /* ----------------------------- Dashboard ----------------------------- */
 
 export function PlayerDashboard() {
@@ -142,6 +249,9 @@ export function PlayerDashboard() {
             </Link>
           }
         />
+
+        {/* ── Today's status strip ────────────────────────────────────────── */}
+        <DailyStatusStrip />
 
         {/* Hero stats */}
         <div className="grid md:grid-cols-4 gap-3 mb-10">

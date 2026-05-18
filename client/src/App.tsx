@@ -92,6 +92,7 @@ const PlayerWearablesPage    = React.lazy(() => import("@/pages/app/player/Playe
 const AssessmentHistoryPage  = React.lazy(() => import("@/pages/app/player/AssessmentHistoryPage"));
 const DevelopmentTimelinePage = React.lazy(() => import("@/pages/app/player/DevelopmentTimelinePage"));
 const PlayerCheckinPage      = React.lazy(() => import("@/pages/app/player/PlayerCheckinPage"));
+const PlayerWodPage          = React.lazy(() => import("@/pages/app/player/PlayerWodPage"));
 const PlayerAssignmentsPage  = React.lazy(() => import("@/pages/app/player/PlayerAssignmentsPage"));
 const PlayerSchedulePage     = React.lazy(() => import("@/pages/app/player/PlayerSchedulePage"));
 const PlayerAbsencePage      = React.lazy(() => import("@/pages/app/player/PlayerAbsencePage"));
@@ -304,6 +305,8 @@ function Router() {
         <Route path="/app/player/assignments" component={PlayerAssignmentsPage} />
         <Route path="/app/player/schedule" component={PlayerSchedulePage} />
         <Route path="/app/player/checkin" component={PlayerCheckinPage} />
+        <Route path="/app/player/check-in" component={PlayerCheckinPage} />
+        <Route path="/app/player/wod" component={PlayerWodPage} />
         <Route path="/app/player/assessments" component={AssessmentHistoryPage} />
         <Route path="/app/player/timeline" component={DevelopmentTimelinePage} />
         <Route path="/app/player/absence" component={PlayerAbsencePage} />
