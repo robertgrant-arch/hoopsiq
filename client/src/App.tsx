@@ -55,6 +55,8 @@ const MessagesPage             = React.lazy(() => import("@/pages/app/coach/Mess
 const CoachInboxPage           = React.lazy(() => import("@/pages/app/coach/CoachInboxPage"));
 const PlayerProfilePage        = React.lazy(() => import("@/pages/app/coach/PlayerProfilePage"));
 const CoachIDPPage             = React.lazy(() => import("@/pages/app/coach/CoachIDPPage"));
+const PlayerIDPPage            = React.lazy(() => import("@/pages/app/coach/players/PlayerIDPPage"));
+const GoalDetailPage           = React.lazy(() => import("@/pages/app/coach/players/GoalDetailPage"));
 const BenchmarkingPage         = React.lazy(() => import("@/pages/app/coach/BenchmarkingPage"));
 const IDPGeneratorPage         = React.lazy(() => import("@/pages/app/coach/IDPGeneratorPage"));
 const FilmSessionDetail        = React.lazy(() => import("@/pages/app/coach/FilmSessionDetail"));
@@ -312,7 +314,8 @@ function Router() {
         {/* Coach HQ - auth required */}
         <Route path="/app/coach" component={guard(CoachDashboard)} />
         <Route path="/app/coach/inbox" component={guard(CoachInboxPage)} />
-        <Route path="/app/coach/players/:id/idp" component={guard(CoachIDPPage)} />
+        <Route path="/app/coach/players/:id/idp/goals/:goalId" component={guard(GoalDetailPage)} />
+        <Route path="/app/coach/players/:id/idp" component={guard(PlayerIDPPage)} />
         <Route path="/app/coach/players/:id" component={guard(PlayerProfilePage)} />
         <Route path="/app/coach/roster" component={guard(CoachRoster)} />
         <Route path="/app/coach/parents" component={guard(CoachParents)} />
