@@ -11,7 +11,8 @@ export type AssignmentType =
   | "quiz"
   | "conditioning"
   | "check_in"
-  | "note";
+  | "note"
+  | "scout_team";
 
 export type AssignmentStatus = "open" | "in_progress" | "submitted" | "graded";
 
@@ -109,6 +110,19 @@ export const mockPlayerAssignments: PlayerAssignment[] = [
     priority: "normal",
     completedAt: "2026-05-15T07:15:00Z",
     xpReward: 25,
+  },
+  {
+    id: "pa_7",
+    type: "scout_team",
+    title: "Scout Team — Run #5 Marcus Hill (Westbury)",
+    description:
+      "You are running Marcus Hill in Thursday's scout team practice. Study his tendencies below and simulate them at full speed. Focus on: initiating the PnR at the top of the key, attacking right with the pull-up mid-range on Ice coverage, and pushing pace immediately after any made basket. Watch the 3 clips attached to the Westbury scout report before practice.",
+    assignedBy: "Coach Grant",
+    assignedByRole: "coach",
+    dueDate: "2026-05-21",
+    status: "open",
+    priority: "high",
+    xpReward: 175,
   },
 ];
 

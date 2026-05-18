@@ -2,7 +2,7 @@ import { useState } from "react";
 import {
   ClipboardList, Film, Dumbbell, BookOpen, Zap, CheckCircle2,
   Circle, Clock, AlertCircle, Star, ChevronRight, Trophy,
-  MessageSquare,
+  MessageSquare, Crosshair,
 } from "lucide-react";
 import { toast } from "sonner";
 import { Link } from "wouter";
@@ -28,12 +28,13 @@ function formatDate(iso: string) {
 }
 
 const TYPE_META: Record<AssignmentType, { label: string; icon: React.ComponentType<any>; color: string }> = {
-  film_review:  { label: "Film review",   icon: Film,          color: "oklch(0.7 0.18 310)" },
-  drill:        { label: "Drill",          icon: Dumbbell,      color: "oklch(0.72 0.18 290)" },
-  quiz:         { label: "Quiz",           icon: BookOpen,      color: "oklch(0.78 0.17 75)" },
-  conditioning: { label: "Conditioning",   icon: Zap,           color: "oklch(0.75 0.12 140)" },
-  check_in:     { label: "Check-in",       icon: CheckCircle2,  color: "oklch(0.65 0.15 230)" },
-  note:         { label: "Note",           icon: MessageSquare, color: "oklch(0.5 0 0)" },
+  film_review:  { label: "Film review",    icon: Film,          color: "oklch(0.7 0.18 310)"  },
+  drill:        { label: "Drill",           icon: Dumbbell,      color: "oklch(0.72 0.18 290)" },
+  quiz:         { label: "Quiz",            icon: BookOpen,      color: "oklch(0.78 0.17 75)"  },
+  conditioning: { label: "Conditioning",    icon: Zap,           color: "oklch(0.75 0.12 140)" },
+  check_in:     { label: "Check-in",        icon: CheckCircle2,  color: "oklch(0.65 0.15 230)" },
+  note:         { label: "Note",            icon: MessageSquare, color: "oklch(0.5 0 0)"       },
+  scout_team:   { label: "Scout team role", icon: Crosshair,     color: "oklch(0.68 0.22 25)"  },
 };
 
 const STATUS_ORDER: AssignmentStatus[] = ["open", "in_progress", "submitted", "graded"];
@@ -158,6 +159,29 @@ function AssignmentCard({
             <p className="text-[12px] text-muted-foreground mt-2 leading-relaxed line-clamp-2">
               {assignment.description}
             </p>
+
+            {/* Scout-team role callout */}
+            {assignment.type === "scout_team" && (
+              <div
+                className="mt-2 rounded-lg border px-3 py-2 space-y-1"
+                style={{
+                  borderColor: "oklch(0.68 0.22 25 / 0.25)",
+                  background: "oklch(0.68 0.22 25 / 0.05)",
+                }}
+              >
+                <div
+                  className="flex items-center gap-1.5 text-[10px] font-semibold uppercase tracking-wide"
+                  style={{ color: "oklch(0.68 0.22 25)" }}
+                >
+                  <Crosshair className="w-3 h-3" />
+                  Scout team assignment — simulate the opponent
+                </div>
+                <p className="text-[11.5px]" style={{ color: "oklch(0.55 0.02 260)" }}>
+                  Study your opponent's tendencies before practice. Your job is to make
+                  our defense's reads automatic.
+                </p>
+              </div>
+            )}
 
             {assignment.coachFeedback && (
               <div className="mt-2 rounded-lg bg-muted/50 border-l-2 border-muted px-3 py-2 text-[11.5px] text-muted-foreground italic">

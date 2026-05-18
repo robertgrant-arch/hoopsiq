@@ -261,13 +261,18 @@ function CommandStrip({
               </div>
               <div className="text-[13px] font-medium mt-0.5">vs {NEXT_GAME.opponent}</div>
               <div className="text-[11.5px] text-muted-foreground mt-0.5">{NEXT_GAME.date} · {NEXT_GAME.location}</div>
-              {!NEXT_GAME.scoutingReady && (
-                <Link href="/app/coach/scouting">
+              {!NEXT_GAME.scoutingReady && NEXT_GAME.daysOut <= 2 && (
+                <Link href="/app/coach/scouting/opp_westbury/game-plan">
                   <a
-                    className="mt-1.5 inline-flex items-center gap-1 text-[11px] font-semibold"
-                    style={{ color: "oklch(0.68 0.22 25)" }}
+                    className="mt-2 flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg border text-[11px] font-semibold w-full transition-colors hover:brightness-110"
+                    style={{
+                      borderColor: "oklch(0.68 0.22 25 / 0.35)",
+                      background: "oklch(0.68 0.22 25 / 0.08)",
+                      color: "oklch(0.68 0.22 25)",
+                    }}
                   >
-                    <AlertTriangle className="w-3 h-3" /> Scout report needed
+                    <AlertTriangle className="w-3.5 h-3.5 shrink-0" />
+                    Game prep incomplete — open game-day view
                   </a>
                 </Link>
               )}

@@ -56,6 +56,9 @@ const FilmQueuePage       = React.lazy(() => import("@/pages/app/coach/FilmQueue
 const FilmQueueDetailPage = React.lazy(() => import("@/pages/app/coach/FilmQueueDetailPage"));
 const CoachClipPage       = React.lazy(() => import("@/pages/app/coach/CoachClipPage"));
 
+// Scout-to-Practice pages
+const GameDayPage         = React.lazy(() => import("@/pages/app/coach/GameDayPage"));
+
 // Coach pages
 const MessagesPage             = React.lazy(() => import("@/pages/app/coach/MessagesPage"));
 const CoachInboxPage           = React.lazy(() => import("@/pages/app/coach/CoachInboxPage"));
@@ -334,6 +337,7 @@ function Router() {
         <Route path="/app/coach/actions" component={guard(CoachActionsPage)} />
         <Route path="/app/coach/readiness" component={guard(TeamReadinessPage)} />
         <Route path="/app/coach/scouting" component={guard(ScoutingHubPage)} />
+        <Route path="/app/coach/scouting/:opponentId/game-plan" component={guard(GameDayPage)} />
         <Route path="/app/coach/scouting/:opponentId" component={guard(OpponentScoutPage)} />
         <Route path="/app/coach/assignments" component={guard(CoachAssignments)} />
         <Route path="/app/coach/practice-plans" component={guard(CoachPracticePlanBuilder)} />

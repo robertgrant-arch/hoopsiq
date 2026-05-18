@@ -682,6 +682,278 @@ export const mockOpponentHistory: OpponentGameResult[] = [
   },
 ];
 
+// ── Generated practice blocks ─────────────────────────────────────────────
+
+export type PracticeBlockFocus =
+  | "ball_screen_defense"
+  | "transition_stop"
+  | "post_defense"
+  | "perimeter_closeout"
+  | "offensive_rebounding"
+  | "zone_attack"
+  | "press_break"
+  | "special_situations"
+  | "scout_team_reps"
+  | "film_review";
+
+export const PRACTICE_BLOCK_FOCUS_LABEL: Record<PracticeBlockFocus, string> = {
+  ball_screen_defense:  "Ball-Screen Defense",
+  transition_stop:      "Transition Stop",
+  post_defense:         "Post Defense",
+  perimeter_closeout:   "Perimeter Closeout",
+  offensive_rebounding: "Offensive Rebounding",
+  zone_attack:          "Zone Attack",
+  press_break:          "Press Break",
+  special_situations:   "Special Situations",
+  scout_team_reps:      "Scout Team Reps",
+  film_review:          "Film Review",
+};
+
+export interface GeneratedPracticeBlock {
+  id: string;
+  /** Which tendency drove this recommendation */
+  sourceTendencyId: string;
+  sourceTendencyTitle: string;
+  sourceSide: "offense" | "defense";
+  focus: PracticeBlockFocus;
+  title: string;
+  drill: string;
+  rationale: string;
+  suggestedMinutes: number;
+  intensity: "low" | "medium" | "high";
+  priority: number; // 1 = highest
+  /** If true, add to practice plan is suggested */
+  linkedPracticeAvailable: boolean;
+}
+
+/**
+ * Map tendency severity to priority (critical → 1, high → 2, medium → 3, low → 4).
+ */
+function severityPriority(s: Severity): number {
+  return { critical: 1, high: 2, medium: 3, low: 4 }[s] ?? 4;
+}
+
+/** Derive recommended defensive coverage drills from a scout report's tendencies. */
+export function generatePracticeEmphasis(report: ScoutReport): GeneratedPracticeBlock[] {
+  const blocks: GeneratedPracticeBlock[] = [];
+  let idx = 0;
+
+  const allTendencies = [
+    ...report.offenseTendencies.map((t) => ({ ...t, side: "offense" as const })),
+    ...report.defenseTendencies.map((t) => ({ ...t, side: "defense" as const })),
+  ].sort((a, b) => severityPriority(a.severity) - severityPriority(b.severity));
+
+  for (const t of allTendencies) {
+    const base = {
+      id: `pb_${++idx}`,
+      sourceTendencyId: t.id,
+      sourceTendencyTitle: t.title,
+      sourceSide: t.side,
+      priority: severityPriority(t.severity),
+      linkedPracticeAvailable: true,
+    };
+
+    // Offense tendencies → defensive drill recommendations
+    if (t.side === "offense") {
+      if (t.category === "halfcourt_offense" && t.tags.some((g) => g.toLowerCase().includes("pnr") || g.toLowerCase().includes("pick"))) {
+        blocks.push({
+          ...base,
+          focus: "ball_screen_defense",
+          title: "Ice/Drop Ball-Screen Coverage",
+          drill: "2-man Ice drill → 3v3 PnR shell → live 5-on-5 with PnR emphasis",
+          rationale: `Opponent runs heavy PnR. "${t.title}" — defenders must master Ice and drop reads before game day.`,
+          suggestedMinutes: 18,
+          intensity: "high",
+        });
+      } else if (t.category === "transition_offense") {
+        blocks.push({
+          ...base,
+          focus: "transition_stop",
+          title: "Transition Sprint-Back + Stop Drill",
+          drill: "Continuous 3v2 sprint drill → 5-on-0 transition stop shell",
+          rationale: `"${t.title}" — they push pace and create easy run-outs. Defensive transition sprint-back must be automatic.`,
+          suggestedMinutes: 12,
+          intensity: "high",
+        });
+      } else if (t.category === "special_situations") {
+        blocks.push({
+          ...base,
+          focus: "special_situations",
+          title: "BLOB/SLOB Coverage Reps",
+          drill: "Walk-through → live SLOB/BLOB coverage reps vs. scout team",
+          rationale: `"${t.title}" — they run reliable OB sets. Reps at full speed before game day.`,
+          suggestedMinutes: 10,
+          intensity: "medium",
+        });
+      } else if (t.category === "halfcourt_offense") {
+        blocks.push({
+          ...base,
+          focus: "perimeter_closeout",
+          title: "Perimeter Closeout + Contest",
+          drill: "Closeout 1-on-1 shell → 4-on-4 close-and-contest",
+          rationale: `"${t.title}" — they generate three-point looks off off-ball movement. Closeout discipline is key.`,
+          suggestedMinutes: 12,
+          intensity: "medium",
+        });
+      } else if (t.category === "rebounding") {
+        blocks.push({
+          ...base,
+          focus: "offensive_rebounding",
+          title: "Offensive Crash + Box-Out Read",
+          drill: "Box-out shell drill → live crash reads off shot attempts",
+          rationale: `"${t.title}" — second-chance opportunities available when their guards don't box out.`,
+          suggestedMinutes: 8,
+          intensity: "medium",
+        });
+      }
+    }
+
+    // Defense tendencies → offensive exploitation drills
+    if (t.side === "defense") {
+      if (t.tags.some((g) => g.toLowerCase().includes("ice") || g.toLowerCase().includes("ball screen coverage"))) {
+        blocks.push({
+          ...base,
+          focus: "ball_screen_defense",
+          title: "Mid-Range Pull-Up Attack vs. Ice",
+          drill: "PnR ball-handler mid-range pull-up drill → live 2-on-2 vs. Ice",
+          rationale: `"${t.title}" — Ice gives up the mid-range. Our PG/wings must be ready to punish this gap.`,
+          suggestedMinutes: 15,
+          intensity: "high",
+        });
+      } else if (t.category === "transition_defense") {
+        blocks.push({
+          ...base,
+          focus: "transition_stop",
+          title: "Corner 3 Transition Spacings",
+          drill: "3-man weave into corner-3 transition read → 5-on-0 spacing walkthrough",
+          rationale: `"${t.title}" — they give up corner threes in transition. Spacing reads must be automatic.`,
+          suggestedMinutes: 10,
+          intensity: "medium",
+        });
+      } else if (t.category === "halfcourt_defense") {
+        blocks.push({
+          ...base,
+          focus: "zone_attack",
+          title: "Zone Gap Attack",
+          drill: "5-on-0 zone skip drill → 5-on-5 vs. scout-team zone",
+          rationale: `"${t.title}" — their coverage has a gap to exploit. Drill the skip pass and high-post attack.`,
+          suggestedMinutes: 12,
+          intensity: "medium",
+        });
+      } else if (t.category === "rebounding") {
+        blocks.push({
+          ...base,
+          focus: "offensive_rebounding",
+          title: "Guard Crash Off Miss",
+          drill: "Live rebounding drill — guards crash weak-side on every shot",
+          rationale: `"${t.title}" — their guards don't box out. Send our guards to the glass every trip.`,
+          suggestedMinutes: 8,
+          intensity: "medium",
+        });
+      }
+    }
+  }
+
+  // Always add scout-team reps and film review if the report has key players
+  if (report.keyPlayers.length > 0) {
+    blocks.push({
+      id: `pb_${++idx}`,
+      sourceTendencyId: "scout_team",
+      sourceTendencyTitle: "Scout team simulation",
+      sourceSide: "offense",
+      focus: "scout_team_reps",
+      title: "Scout Team Live Reps",
+      drill: "Scout team runs opponent's top 3 actions at full speed — defense responds",
+      rationale: `With ${report.keyPlayers.length} key players identified, scout team reps make game-day reads automatic.`,
+      suggestedMinutes: 20,
+      intensity: "high",
+      priority: 1,
+      linkedPracticeAvailable: true,
+    });
+  }
+
+  if (report.linkedClipIds.length > 0 || report.keysToWin.length > 0) {
+    blocks.push({
+      id: `pb_${++idx}`,
+      sourceTendencyId: "film_review",
+      sourceTendencyTitle: "Film review session",
+      sourceSide: "defense",
+      focus: "film_review",
+      title: "Pre-Game Film Session",
+      drill: "30-min team film: top clips of opponent's tendencies + keys to the game walk-through",
+      rationale: "Mental preparation — make sure every player can identify the opponent's primary actions before tip-off.",
+      suggestedMinutes: 30,
+      intensity: "low",
+      priority: 2,
+      linkedPracticeAvailable: true,
+    });
+  }
+
+  return blocks.slice(0, 8); // cap at 8 blocks
+}
+
+// ── Scout-team player roles ────────────────────────────────────────────────
+
+export interface ScoutTeamRole {
+  id: string;
+  opponentId: string;
+  opponentName: string;
+  scoutReportId: string;
+  playerId: string;
+  playerName: string;
+  /** Opponent player they simulate */
+  simOpponentPlayer: string;
+  simOpponentJersey: string;
+  simOpponentPosition: string;
+  tendenciesToSimulate: string[];
+  practiceDate: string; // ISO
+  notes?: string;
+}
+
+export const SCOUT_TEAM_ROLES: ScoutTeamRole[] = [
+  {
+    id: "str_1",
+    opponentId: "opp_westbury",
+    opponentName: "Westbury Eagles",
+    scoutReportId: "sr_westbury_1",
+    playerId: "a_5",
+    playerName: "Isaiah Moore",
+    simOpponentPlayer: "Marcus Hill",
+    simOpponentJersey: "5",
+    simOpponentPosition: "PG",
+    tendenciesToSimulate: [
+      "Initiate every possession with top-of-key PnR",
+      "Attack right — pull up mid-range on Ice coverage",
+      "Push pace immediately after any made basket",
+      "DHO at the elbow as secondary action",
+    ],
+    practiceDate: "2026-05-21",
+    notes: "Study Hill's film from last 3 games. Mirror his hesitation move and when he goes left vs. right.",
+  },
+  {
+    id: "str_2",
+    opponentId: "opp_westbury",
+    opponentName: "Westbury Eagles",
+    scoutReportId: "sr_westbury_1",
+    playerId: "a_3",
+    playerName: "DeAndre Johnson",
+    simOpponentPlayer: "Javier Torres",
+    simOpponentJersey: "3",
+    simOpponentPosition: "SG",
+    tendenciesToSimulate: [
+      "Run double stagger reads off the ball",
+      "Curl into the corner for catch-and-shoot threes",
+      "Back-door cut on stagger when defender jumps",
+    ],
+    practiceDate: "2026-05-21",
+    notes: "Torres is dangerous off the stagger. Run the action at full speed — defense needs live reads.",
+  },
+];
+
+export function getScoutTeamRolesForPlayer(playerId: string): ScoutTeamRole[] {
+  return SCOUT_TEAM_ROLES.filter((r) => r.playerId === playerId);
+}
+
 // ── AI tendency suggestions (simulated from film analysis) ────────────────
 
 export interface AITendencySuggestion {

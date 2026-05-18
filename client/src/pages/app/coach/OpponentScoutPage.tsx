@@ -6,7 +6,7 @@ import {
   Star, Target, Users, ClipboardList, FileText, X,
   Dumbbell, Trophy, Shield, Flame, ChevronDown, ChevronUp,
   Check, Clock, Circle, Copy, Link2, Sparkles, History,
-  ArrowUp, ArrowDown, Minus, BarChart2, Zap,
+  ArrowUp, ArrowDown, Minus, BarChart2, Zap, RotateCcw,
 } from "lucide-react";
 import { AppShell } from "@/components/app/AppShell";
 import { Button } from "@/components/ui/button";
@@ -25,11 +25,12 @@ import {
   mockOpponentHistory, mockAISuggestions,
   teamColor, statusMeta,
   TENDENCY_CAT_LABEL, SEVERITY_COLOR, TASK_TYPE_LABEL,
-  SCOUT_PLAY_CAT_LABEL,
+  SCOUT_PLAY_CAT_LABEL, SCOUT_TEAM_ROLES,
+  generatePracticeEmphasis, PRACTICE_BLOCK_FOCUS_LABEL,
   type ScoutReport, type ScoutTendency, type ScoutKeyPlayer,
   type MatchupNote, type ScoutAssignment, type Severity,
   type TendencyCategory, type ThreatLevel, type ScoutPlayCategory,
-  type AITendencySuggestion,
+  type AITendencySuggestion, type GeneratedPracticeBlock,
 } from "@/lib/mock/scouting";
 
 // ── Tab definition ─────────────────────────────────────────────────────────
@@ -1712,121 +1713,317 @@ function HistoryTab({ opponentId }: { opponentId: string }) {
 
 // ── Practice Tab ───────────────────────────────────────────────────────────
 
+function PracticeBlockCard({
+  block,
+  onAddToPlan,
+  added,
+}: {
+  block: GeneratedPracticeBlock;
+  onAddToPlan: (id: string) => void;
+  added: boolean;
+}) {
+  const intensityColor: Record<string, string> = {
+    high:   "oklch(0.68 0.22 25)",
+    medium: "oklch(0.78 0.16 75)",
+    low:    "oklch(0.65 0.15 230)",
+  };
+  const color = intensityColor[block.intensity] ?? "oklch(0.65 0.18 290)";
+
+  return (
+    <div
+      className="rounded-xl border bg-card p-4 space-y-2 transition-all"
+      style={{
+        borderColor: added ? "oklch(0.75 0.12 140 / 0.35)" : "hsl(var(--border))",
+        background: added ? "oklch(0.75 0.12 140 / 0.04)" : undefined,
+      }}
+    >
+      <div className="flex items-start justify-between gap-3">
+        <div className="flex-1 min-w-0 space-y-1">
+          <div className="flex items-center gap-2 flex-wrap">
+            <span
+              className="text-[10px] font-semibold px-2 py-0.5 rounded-full border"
+              style={{ color, borderColor: `${color} / 0.30`, background: `${color} / 0.08` }}
+            >
+              {PRACTICE_BLOCK_FOCUS_LABEL[block.focus]}
+            </span>
+            <span className="text-[10px] text-muted-foreground">
+              {block.suggestedMinutes} min · {block.intensity} intensity
+            </span>
+            {block.priority === 1 && (
+              <span className="text-[9px] font-semibold px-1.5 py-0.5 rounded bg-red-500/10 text-red-400">
+                PRIORITY
+              </span>
+            )}
+          </div>
+          <p className="text-[13px] font-semibold">{block.title}</p>
+          <p className="text-[11.5px] text-muted-foreground leading-snug">{block.rationale}</p>
+          <div className="rounded-lg bg-muted/40 border border-border/40 px-2.5 py-1.5 mt-1">
+            <p className="text-[11px] text-muted-foreground font-medium">Drill:</p>
+            <p className="text-[11.5px]">{block.drill}</p>
+          </div>
+          <p className="text-[10px] text-muted-foreground">
+            Source: {block.sourceTendencyTitle}
+          </p>
+        </div>
+        <div className="shrink-0">
+          {added ? (
+            <span className="flex items-center gap-1 text-[11px] font-medium" style={{ color: "oklch(0.75 0.12 140)" }}>
+              <CheckCircle2 className="w-3.5 h-3.5" /> Added
+            </span>
+          ) : (
+            <Button
+              size="sm"
+              variant="outline"
+              className="h-7 text-[11px] gap-1 shrink-0"
+              onClick={() => onAddToPlan(block.id)}
+            >
+              <CalendarPlus className="w-3 h-3" /> Add to plan
+            </Button>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
+
 function PracticeTab({
   report, onUpdate,
 }: { report: ScoutReport; onUpdate: (p: Partial<ScoutReport>) => void }) {
   const linked = !!report.linkedPracticePlanId;
+  const [generated, setGenerated] = useState<GeneratedPracticeBlock[]>([]);
+  const [hasGenerated, setHasGenerated] = useState(false);
+  const [addedBlocks, setAddedBlocks] = useState<Set<string>>(new Set());
+  const [generating, setGenerating] = useState(false);
+
+  // Scout-team roles for this report
+  const scoutRoles = SCOUT_TEAM_ROLES.filter((r) => r.scoutReportId === report.id);
+
+  function handleGenerate() {
+    setGenerating(true);
+    // Simulate brief processing
+    setTimeout(() => {
+      const blocks = generatePracticeEmphasis(report);
+      setGenerated(blocks);
+      setHasGenerated(true);
+      setGenerating(false);
+      toast.success(`${blocks.length} practice blocks generated from scout tendencies`);
+    }, 600);
+  }
+
+  function addBlockToPlan(blockId: string) {
+    setAddedBlocks((prev) => new Set(Array.from(prev).concat(blockId)));
+    toast.success("Block added to practice plan.");
+    if (!linked) {
+      onUpdate({ linkedPracticePlanId: "plan_1" });
+    }
+  }
+
+  function addAllToPlan() {
+    setAddedBlocks(new Set(generated.map((b) => b.id)));
+    onUpdate({ linkedPracticePlanId: "plan_1" });
+    toast.success(`All ${generated.length} blocks added to practice plan.`);
+  }
+
+  const totalMinutes = generated.reduce((s, b) => s + b.suggestedMinutes, 0);
 
   return (
-    <div className="space-y-4">
-      <SectionLabel label="Linked practice plan" />
-
-      {linked ? (
-        <div className="rounded-xl border border-[oklch(0.65_0.18_290/0.3)] bg-[oklch(0.65_0.18_290/0.05)] p-5">
-          <div className="flex items-start gap-3">
-            <Dumbbell className="w-5 h-5 text-[oklch(0.65_0.18_290)] shrink-0 mt-0.5" />
-            <div className="flex-1">
-              <div className="font-semibold text-[14px]">Pre-Westbury Practice Plan</div>
-              <div className="text-[12px] text-muted-foreground mt-0.5">
-                May 21 · 90 min · HIGH intensity · 5 drills
+    <div className="space-y-5">
+      {/* Linked practice plan */}
+      <div>
+        <SectionLabel label="Linked practice plan" />
+        {linked ? (
+          <div className="rounded-xl border border-[oklch(0.65_0.18_290/0.3)] bg-[oklch(0.65_0.18_290/0.05)] p-5">
+            <div className="flex items-start gap-3">
+              <Dumbbell className="w-5 h-5 text-[oklch(0.65_0.18_290)] shrink-0 mt-0.5" />
+              <div className="flex-1">
+                <div className="font-semibold text-[14px]">Pre-Westbury Practice Plan</div>
+                <div className="text-[12px] text-muted-foreground mt-0.5">
+                  May 21 · 90 min · HIGH intensity · {addedBlocks.size > 0 ? `${addedBlocks.size + 5} blocks` : "5 blocks"}
+                </div>
+                <div className="flex flex-wrap gap-1.5 mt-2">
+                  {["PnR Defense", "Ice Coverage", "Corner 3 Defense", "Post Physicality", "Film Review"].map((tag) => (
+                    <span
+                      key={tag}
+                      className="text-[10px] bg-muted/70 rounded px-2 py-0.5 text-muted-foreground border border-border/50"
+                    >
+                      {tag}
+                    </span>
+                  ))}
+                </div>
               </div>
-              <div className="flex flex-wrap gap-1.5 mt-2">
-                {["PnR Defense", "Ice Coverage", "Corner 3 Defense", "Post Physicality", "Film Review"].map((tag) => (
-                  <span
-                    key={tag}
-                    className="text-[10px] bg-muted/70 rounded px-2 py-0.5 text-muted-foreground border border-border/50"
-                  >
-                    {tag}
-                  </span>
-                ))}
+              <div className="flex gap-1.5 shrink-0">
+                <Link href="/app/coach/practice-plans">
+                  <a>
+                    <Button size="sm" variant="outline" className="h-7 text-[11px] gap-1">
+                      <BookOpen className="w-3 h-3" /> Open plan
+                    </Button>
+                  </a>
+                </Link>
+                <Button
+                  size="sm" variant="ghost" className="h-7 text-[11px] text-muted-foreground"
+                  onClick={() => {
+                    onUpdate({ linkedPracticePlanId: undefined });
+                    toast.success("Practice plan unlinked");
+                  }}
+                >
+                  Unlink
+                </Button>
               </div>
             </div>
-            <div className="flex gap-1.5 shrink-0">
+          </div>
+        ) : (
+          <div className="rounded-xl border border-dashed border-border bg-muted/20 py-8 flex flex-col items-center gap-3 text-center px-6">
+            <Dumbbell className="w-7 h-7 text-muted-foreground/30" />
+            <div>
+              <p className="text-[13px] font-medium">No practice plan linked</p>
+              <p className="text-[12px] text-muted-foreground mt-0.5">
+                Generate practice emphasis below — blocks will be added automatically when you link a plan.
+              </p>
+            </div>
+            <div className="flex gap-2">
+              <Button
+                variant="outline" className="gap-1.5"
+                onClick={() => { onUpdate({ linkedPracticePlanId: "plan_1" }); toast.success("Practice plan linked"); }}
+              >
+                <CalendarPlus className="w-3.5 h-3.5" /> Link existing
+              </Button>
               <Link href="/app/coach/practice-plans">
                 <a>
-                  <Button size="sm" variant="outline" className="h-7 text-[11px] gap-1">
-                    <BookOpen className="w-3 h-3" /> Open
+                  <Button className="gap-1.5">
+                    <Plus className="w-3.5 h-3.5" /> Create game-prep plan
                   </Button>
                 </a>
               </Link>
-              <Button
-                size="sm" variant="ghost" className="h-7 text-[11px] text-muted-foreground"
-                onClick={() => {
-                  onUpdate({ linkedPracticePlanId: undefined });
-                  toast.success("Practice plan unlinked");
-                }}
-              >
-                Unlink
-              </Button>
             </div>
           </div>
-        </div>
-      ) : (
-        <div className="rounded-xl border border-dashed border-border bg-muted/20 py-10 flex flex-col items-center gap-3 text-center px-6">
-          <Dumbbell className="w-7 h-7 text-muted-foreground/30" />
-          <div>
-            <p className="text-[13px] font-medium">No practice plan linked</p>
-            <p className="text-[12px] text-muted-foreground mt-0.5">
-              Link a practice plan to ensure your scout insights drive tomorrow's prep.
-            </p>
-          </div>
-          <div className="flex gap-2">
-            <Button
-              variant="outline" className="gap-1.5"
-              onClick={() => {
-                onUpdate({ linkedPracticePlanId: "plan_1" });
-                toast.success("Practice plan linked");
-              }}
-            >
-              <CalendarPlus className="w-3.5 h-3.5" /> Link existing
-            </Button>
-            <Link href="/app/coach/practice-plans">
-              <a>
-                <Button className="gap-1.5">
-                  <Plus className="w-3.5 h-3.5" /> Create game-prep plan
-                </Button>
-              </a>
-            </Link>
+        )}
+      </div>
+
+      {/* Scout-team roles */}
+      {scoutRoles.length > 0 && (
+        <div>
+          <SectionLabel label="Scout team roles" count={scoutRoles.length} />
+          <div className="space-y-2">
+            {scoutRoles.map((role) => (
+              <div
+                key={role.id}
+                className="rounded-xl border border-[oklch(0.68_0.22_25/0.25)] bg-[oklch(0.68_0.22_25/0.04)] p-4 space-y-2"
+              >
+                <div className="flex items-start gap-3">
+                  <Users className="w-4 h-4 text-[oklch(0.68_0.22_25)] shrink-0 mt-0.5" />
+                  <div className="flex-1 space-y-1">
+                    <div className="flex items-center gap-2 flex-wrap">
+                      <span className="text-[13px] font-semibold">{role.playerName}</span>
+                      <span className="text-[11px] text-muted-foreground">runs as</span>
+                      <span className="text-[13px] font-semibold text-[oklch(0.68_0.22_25)]">
+                        #{role.simOpponentJersey} {role.simOpponentPlayer}
+                      </span>
+                      <span
+                        className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-muted"
+                      >
+                        {role.simOpponentPosition}
+                      </span>
+                    </div>
+                    <p className="text-[12px] text-muted-foreground">{role.practiceDate}</p>
+                    {role.notes && (
+                      <p className="text-[11.5px] text-muted-foreground italic">{role.notes}</p>
+                    )}
+                    <div className="space-y-1 mt-1">
+                      {role.tendenciesToSimulate.map((t, i) => (
+                        <div key={i} className="flex items-start gap-1.5 text-[11.5px]">
+                          <span className="text-muted-foreground mt-0.5">·</span>
+                          <span>{t}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            ))}
           </div>
         </div>
       )}
 
-      <div className="rounded-xl border border-border bg-card p-5">
-        <SectionLabel label="Suggested practice focus" />
-        <p className="text-[12px] text-muted-foreground mb-3">
-          Based on your scouted tendencies — recommended drill categories for your game-prep practice.
-        </p>
-        <div className="space-y-2">
-          {[
-            {
-              label: "Ice ball-screen coverage reps",
-              reason: "They run heavy PnR — your bigs must master the drop and midrange closeout",
-            },
-            {
-              label: "Corner 3 transition sprint-back",
-              reason: "They give up corner threes — your guards need to be in the right spot",
-            },
-            {
-              label: "Post entry and physicality",
-              reason: "You have a size advantage — establish it early in a post feed drill",
-            },
-            {
-              label: "Offensive rebounding box-out read",
-              reason: "Their guards don't box out — send your guards to the glass",
-            },
-          ].map((s, i) => (
-            <div
-              key={i}
-              className="flex items-start gap-2.5 rounded-lg bg-muted/30 border border-border/50 px-3 py-2.5"
-            >
-              <Dumbbell className="w-3.5 h-3.5 text-primary shrink-0 mt-0.5" />
-              <div>
-                <div className="text-[12.5px] font-medium">{s.label}</div>
-                <div className="text-[11px] text-muted-foreground mt-0.5">{s.reason}</div>
-              </div>
+      {/* Generate practice emphasis */}
+      <div>
+        <div className="flex items-center justify-between mb-3">
+          <SectionLabel label="Practice emphasis" />
+          {hasGenerated && generated.length > 0 && (
+            <div className="flex items-center gap-2">
+              <span className="text-[11px] text-muted-foreground">
+                {totalMinutes} min · {generated.length} blocks
+              </span>
+              <Button
+                size="sm" variant="outline" className="h-7 text-[11px] gap-1"
+                onClick={addAllToPlan}
+              >
+                <CalendarPlus className="w-3 h-3" /> Add all to plan
+              </Button>
             </div>
-          ))}
+          )}
         </div>
+
+        {!hasGenerated ? (
+          <div
+            className="rounded-xl border border-dashed p-6 flex flex-col items-center gap-3 text-center"
+            style={{ borderColor: "oklch(0.65 0.18 290 / 0.30)" }}
+          >
+            <Sparkles className="w-7 h-7 text-[oklch(0.65_0.18_290)] opacity-60" />
+            <div>
+              <p className="text-[13px] font-semibold">Generate from scout tendencies</p>
+              <p className="text-[12px] text-muted-foreground mt-0.5 max-w-sm mx-auto">
+                Analyzes your scouted tendencies and creates drill recommendations for your game-prep practice — with rationale for each block.
+              </p>
+            </div>
+            {report.offenseTendencies.length + report.defenseTendencies.length === 0 ? (
+              <p className="text-[11.5px] text-muted-foreground">
+                Add tendencies in the Tendencies tab first.
+              </p>
+            ) : (
+              <Button
+                onClick={handleGenerate}
+                disabled={generating}
+                className="gap-1.5 mt-1"
+              >
+                <Sparkles className="w-3.5 h-3.5" />
+                {generating ? "Generating…" : `Generate practice emphasis (${report.offenseTendencies.length + report.defenseTendencies.length} tendencies)`}
+              </Button>
+            )}
+          </div>
+        ) : generated.length === 0 ? (
+          <div className="rounded-xl border border-dashed border-border bg-muted/20 py-8 flex flex-col items-center gap-2 text-center">
+            <p className="text-[13px] text-muted-foreground">No blocks generated — add more tendencies and try again.</p>
+            <Button size="sm" variant="outline" onClick={() => setHasGenerated(false)}>
+              Re-generate
+            </Button>
+          </div>
+        ) : (
+          <div className="space-y-3">
+            {generated.map((block) => (
+              <PracticeBlockCard
+                key={block.id}
+                block={block}
+                onAddToPlan={addBlockToPlan}
+                added={addedBlocks.has(block.id)}
+              />
+            ))}
+            <div className="flex items-center justify-between pt-1">
+              <Button
+                size="sm" variant="ghost" className="h-7 text-[11px] gap-1 text-muted-foreground"
+                onClick={() => { setHasGenerated(false); setGenerated([]); setAddedBlocks(new Set()); }}
+              >
+                <RotateCcw className="w-3 h-3" /> Re-generate
+              </Button>
+              <Link href="/app/coach/practice-plans">
+                <a>
+                  <Button size="sm" variant="outline" className="h-7 text-[11px] gap-1">
+                    <BookOpen className="w-3 h-3" /> Open practice plan builder
+                  </Button>
+                </a>
+              </Link>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );
