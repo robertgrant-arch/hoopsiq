@@ -108,6 +108,7 @@ const CertificationPage          = React.lazy(() => import("@/pages/app/coach/Ce
 const PlayerDevelopmentView  = React.lazy(() => import("@/pages/app/player/PlayerDevelopmentView"));
 const PlayerWearablesPage    = React.lazy(() => import("@/pages/app/player/PlayerWearablesPage"));
 const AssessmentHistoryPage  = React.lazy(() => import("@/pages/app/player/AssessmentHistoryPage"));
+const PlayerAssessmentIDPPage = React.lazy(() => import("@/pages/app/player/PlayerAssessmentIDPPage"));
 const DevelopmentTimelinePage = React.lazy(() => import("@/pages/app/player/DevelopmentTimelinePage"));
 const PlayerCheckinPage      = React.lazy(() => import("@/pages/app/player/PlayerCheckinPage"));
 const PlayerWodPage          = React.lazy(() => import("@/pages/app/player/PlayerWodPage"));
@@ -331,7 +332,7 @@ function Router() {
         <Route path="/app/player/checkin" component={PlayerCheckinPage} />
         <Route path="/app/player/check-in" component={PlayerCheckinPage} />
         <Route path="/app/player/wod" component={PlayerWodPage} />
-        <Route path="/app/player/assessments" component={AssessmentHistoryPage} />
+        <Route path="/app/player/assessments" component={PlayerAssessmentIDPPage} />
         <Route path="/app/player/timeline" component={DevelopmentTimelinePage} />
         <Route path="/app/player/absence" component={PlayerAbsencePage} />
         <Route path="/app/player/recruiting" component={PlayerRecruitingDashboard} />
