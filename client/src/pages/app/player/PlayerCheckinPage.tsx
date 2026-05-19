@@ -39,6 +39,7 @@ import {
 } from "@/features/readiness/checkin";
 import { useAuth } from "@/lib/auth";
 import { toast } from "sonner";
+import { useSubmitCheckin } from "@/features/workout-log";
 
 // ─── Constants ────────────────────────────────────────────────────────────────
 
@@ -740,6 +741,20 @@ export default function PlayerCheckinPage(): React.ReactElement {
   const playerName = user?.name ?? "Player";
   const [submitted, setSubmitted] = useState(todayCheckinDone);
   const todayEntry = myReadinessHistory[0];
+  const { mutate: submitCheckin } = useSubmitCheckin();
+
+  function handleCheckinSubmit(data: {
+    soreness: 1|2|3|4|5;
+    sleep: 1|2|3|4|5;
+    energy: 1|2|3|4|5;
+    stress: 1|2|3|4|5;
+    note?: string;
+    [key: string]: unknown;
+  }) {
+    // Fire real API — POST /api/readiness — graceful fallback on error
+    submitCheckin({ soreness: data.soreness, sleep: data.sleep, energy: data.energy, stress: data.stress, note: data.note });
+    setSubmitted(true);
+  }
 
   return (
     <AppShell>
@@ -750,7 +765,7 @@ export default function PlayerCheckinPage(): React.ReactElement {
         ) : (
           <CheckinForm
             playerName={playerName}
-            onSubmit={() => setSubmitted(true)}
+            onSubmit={handleCheckinSubmit}
           />
         )}
 

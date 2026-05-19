@@ -258,6 +258,7 @@ const CoachViewTransparencyPage = React.lazy(() => import("@/pages/app/player/Co
 const SkillVelocityPage        = React.lazy(() => import("@/pages/app/player/SkillVelocityPage"));
 const PlayerGrowthStoryPage    = React.lazy(() => import("@/pages/app/player/PlayerGrowthStoryPage"));
 const PlayerMilestonePage      = React.lazy(() => import("@/pages/app/player/PlayerMilestonePage"));
+const PlayerProgressPage       = React.lazy(() => import("@/pages/app/player/PlayerProgressPage"));
 const RecruiterViewActivityPage = React.lazy(() => import("@/pages/app/parent/RecruiterViewActivityPage"));
 const ParentWeeklyPulsePage    = React.lazy(() => import("@/pages/app/parent/ParentWeeklyPulsePage"));
 const PlayerOnboardingPage     = React.lazy(() => import("@/pages/app/player/PlayerOnboardingPage"));
@@ -545,6 +546,7 @@ function Router() {
         <Route path="/app/player/skill-velocity"       component={SkillVelocityPage} />
         <Route path="/app/player/growth-story"         component={PlayerGrowthStoryPage} />
         <Route path="/app/player/milestones"           component={PlayerMilestonePage} />
+        <Route path="/app/player/progress"             component={PlayerProgressPage} />
         <Route path="/app/parent/recruiter-activity"   component={RecruiterViewActivityPage} />
         <Route path="/app/parent/weekly-pulse"         component={ParentWeeklyPulsePage} />
         <Route path="/app/player/onboarding"           component={PlayerOnboardingPage} />
