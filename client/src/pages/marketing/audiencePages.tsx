@@ -115,6 +115,50 @@ export function PlayersPage() {
         </div>
       </section>
 
+      {/* WHAT ELITE DEVELOPMENT ACTUALLY LOOKS LIKE */}
+      <section className="max-w-[1400px] mx-auto px-5 lg:px-8 mt-24">
+        <div className="relative rounded-xl border border-border overflow-hidden">
+          <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_left,oklch(0.78_0.18_75_/_0.08),transparent_60%)]" />
+          <div className="relative grid lg:grid-cols-2 gap-0">
+            <div className="p-10 lg:p-14 border-b lg:border-b-0 lg:border-r border-border">
+              <div className="text-[11px] uppercase tracking-[0.12em] text-primary font-mono mb-5">
+                What Elite Development Actually Looks Like
+              </div>
+              <h2 className="display text-2xl lg:text-3xl leading-tight mb-6">
+                The difference isn't talent.<br />It's whether anyone closed the loop.
+              </h2>
+              <p className="text-[14.5px] text-muted-foreground leading-relaxed mb-6">
+                Earl Watson spent 13 years in the NBA watching what separated
+                players who developed from players who plateaued. The answer was
+                rarely talent. It was whether their coaches had a system to turn
+                observations into assigned work — and assigned work into
+                measurable evidence of growth.
+              </p>
+              <p className="text-[14.5px] text-muted-foreground leading-relaxed">
+                Your IDP, your skill scores, your film feedback — that's the
+                system. Built for players who want to know exactly where they
+                stand and exactly what to do about it.
+              </p>
+            </div>
+            <div className="p-10 lg:p-14 flex flex-col justify-center gap-7">
+              {[
+                { label: "You know what to work on.", sub: "Your top focus areas are set by your coach from real assessment scores — not a guess, not a conversation you forgot." },
+                { label: "You know why.", sub: "Every drill assignment is linked to a film observation. You can see the clip, read the note, and understand the correction." },
+                { label: "You can prove you improved.", sub: "Skill scores are dated. Your coach reassesses. The delta is visible to you, your coach, and recruiting programs." },
+              ].map((item) => (
+                <div key={item.label} className="flex gap-4">
+                  <div className="w-1.5 rounded-full bg-primary/40 shrink-0 mt-1" style={{ minHeight: "1.25rem" }} />
+                  <div>
+                    <div className="display text-[16px] mb-1">{item.label}</div>
+                    <p className="text-[13px] text-muted-foreground leading-relaxed">{item.sub}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* 50% callout */}
       <section className="max-w-[1400px] mx-auto px-5 lg:px-8 mt-16" id="team-discount">
         <div className="rounded-xl border border-primary/30 bg-primary/5 p-10 flex flex-col lg:flex-row items-start lg:items-center justify-between gap-8">
@@ -221,6 +265,85 @@ export function CoachesPage() {
           ))}
         </div>
       </section>
+
+      {/* THE DEVELOPMENT STANDARD — Earl Watson methodology */}
+      <section className="max-w-[1400px] mx-auto px-5 lg:px-8 mt-24">
+        <div className="grid lg:grid-cols-2 gap-14 items-start">
+          <div>
+            <div className="text-[11px] uppercase tracking-[0.12em] text-primary font-mono mb-5">
+              The Development Standard · Earl Watson, HoopsOS Partner
+            </div>
+            <h2 className="display text-3xl lg:text-[2.2rem] leading-tight mb-6">
+              Observation is the beginning.<br />Not the end.
+            </h2>
+            <p className="text-[15px] text-muted-foreground leading-relaxed mb-6">
+              Earl Watson's conviction — forged across 13 NBA seasons as a
+              player and years on the bench as a coach — is that most coaching
+              work never closes the loop. A coach sees something on film. They
+              say something in practice. The player hears it. Nothing is
+              written down. Nothing is tracked. Nothing is re-assessed.
+            </p>
+            <p className="text-[15px] text-muted-foreground leading-relaxed mb-8">
+              HoopsOS is built to make that impossible. Every observation you
+              make creates a record. Every coaching action generates an
+              assignment. Every assignment connects to a focus area. Every
+              focus area has a score that moves — or doesn't — and you'll know
+              which.
+            </p>
+            <blockquote className="border-l-2 border-primary pl-6">
+              <p className="display text-[19px] leading-snug text-foreground mb-3">
+                "Every coaching observation should close a loop. Not just
+                'I saw it' — but 'I noted it, I taught it, the player worked
+                on it, and we can prove it changed.'"
+              </p>
+              <cite className="text-[12px] text-muted-foreground not-italic font-mono uppercase tracking-[0.1em]">
+                Earl Watson · HoopsOS Partner
+              </cite>
+            </blockquote>
+          </div>
+          <div className="flex flex-col gap-5 pt-2">
+            <div className="text-[11px] uppercase tracking-[0.12em] text-muted-foreground font-mono mb-1">
+              The loop, step by step
+            </div>
+            {[
+              { step: "01", label: "You see it on film.", detail: "Annotate the clip. Flag the moment. Tag the player and the category." },
+              { step: "02", label: "You create a coaching action.", detail: "Prescribe a drill, assign the clip, or link it directly to an IDP focus area." },
+              { step: "03", label: "The player receives it.", detail: "The assignment surfaces in their WOD. Film context travels with it — they know why." },
+              { step: "04", label: "The player executes.", detail: "Drill completions are logged. Film responses are submitted. Progress is recorded." },
+              { step: "05", label: "You re-assess.", detail: "Skill scores update. The development record grows. You close the loop." },
+            ].map((item) => (
+              <div key={item.step} className="flex gap-5 items-start">
+                <div className="font-mono text-[11px] text-primary w-8 shrink-0 pt-[3px]">{item.step}</div>
+                <div>
+                  <div className="text-[14px] font-semibold mb-1">{item.label}</div>
+                  <p className="text-[13px] text-muted-foreground leading-relaxed">{item.detail}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* WHAT GREAT COACHES KNOW */}
+      <section className="max-w-[1400px] mx-auto px-5 lg:px-8 mt-24 mb-8">
+        <div className="rounded-xl border border-border bg-card p-10 lg:p-14">
+          <div className="text-[11px] uppercase tracking-[0.12em] text-primary font-mono mb-6">
+            What the best player-development coaches have in common
+          </div>
+          <div className="grid md:grid-cols-3 gap-8">
+            {[
+              { title: "They teach the why.", body: "The drill prescription includes the reason. A player who understands why they're working on something executes with intention. HoopsOS carries your reasoning from film annotation through to the assignment." },
+              { title: "They hold themselves accountable.", body: "Good coaches track their own coaching — not just player output. How many observations became actions this month? How many actions were followed up? HoopsOS makes that visible." },
+              { title: "They build individual plans.", body: "The best programs have an IDP for every player — not just the stars. HoopsOS makes program-wide individual development feasible for coaching staffs of any size." },
+            ].map((item) => (
+              <div key={item.title}>
+                <div className="display text-[19px] leading-tight mb-3">{item.title}</div>
+                <p className="text-[13.5px] text-muted-foreground leading-relaxed">{item.body}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
     </AudienceShell>
   );
 }
@@ -239,7 +362,55 @@ export function TeamsPage() {
       secondaryHref="/pricing"
       accent="teal"
     >
+      {/* Program development standard */}
       <section className="max-w-[1400px] mx-auto px-5 lg:px-8 mt-16">
+        <div className="grid lg:grid-cols-3 gap-6 mb-12">
+          <div className="lg:col-span-2">
+            <div className="text-[11px] uppercase tracking-[0.12em] text-primary font-mono mb-4">
+              The program-level standard
+            </div>
+            <h2 className="display text-3xl lg:text-4xl leading-tight mb-5">
+              The programs that develop players do it systematically — not occasionally.
+            </h2>
+            <p className="text-[15px] text-muted-foreground leading-relaxed mb-4">
+              Earl Watson has seen programs at every level — college, NBA, youth —
+              and the gap between programs that develop players and programs that
+              roster them is structural, not philosophical. It's whether there's
+              a system that runs for every player, not just the ones who get
+              extra attention.
+            </p>
+            <p className="text-[15px] text-muted-foreground leading-relaxed">
+              HoopsOS is that system. Every player gets an IDP. Every coach
+              observation creates a record. Every program has a development
+              standard that applies at scale — not just for the stars.
+            </p>
+          </div>
+          <div className="rounded-xl border border-border bg-card p-7 flex flex-col gap-5">
+            <div className="text-[11px] uppercase tracking-[0.12em] text-muted-foreground font-mono">
+              Program-wide development
+            </div>
+            {[
+              "Every player gets a real IDP",
+              "Film → coaching action → player assignment — automated",
+              "Readiness tracked across every athlete",
+              "Skill assessments dated and stored",
+              "Development records into recruiting",
+            ].map((item) => (
+              <div key={item} className="flex items-start gap-2.5 text-[13px]">
+                <Check className="w-4 h-4 text-primary shrink-0 mt-0.5" />
+                <span>{item}</span>
+              </div>
+            ))}
+            <div className="pt-2 mt-auto border-t border-border">
+              <div className="text-[11px] text-muted-foreground font-mono uppercase tracking-[0.1em]">
+                Earl Watson · HoopsOS Partner
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section className="max-w-[1400px] mx-auto px-5 lg:px-8">
         <div className="rounded-xl border border-border bg-card p-10">
           <h2 className="display text-3xl mb-8">The 50% Rule, visually.</h2>
           <div className="grid md:grid-cols-3 gap-6 text-[13.5px] leading-relaxed">

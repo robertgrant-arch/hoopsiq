@@ -152,7 +152,7 @@ export default function Home() {
             <blockquote className="display text-3xl lg:text-[2.1rem] leading-tight mb-8">
               "The best coaches don't just watch film. They close the loop —
               from what they see, to what the player works on, to what actually
-              changes."
+              changes. That loop is everything."
             </blockquote>
             <div className="flex items-center gap-4 mb-8">
               <div className="w-14 h-14 rounded-full bg-primary/15 border border-primary/30 flex items-center justify-center text-primary font-bold display text-lg shrink-0">
@@ -166,21 +166,23 @@ export default function Home() {
               </div>
             </div>
             <p className="text-[14px] text-muted-foreground leading-relaxed max-w-xl">
-              Earl Watson played 13 seasons in the NBA — from the SuperSonics
-              to OKC to Miami — and spent years studying what actually develops
-              players rather than what makes practice feel productive. The
-              individual development methodology behind HoopsOS was built from
-              that work. Every IDP, every coaching action, every film-to-drill
-              connection in the platform reflects how serious programs actually
-              operate.
+              Earl Watson played 13 seasons in the NBA — at UCLA, with the
+              SuperSonics, the Thunder, the Trail Blazers — and spent years on
+              the bench studying what actually develops players rather than
+              what makes practice feel productive. His conviction: individual
+              development requires a system, not a session. Every observation
+              needs to close a loop. Every player needs a real plan — not a
+              spreadsheet, not a conversation, a structured record that follows
+              them and proves they got better. That conviction is the
+              architecture behind HoopsOS.
             </p>
           </div>
           <div className="grid grid-cols-2 gap-4">
             {[
-              { k: "13", v: "NBA seasons as a player", sub: "SuperSonics · Nuggets · Thunder · Heat" },
-              { k: "Head Coach", v: "Phoenix Suns", sub: "Built for developing young talent" },
-              { k: "Film → IDP", v: "The loop he designed", sub: "Observation to plan to proof" },
-              { k: "Elite ID", v: "Individual development", sub: "Not just coaching operations" },
+              { k: "13", v: "NBA seasons", sub: "SuperSonics · Thunder · Blazers · Heat and more" },
+              { k: "UCLA", v: "Foundation", sub: "Where basketball IQ and player development became his lens" },
+              { k: "Head Coach", v: "Phoenix Suns", sub: "Led a program built on individual development at every roster level" },
+              { k: "The Loop", v: "Film → Plan → Proof", sub: "The coaching methodology behind every HoopsOS workflow" },
             ].map((c) => (
               <div
                 key={c.k}
@@ -192,6 +194,48 @@ export default function Home() {
               </div>
             ))}
           </div>
+        </div>
+      </section>
+
+      {/* DEVELOPMENT PRINCIPLES */}
+      <section className="max-w-[1400px] mx-auto px-5 lg:px-8 mt-32">
+        <div className="text-center mb-16">
+          <div className="text-[11px] uppercase tracking-[0.12em] text-muted-foreground font-mono mb-3">
+            The standard HoopsOS is built to
+          </div>
+          <h2 className="display text-4xl lg:text-5xl">
+            Four things elite programs do.
+          </h2>
+        </div>
+        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-px bg-border border border-border rounded-lg overflow-hidden">
+          {[
+            {
+              n: "01",
+              title: "Teach the why, not just the what.",
+              body: "Players who understand why they're working on something execute with intention. Drill prescriptions in HoopsOS carry the coach's reasoning — not just the reps.",
+            },
+            {
+              n: "02",
+              title: "Every observation creates an obligation.",
+              body: "A coaching note that doesn't connect to a player action is just commentary. Film annotations in HoopsOS generate coaching actions. Actions become assignments. Assignments close.",
+            },
+            {
+              n: "03",
+              title: "Progress needs proof, not opinion.",
+              body: "Coaches feel players improving. Programs need to measure it. Skill scores, milestone completions, and assessment history create a development record that can't be argued with.",
+            },
+            {
+              n: "04",
+              title: "Individual development is a system.",
+              body: "One great practice doesn't develop a player. A system of observation, planning, execution, and re-assessment over a full season does. That's what HoopsOS runs.",
+            },
+          ].map((p) => (
+            <div key={p.n} className="bg-card p-8 lg:p-10">
+              <div className="font-mono text-[11px] text-primary mb-5">{p.n}</div>
+              <h3 className="display text-[19px] leading-tight mb-4">{p.title}</h3>
+              <p className="text-[13.5px] text-muted-foreground leading-relaxed">{p.body}</p>
+            </div>
+          ))}
         </div>
       </section>
 
