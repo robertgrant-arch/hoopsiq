@@ -246,12 +246,13 @@ const COACH_SIDEBAR_SECTIONS: SidebarSection[] = [
     ],
   },
   {
-    title: "RECRUITING",
+    title: "BUILD",
     items: [
-      { href: "/app/coach/recruiting/export",     label: "Export Builder",    icon: <Star className="w-4 h-4" />        },
-      { href: "/app/coach/recruiting/badges",     label: "Badge Awards",      icon: <Award className="w-4 h-4" />       },
-      { href: "/app/coach/recruiting/narratives", label: "Player Narratives", icon: <FileText className="w-4 h-4" />    },
-      { href: "/app/coach/recruiting/synthesis",  label: "Dev Synthesis",     icon: <TrendingUp className="w-4 h-4" />  },
+      { href: "/app/coach/practice-plans", label: "Practice Plans", icon: <CalendarDays className="w-4 h-4" /> },
+      { href: "/app/coach/wods",           label: "Daily WODs",     icon: <Dumbbell className="w-4 h-4" />     },
+      { href: "/app/coach/assignments",    label: "Assignments",    icon: <ClipboardList className="w-4 h-4" />},
+      { href: "/app/coach/drills",         label: "Drill Library",  icon: <BookOpen className="w-4 h-4" />     },
+      { href: "/app/playbook",             label: "Playbook",       icon: <Target className="w-4 h-4" />       },
     ],
   },
   {
@@ -266,14 +267,6 @@ const COACH_SIDEBAR_SECTIONS: SidebarSection[] = [
     ],
   },
   {
-    title: "ANALYTICS",
-    items: [
-      { href: "/app/coach/effectiveness",        label: "My Effectiveness",   icon: <BarChart2 className="w-4 h-4" />    },
-      { href: "/app/coach/development-outcomes", label: "Player Outcomes",    icon: <TrendingUp className="w-4 h-4" />   },
-      { href: "/app/coach/retention-leaders",    label: "Retention Leaders",  icon: <Users className="w-4 h-4" />        },
-    ],
-  },
-  {
     title: "FILM",
     items: [
       { href: "/app/coach/film",         label: "Film Room",    icon: <Film className="w-4 h-4" />       },
@@ -283,13 +276,20 @@ const COACH_SIDEBAR_SECTIONS: SidebarSection[] = [
     ],
   },
   {
-    title: "BUILD",
+    title: "ANALYTICS",
     items: [
-      { href: "/app/coach/practice-plans", label: "Practice Plans", icon: <CalendarDays className="w-4 h-4" /> },
-      { href: "/app/coach/wods",           label: "Daily WODs",     icon: <Dumbbell className="w-4 h-4" />     },
-      { href: "/app/coach/assignments",    label: "Assignments",    icon: <ClipboardList className="w-4 h-4" />},
-      { href: "/app/coach/drills",         label: "Drill Library",  icon: <BookOpen className="w-4 h-4" />     },
-      { href: "/app/playbook",             label: "Playbook",       icon: <Target className="w-4 h-4" />       },
+      { href: "/app/coach/effectiveness",        label: "My Effectiveness",   icon: <BarChart2 className="w-4 h-4" />    },
+      { href: "/app/coach/development-outcomes", label: "Player Outcomes",    icon: <TrendingUp className="w-4 h-4" />   },
+      { href: "/app/coach/retention-leaders",    label: "Retention Leaders",  icon: <Users className="w-4 h-4" />        },
+    ],
+  },
+  {
+    title: "RECRUITING",
+    items: [
+      { href: "/app/coach/recruiting/export",     label: "Export Builder",    icon: <Star className="w-4 h-4" />        },
+      { href: "/app/coach/recruiting/badges",     label: "Badge Awards",      icon: <Award className="w-4 h-4" />       },
+      { href: "/app/coach/recruiting/narratives", label: "Player Narratives", icon: <FileText className="w-4 h-4" />    },
+      { href: "/app/coach/recruiting/synthesis",  label: "Dev Synthesis",     icon: <TrendingUp className="w-4 h-4" />  },
     ],
   },
   {
@@ -321,7 +321,7 @@ const COACH_SIDEBAR_SECTIONS: SidebarSection[] = [
       { href: "/app/coach/career",        label: "Career Record",    icon: <TrendingUp className="w-4 h-4" /> },
       { href: "/app/coach/season-report", label: "Season Report",    icon: <BarChart2 className="w-4 h-4" />  },
     ],
-  },
+  }
 ];
 
 const COACH_OVERFLOW_ITEMS: NavItem[] = [
