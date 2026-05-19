@@ -19,10 +19,35 @@ Documents are ordered — each builds on the previous.
 
 **The wedge**: Film → annotation → coaching action → IDP focus area. Three taps. No other tool does this.
 
-**The category**: Coached Development Platform.
+**The two product pillars**: Coach Intelligence (film, actions, practice, readiness) and Player Development (IDP, assessments, film feedback, skill tracking, progression).
+
+**The development loop**: Assess → Plan (IDP) → Train (WOD + assignments) → Review (film feedback) → Progress (skill scores, timeline).
 
 **The smallest V1**: Readiness check-in + Film annotation + Coaching action + Practice plan + IDP + Parent digest + Billing.
 
 **V1 release gate**: Week 28. After the film loop is wired. Before analytics are attempted.
 
 **Total backlog**: 312 tasks across 13 categories.
+
+## Player Development Domain
+
+Player Development is a first-class product area — equal in weight to the coach-side Coaching Intelligence features.
+
+| Surface | Player Development entry point |
+|---|---|
+| Player mobile tabs 1–5 | Home · **My Plan** · Check-In · Assignments · Skills |
+| Coach sidebar DEVELOP | Quick Assess · Assessments · Observation Quality · Film Corroboration · Benchmarking · IDP Builder |
+| Core player routes | `/app/player/development` (IDP hub) · `/app/player/assessments` · `/app/player/skills` · `/app/player/timeline` |
+| Coach-side routes | `/app/coach/assessments` · `/app/coach/idp/generate` · `/app/coach/benchmarks` · `/app/coach/development-outcomes` |
+
+**The player development loop in routes:**
+```
+/app/player/checkin          → daily readiness signal
+/app/player/development      → IDP hub (My Plan) — focus areas, milestones, drills
+/app/player/assignments      → film clips + drills assigned by coach
+/app/player/skills           → skill tracks (progress over time)
+/app/player/assessments      → scored assessment history
+/app/player/timeline         → chronological development record
+/app/player/skill-velocity   → rate-of-improvement charts
+/app/player/milestones       → achievement milestones
+```
