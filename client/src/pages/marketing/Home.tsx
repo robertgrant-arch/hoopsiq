@@ -27,22 +27,23 @@ export default function Home() {
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-primary/30 bg-primary/10 mb-8">
               <Flame className="w-3.5 h-3.5 text-primary" />
               <span className="text-[11px] uppercase tracking-[0.12em] text-primary font-medium">
-                Now in preview — joining 12,400+ athletes
+                Built with Earl Watson · Elite development infrastructure
               </span>
             </div>
 
             <h1 className="display text-[clamp(3rem,7vw,6rem)] leading-[0.9] tracking-[-0.01em]">
-              THE UNIFIED
+              THE BASKETBALL
               <br />
-              BASKETBALL
+              DEVELOPMENT
               <br />
               <span className="text-primary">OS.</span>
             </h1>
 
             <p className="text-[18px] lg:text-[20px] leading-relaxed text-muted-foreground max-w-2xl mt-8">
-              One platform for players, coaches, and programs. Daily workouts
-              with AI feedback. A coaching command center for teams. A
-              marketplace of elite trainers. The whole sport — one OS.
+              The operating system for elite player development. Coaching
+              observations become individual plans. Film becomes drills. Drills
+              become scored skill data. Every player in your program gets a real
+              IDP — not a spreadsheet.
             </p>
 
             <div className="flex flex-wrap gap-3 mt-10">
@@ -53,17 +54,17 @@ export default function Home() {
               </Link>
               <Link href="/coaches" asChild>
                 <a className="inline-flex items-center gap-2 h-12 px-6 rounded-md border border-border bg-card hover:bg-[oklch(0.17_0.005_260)] text-[13px] font-semibold uppercase tracking-[0.08em] transition">
-                  <Play className="w-4 h-4" /> Explore Coach HQ
+                  <Play className="w-4 h-4" /> See the Development Loop
                 </a>
               </Link>
             </div>
 
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-16 max-w-3xl">
               {[
-                { k: "12,400+", v: "Athletes Training" },
-                { k: "480+", v: "Teams" },
-                { k: "142", v: "Elite Experts" },
-                { k: "50%", v: "Off for Team Athletes" },
+                { k: "12,400+", v: "Players in active development" },
+                { k: "480+",    v: "Programs" },
+                { k: "13 yrs", v: "NBA career — Earl Watson, Partner" },
+                { k: "Film → IDP", v: "The loop that closes" },
               ].map((s) => (
                 <div key={s.v}>
                   <div className="display text-3xl lg:text-4xl text-primary">{s.k}</div>
@@ -81,10 +82,10 @@ export default function Home() {
       <section className="max-w-[1400px] mx-auto px-5 lg:px-8 -mt-8">
         <div className="text-center mb-14">
           <div className="text-[11px] uppercase tracking-[0.12em] text-muted-foreground font-mono mb-3">
-            One platform · four audiences
+            One platform · every role in the program
           </div>
           <h2 className="display text-4xl lg:text-5xl">
-            Built for every seat on the bench.
+            Built for every seat in the gym.
           </h2>
         </div>
         <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-4">
@@ -92,30 +93,30 @@ export default function Home() {
             href="/players"
             icon={<Zap className="w-5 h-5" />}
             eyebrow="Players"
-            title="Your daily blueprint for greatness."
-            body="Adaptive WODs, AI feedback, and skill-track progression."
+            title="Your development plan. In motion."
+            body="Individual focus areas, drill assignments from your coach, and skill scores that prove you're getting better — session after session."
           />
           <AudCard
             href="/coaches"
             icon={<Shield className="w-5 h-5" />}
             eyebrow="Coaches"
-            title="An operating system, not an app."
-            body="Compliance, reviews, playbooks, and messaging — in one."
+            title="Coaching intelligence that develops players."
+            body="Film observations become IDP entries. Coaching actions become practice drills. Every decision leaves a development record."
           />
           <AudCard
             href="/teams"
             icon={<Trophy className="w-5 h-5" />}
-            eyebrow="Teams & Orgs"
-            title="Standardize excellence across your program."
-            body="Seat-based billing. Athletes get 50% off Player Core."
+            eyebrow="Programs"
+            title="Every player in your program gets a real IDP."
+            body="Individual development at scale. Film-to-drill feedback for every player on the roster, not just the ones with time."
             highlight
           />
           <AudCard
             href="/experts"
             icon={<Flame className="w-5 h-5" />}
-            eyebrow="Experts"
-            title="Monetize your basketball mind."
-            body="Async reviews, live classes, courses. You set the price."
+            eyebrow="Expert Coaches"
+            title="Bring elite development knowledge to your program."
+            body="Async film reviews, live sessions, and premium curriculum from coaches who've developed players at the highest level."
           />
         </div>
       </section>
@@ -124,20 +125,73 @@ export default function Home() {
       <section className="max-w-[1400px] mx-auto px-5 lg:px-8 mt-32">
         <div className="grid lg:grid-cols-3 gap-px bg-border rounded-lg overflow-hidden border border-border">
           <Pillar
+            label="Player Development"
+            title="Every player gets a real plan. Every plan has proof of progress."
+            body="Individual development plans built from film observations and assessment scores. Focus areas. Coach-assigned drills. Skill milestones. A development record that follows the player through every season — and into recruiting."
+          />
+          <Pillar
+            label="Coach Intelligence"
+            title="What you see on film becomes what they work on tomorrow."
+            body="Annotate a clip. Create a coaching action. It surfaces in the practice plan and the player's IDP automatically. Readiness tracking, playbook studio, and compliance — every tool connects to the development loop."
+          />
+          <Pillar
             label="AI Feedback"
-            title="Your shot. Your tape. Real critique — every rep."
-            body="Upload a clip. Get frame-by-frame feedback on balance, release, footwork, and decision-making. Coaches review and sign off on every flag."
+            title="Frame-by-frame critique. Coach-verified before the player sees it."
+            body="Upload any clip — phone or camcorder. AI flags balance, release angle, footwork, and decision-making at each timestamp. Coaches review and sign off. Suggested drills route directly to the player's next WOD."
           />
-          <Pillar
-            label="Coach HQ"
-            title="Stop toggling between Excel, GroupMe, Hudl, and Canva."
-            body="Roster compliance, review queues, telestration, practice-plan builder, playbook studio, and parent-in-the-loop messaging. One tab."
-          />
-          <Pillar
-            label="Expert Marketplace"
-            title="Book the people who've been on the floor."
-            body="Brickley, Tasha King, D1 head coaches. Async video reviews, 1:1 consults, and premium courses. Member pricing baked in."
-          />
+        </div>
+      </section>
+
+      {/* EARL WATSON / DEVELOPMENT CREDIBILITY */}
+      <section className="max-w-[1400px] mx-auto px-5 lg:px-8 mt-32">
+        <div className="grid lg:grid-cols-2 gap-14 items-center">
+          <div>
+            <div className="text-[11px] uppercase tracking-[0.12em] text-primary font-mono mb-6">
+              Development Philosophy · HoopsOS Partner
+            </div>
+            <blockquote className="display text-3xl lg:text-[2.1rem] leading-tight mb-8">
+              "The best coaches don't just watch film. They close the loop —
+              from what they see, to what the player works on, to what actually
+              changes."
+            </blockquote>
+            <div className="flex items-center gap-4 mb-8">
+              <div className="w-14 h-14 rounded-full bg-primary/15 border border-primary/30 flex items-center justify-center text-primary font-bold display text-lg shrink-0">
+                EW
+              </div>
+              <div>
+                <div className="font-semibold display text-[18px]">Earl Watson</div>
+                <div className="text-[13px] text-muted-foreground leading-relaxed">
+                  13-year NBA veteran · Head Coach, Phoenix Suns · HoopsOS Partner
+                </div>
+              </div>
+            </div>
+            <p className="text-[14px] text-muted-foreground leading-relaxed max-w-xl">
+              Earl Watson played 13 seasons in the NBA — from the SuperSonics
+              to OKC to Miami — and spent years studying what actually develops
+              players rather than what makes practice feel productive. The
+              individual development methodology behind HoopsOS was built from
+              that work. Every IDP, every coaching action, every film-to-drill
+              connection in the platform reflects how serious programs actually
+              operate.
+            </p>
+          </div>
+          <div className="grid grid-cols-2 gap-4">
+            {[
+              { k: "13", v: "NBA seasons as a player", sub: "SuperSonics · Nuggets · Thunder · Heat" },
+              { k: "Head Coach", v: "Phoenix Suns", sub: "Built for developing young talent" },
+              { k: "Film → IDP", v: "The loop he designed", sub: "Observation to plan to proof" },
+              { k: "Elite ID", v: "Individual development", sub: "Not just coaching operations" },
+            ].map((c) => (
+              <div
+                key={c.k}
+                className="rounded-lg border border-border bg-card p-5"
+              >
+                <div className="display text-2xl text-primary mb-1">{c.k}</div>
+                <div className="text-[13px] font-semibold mb-1">{c.v}</div>
+                <div className="text-[11.5px] text-muted-foreground">{c.sub}</div>
+              </div>
+            ))}
+          </div>
         </div>
       </section>
 
@@ -147,20 +201,21 @@ export default function Home() {
           <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,oklch(0.78_0.18_75/0.25),transparent_55%)]" />
           <div className="relative max-w-3xl">
             <div className="text-[11px] uppercase tracking-[0.12em] text-primary font-mono mb-4">
-              The every-day-matters promise
+              The standard serious programs hold themselves to
             </div>
             <h2 className="display text-4xl lg:text-6xl leading-[0.95]">
-              THE COURT IS EARNED.
+              GREAT PROGRAMS
               <br />
-              <span className="text-primary">EARN IT DAILY.</span>
+              DON'T JUST RUN PRACTICES.
+              <br />
+              <span className="text-primary">THEY DEVELOP PLAYERS.</span>
             </h2>
             <p className="text-[17px] leading-relaxed text-muted-foreground mt-6 max-w-xl">
-              HoopsOS is the compound-interest account for your basketball
-              career. Players who train daily with AI feedback average{" "}
-              <span className="text-foreground font-medium">
-                +23% improvement
-              </span>{" "}
-              on tracked skills in 90 days.
+              HoopsOS turns coaching observations into individual development
+              plans. The film you watch on Monday becomes the drill your player
+              runs on Wednesday. That drill becomes the scored data that proves
+              they got better. That data follows the player into recruiting
+              season.
             </p>
             <Link href="/sign-in" asChild>
               <a className="inline-flex items-center gap-2 h-12 px-6 mt-10 rounded-md bg-primary text-primary-foreground font-semibold text-[13px] uppercase tracking-[0.08em] hover:brightness-110 transition">

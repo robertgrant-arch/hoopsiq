@@ -85,24 +85,24 @@ export function PlayersPage() {
   return (
     <AudienceShell
       eyebrow="For Players"
-      title="YOUR DAILY BLUEPRINT"
-      titleAccent="FOR GREATNESS."
-      lede="A real training plan. Honest AI feedback. Coaches who actually watch your tape. The minutes you put in compound — HoopsOS keeps the ledger."
+      title="YOUR DEVELOPMENT PLAN."
+      titleAccent="IN MOTION."
+      lede="Your coach sees the film. They write the plan. You execute the drills. You both watch the skill scores move. HoopsOS is where individual development actually happens — not just gets scheduled."
       primaryCta="Open Player Demo"
       primaryHref="/sign-in"
-      secondaryCta="See How AI Feedback Works"
-      secondaryHref="#ai-feedback"
+      secondaryCta="See How the IDP Works"
+      secondaryHref="#idp"
       accent="amber"
     >
       {/* The Stack */}
       <section className="max-w-[1400px] mx-auto px-5 lg:px-8 mt-16">
-        <h2 className="display text-3xl lg:text-4xl mb-10">The stack in one app.</h2>
+        <h2 className="display text-3xl lg:text-4xl mb-10">Your development stack — all in one place.</h2>
         <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-4">
           {[
-            { icon: <Zap />, title: "Daily WOD", body: "Adaptive to your level. Takes 20–40 min. Never the same week twice." },
-            { icon: <Flame />, title: "AI Feedback", body: "Upload shooting, handles, footwork — get timestamped critiques in under 2 minutes." },
-            { icon: <Shield />, title: "Skill Tracks", body: "Shooting, handles, defense, footwork, IQ — level up visibly over time." },
-            { icon: <Trophy />, title: "XP & Streaks", body: "Earn XP per rep. Streaks unlock badges. Retire your jersey at Level 50." },
+            { icon: <Zap />, title: "My IDP", body: "Individual development plan with real focus areas. Built by your coach from film and assessments. Updated every time you make progress." },
+            { icon: <Flame />, title: "Film Feedback", body: "Your coach annotates your clips. Their notes, the linked drill, and the IDP connection — all visible to you." },
+            { icon: <Shield />, title: "Skill Scores", body: "Assessed by your coach across shooting, finishing, ball handling, defense, and footwork. Your trajectory is visible and dated." },
+            { icon: <Trophy />, title: "Drill Assignments", body: "Coach-prescribed drills delivered to your daily WOD. When you complete them, the feedback loop closes." },
           ].map((c) => (
             <div key={c.title} className="rounded-lg border border-border bg-card p-6">
               <div className="w-10 h-10 rounded-md bg-primary/10 text-primary flex items-center justify-center mb-4">
@@ -195,24 +195,24 @@ export function CoachesPage() {
   return (
     <AudienceShell
       eyebrow="For Coaches"
-      title="THE COMMAND CENTER"
-      titleAccent="FOR ELITE PROGRAMS."
-      lede="Stop living in seven apps. Roster compliance, review queues, telestration, practice plans, playbook studio, film assignments, and parent-in-the-loop messaging — in one tab, built for coaches."
+      title="COACHING THAT"
+      titleAccent="DEVELOPS PLAYERS."
+      lede="Turn what you see on film into what players actually work on. Individual development plans built from your coaching observations. Readiness tracking, practice planning, playbook, and film — one workflow that connects observation to outcome."
       primaryCta="Open Coach Demo"
       primaryHref="/sign-in"
-      secondaryCta="Download Free Playbook (PDF)"
-      secondaryHref="#playbook"
+      secondaryCta="See the Development Loop"
+      secondaryHref="#dev-loop"
       accent="indigo"
     >
-      <section className="max-w-[1400px] mx-auto px-5 lg:px-8 mt-16">
+      <section className="max-w-[1400px] mx-auto px-5 lg:px-8 mt-16" id="dev-loop">
         <div className="grid md:grid-cols-3 gap-4">
           {[
-            { t: "Compliance Grid", b: "See at a glance which athletes completed today's WOD, and who's drifted. Bulk-nudge with one click." },
-            { t: "Review Queue", b: "Athlete uploads with AI-flagged moments. Telestration canvas. Timestamped comments. Parents auto-cc'd for minors." },
-            { t: "Practice Plan Builder", b: "Drag-and-drop blocks with time budgets. Warmup → skill → scrimmage. Saves straight to the calendar." },
-            { t: "Assignment Composer", b: "Push workouts, drills, film, courses, or quizzes to the whole team, a group, or one player." },
-            { t: "Playbook Studio", b: "Draw plays on a real court. Animate read-sequences. Quiz athletes on coverages and counters." },
-            { t: "Compliance Dashboards", b: "Who watched film. Who aced the quiz. Who's late. Export to PDF for program reviews." },
+            { t: "IDP Builder", b: "Create individual development plans from assessment scores and film observations. Focus areas, milestones, and drill links — all in one record that follows the player." },
+            { t: "Coaching Actions", b: "Annotate a film clip. Create a coaching action. It surfaces in the practice plan sidebar and the player's daily assignments automatically." },
+            { t: "Readiness Intelligence", b: "Daily check-ins scored against wellness thresholds. Know who's restricted before you plan the session. Overrides tracked for accountability." },
+            { t: "Practice Plan Builder", b: "Drag-and-drop blocks with time budgets. Open coaching actions surface as suggested drills. Flagged players highlighted before you publish." },
+            { t: "Playbook Studio", b: "Draw plays on a real court. Animate read-sequences. Assign film study and quiz players on coverages and counters." },
+            { t: "Proof of Progress", b: "Skill scores over time. IDP completion rates. Development records that answer the question every parent asks: is my player getting better?" },
           ].map((c) => (
             <div key={c.t} className="rounded-lg border border-border bg-card p-6">
               <div className="display text-[18px] mb-2">{c.t}</div>
