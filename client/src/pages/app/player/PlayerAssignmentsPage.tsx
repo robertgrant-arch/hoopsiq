@@ -11,6 +11,10 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { mockPlayerAssignments, type PlayerAssignment, type AssignmentType, type AssignmentStatus } from "@/features/player/mock";
 
+// ── Film Feedback slice ───────────────────────────────────────────────────────
+import { useFilmRepPlans } from "@/features/film-feedback";
+import { FilmRepPlanCard } from "@/features/film-feedback/components/FilmRepPlanCard";
+
 /* -------------------------------------------------------------------------- */
 /* Helpers                                                                     */
 /* -------------------------------------------------------------------------- */
@@ -257,7 +261,16 @@ type FilterTab = "all" | AssignmentStatus | AssignmentType;
 
 export default function PlayerAssignmentsPage() {
   const [assignments, setAssignments] = useState(mockPlayerAssignments);
-  const [filter, setFilter] = useState<"active" | "done">("active");
+  const [filter, setFilter] = useState<"film" | "active" | "done">("film");
+
+  // Film Feedback slice — from coaching actions
+  const { data: filmRepPlans = [], isLoading: filmLoading } = useFilmRepPlans();
+  const activeFilmPlans = filmRepPlans.filter(
+    (p) => p.status === "assigned" || p.status === "in_progress"
+  );
+  const doneFilmPlans = filmRepPlans.filter(
+    (p) => p.status === "completed" || p.status === "coach_reviewed"
+  );
 
   function handleStart(id: string) {
     setAssignments((prev) =>
@@ -281,67 +294,126 @@ export default function PlayerAssignmentsPage() {
   const active = assignments.filter((a) => a.status === "open" || a.status === "in_progress");
   const done = assignments.filter((a) => a.status === "submitted" || a.status === "graded");
 
-  // Sort: high priority first, then by due date
   const sortedActive = [...active].sort((a, b) => {
     if (a.priority === "high" && b.priority !== "high") return -1;
     if (b.priority === "high" && a.priority !== "high") return 1;
     return a.dueDate.localeCompare(b.dueDate);
   });
 
-  const displayed = filter === "active" ? sortedActive : done;
-
   return (
     <AppShell>
-      <PageHeader
-        eyebrow="Athlete Portal"
-        title="My Assignments"
-        subtitle="Coach-assigned film reviews, drills, quizzes, and tasks."
-      />
+      <div className="px-4 py-6 max-w-2xl mx-auto flex flex-col gap-4 pb-12">
+        <PageHeader
+          eyebrow="Athlete Portal"
+          title="My Assignments"
+          subtitle="Coach-assigned film reviews, drills, and tasks — all in one place."
+        />
 
-      <div className="space-y-5">
-        <SummaryStrip items={assignments} />
-
-        {/* Filter tabs */}
-        <div className="flex gap-2">
-          {(["active", "done"] as const).map((f) => (
-            <button
-              key={f}
-              onClick={() => setFilter(f)}
-              className="px-3 py-1.5 rounded-full text-[12px] font-medium border transition-all flex items-center gap-1.5"
-              style={filter === f
-                ? { background: "oklch(0.72 0.18 290)", borderColor: "oklch(0.72 0.18 290)", color: "white" }
-                : { borderColor: "transparent" }
-              }
-            >
-              {f === "active" ? (
-                <><Circle className="w-3 h-3" /> Active ({active.length})</>
-              ) : (
-                <><CheckCircle2 className="w-3 h-3" /> Done ({done.length})</>
-              )}
-            </button>
-          ))}
+        {/* ── Tab bar ─────────────────────────────────────────────────────── */}
+        <div className="flex gap-1.5">
+          {(["film", "active", "done"] as const).map((f) => {
+            const labels = {
+              film:   `From Film (${activeFilmPlans.length})`,
+              active: `Other (${active.length})`,
+              done:   `Done (${done.length + doneFilmPlans.length})`,
+            };
+            return (
+              <button
+                key={f}
+                onClick={() => setFilter(f)}
+                className="px-3 py-1.5 rounded-full text-[12px] font-medium border transition-all flex items-center gap-1.5"
+                style={
+                  filter === f
+                    ? { background: "oklch(0.72 0.18 290)", borderColor: "oklch(0.72 0.18 290)", color: "white" }
+                    : { borderColor: "transparent" }
+                }
+              >
+                {f === "film" && <Film className="w-3 h-3" />}
+                {f === "active" && <Circle className="w-3 h-3" />}
+                {f === "done" && <CheckCircle2 className="w-3 h-3" />}
+                {labels[f]}
+              </button>
+            );
+          })}
         </div>
 
-        {/* List */}
-        {displayed.length === 0 ? (
-          filter === "active" ? (
-            <EmptyState />
-          ) : (
-            <div className="rounded-xl border border-border bg-card px-6 py-10 flex flex-col items-center text-center gap-2">
-              <CheckCircle2 className="w-8 h-8 text-muted-foreground/30" />
-              <p className="text-[13px] text-muted-foreground">No completed assignments yet.</p>
-            </div>
-          )
-        ) : (
+        {/* ── Film Feedback tab ────────────────────────────────────────────── */}
+        {filter === "film" && (
+          <div className="flex flex-col gap-3">
+            {filmLoading ? (
+              <div className="rounded-2xl border border-border bg-card p-6 animate-pulse h-40" />
+            ) : activeFilmPlans.length === 0 ? (
+              <div className="rounded-2xl border border-dashed border-border px-6 py-10 flex flex-col items-center text-center gap-2">
+                <Film className="w-7 h-7 text-muted-foreground/30" />
+                <p className="font-semibold text-[14px]">No film assignments yet.</p>
+                <p className="text-[12.5px] text-muted-foreground max-w-xs">
+                  When your coach prescribes a drill or assigns a clip from film review, it will appear here with full context.
+                </p>
+              </div>
+            ) : (
+              activeFilmPlans.map((plan) => (
+                <FilmRepPlanCard key={plan.id} plan={plan} />
+              ))
+            )}
+          </div>
+        )}
+
+        {/* ── Other assignments tab ────────────────────────────────────────── */}
+        {filter === "active" && (
           <div className="space-y-3">
-            {displayed.map((a) => (
-              <AssignmentCard
-                key={a.id}
-                assignment={a}
-                onStart={handleStart}
-                onSubmit={handleSubmit}
-              />
-            ))}
+            {sortedActive.length === 0 ? (
+              <EmptyState />
+            ) : (
+              sortedActive.map((a) => (
+                <AssignmentCard
+                  key={a.id}
+                  assignment={a}
+                  onStart={handleStart}
+                  onSubmit={handleSubmit}
+                />
+              ))
+            )}
+          </div>
+        )}
+
+        {/* ── Done tab ─────────────────────────────────────────────────────── */}
+        {filter === "done" && (
+          <div className="flex flex-col gap-3">
+            {/* Completed film assignments */}
+            {doneFilmPlans.length > 0 && (
+              <>
+                <div className="text-[10.5px] font-mono uppercase tracking-[0.12em] text-muted-foreground">
+                  From Film
+                </div>
+                {doneFilmPlans.map((plan) => (
+                  <FilmRepPlanCard key={plan.id} plan={plan} />
+                ))}
+              </>
+            )}
+            {/* Completed generic assignments */}
+            {done.length > 0 && (
+              <>
+                {doneFilmPlans.length > 0 && (
+                  <div className="text-[10.5px] font-mono uppercase tracking-[0.12em] text-muted-foreground mt-2">
+                    Other
+                  </div>
+                )}
+                {done.map((a) => (
+                  <AssignmentCard
+                    key={a.id}
+                    assignment={a}
+                    onStart={handleStart}
+                    onSubmit={handleSubmit}
+                  />
+                ))}
+              </>
+            )}
+            {doneFilmPlans.length === 0 && done.length === 0 && (
+              <div className="rounded-2xl border border-border bg-card px-6 py-10 flex flex-col items-center text-center gap-2">
+                <CheckCircle2 className="w-8 h-8 text-muted-foreground/30" />
+                <p className="text-[13px] text-muted-foreground">No completed assignments yet.</p>
+              </div>
+            )}
           </div>
         )}
       </div>
