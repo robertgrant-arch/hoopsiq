@@ -276,6 +276,19 @@ const COACH_SIDEBAR_SECTIONS: SidebarSection[] = [
     ],
   },
   {
+    title: "EDUCATION",
+    items: [
+      { href: "/app/coach/education",                label: "Education Hub",   icon: <GraduationCap className="w-4 h-4" /> },
+      { href: "/app/coach/education/paths",          label: "Learning Paths",  icon: <BookOpen className="w-4 h-4" />      },
+      { href: "/app/coach/education/mirror",         label: "My Data",         icon: <Activity className="w-4 h-4" />      },
+      { href: "/app/coach/cues",                     label: "Cue Library",     icon: <MessageSquare className="w-4 h-4" /> },
+      { href: "/app/coach/education/journal",        label: "Coaching Journal", icon: <FileText className="w-4 h-4" />     },
+      { href: "/app/coach/education/cohort",           label: "Staff Cohort",      icon: <Users className="w-4 h-4" />         },
+      { href: "/app/coach/education/certifications",   label: "Certifications",    icon: <Award className="w-4 h-4" />         },
+      { href: "/app/coach/education/prescriptions",    label: "My Prescriptions",  icon: <Target className="w-4 h-4" />        },
+    ],
+  },
+  {
     title: "ANALYTICS",
     items: [
       { href: "/app/coach/effectiveness",        label: "My Effectiveness",   icon: <BarChart2 className="w-4 h-4" />    },
@@ -293,6 +306,13 @@ const COACH_SIDEBAR_SECTIONS: SidebarSection[] = [
     ],
   },
   {
+    title: "PROFILE",
+    items: [
+      { href: "/app/coach/career",        label: "Career Record",    icon: <TrendingUp className="w-4 h-4" /> },
+      { href: "/app/coach/season-report", label: "Season Report",    icon: <BarChart2 className="w-4 h-4" />  },
+    ],
+  },
+  {
     title: "MORE",
     items: [
       { href: "/app/coach/bookings",    label: "Bookings",        icon: <Calendar className="w-4 h-4" />     },
@@ -300,26 +320,6 @@ const COACH_SIDEBAR_SECTIONS: SidebarSection[] = [
       { href: "/app/club/analytics/v2", label: "Deep Analytics",  icon: <BarChart2 className="w-4 h-4" />    },
       { href: "/app/billing",           label: "Billing",         icon: <CreditCard className="w-4 h-4" />   },
       { href: "/app/learn",             label: "Coach Education", icon: <GraduationCap className="w-4 h-4" />},
-    ],
-  },
-  {
-    title: "EDUCATION",
-    items: [
-      { href: "/app/coach/education",                label: "Education Hub",   icon: <GraduationCap className="w-4 h-4" /> },
-      { href: "/app/coach/education/paths",          label: "Learning Paths",  icon: <BookOpen className="w-4 h-4" />      },
-      { href: "/app/coach/education/mirror",         label: "My Data",         icon: <Activity className="w-4 h-4" />      },
-      { href: "/app/coach/cues",                     label: "Cue Library",     icon: <MessageSquare className="w-4 h-4" /> },
-      { href: "/app/coach/education/journal",        label: "Coaching Journal", icon: <FileText className="w-4 h-4" />     },
-      { href: "/app/coach/education/cohort",           label: "Staff Cohort",      icon: <Users className="w-4 h-4" />         },
-      { href: "/app/coach/education/certifications",   label: "Certifications",    icon: <Award className="w-4 h-4" />         },
-      { href: "/app/coach/education/prescriptions",    label: "My Prescriptions",  icon: <Target className="w-4 h-4" />        },
-    ],
-  },
-  {
-    title: "PROFILE",
-    items: [
-      { href: "/app/coach/career",        label: "Career Record",    icon: <TrendingUp className="w-4 h-4" /> },
-      { href: "/app/coach/season-report", label: "Season Report",    icon: <BarChart2 className="w-4 h-4" />  },
     ],
   }
 ];
