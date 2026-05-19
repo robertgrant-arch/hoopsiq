@@ -22,6 +22,8 @@ import {
   Dumbbell,
   AlertTriangle,
   XCircle,
+  Zap,
+  BookOpen,
 } from "lucide-react";
 import {
   todayCheckinDone,
@@ -39,6 +41,7 @@ import {
   notifications,
   type VideoUpload,
 } from "@/lib/mock/data";
+import { MOCK_HUB_DATA } from "@/features/player-development/mock";
 
 /* ----------------------------- Shared primitives ----------------------------- */
 
@@ -253,35 +256,81 @@ export function PlayerDashboard() {
         {/* ── Today's status strip ────────────────────────────────────────── */}
         <DailyStatusStrip />
 
-        {/* Hero stats */}
+        {/* Development context — what matters today */}
         <div className="grid md:grid-cols-4 gap-3 mb-10">
-          <StatCard
-            label="Level"
-            value={user?.level ?? "—"}
-            trend="+240 XP today"
-            accent="primary"
-            icon={<TrendingUp className="w-4 h-4" />}
-          />
+          {/* Top Focus — IDP #1 priority */}
+          <div className="md:col-span-2 rounded-lg border border-primary/30 bg-primary/5 p-5 flex flex-col justify-between">
+            <div className="flex items-center justify-between mb-3">
+              <div className="text-[11px] uppercase tracking-[0.12em] font-mono text-primary">
+                Top Focus Area
+              </div>
+              <span className="text-lg leading-none">{MOCK_HUB_DATA.focusAreas[0]?.emoji ?? "🎯"}</span>
+            </div>
+            <div>
+              <div className="display text-[22px] leading-tight mb-1">
+                {MOCK_HUB_DATA.focusAreas[0]?.subSkill ?? "Not set"}
+              </div>
+              <div className="text-[12px] text-muted-foreground">
+                Score{" "}
+                <span className="text-amber-500 font-bold">
+                  {MOCK_HUB_DATA.focusAreas[0]?.currentScore ?? "—"}
+                </span>
+                {" → "}
+                <span className="text-primary font-bold">
+                  {MOCK_HUB_DATA.focusAreas[0]?.targetScore ?? "—"}
+                </span>
+                {" / 10 · "}
+                {MOCK_HUB_DATA.focusAreas[0]?.todayDrill ?? "No drill today"}
+              </div>
+            </div>
+            <Link href="/app/player/development" asChild>
+              <a className="text-[11.5px] text-primary hover:underline flex items-center gap-1 mt-3">
+                View full plan <ChevronRight className="w-3.5 h-3.5" />
+              </a>
+            </Link>
+          </div>
+
+          {/* Streak */}
           <StatCard
             label="Streak"
             value={<span>{user?.streak ?? 0}<span className="text-base font-normal text-muted-foreground ml-1">days</span></span>}
-            trend="🔥 Protected — keep it alive"
+            trend="🔥 Keep it alive"
             accent="flame"
             icon={<Flame className="w-4 h-4" />}
           />
-          <StatCard
-            label="XP Total"
-            value={user?.xp?.toLocaleString() ?? "0"}
-            trend="Next level at 3,000"
-            icon={<Target className="w-4 h-4" />}
-          />
-          <StatCard
-            label="Today's WOD"
-            value="Ready"
-            trend="28 min · 240 XP"
-            accent="primary"
-            icon={<Play className="w-4 h-4" />}
-          />
+
+          {/* Open coaching actions */}
+          <div
+            className="rounded-lg border p-5 flex flex-col justify-between"
+            style={{
+              borderColor: MOCK_HUB_DATA.coachActions.filter(a => a.status !== "resolved").length > 0
+                ? "oklch(0.78 0.16 75 / 0.35)"
+                : "hsl(var(--border))",
+              background: MOCK_HUB_DATA.coachActions.filter(a => a.status !== "resolved").length > 0
+                ? "oklch(0.78 0.16 75 / 0.07)"
+                : "hsl(var(--card))",
+            }}
+          >
+            <div className="flex items-center justify-between mb-3">
+              <div className="text-[11px] uppercase tracking-[0.12em] font-mono text-muted-foreground">
+                Coach Actions
+              </div>
+              <Zap className="w-4 h-4 text-amber-500" />
+            </div>
+            <div className="display text-3xl leading-none mb-2">
+              {MOCK_HUB_DATA.coachActions.filter(a => a.status !== "resolved").length}
+            </div>
+            <div className="text-[12px] text-muted-foreground">
+              {MOCK_HUB_DATA.coachActions.filter(a => a.status !== "resolved").length > 0
+                ? "open · needs action"
+                : "all caught up"}
+            </div>
+            <Link href="/app/player/assignments" asChild>
+              <a className="text-[11.5px] text-amber-500 hover:underline flex items-center gap-1 mt-3">
+                View assignments <ChevronRight className="w-3.5 h-3.5" />
+              </a>
+            </Link>
+          </div>
         </div>
 
         <div className="grid lg:grid-cols-3 gap-6">
@@ -433,15 +482,41 @@ export function PlayerDashboard() {
               </div>
             </div>
 
-            {/* Recent achievement */}
-            <div className="rounded-xl border border-primary/30 bg-gradient-to-br from-primary/10 to-transparent p-5">
-              <div className="flex items-center gap-2 text-[11px] uppercase tracking-[0.12em] font-mono text-primary mb-2">
-                <Trophy className="w-3.5 h-3.5" /> Achievement Unlocked
+            {/* Recent wins — growth story preview */}
+            <div className="rounded-xl border border-border bg-card p-5">
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="display text-[16px]">Recent Wins</h3>
+                <Link href="/app/player/growth-story" asChild>
+                  <a className="text-[11px] text-muted-foreground hover:text-foreground">
+                    Full story →
+                  </a>
+                </Link>
               </div>
-              <div className="display text-[18px] mb-1">Iron Will</div>
-              <p className="text-[12.5px] text-muted-foreground">
-                14-day workout streak. The grind is the payoff.
-              </p>
+              <div className="space-y-3.5">
+                {[
+                  { skill: "Ball Handling", delta: "+1.4", period: "last 30 days", color: "oklch(0.72 0.18 290)" },
+                  { skill: "Defensive IQ",  delta: "+1.4", period: "last 30 days", color: "oklch(0.75 0.12 140)" },
+                  { skill: "Finishing",     delta: "+0.6", period: "last 14 days", color: "oklch(0.78 0.16 75)"  },
+                ].map((w) => (
+                  <div key={w.skill} className="flex items-center justify-between">
+                    <div>
+                      <div className="text-[13px] font-medium">{w.skill}</div>
+                      <div className="text-[10.5px] text-muted-foreground">{w.period}</div>
+                    </div>
+                    <span
+                      className="text-[14px] font-bold font-mono tabular-nums"
+                      style={{ color: w.color }}
+                    >
+                      {w.delta}
+                    </span>
+                  </div>
+                ))}
+              </div>
+              <div className="mt-4 pt-3 border-t border-border">
+                <div className="text-[11px] text-muted-foreground">
+                  Coach-verified · based on assessment data
+                </div>
+              </div>
             </div>
           </div>
         </div>

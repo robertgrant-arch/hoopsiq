@@ -1,5 +1,8 @@
 import { AppShell, PageHeader } from "@/components/app/AppShell";
 import { toast } from "sonner";
+import { useGrowthStory } from "@/features/growth-story";
+import { WinCard } from "@/features/growth-story/components/WinCard";
+import { WeeklyMomentumCard } from "@/features/growth-story/components/WeeklyMomentumCard";
 
 const PRIMARY = "oklch(0.72 0.18 290)";
 const SUCCESS = "oklch(0.75 0.12 140)";
@@ -239,15 +242,55 @@ function DeltaBar({ delta, maxDelta = 1.6, color }: { delta: number; maxDelta?: 
 // ─── Main Page ────────────────────────────────────────────────────────────────
 
 export default function PlayerGrowthStoryPage() {
+  const { data: story } = useGrowthStory();
+
   return (
     <AppShell>
       <PageHeader
         eyebrow="Your Story"
-        title="Marcus's Last 90 Days"
-        subtitle="January 15 – April 15, 2026"
+        title={`${story?.playerFirstName ?? "Marcus"}'s Growth Story`}
+        subtitle={story ? `${story.periodLabel} · ${Math.round(story.drillCompletionRate * 100)}% drill compliance · ${story.checkInStreak}-day streak` : "Last 30 Days"}
       />
 
-      <div style={{ maxWidth: 920, margin: "0 auto", padding: "0 0 80px", display: "flex", flexDirection: "column", gap: 64 }}>
+      <div style={{ maxWidth: 920, margin: "0 auto", padding: "0 0 80px", display: "flex", flexDirection: "column", gap: 48 }}>
+
+        {/* ── Slice: Recent Wins (development-first, real data) ── */}
+        {story && story.wins.length > 0 && (
+          <section>
+            <div style={{ marginBottom: 20 }}>
+              <h2 style={{ fontSize: 22, fontWeight: 900, color: "var(--text-primary)", margin: "0 0 6px" }}>
+                Verified Improvements
+              </h2>
+              <p style={{ fontSize: 14, color: "var(--text-muted)", margin: 0 }}>
+                Coach-confirmed skill gains from the last {story.periodLabel.toLowerCase()}.
+              </p>
+            </div>
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))", gap: 16 }}>
+              {story.wins.map((win) => (
+                <WinCard key={win.id} win={win} />
+              ))}
+            </div>
+          </section>
+        )}
+
+        {/* ── Slice: Weekly Momentum ── */}
+        {story && story.weeklyMomentum.length > 0 && (
+          <section>
+            <div style={{ marginBottom: 20 }}>
+              <h2 style={{ fontSize: 22, fontWeight: 900, color: "var(--text-primary)", margin: "0 0 6px" }}>
+                Weekly Momentum
+              </h2>
+              <p style={{ fontSize: 14, color: "var(--text-muted)", margin: 0 }}>
+                Consistency builds results. Here's what the last few weeks looked like.
+              </p>
+            </div>
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(240px, 1fr))", gap: 12 }}>
+              {story.weeklyMomentum.map((week, i) => (
+                <WeeklyMomentumCard key={week.weekLabel} week={week} isCurrentWeek={i === 0} />
+              ))}
+            </div>
+          </section>
+        )}
 
         {/* ── Section 1: Journey Header ── */}
         <section>

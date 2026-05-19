@@ -1,6 +1,8 @@
 import { useState } from "react";
 import { AppShell, PageHeader } from "@/components/app/AppShell";
 import { toast } from "sonner";
+import { useAssessmentData } from "@/features/assessments";
+import { CATEGORY_META } from "@/features/assessments/types";
 
 const PRIMARY = "oklch(0.72 0.18 290)";
 const SUCCESS = "oklch(0.75 0.12 140)";
@@ -335,12 +337,22 @@ function GrowthChart() {
 
 export default function CoachViewTransparencyPage() {
   const [message, setMessage] = useState("");
+  const { data: assessmentData } = useAssessmentData();
 
   function handleSend() {
     if (!message.trim()) return;
     toast.success("Message sent to Coach Grant");
     setMessage("");
   }
+
+  // Build a quick lookup from real assessment scores
+  const realScores = assessmentData
+    ? Object.fromEntries(
+        assessmentData.scores
+          .filter((s) => s.coachScore !== null)
+          .map((s) => [s.category, s.coachScore as number])
+      )
+    : {};
 
   return (
     <AppShell>
@@ -349,6 +361,39 @@ export default function CoachViewTransparencyPage() {
         title="What Coach Sees"
         subtitle="Radical transparency — exactly what Coach Grant is tracking, what each score means, and what your plan looks like."
       />
+
+      {/* Real score strip from assessments slice */}
+      {assessmentData && (
+        <div className="max-w-3xl mx-auto px-4 mb-6">
+          <div className="rounded-2xl border border-border bg-card p-5">
+            <div className="text-[10.5px] font-mono uppercase tracking-[0.12em] text-muted-foreground mb-4">
+              Your Current Coach Scores · All 8 Skills
+            </div>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+              {assessmentData.scores.map((score) => {
+                const meta = CATEGORY_META[score.category];
+                const val  = score.coachScore;
+                const color =
+                  val === null ? MUTED :
+                  val >= 8    ? SUCCESS :
+                  val >= 6    ? PRIMARY :
+                  val >= 4    ? WARNING : DANGER;
+                return (
+                  <div key={score.category} className="flex items-center gap-2.5 p-3 rounded-xl border border-border">
+                    <span className="text-[18px] leading-none shrink-0">{meta.emoji}</span>
+                    <div>
+                      <div className="text-[11px] text-muted-foreground leading-tight">{meta.label}</div>
+                      <div className="text-[15px] font-bold leading-tight tabular-nums" style={{ color }}>
+                        {val !== null ? `${val}/10` : "—"}
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        </div>
+      )}
 
       <div style={{ maxWidth: 860, margin: "0 auto", padding: "0 0 72px", display: "flex", flexDirection: "column", gap: 56 }}>
 
