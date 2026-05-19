@@ -4,9 +4,9 @@
  * duration. Visibility-stable (drops accumulated time on tab wake).
  */
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { resolvePlay } from "../../../../src/playbook/resolver";
-import { tween } from "../../../../src/playbook/animate";
-import type { Play, PlayerId, Vec2 } from "../../../../src/playbook/types";
+import { resolvePlay } from "@playbook/resolver";
+import { tween } from "@playbook/animate";
+import type { Play, PlayerId, Vec2 } from "@playbook/types";
 
 const PHASE_DURATION_MS = 1400;
 const MAX_FRAME_DELTA_MS = 64;

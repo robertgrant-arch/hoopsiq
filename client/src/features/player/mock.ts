@@ -130,8 +130,8 @@ export const mockPlayerAssignments: PlayerAssignment[] = [
 /* Team schedule (shared with parent portal)                                    */
 /* -------------------------------------------------------------------------- */
 
-export { mockScheduleEvents } from "./parent";
-export type { ScheduleEvent } from "./parent";
+export { mockScheduleEvents } from "../parent/mock";
+export type { ScheduleEvent } from "../parent/mock";
 
 /* -------------------------------------------------------------------------- */
 /* Availability / RSVP                                                          */

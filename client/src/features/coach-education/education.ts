@@ -698,3 +698,83 @@ export const LEVEL_LABELS: Record<CourseLevel, string> = {
   intermediate: "Intermediate",
   advanced: "Advanced",
 };
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Learning-path model (used by CoachEducationHub)
+// Separate from the Course/Lesson model above — paths are progress-tracked
+// aggregations of modules; courses are self-contained curriculum units.
+// ─────────────────────────────────────────────────────────────────────────────
+
+export type EducationModule = {
+  id: string;
+  title: string;
+  status: "complete" | "in_progress" | "not_started" | "locked";
+  path: string;           // which LearningPath this module belongs to
+  durationMinutes?: number;
+  category?: string;
+};
+
+export type LearningPath = {
+  id: string;
+  level: number;
+  title: string;
+  modules: EducationModule[];
+};
+
+export const learningPaths: LearningPath[] = [
+  {
+    id: "foundation",
+    level: 1,
+    title: "Foundation",
+    modules: [
+      { id: "edu-m1", title: "Understanding the Film-to-Action Loop",   status: "complete",    path: "foundation", durationMinutes: 18 },
+      { id: "edu-m2", title: "Building Your First IDP",                 status: "complete",    path: "foundation", durationMinutes: 22 },
+      { id: "edu-m3", title: "Reading Readiness Signals",               status: "in_progress", path: "foundation", durationMinutes: 15 },
+      { id: "edu-m4", title: "Practice Plan Architecture",              status: "not_started", path: "foundation", durationMinutes: 20 },
+      { id: "edu-m5", title: "Coaching Actions That Stick",             status: "locked",      path: "foundation", durationMinutes: 17 },
+      { id: "edu-m6", title: "Parent Communication Systems",            status: "locked",      path: "foundation", durationMinutes: 14 },
+    ],
+  },
+  {
+    id: "development",
+    level: 2,
+    title: "Player Development",
+    modules: [
+      { id: "edu-m7", title: "Skill Assessment Methodology",            status: "locked",      path: "development", durationMinutes: 25 },
+      { id: "edu-m8", title: "Benchmark Analysis and IDP Generation",   status: "locked",      path: "development", durationMinutes: 28 },
+      { id: "edu-m9", title: "Development Resume and Recruiting",       status: "locked",      path: "development", durationMinutes: 20 },
+    ],
+  },
+];
+
+/** Flat list of every module across all paths — used for cross-path queries. */
+export const allModules: EducationModule[] = learningPaths.flatMap((p) => p.modules);
+
+/** Returns the first module that is in_progress, then the first not_started. */
+export function getNextModule(): EducationModule | undefined {
+  return (
+    allModules.find((m) => m.status === "in_progress") ??
+    allModules.find((m) => m.status === "not_started")
+  );
+}
+
+/** Weekly reflection prompts — last item is shown as today's prompt. */
+export const journalPrompts: string[] = [
+  "What's one habit your best player has that you wish all your players shared?",
+  "Describe the last time you changed your coaching approach based on what you saw on film.",
+  "Which player on your roster has the most unrealized potential right now, and what's your specific plan for them this week?",
+  "What would your program look like in three years if every player hit their IDP milestones consistently?",
+  "What does 'player development' actually mean in your program today — and is that the answer you want it to be?",
+];
+
+/** A single content section within a module — typed by teaching intent. */
+export type ModuleSection = {
+  type: "frame" | "concept" | "examine" | "apply" | "reflect";
+  title?: string;
+  body: string;
+};
+
+/** Look up a single module by id across all paths. */
+export function getModule(id: string): EducationModule | undefined {
+  return allModules.find((m) => m.id === id);
+}

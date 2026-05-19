@@ -4,7 +4,7 @@
  * Authored directly in the action-based model from `src/playbook/types.ts`.
  * Coordinates are court-normalized (0..1, origin = baseline-left).
  */
-import type { Play } from "../../../../src/playbook/types";
+import type { Play } from "@playbook/types";
 
 const id = (n: number) => `seed_v3_${n}`;
 

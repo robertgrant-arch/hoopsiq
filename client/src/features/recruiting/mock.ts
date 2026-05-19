@@ -8,7 +8,7 @@
  *          PublicRecruitingProfile (public-facing)
  */
 
-import type { SkillCategory } from "./assessments";
+import type { SkillCategory } from "../benchmarks/mock";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 

@@ -55,8 +55,7 @@ export type {
 } from "./types";
 
 // ── Catalog helpers (needed by pricing/seat UI) ────────────────────────────
-export { findProduct, findPrice, formatCents, pricesForProduct } from "./catalog";
-export type { Product, Price } from "./types";
+export { findProduct, findPrice, formatCents, pricesForProduct, products, prices } from "./catalog";
 
 // ── Entitlements (needed by admin tool) ───────────────────────────────────
 export { grantEntitlement, revokeEntitlement, expireGrandfathers, grantCoachLink, revokeCoachLink } from "./entitlements";

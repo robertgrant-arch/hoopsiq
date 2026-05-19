@@ -30,9 +30,9 @@ import type {
   PlayerId,
   ResolvedFrame,
   Vec2,
-} from "../../../../src/playbook/types";
-import { resolvePlay } from "../../../../src/playbook/resolver";
-import { snapToCourt } from "../../../../src/playbook/snap";
+} from "@playbook/types";
+import { resolvePlay } from "@playbook/resolver";
+import { snapToCourt } from "@playbook/snap";
 import type { ToolMode } from "./store";
 
 const STAGE_W = 800;

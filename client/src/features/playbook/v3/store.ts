@@ -13,8 +13,8 @@ import type {
   Phase,
   Play,
   PlayerId,
-} from "../../../../src/playbook/types";
-import { resolvePlay } from "../../../../src/playbook/resolver";
+} from "@playbook/types";
+import { resolvePlay } from "@playbook/resolver";
 import { v3Seeds } from "./seeds";
 
 const PERSIST_KEY = "hoopsos-playbook-v3";
