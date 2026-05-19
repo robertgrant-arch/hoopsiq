@@ -757,3 +757,148 @@ const _RECOMMENDATION_MAP: Record<string, DevelopmentRecommendation> = {
 export function getRecommendation(playerId: string): DevelopmentRecommendation | null {
   return _RECOMMENDATION_MAP[playerId] ?? null;
 }
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Player Development Hub mock data
+// Added for the Hub / Today experience slice.
+// Used by usePlayerHub() until GET /api/player/hub is implemented.
+// ─────────────────────────────────────────────────────────────────────────────
+import type { PlayerHubData } from "./types";
+
+export const MOCK_HUB_DATA: PlayerHubData = {
+  player: {
+    firstName: "Marcus",
+    name:      "Marcus Davis",
+    position:  "PG",
+    team:      "Barnegat Varsity",
+    gradYear:  2026,
+  },
+
+  season: {
+    week:            8,
+    totalWeeks:      20,
+    seasonLabel:     "2024–25",
+    streakDays:      14,
+    completedDrills: 47,
+    totalDrills:     60,
+  },
+
+  checkedInToday: false,
+
+  focusAreas: [
+    {
+      id:            "fa1",
+      priority:      1,
+      category:      "Finishing",
+      subSkill:      "Contact Layup",
+      emoji:         "🏀",
+      currentScore:  5,
+      targetScore:   7,
+      progressPct:   28,
+      deadline:      "Jun 15",
+      status:        "active",
+      coachNote:     "You're making progress — keep attacking the rim in live reps. The Mikan drill is showing up.",
+      coachInitials: "CW",
+      todayDrill:    "Mikan drill · 5 sets of 10",
+      dueToday:      true,
+      linkedClip:    { title: "Missed and-1 vs. Toms River @ 1:23", href: "/app/film/clips/c2" },
+    },
+    {
+      id:            "fa2",
+      priority:      2,
+      category:      "Shooting",
+      subSkill:      "Off Dribble",
+      emoji:         "🎯",
+      currentScore:  6,
+      targetScore:   8,
+      progressPct:   15,
+      deadline:      "Jul 1",
+      status:        "active",
+      coachNote:     "Your DHO reads are getting sharper. Focus on the 1-2 step rhythm this week.",
+      coachInitials: "CW",
+      todayDrill:    "Pull-up off DHO · 50 reps each side",
+      dueToday:      false,
+      linkedClip:    null,
+    },
+    {
+      id:            "fa3",
+      priority:      3,
+      category:      "Ball Handling",
+      subSkill:      "Weak Hand",
+      emoji:         "✋",
+      currentScore:  6,
+      targetScore:   8,
+      progressPct:   40,
+      deadline:      "Jul 15",
+      status:        "active",
+      coachNote:     "Great improvement. Left-only 3-cone milestone hit — nice work.",
+      coachInitials: "CW",
+      todayDrill:    "Left-only dribble warmup · 10 minutes",
+      dueToday:      true,
+      linkedClip:    null,
+    },
+  ],
+
+  recentFeedback: [
+    {
+      id:            "f1",
+      date:          "May 5",
+      coachName:     "Coach Williams",
+      coachInitials: "CW",
+      type:          "monthly_review",
+      text:          "Strong session. Your weak hand has made real strides since March. Contact finishing is lagging but the Mikan drill work is showing up in practice.",
+      linkedClip:    null,
+    },
+    {
+      id:            "f2",
+      date:          "May 2",
+      coachName:     "Coach Williams",
+      coachInitials: "CW",
+      type:          "film_note",
+      text:          "Watch your footwork on this play. You're fading instead of attacking — going left and drawing the foul is the right read here.",
+      linkedClip:    { title: "Missed and-1 vs. Toms River @ 0:47", href: "/app/film/clips/c2" },
+    },
+    {
+      id:            "f3",
+      date:          "Apr 28",
+      coachName:     "Coach Williams",
+      coachInitials: "CW",
+      type:          "film_note",
+      text:          "Great DHO read here. This is exactly the instinct we're building. Bank this feeling.",
+      linkedClip:    { title: "DHO read vs. LBI @ 2:13", href: "/app/film/clips/c4" },
+    },
+  ],
+
+  coachActions: [
+    {
+      id:            "ca1",
+      actionType:    "request_reupload",
+      status:        "open",
+      issueCategory: "Finishing",
+      coachNote:     "Record this contact layup again — drive through the contact instead of fading. Submit within 48h.",
+      sessionTitle:  "Barnegat vs. Toms River",
+      timestamp:     "1:23",
+      createdAt:     "2026-05-12",
+    },
+    {
+      id:            "ca2",
+      actionType:    "assign_clip",
+      status:        "open",
+      issueCategory: "Release",
+      coachNote:     "Watch your thumb flick in this clip. Index finger last off the ball — this is the habit we need to break.",
+      sessionTitle:  "Pull-Up Jumper Review",
+      timestamp:     "0:37",
+      createdAt:     "2026-05-10",
+    },
+    {
+      id:            "ca3",
+      actionType:    "recommend_drill",
+      status:        "in_progress",
+      issueCategory: "Balance",
+      coachNote:     "Balance Board Jumpers — 3 sets of 8, chest stacked over your base. Daily.",
+      sessionTitle:  "Pull-Up Jumper Review",
+      timestamp:     "0:14",
+      createdAt:     "2026-05-08",
+    },
+  ],
+};
