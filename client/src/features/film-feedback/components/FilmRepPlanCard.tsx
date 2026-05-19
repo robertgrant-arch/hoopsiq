@@ -161,8 +161,8 @@ function StatusTrack({
 
 // Label shown on the advance button
 const STATUS_META: Partial<Record<RepPlanStatus, React.ReactNode>> = {
-  in_progress:   "Start working on this",
-  completed:     "Mark as done",
+  in_progress: "I'm working on this",
+  completed:   "Mark as done ✓",
 };
 
 // ── Main card ─────────────────────────────────────────────────────────────────
@@ -232,7 +232,7 @@ export function FilmRepPlanCard({ plan }: FilmRepPlanCardProps) {
         <div className="rounded-xl border-l-2 pl-3 py-2"
           style={{ borderColor: PRIMARY, backgroundColor: `${PRIMARY}08` }}>
           <div className="text-[10px] font-mono uppercase tracking-[0.1em] mb-1" style={{ color: PRIMARY }}>
-            Coach's note
+            From your coach
           </div>
           <p className="text-[12.5px] leading-relaxed text-muted-foreground italic">
             "{plan.coachNote}"

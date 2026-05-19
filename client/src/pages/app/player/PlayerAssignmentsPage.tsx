@@ -306,7 +306,7 @@ export default function PlayerAssignmentsPage() {
         <PageHeader
           eyebrow="Athlete Portal"
           title="My Assignments"
-          subtitle="Coach-assigned film reviews, drills, and tasks — all in one place."
+          subtitle="From your coach — film to watch, drills to run, work to do."
         />
 
         {/* ── Tab bar ─────────────────────────────────────────────────────── */}
@@ -314,8 +314,8 @@ export default function PlayerAssignmentsPage() {
           {(["film", "active", "done"] as const).map((f) => {
             const labels = {
               film:   `From Film (${activeFilmPlans.length})`,
-              active: `Other (${active.length})`,
-              done:   `Done (${done.length + doneFilmPlans.length})`,
+              active: `Drills & Tasks (${active.length})`,
+              done:   `Completed (${done.length + doneFilmPlans.length})`,
             };
             return (
               <button
@@ -343,12 +343,14 @@ export default function PlayerAssignmentsPage() {
             {filmLoading ? (
               <div className="rounded-2xl border border-border bg-card p-6 animate-pulse h-40" />
             ) : activeFilmPlans.length === 0 ? (
-              <div className="rounded-2xl border border-dashed border-border px-6 py-10 flex flex-col items-center text-center gap-2">
-                <Film className="w-7 h-7 text-muted-foreground/30" />
-                <p className="font-semibold text-[14px]">No film assignments yet.</p>
-                <p className="text-[12.5px] text-muted-foreground max-w-xs">
-                  When your coach prescribes a drill or assigns a clip from film review, it will appear here with full context.
-                </p>
+              <div className="rounded-2xl border border-dashed border-border px-6 py-10 flex flex-col items-center text-center gap-3">
+                <span className="text-3xl">🎬</span>
+                <div>
+                  <p className="font-semibold text-[14px]">No film assignments yet.</p>
+                  <p className="text-[12.5px] text-muted-foreground mt-1 max-w-xs mx-auto">
+                    When your coach pulls a clip and prescribes a drill from film review, it'll appear here — connected to the exact moment they saw.
+                  </p>
+                </div>
               </div>
             ) : (
               activeFilmPlans.map((plan) => (

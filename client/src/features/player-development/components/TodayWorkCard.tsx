@@ -40,14 +40,14 @@ export function TodayWorkCard({ focusAreas, onDrillDone }: TodayWorkCardProps) {
   // Empty state — no drills due today
   if (todayItems.length === 0) {
     return (
-      <div className="rounded-2xl border border-border bg-card p-5">
-        <div className="flex items-center gap-2 mb-3">
-          <Flame className="w-4 h-4 text-muted-foreground" />
-          <span className="text-[13px] font-semibold">Today's Work</span>
+      <div className="rounded-2xl border border-border bg-card p-5 flex items-center gap-3">
+        <span className="text-2xl leading-none">😤</span>
+        <div>
+          <div className="text-[14px] font-semibold">Rest day.</div>
+          <div className="text-[12.5px] text-muted-foreground mt-0.5">
+            Recovery is part of the plan. Come back strong tomorrow.
+          </div>
         </div>
-        <p className="text-[13px] text-muted-foreground">
-          No drills due today. Rest day or check with your coach.
-        </p>
       </div>
     );
   }
@@ -56,10 +56,10 @@ export function TodayWorkCard({ focusAreas, onDrillDone }: TodayWorkCardProps) {
   if (allDone) {
     return (
       <div className="rounded-2xl border border-emerald-500/30 bg-emerald-500/8 p-6 text-center">
-        <div className="text-3xl mb-2">🎉</div>
-        <p className="font-semibold text-[15px]">All done for today.</p>
-        <p className="text-[13px] text-muted-foreground mt-1">
-          You put in the work. Rest up and come back tomorrow.
+        <div className="text-3xl mb-2">🏆</div>
+        <p className="font-bold text-[17px]">Work done. Day won.</p>
+        <p className="text-[13px] text-muted-foreground mt-1.5 max-w-[220px] mx-auto">
+          Every rep today compounds into who you become. See you tomorrow.
         </p>
       </div>
     );
@@ -71,10 +71,10 @@ export function TodayWorkCard({ focusAreas, onDrillDone }: TodayWorkCardProps) {
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-2">
           <Flame className="w-4 h-4 text-amber-500" />
-          <span className="text-[13px] font-semibold">Today's Work</span>
+          <span className="text-[14px] font-bold">Today's drills</span>
         </div>
-        <span className="text-[11px] font-mono text-muted-foreground uppercase tracking-[0.1em]">
-          {done.size}/{todayItems.length} done
+        <span className="text-[12px] font-semibold text-amber-600">
+          {done.size} / {todayItems.length} done
         </span>
       </div>
 
@@ -86,7 +86,7 @@ export function TodayWorkCard({ focusAreas, onDrillDone }: TodayWorkCardProps) {
             <div
               key={area.id}
               className={[
-                "flex items-center gap-3 rounded-xl px-3.5 py-3 border transition-all",
+                "flex items-center gap-3 rounded-xl px-3.5 py-3.5 border transition-all",
                 isDone
                   ? "border-emerald-500/30 bg-emerald-500/5 opacity-60"
                   : "border-border bg-background",
@@ -99,7 +99,7 @@ export function TodayWorkCard({ focusAreas, onDrillDone }: TodayWorkCardProps) {
                 </div>
                 <div
                   className={[
-                    "text-[13px] font-medium leading-snug",
+                    "text-[13.5px] font-medium leading-snug",
                     isDone ? "line-through text-muted-foreground" : "",
                   ].join(" ")}
                 >
@@ -109,7 +109,7 @@ export function TodayWorkCard({ focusAreas, onDrillDone }: TodayWorkCardProps) {
               <Button
                 size="sm"
                 variant={isDone ? "outline" : "default"}
-                className="shrink-0 h-8 px-3 text-[12px]"
+                className="shrink-0 h-11 px-4 text-[13px] font-semibold"
                 onClick={() => handleDone(area.id)}
                 disabled={isDone}
                 aria-label={isDone ? `${area.subSkill} done` : `Mark ${area.subSkill} done`}
@@ -117,7 +117,7 @@ export function TodayWorkCard({ focusAreas, onDrillDone }: TodayWorkCardProps) {
                 {isDone ? (
                   <CheckCircle2 className="w-4 h-4 text-emerald-500" />
                 ) : (
-                  "Done"
+                  "Done ✓"
                 )}
               </Button>
             </div>

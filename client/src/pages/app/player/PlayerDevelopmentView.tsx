@@ -18,7 +18,7 @@
  * Slice: features/player-development/
  */
 
-import { Flame, Target, ChevronRight } from "lucide-react";
+import { Flame, ChevronRight } from "lucide-react";
 import { Link } from "wouter";
 import { AppShell } from "@/components/app/AppShell";
 import { SkeletonCard } from "@/components/ui/SkeletonCard";
@@ -146,17 +146,18 @@ export function PlayerDevelopmentView() {
         {/* ── Header ───────────────────────────────────────────────────── */}
         <div className="flex items-start justify-between mb-1">
           <div>
-            <div className="text-[10.5px] font-mono uppercase tracking-[0.12em] text-muted-foreground mb-0.5">
-              {data.player.position} · {data.player.team} · Class of {data.player.gradYear}
+            <div className="text-[12px] text-muted-foreground mb-0.5">
+              Good work, {data.player.firstName}.
             </div>
-            <h1 className="text-[22px] font-bold leading-tight">
-              {data.player.firstName}'s Plan
+            <h1 className="text-[24px] font-black leading-tight">
+              Your Plan
             </h1>
           </div>
-          <Badge className="gap-1.5 bg-amber-500/15 text-amber-500 border-amber-500/30 text-[11.5px] px-2.5 py-1 shrink-0 mt-0.5">
-            <Flame className="w-3.5 h-3.5" />
-            {data.season.streakDays}-day streak
-          </Badge>
+          <div className="flex items-center gap-1.5 bg-amber-500/10 border border-amber-500/25 rounded-full px-3 py-1.5 shrink-0 mt-0.5">
+            <Flame className="w-3.5 h-3.5 text-amber-500" />
+            <span className="text-[12px] font-bold text-amber-500">{data.season.streakDays}</span>
+            <span className="text-[11px] text-amber-500/80">days</span>
+          </div>
         </div>
 
         {/* ── Check-in prompt (conditional) ────────────────────────────── */}
@@ -182,22 +183,20 @@ export function PlayerDevelopmentView() {
         <ProgressSnapshot season={data.season} />
 
         {/* ── Footer nav links ──────────────────────────────────────────── */}
-        <nav className="flex flex-col gap-0.5 pt-2" aria-label="Development navigation">
+        <nav className="rounded-2xl border border-border bg-card divide-y divide-border/60" aria-label="Development navigation">
           {[
-            { href: "/app/player/assessments",    label: "Skill Assessments",     icon: <Target       className="w-3.5 h-3.5" /> },
-            { href: "/app/player/timeline",       label: "Development Timeline",   icon: <ChevronRight className="w-3.5 h-3.5" /> },
-            { href: "/app/player/skill-velocity", label: "Skill Velocity Charts",  icon: <ChevronRight className="w-3.5 h-3.5" /> },
-            { href: "/app/player/milestones",     label: "Milestones",             icon: <ChevronRight className="w-3.5 h-3.5" /> },
-          ].map(({ href, label, icon }) => (
+            { href: "/app/player/assessments",    label: "Skill Scores & Gaps",       sub: "See how your coach rates each skill" },
+            { href: "/app/player/progress",       label: "Streak & Consistency",      sub: "Your habit calendar and compliance" },
+            { href: "/app/player/skill-velocity", label: "How Fast You're Improving", sub: "Rate of growth across all skills" },
+            { href: "/app/player/milestones",     label: "Milestones Hit",            sub: "Achievements in your development" },
+          ].map(({ href, label, sub }) => (
             <Link key={href} href={href} asChild>
-              <a className="flex items-center justify-between px-3 py-2.5 rounded-xl hover:bg-muted/50 transition-colors text-[13px] text-muted-foreground hover:text-foreground group">
-                <span className="flex items-center gap-2.5">
-                  <span className="text-muted-foreground/50 group-hover:text-muted-foreground transition-colors">
-                    {icon}
-                  </span>
-                  {label}
-                </span>
-                <ChevronRight className="w-3.5 h-3.5 text-muted-foreground/40 group-hover:text-muted-foreground transition-colors" />
+              <a className="flex items-center justify-between px-4 py-3.5 hover:bg-muted/40 transition-colors group first:rounded-t-2xl last:rounded-b-2xl">
+                <div>
+                  <div className="text-[13.5px] font-semibold group-hover:text-primary transition-colors">{label}</div>
+                  <div className="text-[11.5px] text-muted-foreground mt-0.5">{sub}</div>
+                </div>
+                <ChevronRight className="w-4 h-4 text-muted-foreground/50 group-hover:text-primary shrink-0 transition-colors ml-3" />
               </a>
             </Link>
           ))}

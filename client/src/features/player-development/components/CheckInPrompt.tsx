@@ -6,29 +6,23 @@
  */
 
 import { Link } from "wouter";
-import { Activity, ArrowRight } from "lucide-react";
+import { Zap, ArrowRight } from "lucide-react";
 
 export function CheckInPrompt() {
   return (
-    <div className="rounded-2xl border border-dashed border-primary/30 bg-primary/5 p-4 flex items-center gap-4">
-      <div className="w-9 h-9 rounded-full bg-primary/15 flex items-center justify-center shrink-0">
-        <Activity className="w-4 h-4 text-primary" />
-      </div>
-      <div className="flex-1 min-w-0">
-        <div className="text-[13px] font-semibold mb-0.5">How are you feeling today?</div>
-        <div className="text-[11.5px] text-muted-foreground">
-          Submit your daily check-in so your coach knows your status.
+    <Link href="/app/player/checkin" asChild>
+      <a className="rounded-2xl border border-dashed border-amber-500/40 bg-amber-500/5 p-4 flex items-center gap-3.5 hover:bg-amber-500/8 transition-colors active:scale-[0.99]">
+        <div className="w-10 h-10 rounded-full bg-amber-500/15 flex items-center justify-center shrink-0">
+          <Zap className="w-4.5 h-4.5 text-amber-500" />
         </div>
-      </div>
-      <Link href="/app/player/checkin" asChild>
-        <a
-          className="shrink-0 inline-flex items-center gap-1 h-8 px-3 rounded-lg bg-primary text-primary-foreground text-[12px] font-semibold hover:brightness-110 transition"
-          aria-label="Submit today's check-in"
-        >
-          Check in
-          <ArrowRight className="w-3.5 h-3.5" />
-        </a>
-      </Link>
-    </div>
+        <div className="flex-1 min-w-0">
+          <div className="text-[14px] font-semibold mb-0.5">Start your day right</div>
+          <div className="text-[12px] text-muted-foreground">
+            30-second check-in · helps your coach plan your session
+          </div>
+        </div>
+        <ArrowRight className="w-4 h-4 text-amber-500 shrink-0" />
+      </a>
+    </Link>
   );
 }

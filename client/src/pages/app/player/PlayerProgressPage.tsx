@@ -20,10 +20,9 @@
  */
 
 import { Link } from "wouter";
-import { CheckCircle2, Circle, Dumbbell, Activity, ChevronRight, Flame } from "lucide-react";
-import { AppShell, PageHeader } from "@/components/app/AppShell";
+import { CheckCircle2, Dumbbell, Activity, ChevronRight } from "lucide-react";
+import { AppShell } from "@/components/app/AppShell";
 import { SkeletonCard } from "@/components/ui/SkeletonCard";
-import { Badge } from "@/components/ui/badge";
 
 import {
   useWorkoutHistory,
@@ -66,9 +65,9 @@ function TodayStrip({ history }: { history: any[] }) {
             style={{ color: checkInDone ? SUCCESS : MUTED }}
           />
           <div className="min-w-0">
-            <div className="text-[12px] font-semibold leading-tight">Check-In</div>
-            <div className="text-[10.5px]" style={{ color: checkInDone ? SUCCESS : MUTED }}>
-              {checkInDone ? "Done ✓" : "Not yet"}
+            <div className="text-[12px] font-semibold leading-tight">Daily Check-In</div>
+            <div className="text-[10.5px] mt-0.5" style={{ color: checkInDone ? SUCCESS : MUTED }}>
+              {checkInDone ? "Done ✓" : "Tap to start →"}
             </div>
           </div>
           {!checkInDone && <ChevronRight className="w-3.5 h-3.5 ml-auto shrink-0" style={{ color: MUTED }} />}
@@ -89,8 +88,8 @@ function TodayStrip({ history }: { history: any[] }) {
           />
           <div className="min-w-0">
             <div className="text-[12px] font-semibold leading-tight">Today's WOD</div>
-            <div className="text-[10.5px]" style={{ color: wodDone ? SUCCESS : WARNING }}>
-              {wodDone ? "Done ✓" : "In progress"}
+            <div className="text-[10.5px] mt-0.5" style={{ color: wodDone ? SUCCESS : WARNING }}>
+              {wodDone ? "Done ✓" : "Let's go →"}
             </div>
           </div>
           {!wodDone && <ChevronRight className="w-3.5 h-3.5 ml-auto shrink-0" style={{ color: WARNING }} />}
@@ -157,11 +156,10 @@ export function PlayerProgressPage() {
       <div className="px-4 py-6 max-w-2xl mx-auto flex flex-col gap-4 pb-12">
 
         {/* Header */}
-        <PageHeader
-          eyebrow="Player Development"
-          title="Progress & Habits"
-          subtitle="Your consistency, streak, and everything you've put in."
-        />
+        <div className="mb-1">
+          <div className="text-[12px] text-muted-foreground mb-0.5">Keep showing up.</div>
+          <h1 className="text-[24px] font-black leading-tight">Progress & Habits</h1>
+        </div>
 
         {/* 1. Today's status */}
         <TodayStrip history={history} />
@@ -169,21 +167,15 @@ export function PlayerProgressPage() {
         {/* 2. Streak card */}
         <StreakCard streak={streak} />
 
-        {/* 3. Self-log form */}
-        <div>
-          <div className="text-[10.5px] font-mono uppercase tracking-[0.12em] mb-2" style={{ color: MUTED }}>
-            Extra work today ({todaySelfLogs.length})
-          </div>
-          <SelfLogForm onSubmit={addEntry} />
-        </div>
+        {/* 3. Self-log form — no section label overhead */}
+        <SelfLogForm onSubmit={addEntry} />
 
-        {/* 4. Recent self-logs (if any) */}
+        {/* 4. Recent self-logs — only if any exist, compact */}
         {recentSelfLogs.length > 0 && (
           <div className="rounded-2xl border border-border bg-card">
-            <div className="px-4 pt-4 pb-2">
-              <div className="text-[10.5px] font-mono uppercase tracking-[0.12em]" style={{ color: MUTED }}>
-                Recent extra work ({recentSelfLogs.length})
-              </div>
+            <div className="px-4 pt-3.5 pb-1">
+              <span className="text-[12px] font-semibold">Bonus reps logged</span>
+              <span className="text-[11px] text-muted-foreground ml-2">({recentSelfLogs.length})</span>
             </div>
             {recentSelfLogs.map((entry) => (
               <SelfLogRow key={entry.id} entry={entry} onRemove={removeEntry} />
@@ -193,9 +185,7 @@ export function PlayerProgressPage() {
 
         {/* 5. WOD history */}
         <div>
-          <div className="text-[10.5px] font-mono uppercase tracking-[0.12em] mb-2" style={{ color: MUTED }}>
-            Recent workouts
-          </div>
+          <div className="text-[12px] font-semibold mb-2">Recent workouts</div>
           <HistoryList records={history} limit={7} />
         </div>
 

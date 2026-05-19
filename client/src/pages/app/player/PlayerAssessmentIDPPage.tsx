@@ -55,9 +55,9 @@ const MUTED   = "oklch(0.55 0.02 260)";
 type Tab = "scores" | "gaps" | "plan";
 
 const TABS: { id: Tab; label: string; icon: React.ReactNode }[] = [
-  { id: "scores", label: "Scores",  icon: <ClipboardCheck className="w-3.5 h-3.5" /> },
-  { id: "gaps",   label: "Gaps",    icon: <TrendingUp     className="w-3.5 h-3.5" /> },
-  { id: "plan",   label: "My Plan", icon: <Target         className="w-3.5 h-3.5" /> },
+  { id: "scores", label: "My Scores",      icon: <ClipboardCheck className="w-3.5 h-3.5" /> },
+  { id: "gaps",   label: "Where to Grow",  icon: <TrendingUp     className="w-3.5 h-3.5" /> },
+  { id: "plan",   label: "My Plan",        icon: <Target         className="w-3.5 h-3.5" /> },
 ];
 
 /* -------------------------------------------------------------------------- */
@@ -138,7 +138,9 @@ function ScoresTab() {
 /* Tab: Gaps                                                                    */
 /* -------------------------------------------------------------------------- */
 
-function GapsTab() {
+interface GapsTabProps { onSwitchTab: (tab: Tab) => void; }
+
+function GapsTab({ onSwitchTab }: GapsTabProps) {
   const { data, isLoading } = useAssessmentData();
   const { gaps, topRecommendations } = useAssessmentGaps();
   const { getRating, setRating, getDraftRating, submitSelfAssessment, isPending, isSuccess } =
@@ -209,28 +211,30 @@ function GapsTab() {
           style={{ borderColor: `${WARNING}40`, backgroundColor: `${WARNING}08` }}
         >
           <div className="text-[10.5px] font-mono uppercase tracking-[0.12em] mb-2" style={{ color: WARNING }}>
-            Recommended Focus Areas
+            Work on these first
           </div>
           <div className="flex flex-wrap gap-2">
-            {topRecommendations.map((g) => (
-              <span
-                key={g.category}
-                className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[12px] font-medium border"
-                style={{ borderColor: `${WARNING}50`, backgroundColor: `${WARNING}12`, color: WARNING }}
-              >
-                {`${g.gap > 0 ? "▲" : "●"} ${g.category.replace(/_/g, " ")}: Coach ${g.coachScore} / You ${g.selfScore}`}
-              </span>
-            ))}
+            {topRecommendations.map((g) => {
+              const label = g.category.replace(/_/g, " ");
+              const emoji = { shooting:"🎯",finishing:"🏀",ball_handling:"✋",decision_making:"🧠",footwork:"👟",defensive_habits:"🛡️",physical_readiness:"⚡",discipline:"🔄" }[g.category] ?? "📌";
+              return (
+                <span
+                  key={g.category}
+                  className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[12px] font-medium border capitalize"
+                  style={{ borderColor: `${WARNING}50`, backgroundColor: `${WARNING}12`, color: WARNING }}
+                >
+                  {emoji} {label}
+                </span>
+              );
+            })}
           </div>
-          <Link href="/app/player/assessments" asChild>
-            <a
-              className="inline-flex items-center gap-1 text-[12px] mt-3 font-medium transition-colors"
-              style={{ color: WARNING }}
-              onClick={() => {/* navigate to plan tab */}}
-            >
-              See your IDP <ArrowRight className="w-3.5 h-3.5" />
-            </a>
-          </Link>
+          <button
+            onClick={() => onSwitchTab("plan")}
+            className="inline-flex items-center gap-1 text-[12px] mt-3 font-semibold transition-colors"
+            style={{ color: WARNING }}
+          >
+            See your development plan <ArrowRight className="w-3.5 h-3.5" />
+          </button>
         </div>
       )}
 
@@ -359,15 +363,14 @@ export function PlayerAssessmentIDPPage() {
         {/* Header */}
         <PageHeader
           eyebrow="Development"
-          title="Assessments & Plan"
-          subtitle="See how your coach evaluates your skills, compare your own view, and work through your development plan."
+          title="Know Your Game"
+          subtitle="Your scores, where to grow, and the plan to get there."
         />
 
         {/* Tab bar */}
         <div className="flex rounded-xl border border-border bg-card p-1 gap-1">
           {TABS.map((tab) => {
             const active = activeTab === tab.id;
-            // Show badge hints
             const hint =
               tab.id === "gaps" && !hasSelf ? "Rate yourself" :
               tab.id === "plan" && activePlanCount > 0 ? `${activePlanCount} active` :
@@ -401,7 +404,7 @@ export function PlayerAssessmentIDPPage() {
 
         {/* Tab content */}
         {activeTab === "scores" && <ScoresTab />}
-        {activeTab === "gaps"   && <GapsTab   />}
+        {activeTab === "gaps"   && <GapsTab onSwitchTab={setActiveTab} />}
         {activeTab === "plan"   && <PlanTab   />}
       </div>
     </AppShell>
