@@ -67,7 +67,24 @@ import {
   Star,
   Sparkles,
   Award,
+  GripVertical,
+  Settings2,
 } from "lucide-react";
+import {
+  DndContext,
+  closestCenter,
+  PointerSensor,
+  useSensor,
+  useSensors,
+  type DragEndEvent,
+} from "@dnd-kit/core";
+import {
+  SortableContext,
+  verticalListSortingStrategy,
+  useSortable,
+  arrayMove,
+} from "@dnd-kit/sortable";
+import { CSS } from "@dnd-kit/utilities";
 import { useAuth } from "@/lib/auth";
 import { ROLE_META, type Role } from "@/lib/mock/users";
 import { Logo } from "@/components/brand/Logo";
@@ -79,6 +96,14 @@ import {
 } from "@/components/ui/sheet";
 import { useCoachBadgeCounts, formatBadge } from "@/lib/api/hooks/useCoachBadgeCounts";
 import { hapticLight, hapticSelection } from "@/lib/haptics";
+import {
+  readCoachSectionOrder,
+  writeCoachSectionOrder,
+  readAthleteMoreOrder,
+  writeAthleteMoreOrder,
+  applyCoachSectionOrder,
+  applyAthleteMoreOrder,
+} from "@/lib/navPrefs";
 
 /* -------------------------------------------------------------------------- */
 /* Types                                                                       */
@@ -328,6 +353,12 @@ const COACH_OVERFLOW_ITEMS: NavItem[] = [
   { href: "/app/billing",        label: "Billing",         icon: <CreditCard className="w-4 h-4" />   },
   { href: "/app/learn",          label: "Coach Education", icon: <GraduationCap className="w-4 h-4" />},
 ];
+
+/**
+ * Section titles that are always pinned at the top of the coach sidebar.
+ * These cannot be dragged and are always rendered first.
+ */
+const COACH_PINNED_SECTIONS = ["DAILY"] as const;
 
 /* -------------------------------------------------------------------------- */
 /* Other roles nav                                                             */
@@ -772,26 +803,139 @@ function CoachProfileSheet({
 }
 
 /* -------------------------------------------------------------------------- */
-/* CoachDesktopSidebar                                                         */
+/* CoachDesktopSidebar — drag-to-reorder sections                             */
 /* -------------------------------------------------------------------------- */
 
+/**
+ * Sortable section row — renders one sidebar section with a drag handle.
+ * Pinned sections receive no handle and cannot be moved.
+ */
+function SortableSidebarSection({
+  section,
+  loc,
+  pinned,
+}: {
+  section: SidebarSection;
+  loc: string;
+  pinned: boolean;
+}) {
+  const { attributes, listeners, setNodeRef, transform, transition, isDragging } =
+    useSortable({ id: section.title ?? "", disabled: pinned });
+
+  const style: React.CSSProperties = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+    opacity: isDragging ? 0.5 : 1,
+  };
+
+  function isItemActive(item: NavItem) {
+    if (item.href === "/app/coach") return loc === "/app/coach";
+    return loc.startsWith(item.href);
+  }
+
+  return (
+    <div ref={setNodeRef} style={style}>
+      {/* Section header with optional drag handle */}
+      <div className="flex items-center justify-between px-2 mb-1.5 mt-4 first:mt-0 group">
+        {section.title && (
+          <div className="text-[10px] uppercase tracking-[0.14em] font-semibold text-muted-foreground/40">
+            {section.title}
+          </div>
+        )}
+        {!pinned && (
+          <button
+            {...attributes}
+            {...listeners}
+            aria-label={`Drag to reorder ${section.title} section`}
+            className="opacity-0 group-hover:opacity-100 focus:opacity-100 transition-opacity cursor-grab active:cursor-grabbing p-0.5 rounded text-muted-foreground/30 hover:text-muted-foreground/60"
+          >
+            <GripVertical className="w-3.5 h-3.5" />
+          </button>
+        )}
+      </div>
+
+      {/* Section items */}
+      {section.items.map((item) => {
+        const active = isItemActive(item);
+        return (
+          <Link key={item.href} href={item.href} asChild>
+            <a
+              className="flex items-center gap-2.5 px-2.5 py-2 rounded-lg text-[13px] transition-all duration-150 relative mb-0.5"
+              style={
+                active
+                  ? { background: `${ACCENT.replace(")", " / 0.10)")}`, color: ACCENT }
+                  : { color: "oklch(0.55 0.02 260)" }
+              }
+            >
+              {active && (
+                <span
+                  className="absolute left-0 top-1 bottom-1 w-[3px] rounded-full"
+                  style={{ background: ACCENT }}
+                />
+              )}
+              <span className="pl-1 w-4 h-4 flex items-center justify-center shrink-0">
+                {item.icon}
+              </span>
+              <span className={active ? "font-semibold" : ""}>{item.label}</span>
+            </a>
+          </Link>
+        );
+      })}
+    </div>
+  );
+}
+
 function CoachDesktopSidebar({
-  sections,
   loc,
   user,
   meta,
   onSignOut,
 }: {
-  sections: SidebarSection[];
   loc: string;
   user: { name: string; avatar: string; handle: string };
   meta: { color: string; label: string };
   onSignOut: () => void;
 }) {
-  function isItemActive(item: NavItem) {
-    if (item.href === "/app/coach") return loc === "/app/coach";
-    return loc.startsWith(item.href);
+  // Load saved section order and apply it to the default sections
+  const [sections, setSections] = useState<SidebarSection[]>(() =>
+    applyCoachSectionOrder(
+      COACH_SIDEBAR_SECTIONS,
+      readCoachSectionOrder(user.handle),
+      COACH_PINNED_SECTIONS,
+    )
+  );
+
+  const sensors = useSensors(useSensor(PointerSensor, { activationConstraint: { distance: 6 } }));
+
+  function handleDragEnd(event: DragEndEvent) {
+    const { active, over } = event;
+    if (!over || active.id === over.id) return;
+
+    setSections((prev) => {
+      const oldIndex = prev.findIndex((s) => s.title === active.id);
+      const newIndex = prev.findIndex((s) => s.title === over.id);
+      if (oldIndex === -1 || newIndex === -1) return prev;
+
+      // Prevent dragging above pinned sections
+      const pinnedCount = prev.filter((s) =>
+        COACH_PINNED_SECTIONS.includes((s.title ?? "") as typeof COACH_PINNED_SECTIONS[number])
+      ).length;
+      if (newIndex < pinnedCount) return prev;
+
+      const next = arrayMove(prev, oldIndex, newIndex);
+
+      // Save only the non-pinned section order
+      const nonPinnedOrder = next
+        .filter((s) => !COACH_PINNED_SECTIONS.includes((s.title ?? "") as typeof COACH_PINNED_SECTIONS[number]))
+        .map((s) => s.title ?? "");
+      writeCoachSectionOrder(user.handle, nonPinnedOrder);
+
+      return next;
+    });
   }
+
+  // IDs for SortableContext — pinned sections need an id too but won't move
+  const sectionIds = sections.map((s) => s.title ?? "");
 
   return (
     <aside className="hidden lg:flex w-60 shrink-0 border-r border-border flex-col h-screen sticky top-0">
@@ -824,41 +968,27 @@ function CoachDesktopSidebar({
       </div>
 
       <nav className="flex-1 overflow-y-auto py-2 px-3 space-y-0.5">
-        {sections.map((section, si) => (
-          <div key={si} className={si > 0 ? "mt-4" : undefined}>
-            {section.title && (
-              <div className="text-[10px] uppercase tracking-[0.14em] font-semibold text-muted-foreground/40 px-2 mb-1.5">
-                {section.title}
-              </div>
-            )}
-            {section.items.map((item) => {
-              const active = isItemActive(item);
+        <DndContext
+          sensors={sensors}
+          collisionDetection={closestCenter}
+          onDragEnd={handleDragEnd}
+        >
+          <SortableContext items={sectionIds} strategy={verticalListSortingStrategy}>
+            {sections.map((section) => {
+              const pinned = COACH_PINNED_SECTIONS.includes(
+                (section.title ?? "") as typeof COACH_PINNED_SECTIONS[number]
+              );
               return (
-                <Link key={item.href} href={item.href} asChild>
-                  <a
-                    className="flex items-center gap-2.5 px-2.5 py-2 rounded-lg text-[13px] transition-all duration-150 relative"
-                    style={
-                      active
-                        ? { background: `${ACCENT.replace(")", " / 0.10)")}`, color: ACCENT }
-                        : { color: "oklch(0.55 0.02 260)" }
-                    }
-                  >
-                    {active && (
-                      <span
-                        className="absolute left-0 top-1 bottom-1 w-[3px] rounded-full"
-                        style={{ background: ACCENT }}
-                      />
-                    )}
-                    <span className="pl-1 w-4 h-4 flex items-center justify-center shrink-0">
-                      {item.icon}
-                    </span>
-                    <span className={active ? "font-semibold" : ""}>{item.label}</span>
-                  </a>
-                </Link>
+                <SortableSidebarSection
+                  key={section.title ?? "untitled"}
+                  section={section}
+                  loc={loc}
+                  pinned={pinned}
+                />
               );
             })}
-          </div>
-        ))}
+          </SortableContext>
+        </DndContext>
       </nav>
 
       <div className="border-t border-border px-3 py-2 shrink-0 space-y-0.5">
@@ -880,11 +1010,60 @@ function CoachDesktopSidebar({
 }
 
 /* -------------------------------------------------------------------------- */
-/* Generic role More sheet                                                     */
+/* Generic role More sheet — with optional drag-to-reorder for ATHLETE        */
 /* -------------------------------------------------------------------------- */
 
+/** Sortable nav item for the More sheet. */
+function SortableNavItem({
+  item,
+  active,
+  meta,
+  onClose,
+  editMode,
+}: {
+  item: NavItem;
+  active: boolean;
+  meta: { color: string };
+  onClose: () => void;
+  editMode: boolean;
+}) {
+  const { attributes, listeners, setNodeRef, transform, transition, isDragging } =
+    useSortable({ id: item.href, disabled: !editMode });
+
+  const style: React.CSSProperties = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+    opacity: isDragging ? 0.4 : 1,
+  };
+
+  return (
+    <div ref={setNodeRef} style={style} className="flex items-center gap-1 mb-0.5">
+      {editMode && (
+        <button
+          {...attributes}
+          {...listeners}
+          aria-label={`Drag to reorder ${item.label}`}
+          className="p-2 text-muted-foreground/40 hover:text-muted-foreground cursor-grab active:cursor-grabbing shrink-0"
+        >
+          <GripVertical className="w-4 h-4" />
+        </button>
+      )}
+      <Link href={item.href} asChild>
+        <a
+          onClick={editMode ? (e) => e.preventDefault() : onClose}
+          className="flex-1 flex items-center gap-3 px-3 py-3 rounded-xl text-[13.5px] transition-colors hover:bg-muted/50"
+          style={active ? { background: `${meta.color.replace(")", " / 0.10)")}`, color: meta.color } : undefined}
+        >
+          <span className="text-muted-foreground shrink-0">{item.icon}</span>
+          <span className={active ? "font-semibold" : "text-foreground"}>{item.label}</span>
+        </a>
+      </Link>
+    </div>
+  );
+}
+
 function GenericMoreSheet({
-  open, onClose, nav, loc, user, meta, homeHref, onSignOut,
+  open, onClose, nav, loc, user, meta, homeHref, onSignOut, role,
 }: {
   open: boolean;
   onClose: () => void;
@@ -894,21 +1073,78 @@ function GenericMoreSheet({
   meta: { color: string; label: string };
   homeHref: string;
   onSignOut: () => void;
+  role?: string;
 }) {
+  const isAthlete = role === "ATHLETE";
+
+  // Bottom-tab count for the athlete role — these items are pinned
+  const pinnedCount = isAthlete ? (5) : 0;
+
+  // Nav items that appear in the More sheet (beyond the pinned bottom tabs)
+  const pinnedItems    = nav.slice(0, pinnedCount);
+  const moreDefaultItems = nav.slice(pinnedCount);
+
+  // Athlete More sheet order — persisted per user
+  const [moreItems, setMoreItems] = useState<NavItem[]>(() =>
+    isAthlete
+      ? applyAthleteMoreOrder(moreDefaultItems, readAthleteMoreOrder(user.handle))
+      : moreDefaultItems
+  );
+
+  const [editMode, setEditMode] = useState(false);
+
+  const sensors = useSensors(useSensor(PointerSensor, { activationConstraint: { distance: 6 } }));
+
+  function handleDragEnd(event: DragEndEvent) {
+    const { active, over } = event;
+    if (!over || active.id === over.id) return;
+
+    setMoreItems((prev) => {
+      const oldIndex = prev.findIndex((i) => i.href === active.id);
+      const newIndex = prev.findIndex((i) => i.href === over.id);
+      if (oldIndex === -1 || newIndex === -1) return prev;
+      const next = arrayMove(prev, oldIndex, newIndex);
+      writeAthleteMoreOrder(user.handle, next.map((i) => i.href));
+      return next;
+    });
+  }
+
+  // All items to display: pinned (not sortable) + more items (sortable for athlete)
+  const displayNav = isAthlete ? [...pinnedItems, ...moreItems] : nav;
+
   function isActive(item: NavItem) {
     return loc === item.href || (item.href !== homeHref && loc.startsWith(item.href));
   }
 
   return (
-    <Sheet open={open} onOpenChange={onClose}>
+    <Sheet open={open} onOpenChange={(o) => { if (!o) { setEditMode(false); onClose(); } }}>
       <SheetContent side="right" className="w-72 p-0 flex flex-col">
         <SheetHeader className="h-14 border-b border-border flex-row items-center justify-between px-4 shrink-0">
           <SheetTitle className="flex items-center gap-2">
             <Logo size={24} />
           </SheetTitle>
-          <button onClick={onClose} className="w-8 h-8 flex items-center justify-center text-muted-foreground hover:text-foreground rounded-md transition-colors">
-            <X className="w-4 h-4" />
-          </button>
+          <div className="flex items-center gap-1">
+            {isAthlete && (
+              <button
+                onClick={() => setEditMode((e) => !e)}
+                aria-label={editMode ? "Done customizing" : "Customize nav order"}
+                className="flex items-center gap-1 h-7 px-2 rounded-md text-[11px] font-medium transition-colors border"
+                style={editMode
+                  ? { borderColor: meta.color, color: meta.color, background: `${meta.color.replace(")", " / 0.08)")}` }
+                  : { borderColor: "transparent", color: "oklch(0.55 0.02 260)" }
+                }
+              >
+                {editMode ? (
+                  "Done"
+                ) : (
+                  <><Settings2 className="w-3.5 h-3.5" /> Reorder</>
+                )}
+              </button>
+            )}
+            <button onClick={onClose} className="w-8 h-8 flex items-center justify-center text-muted-foreground hover:text-foreground rounded-md transition-colors">
+              <X className="w-4 h-4" />
+            </button>
+          </div>
         </SheetHeader>
 
         <div className="px-4 py-3 border-b border-border shrink-0">
@@ -934,21 +1170,73 @@ function GenericMoreSheet({
         </div>
 
         <div className="flex-1 overflow-y-auto py-2 px-2">
-          {nav.map((item) => {
-            const active = isActive(item);
-            return (
-              <Link key={item.href} href={item.href} asChild>
-                <a
-                  onClick={onClose}
-                  className="flex items-center gap-3 px-3 py-3 rounded-xl text-[13.5px] transition-colors mb-0.5 hover:bg-muted/50"
-                  style={active ? { background: `${meta.color.replace(")", " / 0.10)")}`, color: meta.color } : undefined}
+          {isAthlete && editMode && (
+            <div className="mx-3 mb-3 px-3 py-2 rounded-lg bg-muted/40 text-[11px] text-muted-foreground">
+              Drag <GripVertical className="w-3 h-3 inline" /> to reorder your nav. Bottom tabs stay fixed.
+            </div>
+          )}
+
+          {isAthlete ? (
+            <>
+              {/* Pinned items — bottom-tab items shown but not reorderable */}
+              {pinnedItems.map((item) => {
+                const active = isActive(item);
+                return (
+                  <Link key={item.href} href={item.href} asChild>
+                    <a
+                      onClick={onClose}
+                      className="flex items-center gap-3 px-3 py-3 rounded-xl text-[13.5px] transition-colors mb-0.5 hover:bg-muted/50 opacity-50"
+                      style={active ? { background: `${meta.color.replace(")", " / 0.10)")}`, color: meta.color } : undefined}
+                    >
+                      <span className="text-muted-foreground shrink-0">{item.icon}</span>
+                      <span className={active ? "font-semibold" : "text-foreground"}>{item.label}</span>
+                      <span className="ml-auto text-[9px] font-mono text-muted-foreground/40 uppercase tracking-widest">tab</span>
+                    </a>
+                  </Link>
+                );
+              })}
+
+              {/* Sortable More sheet items */}
+              <DndContext
+                sensors={sensors}
+                collisionDetection={closestCenter}
+                onDragEnd={handleDragEnd}
+              >
+                <SortableContext
+                  items={moreItems.map((i) => i.href)}
+                  strategy={verticalListSortingStrategy}
                 >
-                  <span className="text-muted-foreground shrink-0">{item.icon}</span>
-                  <span className={active ? "font-semibold" : "text-foreground"}>{item.label}</span>
-                </a>
-              </Link>
-            );
-          })}
+                  {moreItems.map((item) => (
+                    <SortableNavItem
+                      key={item.href}
+                      item={item}
+                      active={isActive(item)}
+                      meta={meta}
+                      onClose={onClose}
+                      editMode={editMode}
+                    />
+                  ))}
+                </SortableContext>
+              </DndContext>
+            </>
+          ) : (
+            /* Non-athlete roles — plain list, no reordering */
+            displayNav.map((item) => {
+              const active = isActive(item);
+              return (
+                <Link key={item.href} href={item.href} asChild>
+                  <a
+                    onClick={onClose}
+                    className="flex items-center gap-3 px-3 py-3 rounded-xl text-[13.5px] transition-colors mb-0.5 hover:bg-muted/50"
+                    style={active ? { background: `${meta.color.replace(")", " / 0.10)")}`, color: meta.color } : undefined}
+                  >
+                    <span className="text-muted-foreground shrink-0">{item.icon}</span>
+                    <span className={active ? "font-semibold" : "text-foreground"}>{item.label}</span>
+                  </a>
+                </Link>
+              );
+            })
+          )}
         </div>
 
         <div className="border-t border-border p-2 shrink-0" style={{ paddingBottom: "max(env(safe-area-inset-bottom), 8px)" }}>
@@ -1150,6 +1438,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
         meta={meta}
         homeHref={homeHref}
         onSignOut={handleSignOut}
+        role={user.role}
       />
     </div>
   );
@@ -1188,7 +1477,6 @@ function CoachLayout({
     <div className="min-h-screen flex bg-background">
       {/* Desktop grouped sidebar */}
       <CoachDesktopSidebar
-        sections={COACH_SIDEBAR_SECTIONS}
         loc={loc}
         user={user}
         meta={meta}
