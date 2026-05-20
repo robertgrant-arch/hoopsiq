@@ -26,7 +26,7 @@
   ],
   "functions": {
     "api/index.js": {
-      "includeFiles": "node_modules/@clerk/**,node_modules/@google/**,node_modules/@mux/**,node_modules/@neondatabase/**,node_modules/drizzle-orm/**,node_modules/express/**,node_modules/inngest/**,node_modules/nanoid/**,node_modules/openai/**,node_modules/twilio/**,node_modules/body-parser/**,node_modules/depd/**"
+      "includeFiles": "node_modules/**"
     }
   }
 }
