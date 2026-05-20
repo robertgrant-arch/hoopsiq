@@ -89,6 +89,15 @@ export function clearCoachSectionOrder(handle: string): void {
   }
 }
 
+/** Resets only the athlete More-sheet/sidebar order to default. */
+export function clearAthleteMoreOrder(handle: string): void {
+  try {
+    localStorage.removeItem(key("athlete", handle, "more"));
+  } catch {
+    // Silent
+  }
+}
+
 // ── Order helpers ──────────────────────────────────────────────────────────
 
 /**

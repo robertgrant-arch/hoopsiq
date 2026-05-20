@@ -104,6 +104,7 @@ import {
   applyCoachSectionOrder,
   applyAthleteMoreOrder,
   clearCoachSectionOrder,
+  clearAthleteMoreOrder,
 } from "@/lib/navPrefs";
 
 /* -------------------------------------------------------------------------- */
@@ -1031,6 +1032,269 @@ function CoachDesktopSidebar({
 }
 
 /* -------------------------------------------------------------------------- */
+/* PlayerDesktopSidebar — drag-to-reorder player nav (desktop only)          */
+/* -------------------------------------------------------------------------- */
+
+/**
+ * Number of items pinned to the mobile bottom tab bar.
+ * These are also pinned at the top of the desktop sidebar — never draggable.
+ */
+const ATHLETE_PINNED_COUNT = BOTTOM_NAV_COUNT["ATHLETE"] ?? 5;
+
+/**
+ * One sortable row in the player desktop sidebar.
+ * Drag handle appears on group hover; hidden at rest.
+ */
+function SortablePlayerNavItem({
+  item,
+  loc,
+  homeHref,
+  meta,
+}: {
+  item:     NavItem;
+  loc:      string;
+  homeHref: string;
+  meta:     { color: string };
+}) {
+  const { attributes, listeners, setNodeRef, transform, transition, isDragging } =
+    useSortable({ id: item.href });
+
+  const active =
+    loc === item.href ||
+    (item.href !== homeHref && loc.startsWith(item.href));
+
+  const style: React.CSSProperties = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+    opacity: isDragging ? 0.4 : 1,
+  };
+
+  return (
+    <div ref={setNodeRef} style={style} className="flex items-center gap-0.5 mb-0.5 group">
+      {/* Drag handle — hover-reveal, matching coach sidebar pattern */}
+      <button
+        {...attributes}
+        {...listeners}
+        aria-label={`Drag to reorder ${item.label}`}
+        className="opacity-0 group-hover:opacity-100 focus:opacity-100 transition-opacity cursor-grab active:cursor-grabbing p-0.5 rounded text-muted-foreground/30 hover:text-muted-foreground/60 shrink-0"
+      >
+        <GripVertical className="w-3 h-3" />
+      </button>
+
+      <Link href={item.href} asChild>
+        <a
+          className="flex-1 flex items-center gap-2.5 px-2 py-2 rounded-lg text-[13px] transition-all duration-150 relative"
+          style={
+            active
+              ? { background: `${meta.color.replace(")", " / 0.10)")}`, color: meta.color }
+              : { color: "oklch(0.55 0.02 260)" }
+          }
+        >
+          {active && (
+            <span
+              className="absolute left-0 top-1 bottom-1 w-[3px] rounded-full"
+              style={{ background: meta.color }}
+            />
+          )}
+          <span className="pl-0.5 w-4 h-4 flex items-center justify-center shrink-0">
+            {item.icon}
+          </span>
+          <span className={active ? "font-semibold" : ""}>{item.label}</span>
+        </a>
+      </Link>
+    </div>
+  );
+}
+
+/**
+ * Player desktop sidebar with persistent drag-to-reorder.
+ *
+ * Structure:
+ *   ┌────────────────────────────────┐
+ *   │  Home · My Plan · Check-In    │  ← 5 pinned items (match mobile bottom tabs)
+ *   │  Assignments · Skills         │    no drag handles
+ *   │  ──────────────────────────── │
+ *   │  MORE                         │  ← 21 sortable items
+ *   │  ≡ My Timeline                │    drag handles on hover
+ *   │  ≡ Assessments                │
+ *   │  …                            │
+ *   │  ──────────────────────────── │
+ *   │  Reset nav order   (if saved) │
+ *   │  ← Back to marketing          │
+ *   │  Sign out                     │
+ *   └────────────────────────────────┘
+ *
+ * Persistence: readAthleteMoreOrder / writeAthleteMoreOrder (same key as
+ * GenericMoreSheet) — desktop sidebar and mobile More sheet stay in sync
+ * automatically since they share the same localStorage entry.
+ */
+function PlayerDesktopSidebar({
+  nav,
+  loc,
+  user,
+  meta,
+  onSignOut,
+}: {
+  nav:      NavItem[];
+  loc:      string;
+  user:     { name: string; avatar: string; handle: string };
+  meta:     { color: string; label: string };
+  onSignOut: () => void;
+}) {
+  const homeHref     = nav[0]?.href ?? "/app/player";
+  const pinnedItems  = nav.slice(0, ATHLETE_PINNED_COUNT);
+  const moreDefaults = nav.slice(ATHLETE_PINNED_COUNT);
+
+  // Initialise from saved order; fall back to default if nothing saved
+  const [sortableItems, setSortableItems] = useState<NavItem[]>(() =>
+    applyAthleteMoreOrder(moreDefaults, readAthleteMoreOrder(user.handle))
+  );
+
+  // Drive the "Reset nav order" button — only visible when order differs from default
+  const isCustomized = sortableItems.some(
+    (item, i) => item.href !== moreDefaults[i]?.href
+  );
+
+  const sensors = useSensors(
+    useSensor(PointerSensor, { activationConstraint: { distance: 6 } })
+  );
+
+  function handleDragEnd(event: DragEndEvent) {
+    const { active, over } = event;
+    if (!over || active.id === over.id) return;
+
+    setSortableItems((prev) => {
+      const oldIdx = prev.findIndex((i) => i.href === active.id);
+      const newIdx = prev.findIndex((i) => i.href === over.id);
+      if (oldIdx === -1 || newIdx === -1) return prev;
+
+      const next = arrayMove(prev, oldIdx, newIdx);
+      writeAthleteMoreOrder(user.handle, next.map((i) => i.href));
+      return next;
+    });
+  }
+
+  function handleReset() {
+    clearAthleteMoreOrder(user.handle);
+    setSortableItems([...moreDefaults]);
+  }
+
+  function isActive(item: NavItem) {
+    return loc === item.href || (item.href !== homeHref && loc.startsWith(item.href));
+  }
+
+  return (
+    <aside className="hidden lg:flex w-60 shrink-0 border-r border-border flex-col h-screen sticky top-0">
+      {/* Logo */}
+      <div className="h-16 border-b border-border flex items-center px-5">
+        <Logo size={30} />
+      </div>
+
+      {/* Identity */}
+      <div className="px-4 py-4 border-b border-border">
+        <div
+          className="text-[10px] uppercase tracking-[0.14em] font-mono mb-2"
+          style={{ color: meta.color }}
+        >
+          {meta.label} · Signed in
+        </div>
+        <div className="flex items-center gap-2.5">
+          <div
+            className="w-9 h-9 rounded-lg flex items-center justify-center text-[12px] font-bold shrink-0"
+            style={{
+              background: `${meta.color.replace(")", " / 0.15)")}`,
+              color:      meta.color,
+              border:     `1.5px solid ${meta.color.replace(")", " / 0.28)")}`,
+            }}
+          >
+            {user.avatar}
+          </div>
+          <div className="min-w-0">
+            <div className="text-[13px] font-semibold truncate">{user.name}</div>
+            <div className="text-[11px] text-muted-foreground truncate">{user.handle}</div>
+          </div>
+        </div>
+      </div>
+
+      <nav className="flex-1 overflow-y-auto py-3 px-3">
+        {/* ── Pinned items (match mobile bottom tabs) ── */}
+        {pinnedItems.map((item) => {
+          const active = isActive(item);
+          return (
+            <Link key={item.href} href={item.href} asChild>
+              <a
+                className="flex items-center gap-2.5 px-2.5 py-2.5 rounded-lg text-[13px] transition-colors mb-0.5"
+                style={
+                  active
+                    ? { background: `${meta.color.replace(")", " / 0.10)")}`, color: meta.color }
+                    : { color: "oklch(0.55 0.02 260)" }
+                }
+              >
+                <span className="w-4 h-4 shrink-0 flex items-center">{item.icon}</span>
+                <span className={active ? "font-semibold" : ""}>{item.label}</span>
+              </a>
+            </Link>
+          );
+        })}
+
+        {/* ── Divider + "More" label ── */}
+        <div className="text-[10px] uppercase tracking-[0.12em] font-semibold text-muted-foreground/35 px-2 mt-3 mb-1.5">
+          More
+        </div>
+
+        {/* ── Sortable items (drag handles on hover) ── */}
+        <DndContext
+          sensors={sensors}
+          collisionDetection={closestCenter}
+          onDragEnd={handleDragEnd}
+        >
+          <SortableContext
+            items={sortableItems.map((i) => i.href)}
+            strategy={verticalListSortingStrategy}
+          >
+            {sortableItems.map((item) => (
+              <SortablePlayerNavItem
+                key={item.href}
+                item={item}
+                loc={loc}
+                homeHref={homeHref}
+                meta={meta}
+              />
+            ))}
+          </SortableContext>
+        </DndContext>
+      </nav>
+
+      {/* Footer */}
+      <div className="border-t border-border px-3 py-2 shrink-0 space-y-0.5">
+        {isCustomized && (
+          <button
+            onClick={handleReset}
+            className="w-full flex items-center gap-2.5 px-2.5 py-2 rounded-lg text-[12px] text-muted-foreground/50 hover:text-muted-foreground transition-colors"
+            title="Restore default nav order"
+          >
+            <RotateCcw className="w-3.5 h-3.5" />
+            Reset nav order
+          </button>
+        )}
+        <Link href="/" asChild>
+          <a className="flex items-center gap-2.5 px-2.5 py-2 rounded-lg text-[12.5px] text-muted-foreground/60 hover:text-muted-foreground transition-colors">
+            ← Back to marketing
+          </a>
+        </Link>
+        <button
+          onClick={onSignOut}
+          className="w-full flex items-center gap-2.5 px-2.5 py-2 rounded-lg text-[12.5px] text-muted-foreground/60 hover:text-destructive transition-colors"
+        >
+          <UserIcon className="w-4 h-4" />
+          Sign out
+        </button>
+      </div>
+    </aside>
+  );
+}
+
+/* -------------------------------------------------------------------------- */
 /* Generic role More sheet — with optional drag-to-reorder for ATHLETE        */
 /* -------------------------------------------------------------------------- */
 
@@ -1313,67 +1577,77 @@ export function AppShell({ children }: { children: React.ReactNode }) {
 
   return (
     <div className="min-h-screen flex bg-background">
-      {/* Desktop sidebar */}
-      <aside className="hidden lg:flex w-60 shrink-0 border-r border-border flex-col h-screen sticky top-0">
-        <div className="h-16 border-b border-border flex items-center px-5">
-          <Logo size={30} />
-        </div>
-        <div className="px-4 py-4 border-b border-border">
-          <div className="text-[10px] uppercase tracking-[0.14em] font-mono mb-2" style={{ color: meta.color }}>
-            {meta.label} · Signed in
+      {/* Desktop sidebar — player gets sortable sidebar; other roles get static list */}
+      {user.role === "ATHLETE" ? (
+        <PlayerDesktopSidebar
+          nav={nav}
+          loc={loc}
+          user={user}
+          meta={meta}
+          onSignOut={handleSignOut}
+        />
+      ) : (
+        <aside className="hidden lg:flex w-60 shrink-0 border-r border-border flex-col h-screen sticky top-0">
+          <div className="h-16 border-b border-border flex items-center px-5">
+            <Logo size={30} />
           </div>
-          <div className="flex items-center gap-2.5">
-            <div
-              className="w-9 h-9 rounded-lg flex items-center justify-center text-[12px] font-bold shrink-0"
-              style={{
-                background: `${meta.color.replace(")", " / 0.15)")}`,
-                color:      meta.color,
-                border:     `1.5px solid ${meta.color.replace(")", " / 0.28)")}`,
-              }}
+          <div className="px-4 py-4 border-b border-border">
+            <div className="text-[10px] uppercase tracking-[0.14em] font-mono mb-2" style={{ color: meta.color }}>
+              {meta.label} · Signed in
+            </div>
+            <div className="flex items-center gap-2.5">
+              <div
+                className="w-9 h-9 rounded-lg flex items-center justify-center text-[12px] font-bold shrink-0"
+                style={{
+                  background: `${meta.color.replace(")", " / 0.15)")}`,
+                  color:      meta.color,
+                  border:     `1.5px solid ${meta.color.replace(")", " / 0.28)")}`,
+                }}
+              >
+                {user.avatar}
+              </div>
+              <div className="min-w-0">
+                <div className="text-[13px] font-semibold truncate">{user.name}</div>
+                <div className="text-[11px] text-muted-foreground truncate">{user.handle}</div>
+              </div>
+            </div>
+          </div>
+          <nav className="flex-1 overflow-y-auto py-3 px-3">
+            {nav.map((item) => {
+              const active = isActive(item);
+              return (
+                <Link key={item.href} href={item.href} asChild>
+                  <a
+                    className="flex items-center gap-2.5 px-2.5 py-2.5 rounded-lg text-[13px] transition-colors mb-0.5"
+                    style={
+                      active
+                        ? { background: `${meta.color.replace(")", " / 0.10)")}`, color: meta.color }
+                        : { color: "oklch(0.55 0.02 260)" }
+                    }
+                  >
+                    <span className="w-4 h-4 shrink-0 flex items-center">{item.icon}</span>
+                    <span className={active ? "font-semibold" : ""}>{item.label}</span>
+                  </a>
+                </Link>
+              );
+            })}
+          </nav>
+          <div className="border-t border-border px-3 py-2 shrink-0">
+            <Link href="/" asChild>
+              <a className="flex items-center gap-2.5 px-2.5 py-2 rounded-lg text-[12.5px] text-muted-foreground/60 hover:text-muted-foreground transition-colors">
+                ← Back to marketing
+              </a>
+            </Link>
+            <button
+              onClick={handleSignOut}
+              className="w-full flex items-center gap-2.5 px-2.5 py-2 rounded-lg text-[12.5px] text-muted-foreground/60 hover:text-destructive transition-colors"
             >
-              {user.avatar}
-            </div>
-            <div className="min-w-0">
-              <div className="text-[13px] font-semibold truncate">{user.name}</div>
-              <div className="text-[11px] text-muted-foreground truncate">{user.handle}</div>
-            </div>
+              <UserIcon className="w-4 h-4" />
+              Sign out
+            </button>
           </div>
-        </div>
-        <nav className="flex-1 overflow-y-auto py-3 px-3">
-          {nav.map((item) => {
-            const active = isActive(item);
-            return (
-              <Link key={item.href} href={item.href} asChild>
-                <a
-                  className="flex items-center gap-2.5 px-2.5 py-2.5 rounded-lg text-[13px] transition-colors mb-0.5"
-                  style={
-                    active
-                      ? { background: `${meta.color.replace(")", " / 0.10)")}`, color: meta.color }
-                      : { color: "oklch(0.55 0.02 260)" }
-                  }
-                >
-                  <span className="w-4 h-4 shrink-0 flex items-center">{item.icon}</span>
-                  <span className={active ? "font-semibold" : ""}>{item.label}</span>
-                </a>
-              </Link>
-            );
-          })}
-        </nav>
-        <div className="border-t border-border px-3 py-2 shrink-0">
-          <Link href="/" asChild>
-            <a className="flex items-center gap-2.5 px-2.5 py-2 rounded-lg text-[12.5px] text-muted-foreground/60 hover:text-muted-foreground transition-colors">
-              ← Back to marketing
-            </a>
-          </Link>
-          <button
-            onClick={handleSignOut}
-            className="w-full flex items-center gap-2.5 px-2.5 py-2 rounded-lg text-[12.5px] text-muted-foreground/60 hover:text-destructive transition-colors"
-          >
-            <UserIcon className="w-4 h-4" />
-            Sign out
-          </button>
-        </div>
-      </aside>
+        </aside>
+      )}
 
       {/* Main */}
       <main className="flex-1 min-w-0 pb-[calc(56px+env(safe-area-inset-bottom))] lg:pb-0">
