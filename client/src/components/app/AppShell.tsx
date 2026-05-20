@@ -69,6 +69,7 @@ import {
   Award,
   GripVertical,
   Settings2,
+  RotateCcw,
 } from "lucide-react";
 import {
   DndContext,
