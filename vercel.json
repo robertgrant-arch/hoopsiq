@@ -1,5 +1,5 @@
 {
-  "buildCommand": "npx vite build",
+  "buildCommand": "npx vite build && rm -f api/index.js",
   "outputDirectory": "dist/public",
   "installCommand": "pnpm install --frozen-lockfile",
   "rewrites": [
