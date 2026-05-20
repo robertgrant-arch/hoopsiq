@@ -1,5 +1,5 @@
 {
-  "buildCommand": "npx vite build && echo 'export default function(req,res){res.end(JSON.stringify({build:\"BUILD_MARKER_12345\"}))}' > api/index.js",
+  "buildCommand": "npx vite build",
   "outputDirectory": "dist/public",
   "installCommand": "pnpm install --frozen-lockfile",
   "rewrites": [
