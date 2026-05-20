@@ -1,12 +1,31 @@
 {
   "buildCommand": "npx vite build && npx esbuild api/_build.ts --bundle --platform=node --format=cjs --outfile=api/index.js --alias:@shared/db=./shared/db --alias:@shared/db/client=./shared/db/client --alias:@shared/db/schema=./shared/db/schema --alias:@shared/db/schema/analysis_jobs=./shared/db/schema/analysis_jobs --alias:@shared/db/schema/annotations=./shared/db/schema/annotations --alias:@shared/db/schema/film_sessions=./shared/db/schema/film_sessions --alias:@shared/db/schema/guardians=./shared/db/schema/guardians --alias:@shared/db/schema/messages=./shared/db/schema/messages --alias:@shared/db/schema/players=./shared/db/schema/players",
   "outputDirectory": "dist/public",
-    "installCommand": "pnpm install --frozen-lockfile",
+  "installCommand": "pnpm install --frozen-lockfile",
   "rewrites": [
-    { "source": "/api/plans",        "destination": "/api/plan-sync" },
-    { "source": "/api/wods/:path*",  "destination": "/api/wods/generate" },
-    { "source": "/api/:path*",       "destination": "/api/index" },
-    { "source": "/webhooks/:path*",  "destination": "/api/index" },
-    { "source": "/(.*)",             "destination": "/index.html" }
+    {
+      "source": "/api/plans",
+      "destination": "/api/plan-sync"
+    },
+    {
+      "source": "/api/wods/:path*",
+      "destination": "/api/wods/generate"
+    },
+    {
+      "source": "/api/test",
+      "destination": "/api/index"
+    },
+    {
+      "source": "/api/:path*",
+      "destination": "/api/index"
+    },
+    {
+      "source": "/webhooks/:path*",
+      "destination": "/api/index"
+    },
+    {
+      "source": "/(.*)",
+      "destination": "/index.html"
+    }
   ]
 }

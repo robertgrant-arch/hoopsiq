@@ -1,3 +1,5 @@
 export default function(req, res) {
-  res.status(200).json({ ok: true, source: "api/index.js ESM" });
+  res.statusCode = 200;
+  res.setHeader('Content-Type', 'application/json');
+  res.end(JSON.stringify({ ok: true }));
 }
