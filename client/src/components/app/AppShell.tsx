@@ -20,7 +20,7 @@
  * Safe-area insets via env(safe-area-inset-*) for iOS/Capacitor.
  * All tap targets ≥ 44 × 44 px.
  */
-import { useState, useRef, useCallback } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { Link, useLocation } from "wouter";
 import {
   Home,
