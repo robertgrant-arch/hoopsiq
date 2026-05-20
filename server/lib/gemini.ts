@@ -1,10 +1,16 @@
 import { GoogleGenerativeAI, SchemaType } from "@google/generative-ai";
+import { HttpError } from "../auth/tenant";
 
 let client: GoogleGenerativeAI | null = null;
 
 function getClient() {
   if (!client) {
-    if (!process.env.GEMINI_API_KEY) throw new Error("GEMINI_API_KEY not set");
+    if (!process.env.GEMINI_API_KEY) {
+      throw new HttpError(
+        503,
+        "Film analysis is not available in this environment. GEMINI_API_KEY is not configured.",
+      );
+    }
     client = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
   }
   return client;

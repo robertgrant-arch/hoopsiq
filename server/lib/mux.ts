@@ -3,17 +3,20 @@
 // ─────────────────────────────────────────────────────────────
 //
 // Lazy-initialised so the server boots in dev without Mux credentials;
-// functions throw at call-time when credentials are missing.
+// functions throw HttpError (503) at call-time when credentials are missing
+// so the error is properly converted to a JSON response instead of a 500.
 
 import Mux from "@mux/mux-node";
+import { HttpError } from "../auth/tenant";
 
 let muxClient: Mux | null = null;
 
 export function getMux(): Mux {
   if (!muxClient) {
     if (!process.env.MUX_TOKEN_ID || !process.env.MUX_TOKEN_SECRET) {
-      throw new Error(
-        "Mux credentials not configured — set MUX_TOKEN_ID and MUX_TOKEN_SECRET",
+      throw new HttpError(
+        503,
+        "Film upload is not available in this environment. MUX_TOKEN_ID and MUX_TOKEN_SECRET are not configured.",
       );
     }
     muxClient = new Mux({

@@ -379,39 +379,36 @@ export function registerFilmAnalysisRoutes(
     },
   );
 
-  // ── Structured analysis clips (features/film-analysis slice) ─────────────
+  // ── Structured analysis routes (features/film-analysis slice) ──────────────
   //
-  // GET  /sessions/:sessionId/clips   — returns AnalysisClip[] for a session
-  // POST /clips/:clipId/review        — records coach decision
+  // GET  /sessions/:sessionId/clips    — AnalysisClip[] (empty until CV pipeline runs)
+  // GET  /sessions/:sessionId/summary  — SessionAnalysisSummary aggregate counts
+  // POST /clips/:clipId/review         — coach decision (confirm/edit/reject/flag)
   //
-  // These endpoints serve the bounded, evidence-backed analysis layer.
-  // Responses are structured AnalysisClip objects, not free-form prose.
-  // Until the CV pipeline emits real clips, we serve the structured mock
-  // so the UI hooks have a real route to call.
+  // All three return 401 in demo mode (no Clerk session).
+  // Client hooks in features/film-analysis/hooks.ts fall back to
+  // MOCK_ANALYSIS_CLIPS / MOCK_SESSION_SUMMARY on any error — no 500 possible.
 
   router.get(
     "/sessions/:sessionId/clips",
     async (req: Request, res: Response, next: NextFunction) => {
       try {
         await requireOrg(req);
-        const { sessionId } = req.params;
+        // CV pipeline result goes here. Empty array → client falls back to MOCK_ANALYSIS_CLIPS.
+        res.json([]);
+      } catch (e) {
+        handleError(e, res, next);
+      }
+    },
+  );
 
-        // When real CV pipeline is wired:
-        //   const clips = await service.getStructuredClips(sessionId, orgId, teamId);
-        // For now: import mock and filter by sessionId
-
-        const { MOCK_ANALYSIS_CLIPS } = await import(
-          // Dynamic import keeps this from being bundled into the main build
-          "../../client/src/features/film-analysis/mock" as any
-        ).catch(() => ({ MOCK_ANALYSIS_CLIPS: [] }));
-
-        const clips = Array.isArray(MOCK_ANALYSIS_CLIPS)
-          ? MOCK_ANALYSIS_CLIPS.filter(
-              (c: any) => !sessionId || c.sessionId === sessionId || sessionId === "session_001"
-            )
-          : [];
-
-        res.json(clips);
+  router.get(
+    "/sessions/:sessionId/summary",
+    async (req: Request, res: Response, next: NextFunction) => {
+      try {
+        await requireOrg(req);
+        // Aggregate counts go here. null → client falls back to MOCK_SESSION_SUMMARY.
+        res.json(null);
       } catch (e) {
         handleError(e, res, next);
       }
