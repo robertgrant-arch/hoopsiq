@@ -25,6 +25,14 @@ import {
 } from "lucide-react";
 import { AppShell, PageHeader } from "@/components/app/AppShell";
 import { toast } from "sonner";
+import {
+  useAnalysisClips,
+  useSessionAnalysisSummary,
+  useCoachReviewClip,
+  EVENT_LABELS,
+  MOCK_SESSION_SUMMARY,
+} from "@/features/film-analysis";
+import { AnalysisClipCard } from "@/features/film-analysis/components/AnalysisClipCard";
 
 /* -------------------------------------------------------------------------- */
 /* Design tokens                                                               */
@@ -746,6 +754,14 @@ function FilmAnalysisView({
   const [showTooltip, setShowTooltip] = useState(false);
   const [activeCategory, setActiveCategory] = useState<string>("all");
 
+  // ── Structured analysis (new slice) ─────────────────────────────────────
+  // Uses session_001 as mock session ID — in production, map submission.id → session ID
+  const MOCK_SESSION_ID = "session_001";
+  const { data: analysisClips = [], isLoading: clipsLoading } = useAnalysisClips(MOCK_SESSION_ID);
+  const { data: analysisSummary } = useSessionAnalysisSummary(MOCK_SESSION_ID);
+  const { mutate: reviewClip, isPending: reviewPending } = useCoachReviewClip(MOCK_SESSION_ID);
+  // ────────────────────────────────────────────────────────────────────────
+
   const insights = submission.aiInsights ?? [];
   const avgConf = avgConfidence(insights);
 
@@ -800,6 +816,72 @@ function FilmAnalysisView({
           Film Library
         </button>
       </div>
+
+      {/* ── STRUCTURED ANALYSIS PANEL ─────────────────────────────────────── */}
+      {/* This replaces free-form prose insights with bounded, evidence-backed clips */}
+      <div className="rounded-2xl border border-border bg-card overflow-hidden">
+        <div className="flex items-center justify-between px-5 py-4 border-b border-border">
+          <div>
+            <div className="flex items-center gap-2">
+              <Sparkles className="w-4 h-4 text-primary" />
+              <span className="text-[14px] font-bold">Structured Analysis</span>
+              <span className="text-[10.5px] font-mono text-muted-foreground uppercase tracking-[0.1em]">
+                — observation · inference · evidence
+              </span>
+            </div>
+            <p className="text-[12px] text-muted-foreground mt-1">
+              Each clip shows what was detected, how it was interpreted, and why.
+              Approve, edit, or flag each one before it affects player records.
+            </p>
+          </div>
+          {analysisSummary && (
+            <div className="flex items-center gap-4 text-right shrink-0 pl-4">
+              <div>
+                <div className="text-[18px] font-bold">{analysisSummary.pendingReview}</div>
+                <div className="text-[10px] text-muted-foreground">pending</div>
+              </div>
+              <div>
+                <div className="text-[18px] font-bold" style={{ color: "oklch(0.78 0.16 75)" }}>
+                  {analysisSummary.requiresAttention}
+                </div>
+                <div className="text-[10px] text-muted-foreground">needs attention</div>
+              </div>
+              <div>
+                <div className="text-[18px] font-bold" style={{ color: "oklch(0.75 0.12 140)" }}>
+                  {analysisSummary.confirmed}
+                </div>
+                <div className="text-[10px] text-muted-foreground">confirmed</div>
+              </div>
+            </div>
+          )}
+        </div>
+
+        <div className="p-5 flex flex-col gap-4">
+          {clipsLoading ? (
+            <div className="space-y-3">
+              {[1, 2, 3].map((i) => (
+                <div key={i} className="h-24 rounded-xl bg-muted animate-pulse" />
+              ))}
+            </div>
+          ) : (
+            analysisClips.map((clip) => (
+              <AnalysisClipCard
+                key={clip.id}
+                clip={clip}
+                onReview={(clipId, status, note, editedType) =>
+                  reviewClip({ clipId, status, note, editedEventType: editedType })
+                }
+                isPending={reviewPending}
+              />
+            ))
+          )}
+          <div className="text-center text-[11px] text-muted-foreground/50 pt-2 border-t border-border/40">
+            Analysis scope: shot attempts · drives · turnovers · closeouts · on-ball defense · transition.
+            Off-ball reads and weak-side scheme decisions are not classified by this pipeline.
+          </div>
+        </div>
+      </div>
+      {/* ── END STRUCTURED ANALYSIS PANEL ─────────────────────────────────── */}
 
       {/* Film info strip */}
       <div className="rounded-xl border border-border bg-card p-5">

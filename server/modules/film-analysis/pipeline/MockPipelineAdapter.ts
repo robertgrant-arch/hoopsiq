@@ -111,44 +111,125 @@ export class MockPipelineAdapter implements VideoPipelineAdapter {
       throw new Error(`[MockPipelineAdapter] Unknown job: ${externalJobId}`);
     }
 
-    // Deterministic, minimal result set. Real adapters call the provider's
-    // results API and normalize into our PipelineResults shape. The service
-    // layer is responsible for persisting results into normalized DB tables
-    // (TrackedPlayer, RosterLink, DetectedEvent, ProcessingIssue, etc.).
+    // Structured detected events — bounded event types, player attribution,
+    // confidence scores. These feed into the AnalysisClip layer which adds
+    // observations and evidence. Real adapters call the provider's results API
+    // and normalize into this shape. The service layer persists to normalized
+    // DB tables (TrackedPlayer, RosterLink, DetectedEvent, etc.).
     return {
       trackedPlayers: [
         {
-          filmSessionId: job.input.filmSessionId,
-          analysisJobId: job.input.analysisJobId,
-          trackingId: "track_mock_a",
-          jerseyNumber: "3",
-          teamSide: "HOME",
+          filmSessionId:       job.input.filmSessionId,
+          analysisJobId:       job.input.analysisJobId,
+          trackingId:          "track_mock_a",
+          jerseyNumber:        "3",
+          teamSide:            "HOME",
           detectionConfidence: 0.97,
-          appearanceFrames: 42_000,
-          thumbnailPath: null,
+          appearanceFrames:    42_000,
+          thumbnailPath:       null,
         },
         {
-          filmSessionId: job.input.filmSessionId,
-          analysisJobId: job.input.analysisJobId,
-          trackingId: "track_mock_b",
-          jerseyNumber: "11",
-          teamSide: "HOME",
+          filmSessionId:       job.input.filmSessionId,
+          analysisJobId:       job.input.analysisJobId,
+          trackingId:          "track_mock_b",
+          jerseyNumber:        "11",
+          teamSide:            "HOME",
           detectionConfidence: 0.92,
-          appearanceFrames: 38_500,
-          thumbnailPath: null,
+          appearanceFrames:    38_500,
+          thumbnailPath:       null,
         },
       ],
       rosterLinks: [],
-      detectedEvents: [],
+      detectedEvents: [
+        // Tier 1: shot_missed_2 — high confidence (ball trajectory + rim contact detectable)
+        {
+          analysisJobId:    job.input.analysisJobId,
+          sessionId:        job.input.filmSessionId,
+          segmentId:        "seg_q1",
+          type:             "miss_2",      // maps to DetectedEventType.Miss2
+          tMs:              134_000,
+          endMs:            138_000,
+          primaryTrackId:   "track_mock_a",
+          confidence:       0.93,
+          needsReview:      false,
+          courtZone:        "paint_right",
+          // Structured evidence attached at this level — consumers promote to AnalysisClip
+          evidence: [
+            { type: "shot_attempt",       description: "Overhead ball extension at 134.7s", frameMs: 134_700, strength: "strong" },
+            { type: "trajectory_analysis",description: "Flat arc — short of rim center",                     strength: "strong" },
+            { type: "rim_contact",        description: "Front-left rim impact, deflects out", frameMs: 136_900, strength: "strong" },
+          ],
+        },
+        // Tier 1: turnover — live ball (possession change detectable)
+        {
+          analysisJobId:    job.input.analysisJobId,
+          sessionId:        job.input.filmSessionId,
+          segmentId:        "seg_q1",
+          type:             "turnover",    // maps to DetectedEventType.Turnover
+          tMs:              278_000,
+          endMs:            281_500,
+          primaryTrackId:   "track_mock_a",
+          confidence:       0.88,
+          needsReview:      false,
+          courtZone:        "half_court",
+          evidence: [
+            { type: "possession_state", description: "Confirmed HOME→AWAY possession change",                strength: "strong" },
+            { type: "frame_observation",description: "Ball visible leaving player control without shot",     frameMs: 279_900, strength: "strong" },
+            { type: "proximity_check",  description: "Defender within contact range — strip likely cause",   frameMs: 279_500, strength: "moderate" },
+          ],
+        },
+        // Tier 2: closeout — medium confidence, requires review (player movement interpretation)
+        {
+          analysisJobId:    job.input.analysisJobId,
+          sessionId:        job.input.filmSessionId,
+          segmentId:        "seg_q1",
+          type:             "closeout",    // custom type — maps to AnalysisClip.inference.eventType
+          tMs:              421_000,
+          endMs:            424_500,
+          primaryTrackId:   "track_mock_b",
+          confidence:       0.72,
+          needsReview:      true,          // ← below 0.85 threshold AND close alternative
+          courtZone:        "arc_left",
+          evidence: [
+            { type: "player_velocity",  description: "High-velocity movement: paint → arc left",            strength: "moderate" },
+            { type: "proximity_check",  description: "Arrival within contested-shot range of ball receiver", frameMs: 423_000, strength: "moderate" },
+          ],
+        },
+        // Tier 1: make_3 — high confidence
+        {
+          analysisJobId:    job.input.analysisJobId,
+          sessionId:        job.input.filmSessionId,
+          segmentId:        "seg_q2",
+          type:             "make_3",      // maps to DetectedEventType.Make3
+          tMs:              553_000,
+          endMs:            557_000,
+          primaryTrackId:   "track_mock_b",
+          confidence:       0.96,
+          needsReview:      false,
+          courtZone:        "arc_right",
+          evidence: [
+            { type: "zone_entry",         description: "Release point beyond 3PT line (calibrated)",        frameMs: 554_400, strength: "strong" },
+            { type: "trajectory_analysis",description: "Deep-arc flight consistent with 3PT make",                             strength: "strong" },
+            { type: "rim_contact",        description: "Net-swish — no rim impact detected",                frameMs: 556_100, strength: "strong" },
+          ],
+        },
+      ],
       issues: [
         {
           analysisJobId: job.input.analysisJobId,
-          entityType: null,
-          entityId: null,
-          issueCode: "LOW_LIGHT_PERIOD",
-          severity: "INFO",
-          message:
-            "Brief low-light segment detected near tipoff. Detection confidence reduced for ~12 seconds.",
+          entityType:    null,
+          entityId:      null,
+          issueCode:     "LOW_LIGHT_PERIOD",
+          severity:      "INFO",
+          message:       "Brief low-light segment near tipoff. Detection confidence reduced for ~12 seconds.",
+        },
+        {
+          analysisJobId: job.input.analysisJobId,
+          entityType:    null,
+          entityId:      null,
+          issueCode:     "COMPLEX_EVENTS_SUPPRESSED",
+          severity:      "INFO",
+          message:       "Off-ball reads, weak-side scheme decisions, and multi-possession patterns are not classified. These require aggregate analysis beyond this pipeline's reliable detection surface.",
         },
       ],
     };

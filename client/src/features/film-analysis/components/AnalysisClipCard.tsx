@@ -1,0 +1,373 @@
+/**
+ * features/film-analysis/components/AnalysisClipCard.tsx
+ *
+ * The core UI unit for structured basketball film analysis.
+ *
+ * Three zones, visually distinct:
+ *   Zone A — WHAT WAS OBSERVED (objective detections, no interpretation)
+ *   Zone B — WHAT WE INFER     (bounded event type + confidence + evidence)
+ *   Zone C — COACH REVIEW      (approve / edit / reject / flag for teaching)
+ *
+ * Design principles:
+ *   - Confidence is always visible and color-coded
+ *   - "Requires review" is surfaced prominently, not buried
+ *   - Evidence items are listed, not described in prose
+ *   - Coach decisions are permanent record — edit history preserved
+ *   - suggestedCoachNote is templated copy, not hallucinated prose
+ */
+
+import { useState } from "react";
+import { Film, ChevronDown, ChevronRight, Check, X, AlertTriangle, Edit3, BookOpen, Info } from "lucide-react";
+import { toast } from "sonner";
+import { Badge } from "@/components/ui/badge";
+import {
+  COURT_ZONE_LABELS,
+  EVENT_LABELS,
+  confidenceTier,
+} from "../types";
+import type {
+  AnalysisClip,
+  BoundedEventType,
+  CoachReviewStatus,
+  EvidenceStrength,
+} from "../types";
+
+// ── Color tokens ──────────────────────────────────────────────────────────────
+
+const COLORS = {
+  high:     "oklch(0.75 0.12 140)",   // green
+  medium:   "oklch(0.78 0.16 75)",    // amber
+  low:      "oklch(0.68 0.22 25)",    // red
+  primary:  "oklch(0.72 0.18 290)",   // purple
+  muted:    "oklch(0.55 0.02 260)",
+};
+
+const EVIDENCE_STRENGTH_COLOR: Record<EvidenceStrength, string> = {
+  strong:   COLORS.high,
+  moderate: COLORS.medium,
+  weak:     COLORS.low,
+};
+
+// ── Confidence badge ──────────────────────────────────────────────────────────
+
+function ConfidenceBadge({ score, requiresReview }: { score: number; requiresReview: boolean }) {
+  const tier   = confidenceTier(score);
+  const color  = COLORS[tier];
+  const pct    = Math.round(score * 100);
+  const labels = { high: "High confidence", medium: "Review suggested", low: "Low confidence — review required" };
+
+  return (
+    <div className="flex items-center gap-1.5">
+      <span
+        className="inline-flex items-center gap-1 text-[10.5px] font-semibold px-2 py-0.5 rounded-full border"
+        style={{ color, borderColor: `${color}40`, backgroundColor: `${color}12` }}
+      >
+        {pct}% · {labels[tier]}
+      </span>
+      {requiresReview && (
+        <span className="inline-flex items-center gap-1 text-[10px] font-medium px-2 py-0.5 rounded-full border"
+          style={{ color: COLORS.medium, borderColor: `${COLORS.medium}40`, backgroundColor: `${COLORS.medium}10` }}>
+          <AlertTriangle className="w-2.5 h-2.5" />
+          Review required
+        </span>
+      )}
+    </div>
+  );
+}
+
+// ── Coach review status badge ─────────────────────────────────────────────────
+
+const STATUS_CONFIG: Record<CoachReviewStatus, { label: string; color: string; icon: React.ReactNode }> = {
+  pending:             { label: "Pending review",        color: COLORS.muted,   icon: null },
+  confirmed:           { label: "Confirmed ✓",           color: COLORS.high,    icon: <Check className="w-3 h-3" /> },
+  edited:              { label: "Coach edited",          color: COLORS.primary, icon: <Edit3 className="w-3 h-3" /> },
+  rejected:            { label: "Rejected",              color: COLORS.low,     icon: <X className="w-3 h-3" /> },
+  flagged_for_teaching:{ label: "Teaching point",        color: COLORS.medium,  icon: <BookOpen className="w-3 h-3" /> },
+};
+
+// ── Evidence list ─────────────────────────────────────────────────────────────
+
+function EvidenceList({ evidence }: { evidence: AnalysisClip["inference"]["evidenceItems"] }) {
+  return (
+    <div className="flex flex-col gap-1.5">
+      {evidence.map((item, i) => (
+        <div key={i} className="flex items-start gap-2">
+          <div
+            className="w-1.5 h-1.5 rounded-full mt-[5px] shrink-0"
+            style={{ backgroundColor: EVIDENCE_STRENGTH_COLOR[item.strength] }}
+          />
+          <div className="min-w-0">
+            <span className="text-[12px] text-muted-foreground leading-snug">{item.description}</span>
+            {item.frameMs !== undefined && (
+              <span className="text-[10.5px] text-muted-foreground/50 ml-1.5 font-mono">
+                @{Math.floor(item.frameMs / 1000)}s
+              </span>
+            )}
+          </div>
+          <span
+            className="text-[9.5px] font-mono uppercase tracking-widest shrink-0 mt-[3px]"
+            style={{ color: EVIDENCE_STRENGTH_COLOR[item.strength] }}
+          >
+            {item.strength}
+          </span>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+// ── Main card ─────────────────────────────────────────────────────────────────
+
+interface AnalysisClipCardProps {
+  clip:     AnalysisClip;
+  onReview: (clipId: string, status: CoachReviewStatus, note?: string, editedType?: BoundedEventType) => void;
+  isPending?: boolean;
+}
+
+export function AnalysisClipCard({ clip, onReview, isPending }: AnalysisClipCardProps) {
+  const [observationsOpen, setObservationsOpen] = useState(false);
+  const [editMode, setEditMode]               = useState(false);
+  const [editNote, setEditNote]               = useState(clip.coachDecision?.note ?? "");
+
+  const hasDecision = clip.coachDecision !== null;
+  const statusCfg   = hasDecision
+    ? STATUS_CONFIG[clip.coachDecision!.status]
+    : STATUS_CONFIG["pending"];
+
+  const eventLabel = clip.coachDecision?.editedEventType
+    ? EVENT_LABELS[clip.coachDecision.editedEventType]
+    : EVENT_LABELS[clip.inference.eventType];
+
+  return (
+    <div
+      className="rounded-2xl border bg-card overflow-hidden"
+      style={{
+        borderColor: clip.inference.requiresReview
+          ? `${COLORS.medium}40`
+          : hasDecision
+          ? `${statusCfg.color}30`
+          : "var(--color-border, oklch(0.22 0.005 260))",
+      }}
+    >
+      {/* Header strip */}
+      <div className="flex items-center justify-between px-4 py-2.5 border-b border-border/50 bg-muted/20">
+        <div className="flex items-center gap-2.5">
+          <Film className="w-3.5 h-3.5 text-muted-foreground shrink-0" />
+          <span className="text-[12px] font-semibold tabular-nums">{clip.timestamp}</span>
+          {clip.primaryPlayerName && (
+            <>
+              <span className="text-muted-foreground/30 text-[11px]">·</span>
+              <span className="text-[12px] text-muted-foreground">
+                {clip.primaryPlayerName}
+                {clip.primaryPlayerJersey && ` #${clip.primaryPlayerJersey}`}
+              </span>
+            </>
+          )}
+          {clip.observations[0]?.courtZone && clip.observations[0].courtZone !== "unknown" && (
+            <>
+              <span className="text-muted-foreground/30 text-[11px]">·</span>
+              <span className="text-[11px] text-muted-foreground">
+                {COURT_ZONE_LABELS[clip.observations[0].courtZone]}
+              </span>
+            </>
+          )}
+        </div>
+        <div className="flex items-center gap-1.5">
+          {hasDecision && (
+            <span
+              className="inline-flex items-center gap-1 text-[10.5px] font-medium px-2 py-0.5 rounded-full border"
+              style={{ color: statusCfg.color, borderColor: `${statusCfg.color}35`, backgroundColor: `${statusCfg.color}10` }}
+            >
+              {statusCfg.icon}
+              {statusCfg.label}
+            </span>
+          )}
+        </div>
+      </div>
+
+      <div className="p-5 flex flex-col gap-5">
+
+        {/* ── Zone A: Observations ──────────────────────────────────────────── */}
+        <div>
+          <button
+            onClick={() => setObservationsOpen((o) => !o)}
+            className="flex items-center gap-1.5 text-[10.5px] font-mono uppercase tracking-[0.12em] text-muted-foreground hover:text-foreground transition-colors w-full text-left mb-2"
+          >
+            {observationsOpen ? <ChevronDown className="w-3 h-3" /> : <ChevronRight className="w-3 h-3" />}
+            Observations · {clip.observations.length} detected
+          </button>
+
+          {observationsOpen && (
+            <div className="pl-4 flex flex-col gap-2 border-l-2 border-muted">
+              {clip.observations.map((obs, i) => (
+                <div key={i}>
+                  <div className="text-[11px] font-mono text-muted-foreground/60 uppercase tracking-[0.08em] mb-0.5">
+                    {obs.type.replace(/_/g, " ")}
+                    {obs.frameMs !== undefined && (
+                      <span className="ml-2 text-muted-foreground/40">@ {Math.floor(obs.frameMs / 1000)}s</span>
+                    )}
+                  </div>
+                  <p className="text-[12.5px] text-muted-foreground leading-relaxed">{obs.description}</p>
+                  <div className="flex items-center gap-2 mt-0.5">
+                    <span className="text-[10px] text-muted-foreground/40 font-mono">
+                      detection: {Math.round(obs.detectionConfidence * 100)}%
+                    </span>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+
+        {/* ── Zone B: Inference ─────────────────────────────────────────────── */}
+        <div className="rounded-xl border border-border bg-muted/20 p-4 flex flex-col gap-3">
+          <div className="text-[10px] font-mono uppercase tracking-[0.12em] text-muted-foreground">
+            Inference
+          </div>
+
+          <div className="flex items-start justify-between gap-3">
+            <div>
+              <div className="text-[16px] font-bold leading-tight">{eventLabel}</div>
+              {clip.inference.subLabel && (
+                <div className="text-[12px] text-muted-foreground mt-0.5">{clip.inference.subLabel}</div>
+              )}
+            </div>
+            <ConfidenceBadge
+              score={clip.inference.confidence}
+              requiresReview={clip.inference.requiresReview}
+            />
+          </div>
+
+          {/* Evidence */}
+          <div>
+            <div className="text-[10px] font-mono uppercase tracking-[0.1em] text-muted-foreground mb-2">
+              Evidence ({clip.inference.evidenceItems.length})
+            </div>
+            <EvidenceList evidence={clip.inference.evidenceItems} />
+          </div>
+
+          {/* Alternatives */}
+          {clip.inference.alternatives && clip.inference.alternatives.length > 0 && (
+            <div className="flex items-center gap-2 flex-wrap pt-1 border-t border-border/50">
+              <Info className="w-3 h-3 text-muted-foreground/50 shrink-0" />
+              <span className="text-[11px] text-muted-foreground/60">Also considered:</span>
+              {clip.inference.alternatives.map((alt) => (
+                <span
+                  key={alt.eventType}
+                  className="text-[10.5px] text-muted-foreground/50 font-mono"
+                >
+                  {EVENT_LABELS[alt.eventType]} ({Math.round(alt.confidence * 100)}%)
+                </span>
+              ))}
+            </div>
+          )}
+        </div>
+
+        {/* Suggested coaching note */}
+        {clip.suggestedCoachNote && !hasDecision && (
+          <div className="rounded-lg border border-dashed border-border px-3 py-2">
+            <div className="text-[10px] font-mono uppercase tracking-[0.1em] text-muted-foreground mb-1">
+              Suggested note (editable)
+            </div>
+            <p className="text-[12.5px] text-muted-foreground italic">{clip.suggestedCoachNote}</p>
+          </div>
+        )}
+
+        {/* Coach note (if reviewed) */}
+        {hasDecision && clip.coachDecision!.note && (
+          <div className="rounded-lg border-l-2 border-primary pl-3 py-1.5">
+            <div className="text-[10px] font-mono uppercase tracking-[0.1em] text-primary mb-1">
+              Coach note
+            </div>
+            <p className="text-[12.5px] text-foreground/80 leading-relaxed">
+              {clip.coachDecision!.note}
+            </p>
+          </div>
+        )}
+
+        {/* ── Zone C: Coach Review ──────────────────────────────────────────── */}
+        {!hasDecision && !editMode && (
+          <div className="flex flex-col gap-2 pt-1 border-t border-border/50">
+            <div className="text-[10px] font-mono uppercase tracking-[0.1em] text-muted-foreground mb-1">
+              Coach review
+            </div>
+            <div className="flex flex-wrap gap-2">
+              <button
+                disabled={isPending}
+                onClick={() => { onReview(clip.id, "confirmed"); toast.success("Confirmed."); }}
+                className="h-8 px-3 rounded-lg text-[12px] font-semibold border transition-all hover:brightness-110 disabled:opacity-50"
+                style={{ backgroundColor: `${COLORS.high}15`, borderColor: `${COLORS.high}40`, color: COLORS.high }}
+              >
+                <Check className="w-3.5 h-3.5 inline mr-1" />
+                Confirm
+              </button>
+              <button
+                disabled={isPending}
+                onClick={() => setEditMode(true)}
+                className="h-8 px-3 rounded-lg text-[12px] font-semibold border transition-all hover:brightness-110 disabled:opacity-50"
+                style={{ backgroundColor: `${COLORS.primary}12`, borderColor: `${COLORS.primary}35`, color: COLORS.primary }}
+              >
+                <Edit3 className="w-3.5 h-3.5 inline mr-1" />
+                Edit label
+              </button>
+              <button
+                disabled={isPending}
+                onClick={() => { onReview(clip.id, "flagged_for_teaching"); toast.success("Flagged for teaching."); }}
+                className="h-8 px-3 rounded-lg text-[12px] font-semibold border transition-all hover:brightness-110 disabled:opacity-50"
+                style={{ backgroundColor: `${COLORS.medium}12`, borderColor: `${COLORS.medium}35`, color: COLORS.medium }}
+              >
+                <BookOpen className="w-3.5 h-3.5 inline mr-1" />
+                Flag for teaching
+              </button>
+              <button
+                disabled={isPending}
+                onClick={() => { onReview(clip.id, "rejected"); toast("Rejected."); }}
+                className="h-8 px-3 rounded-lg text-[12px] font-semibold border transition-all hover:brightness-110 disabled:opacity-50"
+                style={{ backgroundColor: `${COLORS.low}10`, borderColor: `${COLORS.low}30`, color: COLORS.low }}
+              >
+                <X className="w-3.5 h-3.5 inline mr-1" />
+                Reject
+              </button>
+            </div>
+          </div>
+        )}
+
+        {editMode && (
+          <div className="flex flex-col gap-3 pt-1 border-t border-border/50">
+            <div className="text-[10px] font-mono uppercase tracking-[0.1em] text-muted-foreground">
+              Add a note (required for edits)
+            </div>
+            <textarea
+              autoFocus
+              value={editNote}
+              onChange={(e) => setEditNote(e.target.value)}
+              placeholder="Describe the correction or teaching point…"
+              rows={2}
+              className="w-full px-3 py-2 text-[13px] rounded-xl border border-border bg-background resize-none focus:outline-none focus:ring-1 focus:ring-primary/40"
+            />
+            <div className="flex items-center gap-2">
+              <button
+                disabled={!editNote.trim() || isPending}
+                onClick={() => {
+                  onReview(clip.id, "edited", editNote.trim());
+                  setEditMode(false);
+                  toast.success("Saved. Coach review logged.");
+                }}
+                className="h-8 px-3 rounded-lg text-[12px] font-semibold transition-all disabled:opacity-50"
+                style={{ backgroundColor: COLORS.primary, color: "#fff" }}
+              >
+                Save note
+              </button>
+              <button
+                onClick={() => { setEditMode(false); setEditNote(""); }}
+                className="h-8 px-3 rounded-lg text-[12px] font-semibold border border-border transition-all hover:bg-muted/50"
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
