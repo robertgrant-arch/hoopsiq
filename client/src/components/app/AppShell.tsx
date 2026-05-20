@@ -103,6 +103,7 @@ import {
   writeAthleteMoreOrder,
   applyCoachSectionOrder,
   applyAthleteMoreOrder,
+  clearCoachSectionOrder,
 } from "@/lib/navPrefs";
 
 /* -------------------------------------------------------------------------- */
@@ -905,6 +906,11 @@ function CoachDesktopSidebar({
     )
   );
 
+  // Whether the user's current order differs from the default
+  const isCustomized = sections.some(
+    (s, i) => s.title !== COACH_SIDEBAR_SECTIONS[i]?.title
+  );
+
   const sensors = useSensors(useSensor(PointerSensor, { activationConstraint: { distance: 6 } }));
 
   function handleDragEnd(event: DragEndEvent) {
@@ -936,6 +942,11 @@ function CoachDesktopSidebar({
 
   // IDs for SortableContext — pinned sections need an id too but won't move
   const sectionIds = sections.map((s) => s.title ?? "");
+
+  function handleReset() {
+    clearCoachSectionOrder(user.handle);
+    setSections([...COACH_SIDEBAR_SECTIONS]);
+  }
 
   return (
     <aside className="hidden lg:flex w-60 shrink-0 border-r border-border flex-col h-screen sticky top-0">
@@ -992,6 +1003,16 @@ function CoachDesktopSidebar({
       </nav>
 
       <div className="border-t border-border px-3 py-2 shrink-0 space-y-0.5">
+        {isCustomized && (
+          <button
+            onClick={handleReset}
+            className="w-full flex items-center gap-2.5 px-2.5 py-2 rounded-lg text-[12px] text-muted-foreground/50 hover:text-muted-foreground transition-colors"
+            title="Restore default nav order"
+          >
+            <RotateCcw className="w-3.5 h-3.5" />
+            Reset nav order
+          </button>
+        )}
         <Link href="/" asChild>
           <a className="flex items-center gap-2.5 px-2.5 py-2 rounded-lg text-[12.5px] text-muted-foreground/60 hover:text-muted-foreground transition-colors">
             ← Marketing site

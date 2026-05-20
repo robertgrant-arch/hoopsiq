@@ -80,6 +80,15 @@ export function clearNavPrefs(handle: string): void {
   }
 }
 
+/** Resets only the coach section order to default (remove the stored key). */
+export function clearCoachSectionOrder(handle: string): void {
+  try {
+    localStorage.removeItem(key("coach", handle, "sections"));
+  } catch {
+    // Silent
+  }
+}
+
 // ── Order helpers ──────────────────────────────────────────────────────────
 
 /**
