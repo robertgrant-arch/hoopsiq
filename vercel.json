@@ -12,12 +12,8 @@
       "destination": "/api/wods/generate"
     },
     {
-      "source": "/api/me",
-      "destination": "/api/wods/generate"
-    },
-    {
       "source": "/api/:path*",
-      "destination": "/api/index"
+      "destination": "/api/wods/generate"
     },
     {
       "source": "/webhooks/:path*",
