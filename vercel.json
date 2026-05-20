@@ -12,12 +12,12 @@
       "destination": "/api/wods/generate"
     },
     {
-      "source": "/api/:path*",
-      "destination": "/api/wods/generate"
+      "source": "/api/:path+",
+      "destination": "/api"
     },
     {
       "source": "/webhooks/:path*",
-      "destination": "/api/index"
+      "destination": "/api"
     },
     {
       "source": "/(.*)",
