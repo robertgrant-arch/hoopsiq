@@ -12,10 +12,6 @@
       "destination": "/api/wods/generate"
     },
     {
-      "source": "/api/ping",
-      "destination": "/api/ping"
-    },
-    {
       "source": "/api/:path*",
       "destination": "/api/index"
     },
