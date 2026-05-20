@@ -29,6 +29,9 @@ export function getDb(): Db {
 
   const url = process.env.DATABASE_URL;
   if (!url) {
+    // Throw a plain Error here — HttpError lives in server/auth/tenant.ts which
+    // creates a circular import risk from shared/db. The routes.ts handleError
+    // function catches this via a fallback check below.
     throw new Error(
       "DATABASE_URL is not set. Set it in Vercel for Development/Preview/Production.",
     );

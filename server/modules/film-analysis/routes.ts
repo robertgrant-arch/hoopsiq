@@ -29,6 +29,20 @@ function handleError(
     res.status(err.status).json({ error: err.message });
     return;
   }
+  // Catch known misconfiguration errors and return a 503 instead of letting
+  // them propagate to Express's default error handler (which returns 500 with
+  // an HTML body). This covers DATABASE_URL, MUX_TOKEN_ID, GEMINI_API_KEY, etc.
+  if (err instanceof Error) {
+    const msg = err.message ?? "";
+    if (
+      msg.includes("DATABASE_URL") ||
+      msg.includes("not set") ||
+      msg.includes("not configured")
+    ) {
+      res.status(503).json({ error: "Service is not fully configured in this environment." });
+      return;
+    }
+  }
   next(err);
 }
 

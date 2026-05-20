@@ -152,23 +152,44 @@ export async function requireOrg(req: Request): Promise<RequireOrgResult> {
     throw new HttpError(403, "Active organization required");
   }
 
-  const orgId = await resolveDbOrgId(clerkOrgId, clerkAuth.orgSlug ?? undefined);
+  let orgId: string | null;
+  try {
+    orgId = await resolveDbOrgId(clerkOrgId, clerkAuth.orgSlug ?? undefined);
+  } catch (e) {
+    // Convert DATABASE_URL / connection errors into a 503 so they become
+    // proper JSON responses instead of Express's default 500 HTML page.
+    const msg = e instanceof Error ? e.message : String(e);
+    if (msg.includes("DATABASE_URL") || msg.includes("not set")) {
+      throw new HttpError(503, "Database is not configured in this environment.");
+    }
+    throw e;
+  }
+
   if (!orgId) {
     throw new HttpError(403, "Organization not provisioned");
   }
 
-  const db = getDb();
-  const [membership] = await db
-    .select()
-    .from(orgMembers)
-    .where(
-      and(
-        eq(orgMembers.orgId, orgId),
-        eq(orgMembers.userId, clerkAuth.userId),
-        isNull(orgMembers.deletedAt),
-      ),
-    )
-    .limit(1);
+  let membership: typeof orgMembers.$inferSelect | undefined;
+  try {
+    const db = getDb();
+    [membership] = await db
+      .select()
+      .from(orgMembers)
+      .where(
+        and(
+          eq(orgMembers.orgId, orgId),
+          eq(orgMembers.userId, clerkAuth.userId),
+          isNull(orgMembers.deletedAt),
+        ),
+      )
+      .limit(1);
+  } catch (e) {
+    const msg = e instanceof Error ? e.message : String(e);
+    if (msg.includes("DATABASE_URL") || msg.includes("not set")) {
+      throw new HttpError(503, "Database is not configured in this environment.");
+    }
+    throw e;
+  }
 
   if (!membership) {
     throw new HttpError(403, "Not a member of this organization");
