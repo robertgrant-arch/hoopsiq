@@ -106,6 +106,11 @@ import {
   applyAthleteMoreOrder,
   clearCoachSectionOrder,
   clearAthleteMoreOrder,
+  readCoachItemOrder,
+  writeCoachSectionItemOrder,
+  clearCoachItemOrder,
+  applyItemOrder,
+  type CoachItemOrder,
 } from "@/lib/navPrefs";
 
 /* -------------------------------------------------------------------------- */
@@ -806,39 +811,137 @@ function CoachProfileSheet({
 }
 
 /* -------------------------------------------------------------------------- */
-/* CoachDesktopSidebar — drag-to-reorder sections                             */
+/* CoachDesktopSidebar — drag-to-reorder sections and items within sections  */
 /* -------------------------------------------------------------------------- */
 
 /**
- * Sortable section row — renders one sidebar section with a drag handle.
- * Pinned sections receive no handle and cannot be moved.
+ * One sortable nav item inside a coach sidebar section.
+ * Smaller drag handle (w-3 h-3) vs section handle (w-3.5 h-3.5) — visually
+ * distinct affordance so coaches understand the two drag levels.
+ */
+function SortableNavItem({ item, loc }: { item: NavItem; loc: string }) {
+  const active =
+    item.href === "/app/coach" ? loc === "/app/coach" : loc.startsWith(item.href);
+
+  const { attributes, listeners, setNodeRef, transform, transition, isDragging } =
+    useSortable({ id: item.href });
+
+  const style: React.CSSProperties = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+    opacity: isDragging ? 0.4 : 1,
+  };
+
+  return (
+    <div ref={setNodeRef} style={style} className="flex items-center gap-0.5 mb-0.5 group">
+      {/* Item-level drag handle — hover-reveal, smaller than section handle */}
+      <button
+        {...attributes}
+        {...listeners}
+        aria-label={`Drag to reorder ${item.label}`}
+        className="opacity-0 group-hover:opacity-100 focus:opacity-100 transition-opacity cursor-grab active:cursor-grabbing p-0.5 rounded text-muted-foreground/25 hover:text-muted-foreground/55 shrink-0"
+      >
+        <GripVertical className="w-3 h-3" />
+      </button>
+
+      <Link href={item.href} asChild>
+        <a
+          className="flex-1 flex items-center gap-2 px-2 py-2 rounded-lg text-[13px] transition-all duration-150 relative"
+          style={
+            active
+              ? { background: `${ACCENT.replace(")", " / 0.10)")}`, color: ACCENT }
+              : { color: "oklch(0.55 0.02 260)" }
+          }
+        >
+          {active && (
+            <span
+              className="absolute left-0 top-1 bottom-1 w-[3px] rounded-full"
+              style={{ background: ACCENT }}
+            />
+          )}
+          <span className="pl-0.5 w-4 h-4 flex items-center justify-center shrink-0">
+            {item.icon}
+          </span>
+          <span className={active ? "font-semibold" : ""}>{item.label}</span>
+        </a>
+      </Link>
+    </div>
+  );
+}
+
+/**
+ * Sortable sidebar section — handles TWO levels of drag-and-drop:
+ *
+ *   Outer level (section-level): useSortable on the section container.
+ *     The section header GripVertical handle (w-3.5 h-3.5) triggers this.
+ *
+ *   Inner level (item-level): its own DndContext wraps the item list.
+ *     Each item's GripVertical handle (w-3 h-3) triggers this.
+ *
+ * The two DndContext instances are separate — @dnd-kit recommends nested
+ * contexts for nested sortable lists. The outer context (in CoachDesktopSidebar)
+ * only fires when the section handle is grabbed; the inner context only fires
+ * when an item handle is grabbed. There is no ambiguity.
  */
 function SortableSidebarSection({
   section,
   loc,
   pinned,
+  savedItemHrefs,
+  onItemsReordered,
+  resetKey,
 }: {
-  section: SidebarSection;
-  loc: string;
-  pinned: boolean;
+  section:          SidebarSection;
+  loc:              string;
+  pinned:           boolean;
+  savedItemHrefs:   string[] | null;
+  onItemsReordered: (sectionTitle: string, hrefs: string[]) => void;
+  resetKey:         number;
 }) {
+  // ── Outer: section-level drag via parent DndContext ──────────────────────
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } =
     useSortable({ id: section.title ?? "", disabled: pinned });
 
-  const style: React.CSSProperties = {
+  const sectionStyle: React.CSSProperties = {
     transform: CSS.Transform.toString(transform),
     transition,
     opacity: isDragging ? 0.5 : 1,
   };
 
-  function isItemActive(item: NavItem) {
-    if (item.href === "/app/coach") return loc === "/app/coach";
-    return loc.startsWith(item.href);
+  // ── Inner: item-level drag ────────────────────────────────────────────────
+  const defaultItems = section.items;
+
+  const [items, setItems] = useState<NavItem[]>(() =>
+    applyItemOrder(defaultItems, savedItemHrefs)
+  );
+
+  // Reset item order when the parent triggers a global reset
+  useEffect(() => {
+    if (resetKey > 0) setItems([...defaultItems]);
+  }, [resetKey]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  const itemSensors = useSensors(
+    useSensor(PointerSensor, { activationConstraint: { distance: 6 } })
+  );
+
+  function handleItemDragEnd(event: DragEndEvent) {
+    const { active, over } = event;
+    if (!over || active.id === over.id) return;
+
+    setItems((prev) => {
+      const oldIdx = prev.findIndex((i) => i.href === active.id);
+      const newIdx = prev.findIndex((i) => i.href === over.id);
+      if (oldIdx === -1 || newIdx === -1) return prev;
+
+      const next = arrayMove(prev, oldIdx, newIdx);
+      onItemsReordered(section.title ?? "", next.map((i) => i.href));
+      return next;
+    });
   }
 
   return (
-    <div ref={setNodeRef} style={style}>
-      {/* Section header with optional drag handle */}
+    <div ref={setNodeRef} style={sectionStyle}>
+      {/* Section header — section-level drag handle */}
       <div className="flex items-center justify-between px-2 mb-1.5 mt-4 first:mt-0 group">
         {section.title && (
           <div className="text-[10px] uppercase tracking-[0.14em] font-semibold text-muted-foreground/40">
@@ -857,33 +960,21 @@ function SortableSidebarSection({
         )}
       </div>
 
-      {/* Section items */}
-      {section.items.map((item) => {
-        const active = isItemActive(item);
-        return (
-          <Link key={item.href} href={item.href} asChild>
-            <a
-              className="flex items-center gap-2.5 px-2.5 py-2 rounded-lg text-[13px] transition-all duration-150 relative mb-0.5"
-              style={
-                active
-                  ? { background: `${ACCENT.replace(")", " / 0.10)")}`, color: ACCENT }
-                  : { color: "oklch(0.55 0.02 260)" }
-              }
-            >
-              {active && (
-                <span
-                  className="absolute left-0 top-1 bottom-1 w-[3px] rounded-full"
-                  style={{ background: ACCENT }}
-                />
-              )}
-              <span className="pl-1 w-4 h-4 flex items-center justify-center shrink-0">
-                {item.icon}
-              </span>
-              <span className={active ? "font-semibold" : ""}>{item.label}</span>
-            </a>
-          </Link>
-        );
-      })}
+      {/* Items — inner DndContext, independent of the section-level DndContext */}
+      <DndContext
+        sensors={itemSensors}
+        collisionDetection={closestCenter}
+        onDragEnd={handleItemDragEnd}
+      >
+        <SortableContext
+          items={items.map((i) => i.href)}
+          strategy={verticalListSortingStrategy}
+        >
+          {items.map((item) => (
+            <SortableNavItem key={item.href} item={item} loc={loc} />
+          ))}
+        </SortableContext>
+      </DndContext>
     </div>
   );
 }
@@ -908,10 +999,24 @@ function CoachDesktopSidebar({
     )
   );
 
-  // Whether the user's current order differs from the default
-  const isCustomized = sections.some(
-    (s, i) => s.title !== COACH_SIDEBAR_SECTIONS[i]?.title
+  // Saved item orders per section — loaded once on mount
+  const [savedItemOrders] = useState<CoachItemOrder | null>(() =>
+    readCoachItemOrder(user.handle)
   );
+
+  // Tracks whether any section's items have been customised (for reset button)
+  const [hasCustomItems, setHasCustomItems] = useState<boolean>(() =>
+    readCoachItemOrder(user.handle) !== null
+  );
+
+  // Incrementing key broadcast to SortableSidebarSection components on reset.
+  // Sections use this to re-initialise their item state without a full remount.
+  const [resetKey, setResetKey] = useState(0);
+
+  // Section order differs from default?
+  const isCustomized =
+    sections.some((s, i) => s.title !== COACH_SIDEBAR_SECTIONS[i]?.title) ||
+    hasCustomItems;
 
   const sensors = useSensors(useSensor(PointerSensor, { activationConstraint: { distance: 6 } }));
 
@@ -945,9 +1050,17 @@ function CoachDesktopSidebar({
   // IDs for SortableContext — pinned sections need an id too but won't move
   const sectionIds = sections.map((s) => s.title ?? "");
 
+  function handleItemsReordered(sectionTitle: string, hrefs: string[]) {
+    writeCoachSectionItemOrder(user.handle, sectionTitle, hrefs);
+    setHasCustomItems(true);
+  }
+
   function handleReset() {
     clearCoachSectionOrder(user.handle);
+    clearCoachItemOrder(user.handle);
     setSections([...COACH_SIDEBAR_SECTIONS]);
+    setHasCustomItems(false);
+    setResetKey((k) => k + 1);  // signals all SortableSidebarSection to reset items
   }
 
   return (
@@ -997,6 +1110,9 @@ function CoachDesktopSidebar({
                   section={section}
                   loc={loc}
                   pinned={pinned}
+                  savedItemHrefs={savedItemOrders?.[section.title ?? ""] ?? null}
+                  onItemsReordered={handleItemsReordered}
+                  resetKey={resetKey}
                 />
               );
             })}
@@ -1300,7 +1416,7 @@ function PlayerDesktopSidebar({
 /* -------------------------------------------------------------------------- */
 
 /** Sortable nav item for the More sheet. */
-function SortableNavItem({
+function MoreSheetNavItem({
   item,
   active,
   meta,
@@ -1493,7 +1609,7 @@ function GenericMoreSheet({
                   strategy={verticalListSortingStrategy}
                 >
                   {moreItems.map((item) => (
-                    <SortableNavItem
+                    <MoreSheetNavItem
                       key={item.href}
                       item={item}
                       active={isActive(item)}
