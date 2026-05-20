@@ -1,10 +1,5 @@
-"use strict";
-var __create = Object.create;
 var __defProp = Object.defineProperty;
-var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
 var __getOwnPropNames = Object.getOwnPropertyNames;
-var __getProtoOf = Object.getPrototypeOf;
-var __hasOwnProp = Object.prototype.hasOwnProperty;
 var __esm = (fn, res) => function __init() {
   return fn && (res = (0, fn[__getOwnPropNames(fn)[0]])(fn = 0)), res;
 };
@@ -12,37 +7,20 @@ var __export = (target, all) => {
   for (var name in all)
     __defProp(target, name, { get: all[name], enumerable: true });
 };
-var __copyProps = (to, from, except, desc15) => {
-  if (from && typeof from === "object" || typeof from === "function") {
-    for (let key of __getOwnPropNames(from))
-      if (!__hasOwnProp.call(to, key) && key !== except)
-        __defProp(to, key, { get: () => from[key], enumerable: !(desc15 = __getOwnPropDesc(from, key)) || desc15.enumerable });
-  }
-  return to;
-};
-var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__getProtoOf(mod)) : {}, __copyProps(
-  // If the importer is in node compatibility mode or this is not an ESM
-  // file that has been converted to a CommonJS file using a Babel-
-  // compatible transform (i.e. "__esModule" has not been set), then set
-  // "default" to the CommonJS "module.exports" for node compatibility.
-  isNodeMode || !mod || !mod.__esModule ? __defProp(target, "default", { value: mod, enumerable: true }) : target,
-  mod
-));
-var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: true }), mod);
 
 // shared/db/schema/_enums.ts
-var import_pg_core, orgPlanEnum, orgRoleEnum, filmSessionStatusEnum, filmSessionKindEnum, filmAssetKindEnum, filmAssetStatusEnum, analysisJobKindEnum, analysisJobStatusEnum, annotationSourceEnum, annotationKindEnum, subscriptionStatusEnum;
+import { pgEnum } from "drizzle-orm/pg-core";
+var orgPlanEnum, orgRoleEnum, filmSessionStatusEnum, filmSessionKindEnum, filmAssetKindEnum, filmAssetStatusEnum, analysisJobKindEnum, analysisJobStatusEnum, annotationSourceEnum, annotationKindEnum, subscriptionStatusEnum;
 var init_enums = __esm({
   "shared/db/schema/_enums.ts"() {
     "use strict";
-    import_pg_core = require("drizzle-orm/pg-core");
-    orgPlanEnum = (0, import_pg_core.pgEnum)("org_plan", [
+    orgPlanEnum = pgEnum("org_plan", [
       "free",
       "team",
       "club",
       "enterprise"
     ]);
-    orgRoleEnum = (0, import_pg_core.pgEnum)("org_role", [
+    orgRoleEnum = pgEnum("org_role", [
       "owner",
       "admin",
       "coach",
@@ -50,7 +28,7 @@ var init_enums = __esm({
       "player",
       "viewer"
     ]);
-    filmSessionStatusEnum = (0, import_pg_core.pgEnum)("film_session_status", [
+    filmSessionStatusEnum = pgEnum("film_session_status", [
       "draft",
       "uploading",
       "queued",
@@ -59,7 +37,7 @@ var init_enums = __esm({
       "failed",
       "archived"
     ]);
-    filmSessionKindEnum = (0, import_pg_core.pgEnum)("film_session_kind", [
+    filmSessionKindEnum = pgEnum("film_session_kind", [
       "game",
       "practice",
       "scrimmage",
@@ -67,7 +45,7 @@ var init_enums = __esm({
       "scout",
       "other"
     ]);
-    filmAssetKindEnum = (0, import_pg_core.pgEnum)("film_asset_kind", [
+    filmAssetKindEnum = pgEnum("film_asset_kind", [
       "source",
       "hls",
       "mp4_720p",
@@ -76,7 +54,7 @@ var init_enums = __esm({
       "sprite",
       "caption"
     ]);
-    filmAssetStatusEnum = (0, import_pg_core.pgEnum)("film_asset_status", [
+    filmAssetStatusEnum = pgEnum("film_asset_status", [
       "pending",
       "uploading",
       "stored",
@@ -84,7 +62,7 @@ var init_enums = __esm({
       "ready",
       "failed"
     ]);
-    analysisJobKindEnum = (0, import_pg_core.pgEnum)("analysis_job_kind", [
+    analysisJobKindEnum = pgEnum("analysis_job_kind", [
       "ingest",
       "transcode",
       "shot_chart",
@@ -93,7 +71,7 @@ var init_enums = __esm({
       "highlight_reel",
       "scouting_report"
     ]);
-    analysisJobStatusEnum = (0, import_pg_core.pgEnum)("analysis_job_status", [
+    analysisJobStatusEnum = pgEnum("analysis_job_status", [
       "queued",
       "running",
       "succeeded",
@@ -101,13 +79,13 @@ var init_enums = __esm({
       "cancelled",
       "retrying"
     ]);
-    annotationSourceEnum = (0, import_pg_core.pgEnum)("annotation_source", [
+    annotationSourceEnum = pgEnum("annotation_source", [
       "coach",
       "ai",
       "player",
       "import"
     ]);
-    annotationKindEnum = (0, import_pg_core.pgEnum)("annotation_kind", [
+    annotationKindEnum = pgEnum("annotation_kind", [
       "note",
       "tag",
       "play",
@@ -117,7 +95,7 @@ var init_enums = __esm({
       "highlight",
       "telestration"
     ]);
-    subscriptionStatusEnum = (0, import_pg_core.pgEnum)("subscription_status", [
+    subscriptionStatusEnum = pgEnum("subscription_status", [
       "trialing",
       "active",
       "past_due",
@@ -130,90 +108,106 @@ var init_enums = __esm({
 });
 
 // shared/db/schema/orgs.ts
-var import_pg_core2, orgs, orgMembers;
+import {
+  pgTable,
+  uuid,
+  text,
+  timestamp,
+  jsonb,
+  uniqueIndex,
+  index
+} from "drizzle-orm/pg-core";
+var orgs, orgMembers;
 var init_orgs = __esm({
   "shared/db/schema/orgs.ts"() {
     "use strict";
-    import_pg_core2 = require("drizzle-orm/pg-core");
     init_enums();
-    orgs = (0, import_pg_core2.pgTable)(
+    orgs = pgTable(
       "orgs",
       {
-        id: (0, import_pg_core2.uuid)("id").primaryKey().defaultRandom(),
-        slug: (0, import_pg_core2.text)("slug").notNull(),
-        name: (0, import_pg_core2.text)("name").notNull(),
+        id: uuid("id").primaryKey().defaultRandom(),
+        slug: text("slug").notNull(),
+        name: text("name").notNull(),
         plan: orgPlanEnum("plan").notNull().default("free"),
         // Stripe customer id, set by PR 6.
-        stripeCustomerId: (0, import_pg_core2.text)("stripe_customer_id"),
-        payload: (0, import_pg_core2.jsonb)("payload").notNull().default({}),
-        createdAt: (0, import_pg_core2.timestamp)("created_at", { withTimezone: true }).notNull().defaultNow(),
-        updatedAt: (0, import_pg_core2.timestamp)("updated_at", { withTimezone: true }).notNull().defaultNow(),
-        deletedAt: (0, import_pg_core2.timestamp)("deleted_at", { withTimezone: true })
+        stripeCustomerId: text("stripe_customer_id"),
+        payload: jsonb("payload").notNull().default({}),
+        createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+        updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
+        deletedAt: timestamp("deleted_at", { withTimezone: true })
       },
       (t) => ({
-        slugUnique: (0, import_pg_core2.uniqueIndex)("orgs_slug_unique").on(t.slug)
+        slugUnique: uniqueIndex("orgs_slug_unique").on(t.slug)
       })
     );
-    orgMembers = (0, import_pg_core2.pgTable)(
+    orgMembers = pgTable(
       "org_members",
       {
-        id: (0, import_pg_core2.uuid)("id").primaryKey().defaultRandom(),
-        orgId: (0, import_pg_core2.uuid)("org_id").notNull().references(() => orgs.id, { onDelete: "cascade" }),
+        id: uuid("id").primaryKey().defaultRandom(),
+        orgId: uuid("org_id").notNull().references(() => orgs.id, { onDelete: "cascade" }),
         // userId is sourced from the auth provider (Clerk/Supabase). Kept as text
         // so we are not coupled to a specific auth schema in this package.
-        userId: (0, import_pg_core2.text)("user_id").notNull(),
+        userId: text("user_id").notNull(),
         role: orgRoleEnum("role").notNull().default("viewer"),
-        payload: (0, import_pg_core2.jsonb)("payload").notNull().default({}),
-        createdAt: (0, import_pg_core2.timestamp)("created_at", { withTimezone: true }).notNull().defaultNow(),
-        updatedAt: (0, import_pg_core2.timestamp)("updated_at", { withTimezone: true }).notNull().defaultNow(),
-        deletedAt: (0, import_pg_core2.timestamp)("deleted_at", { withTimezone: true })
+        payload: jsonb("payload").notNull().default({}),
+        createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+        updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
+        deletedAt: timestamp("deleted_at", { withTimezone: true })
       },
       (t) => ({
-        orgUserUnique: (0, import_pg_core2.uniqueIndex)("org_members_org_user_unique").on(
+        orgUserUnique: uniqueIndex("org_members_org_user_unique").on(
           t.orgId,
           t.userId
         ),
-        byUser: (0, import_pg_core2.index)("org_members_user_idx").on(t.userId)
+        byUser: index("org_members_user_idx").on(t.userId)
       })
     );
   }
 });
 
 // shared/db/schema/film_sessions.ts
-var import_pg_core3, filmSessions;
+import {
+  pgTable as pgTable2,
+  uuid as uuid2,
+  text as text2,
+  timestamp as timestamp2,
+  jsonb as jsonb2,
+  integer,
+  index as index2
+} from "drizzle-orm/pg-core";
+var filmSessions;
 var init_film_sessions = __esm({
   "shared/db/schema/film_sessions.ts"() {
     "use strict";
-    import_pg_core3 = require("drizzle-orm/pg-core");
     init_orgs();
     init_enums();
-    filmSessions = (0, import_pg_core3.pgTable)(
+    filmSessions = pgTable2(
       "film_sessions",
       {
-        id: (0, import_pg_core3.uuid)("id").primaryKey().defaultRandom(),
-        orgId: (0, import_pg_core3.uuid)("org_id").notNull().references(() => orgs.id, { onDelete: "cascade" }),
-        createdByUserId: (0, import_pg_core3.text)("created_by_user_id").notNull(),
-        title: (0, import_pg_core3.text)("title").notNull(),
-        description: (0, import_pg_core3.text)("description"),
+        id: uuid2("id").primaryKey().defaultRandom(),
+        orgId: uuid2("org_id").notNull().references(() => orgs.id, { onDelete: "cascade" }),
+        createdByUserId: text2("created_by_user_id").notNull(),
+        title: text2("title").notNull(),
+        description: text2("description"),
         kind: filmSessionKindEnum("kind").notNull().default("game"),
         status: filmSessionStatusEnum("status").notNull().default("draft"),
         // Optional context for game/scout sessions.
-        opponent: (0, import_pg_core3.text)("opponent"),
-        homeAway: (0, import_pg_core3.text)("home_away"),
+        opponent: text2("opponent"),
+        homeAway: text2("home_away"),
         // "home" | "away" | "neutral"
-        season: (0, import_pg_core3.text)("season"),
-        playedAt: (0, import_pg_core3.timestamp)("played_at", { withTimezone: true }),
+        season: text2("season"),
+        playedAt: timestamp2("played_at", { withTimezone: true }),
         // Cached duration of the primary asset, filled in by the transcode job.
-        durationSeconds: (0, import_pg_core3.integer)("duration_seconds"),
-        payload: (0, import_pg_core3.jsonb)("payload").notNull().default({}),
-        createdAt: (0, import_pg_core3.timestamp)("created_at", { withTimezone: true }).notNull().defaultNow(),
-        updatedAt: (0, import_pg_core3.timestamp)("updated_at", { withTimezone: true }).notNull().defaultNow(),
-        deletedAt: (0, import_pg_core3.timestamp)("deleted_at", { withTimezone: true })
+        durationSeconds: integer("duration_seconds"),
+        payload: jsonb2("payload").notNull().default({}),
+        createdAt: timestamp2("created_at", { withTimezone: true }).notNull().defaultNow(),
+        updatedAt: timestamp2("updated_at", { withTimezone: true }).notNull().defaultNow(),
+        deletedAt: timestamp2("deleted_at", { withTimezone: true })
       },
       (t) => ({
-        byOrg: (0, import_pg_core3.index)("film_sessions_org_idx").on(t.orgId),
-        byOrgStatus: (0, import_pg_core3.index)("film_sessions_org_status_idx").on(t.orgId, t.status),
-        byOrgPlayedAt: (0, import_pg_core3.index)("film_sessions_org_played_at_idx").on(
+        byOrg: index2("film_sessions_org_idx").on(t.orgId),
+        byOrgStatus: index2("film_sessions_org_status_idx").on(t.orgId, t.status),
+        byOrgPlayedAt: index2("film_sessions_org_played_at_idx").on(
           t.orgId,
           t.playedAt
         )
@@ -223,140 +217,165 @@ var init_film_sessions = __esm({
 });
 
 // shared/db/schema/film_assets.ts
-var import_pg_core4, filmAssets;
+import {
+  pgTable as pgTable3,
+  uuid as uuid3,
+  text as text3,
+  timestamp as timestamp3,
+  jsonb as jsonb3,
+  integer as integer2,
+  bigint,
+  index as index3
+} from "drizzle-orm/pg-core";
+var filmAssets;
 var init_film_assets = __esm({
   "shared/db/schema/film_assets.ts"() {
     "use strict";
-    import_pg_core4 = require("drizzle-orm/pg-core");
     init_orgs();
     init_film_sessions();
     init_enums();
-    filmAssets = (0, import_pg_core4.pgTable)(
+    filmAssets = pgTable3(
       "film_assets",
       {
-        id: (0, import_pg_core4.uuid)("id").primaryKey().defaultRandom(),
-        orgId: (0, import_pg_core4.uuid)("org_id").notNull().references(() => orgs.id, { onDelete: "cascade" }),
-        sessionId: (0, import_pg_core4.uuid)("session_id").notNull().references(() => filmSessions.id, { onDelete: "cascade" }),
+        id: uuid3("id").primaryKey().defaultRandom(),
+        orgId: uuid3("org_id").notNull().references(() => orgs.id, { onDelete: "cascade" }),
+        sessionId: uuid3("session_id").notNull().references(() => filmSessions.id, { onDelete: "cascade" }),
         kind: filmAssetKindEnum("kind").notNull(),
         status: filmAssetStatusEnum("status").notNull().default("pending"),
         // Provider-agnostic storage pointers. For S3 we set storageProvider="s3"
         // and storageKey to the object key. For Mux we store the asset id in
         // providerId and the playback id in playbackId.
-        storageProvider: (0, import_pg_core4.text)("storage_provider"),
+        storageProvider: text3("storage_provider"),
         // "s3" | "mux" | "r2"
-        storageBucket: (0, import_pg_core4.text)("storage_bucket"),
-        storageKey: (0, import_pg_core4.text)("storage_key"),
-        providerId: (0, import_pg_core4.text)("provider_id"),
-        playbackId: (0, import_pg_core4.text)("playback_id"),
+        storageBucket: text3("storage_bucket"),
+        storageKey: text3("storage_key"),
+        providerId: text3("provider_id"),
+        playbackId: text3("playback_id"),
         // Media metadata (filled in once known).
-        mimeType: (0, import_pg_core4.text)("mime_type"),
-        sizeBytes: (0, import_pg_core4.bigint)("size_bytes", { mode: "number" }),
-        durationSeconds: (0, import_pg_core4.integer)("duration_seconds"),
-        width: (0, import_pg_core4.integer)("width"),
-        height: (0, import_pg_core4.integer)("height"),
-        checksumSha256: (0, import_pg_core4.text)("checksum_sha256"),
-        payload: (0, import_pg_core4.jsonb)("payload").notNull().default({}),
-        createdAt: (0, import_pg_core4.timestamp)("created_at", { withTimezone: true }).notNull().defaultNow(),
-        updatedAt: (0, import_pg_core4.timestamp)("updated_at", { withTimezone: true }).notNull().defaultNow(),
-        deletedAt: (0, import_pg_core4.timestamp)("deleted_at", { withTimezone: true })
+        mimeType: text3("mime_type"),
+        sizeBytes: bigint("size_bytes", { mode: "number" }),
+        durationSeconds: integer2("duration_seconds"),
+        width: integer2("width"),
+        height: integer2("height"),
+        checksumSha256: text3("checksum_sha256"),
+        payload: jsonb3("payload").notNull().default({}),
+        createdAt: timestamp3("created_at", { withTimezone: true }).notNull().defaultNow(),
+        updatedAt: timestamp3("updated_at", { withTimezone: true }).notNull().defaultNow(),
+        deletedAt: timestamp3("deleted_at", { withTimezone: true })
       },
       (t) => ({
-        bySession: (0, import_pg_core4.index)("film_assets_session_idx").on(t.sessionId),
-        bySessionKind: (0, import_pg_core4.index)("film_assets_session_kind_idx").on(
+        bySession: index3("film_assets_session_idx").on(t.sessionId),
+        bySessionKind: index3("film_assets_session_kind_idx").on(
           t.sessionId,
           t.kind
         ),
-        byOrgStatus: (0, import_pg_core4.index)("film_assets_org_status_idx").on(t.orgId, t.status)
+        byOrgStatus: index3("film_assets_org_status_idx").on(t.orgId, t.status)
       })
     );
   }
 });
 
 // shared/db/schema/analysis_jobs.ts
-var import_pg_core5, analysisJobs;
+import {
+  pgTable as pgTable4,
+  uuid as uuid4,
+  text as text4,
+  timestamp as timestamp4,
+  jsonb as jsonb4,
+  integer as integer3,
+  index as index4
+} from "drizzle-orm/pg-core";
+var analysisJobs;
 var init_analysis_jobs = __esm({
   "shared/db/schema/analysis_jobs.ts"() {
     "use strict";
-    import_pg_core5 = require("drizzle-orm/pg-core");
     init_orgs();
     init_film_sessions();
     init_enums();
-    analysisJobs = (0, import_pg_core5.pgTable)(
+    analysisJobs = pgTable4(
       "analysis_jobs",
       {
-        id: (0, import_pg_core5.uuid)("id").primaryKey().defaultRandom(),
-        orgId: (0, import_pg_core5.uuid)("org_id").notNull().references(() => orgs.id, { onDelete: "cascade" }),
-        sessionId: (0, import_pg_core5.uuid)("session_id").notNull().references(() => filmSessions.id, { onDelete: "cascade" }),
+        id: uuid4("id").primaryKey().defaultRandom(),
+        orgId: uuid4("org_id").notNull().references(() => orgs.id, { onDelete: "cascade" }),
+        sessionId: uuid4("session_id").notNull().references(() => filmSessions.id, { onDelete: "cascade" }),
         kind: analysisJobKindEnum("kind").notNull(),
         status: analysisJobStatusEnum("status").notNull().default("queued"),
         // Inngest run id and event id, so we can deep-link from the dashboard.
-        inngestRunId: (0, import_pg_core5.text)("inngest_run_id"),
-        inngestEventId: (0, import_pg_core5.text)("inngest_event_id"),
-        attempts: (0, import_pg_core5.integer)("attempts").notNull().default(0),
-        maxAttempts: (0, import_pg_core5.integer)("max_attempts").notNull().default(5),
-        lastError: (0, import_pg_core5.text)("last_error"),
-        startedAt: (0, import_pg_core5.timestamp)("started_at", { withTimezone: true }),
-        finishedAt: (0, import_pg_core5.timestamp)("finished_at", { withTimezone: true }),
+        inngestRunId: text4("inngest_run_id"),
+        inngestEventId: text4("inngest_event_id"),
+        attempts: integer3("attempts").notNull().default(0),
+        maxAttempts: integer3("max_attempts").notNull().default(5),
+        lastError: text4("last_error"),
+        startedAt: timestamp4("started_at", { withTimezone: true }),
+        finishedAt: timestamp4("finished_at", { withTimezone: true }),
         // Pipeline output (shot chart json, play breakdown, etc.).
-        result: (0, import_pg_core5.jsonb)("result"),
-        payload: (0, import_pg_core5.jsonb)("payload").notNull().default({}),
-        createdAt: (0, import_pg_core5.timestamp)("created_at", { withTimezone: true }).notNull().defaultNow(),
-        updatedAt: (0, import_pg_core5.timestamp)("updated_at", { withTimezone: true }).notNull().defaultNow(),
-        deletedAt: (0, import_pg_core5.timestamp)("deleted_at", { withTimezone: true })
+        result: jsonb4("result"),
+        payload: jsonb4("payload").notNull().default({}),
+        createdAt: timestamp4("created_at", { withTimezone: true }).notNull().defaultNow(),
+        updatedAt: timestamp4("updated_at", { withTimezone: true }).notNull().defaultNow(),
+        deletedAt: timestamp4("deleted_at", { withTimezone: true })
       },
       (t) => ({
-        bySession: (0, import_pg_core5.index)("analysis_jobs_session_idx").on(t.sessionId),
-        bySessionKind: (0, import_pg_core5.index)("analysis_jobs_session_kind_idx").on(
+        bySession: index4("analysis_jobs_session_idx").on(t.sessionId),
+        bySessionKind: index4("analysis_jobs_session_kind_idx").on(
           t.sessionId,
           t.kind
         ),
-        byOrgStatus: (0, import_pg_core5.index)("analysis_jobs_org_status_idx").on(t.orgId, t.status)
+        byOrgStatus: index4("analysis_jobs_org_status_idx").on(t.orgId, t.status)
       })
     );
   }
 });
 
 // shared/db/schema/annotations.ts
-var import_pg_core6, annotations;
+import {
+  pgTable as pgTable5,
+  uuid as uuid5,
+  text as text5,
+  timestamp as timestamp5,
+  jsonb as jsonb5,
+  integer as integer4,
+  index as index5
+} from "drizzle-orm/pg-core";
+var annotations;
 var init_annotations = __esm({
   "shared/db/schema/annotations.ts"() {
     "use strict";
-    import_pg_core6 = require("drizzle-orm/pg-core");
     init_orgs();
     init_film_sessions();
     init_analysis_jobs();
     init_enums();
-    annotations = (0, import_pg_core6.pgTable)(
+    annotations = pgTable5(
       "annotations",
       {
-        id: (0, import_pg_core6.uuid)("id").primaryKey().defaultRandom(),
-        orgId: (0, import_pg_core6.uuid)("org_id").notNull().references(() => orgs.id, { onDelete: "cascade" }),
-        sessionId: (0, import_pg_core6.uuid)("session_id").notNull().references(() => filmSessions.id, { onDelete: "cascade" }),
-        jobId: (0, import_pg_core6.uuid)("job_id").references(() => analysisJobs.id, {
+        id: uuid5("id").primaryKey().defaultRandom(),
+        orgId: uuid5("org_id").notNull().references(() => orgs.id, { onDelete: "cascade" }),
+        sessionId: uuid5("session_id").notNull().references(() => filmSessions.id, { onDelete: "cascade" }),
+        jobId: uuid5("job_id").references(() => analysisJobs.id, {
           onDelete: "set null"
         }),
         kind: annotationKindEnum("kind").notNull(),
         source: annotationSourceEnum("source").notNull().default("coach"),
-        authorUserId: (0, import_pg_core6.text)("author_user_id"),
+        authorUserId: text5("author_user_id"),
         // Time range on the master timeline, in milliseconds.
-        startMs: (0, import_pg_core6.integer)("start_ms").notNull(),
-        endMs: (0, import_pg_core6.integer)("end_ms"),
-        label: (0, import_pg_core6.text)("label"),
-        body: (0, import_pg_core6.text)("body"),
+        startMs: integer4("start_ms").notNull(),
+        endMs: integer4("end_ms"),
+        label: text5("label"),
+        body: text5("body"),
         // Free-form structured data: shot coords, player ids, play tags, etc.
-        data: (0, import_pg_core6.jsonb)("data").notNull().default({}),
-        payload: (0, import_pg_core6.jsonb)("payload").notNull().default({}),
-        createdAt: (0, import_pg_core6.timestamp)("created_at", { withTimezone: true }).notNull().defaultNow(),
-        updatedAt: (0, import_pg_core6.timestamp)("updated_at", { withTimezone: true }).notNull().defaultNow(),
-        deletedAt: (0, import_pg_core6.timestamp)("deleted_at", { withTimezone: true })
+        data: jsonb5("data").notNull().default({}),
+        payload: jsonb5("payload").notNull().default({}),
+        createdAt: timestamp5("created_at", { withTimezone: true }).notNull().defaultNow(),
+        updatedAt: timestamp5("updated_at", { withTimezone: true }).notNull().defaultNow(),
+        deletedAt: timestamp5("deleted_at", { withTimezone: true })
       },
       (t) => ({
-        bySession: (0, import_pg_core6.index)("annotations_session_idx").on(t.sessionId),
-        bySessionTime: (0, import_pg_core6.index)("annotations_session_time_idx").on(
+        bySession: index5("annotations_session_idx").on(t.sessionId),
+        bySessionTime: index5("annotations_session_time_idx").on(
           t.sessionId,
           t.startMs
         ),
-        bySessionKind: (0, import_pg_core6.index)("annotations_session_kind_idx").on(
+        bySessionKind: index5("annotations_session_kind_idx").on(
           t.sessionId,
           t.kind
         )
@@ -366,448 +385,459 @@ var init_annotations = __esm({
 });
 
 // shared/db/schema/players.ts
-var import_pg_core7, import_nanoid, playerStatusEnum, players;
+import { pgEnum as pgEnum2, pgTable as pgTable6, text as text6, integer as integer5, timestamp as timestamp6 } from "drizzle-orm/pg-core";
+import { nanoid } from "nanoid";
+var playerStatusEnum, players;
 var init_players = __esm({
   "shared/db/schema/players.ts"() {
     "use strict";
-    import_pg_core7 = require("drizzle-orm/pg-core");
-    import_nanoid = require("nanoid");
-    playerStatusEnum = (0, import_pg_core7.pgEnum)("player_status", ["active", "injured", "suspended", "inactive"]);
-    players = (0, import_pg_core7.pgTable)("players", {
-      id: (0, import_pg_core7.text)("id").primaryKey().$defaultFn(() => (0, import_nanoid.nanoid)()),
-      orgId: (0, import_pg_core7.text)("org_id").notNull(),
-      userId: (0, import_pg_core7.text)("user_id"),
+    playerStatusEnum = pgEnum2("player_status", ["active", "injured", "suspended", "inactive"]);
+    players = pgTable6("players", {
+      id: text6("id").primaryKey().$defaultFn(() => nanoid()),
+      orgId: text6("org_id").notNull(),
+      userId: text6("user_id"),
       // Clerk user ID — nullable until player claims account
-      name: (0, import_pg_core7.text)("name").notNull(),
-      position: (0, import_pg_core7.text)("position"),
+      name: text6("name").notNull(),
+      position: text6("position"),
       // PG | SG | SF | PF | C
-      jerseyNumber: (0, import_pg_core7.integer)("jersey_number"),
-      grade: (0, import_pg_core7.text)("grade"),
+      jerseyNumber: integer5("jersey_number"),
+      grade: text6("grade"),
       // "10" | "11" | "12" | "Fr" | "So" | etc.
-      gradYear: (0, import_pg_core7.integer)("grad_year"),
-      height: (0, import_pg_core7.text)("height"),
+      gradYear: integer5("grad_year"),
+      height: text6("height"),
       // "6'1\""
-      weight: (0, import_pg_core7.integer)("weight"),
-      handedness: (0, import_pg_core7.text)("handedness").default("right"),
+      weight: integer5("weight"),
+      handedness: text6("handedness").default("right"),
       status: playerStatusEnum("status").notNull().default("active"),
-      role: (0, import_pg_core7.text)("role").default("player"),
+      role: text6("role").default("player"),
       // starter | reserve | developmental
-      parentGuardianName: (0, import_pg_core7.text)("parent_guardian_name"),
-      parentGuardianEmail: (0, import_pg_core7.text)("parent_guardian_email"),
-      parentGuardianPhone: (0, import_pg_core7.text)("parent_guardian_phone"),
-      medicalNotes: (0, import_pg_core7.text)("medical_notes"),
+      parentGuardianName: text6("parent_guardian_name"),
+      parentGuardianEmail: text6("parent_guardian_email"),
+      parentGuardianPhone: text6("parent_guardian_phone"),
+      medicalNotes: text6("medical_notes"),
       // Extended profile fields
-      phone: (0, import_pg_core7.text)("phone"),
-      email: (0, import_pg_core7.text)("email"),
-      bio: (0, import_pg_core7.text)("bio"),
-      recruitingStatus: (0, import_pg_core7.text)("recruiting_status"),
+      phone: text6("phone"),
+      email: text6("email"),
+      bio: text6("bio"),
+      recruitingStatus: text6("recruiting_status"),
       // "D1 Interest" | "D2 Target" | etc.
-      academicNotes: (0, import_pg_core7.text)("academic_notes"),
-      yearsPlaying: (0, import_pg_core7.integer)("years_playing"),
-      createdByUserId: (0, import_pg_core7.text)("created_by_user_id"),
-      createdAt: (0, import_pg_core7.timestamp)("created_at").defaultNow().notNull(),
-      updatedAt: (0, import_pg_core7.timestamp)("updated_at").defaultNow().notNull(),
-      deletedAt: (0, import_pg_core7.timestamp)("deleted_at")
+      academicNotes: text6("academic_notes"),
+      yearsPlaying: integer5("years_playing"),
+      createdByUserId: text6("created_by_user_id"),
+      createdAt: timestamp6("created_at").defaultNow().notNull(),
+      updatedAt: timestamp6("updated_at").defaultNow().notNull(),
+      deletedAt: timestamp6("deleted_at")
     });
   }
 });
 
 // shared/db/schema/events.ts
-var import_pg_core8, import_nanoid2, eventTypeEnum, eventStatusEnum, availabilityResponseEnum, attendanceStatusEnum, events, eventAvailability, eventAttendance;
+import { pgEnum as pgEnum3, pgTable as pgTable7, text as text7, timestamp as timestamp7 } from "drizzle-orm/pg-core";
+import { nanoid as nanoid2 } from "nanoid";
+var eventTypeEnum, eventStatusEnum, availabilityResponseEnum, attendanceStatusEnum, events, eventAvailability, eventAttendance;
 var init_events = __esm({
   "shared/db/schema/events.ts"() {
     "use strict";
-    import_pg_core8 = require("drizzle-orm/pg-core");
-    import_nanoid2 = require("nanoid");
-    eventTypeEnum = (0, import_pg_core8.pgEnum)("event_type", ["practice", "game", "scrimmage", "film_session", "optional", "tournament", "team_meal"]);
-    eventStatusEnum = (0, import_pg_core8.pgEnum)("event_status", ["scheduled", "in_progress", "completed", "cancelled"]);
-    availabilityResponseEnum = (0, import_pg_core8.pgEnum)("availability_response", ["yes", "no", "maybe"]);
-    attendanceStatusEnum = (0, import_pg_core8.pgEnum)("attendance_status", ["present", "absent", "late", "excused"]);
-    events = (0, import_pg_core8.pgTable)("events", {
-      id: (0, import_pg_core8.text)("id").primaryKey().$defaultFn(() => (0, import_nanoid2.nanoid)()),
-      orgId: (0, import_pg_core8.text)("org_id").notNull(),
-      title: (0, import_pg_core8.text)("title").notNull(),
+    eventTypeEnum = pgEnum3("event_type", ["practice", "game", "scrimmage", "film_session", "optional", "tournament", "team_meal"]);
+    eventStatusEnum = pgEnum3("event_status", ["scheduled", "in_progress", "completed", "cancelled"]);
+    availabilityResponseEnum = pgEnum3("availability_response", ["yes", "no", "maybe"]);
+    attendanceStatusEnum = pgEnum3("attendance_status", ["present", "absent", "late", "excused"]);
+    events = pgTable7("events", {
+      id: text7("id").primaryKey().$defaultFn(() => nanoid2()),
+      orgId: text7("org_id").notNull(),
+      title: text7("title").notNull(),
       type: eventTypeEnum("type").notNull().default("practice"),
       status: eventStatusEnum("status").notNull().default("scheduled"),
-      startsAt: (0, import_pg_core8.timestamp)("starts_at").notNull(),
-      endsAt: (0, import_pg_core8.timestamp)("ends_at"),
-      location: (0, import_pg_core8.text)("location"),
-      homeAway: (0, import_pg_core8.text)("home_away"),
+      startsAt: timestamp7("starts_at").notNull(),
+      endsAt: timestamp7("ends_at"),
+      location: text7("location"),
+      homeAway: text7("home_away"),
       // "home" | "away" | "neutral"
-      opponent: (0, import_pg_core8.text)("opponent"),
-      notes: (0, import_pg_core8.text)("notes"),
-      availabilityDeadline: (0, import_pg_core8.timestamp)("availability_deadline"),
-      filmSessionId: (0, import_pg_core8.text)("film_session_id"),
-      practicePlanId: (0, import_pg_core8.text)("practice_plan_id"),
-      createdByUserId: (0, import_pg_core8.text)("created_by_user_id").notNull(),
-      createdAt: (0, import_pg_core8.timestamp)("created_at").defaultNow().notNull(),
-      updatedAt: (0, import_pg_core8.timestamp)("updated_at").defaultNow().notNull(),
-      deletedAt: (0, import_pg_core8.timestamp)("deleted_at")
+      opponent: text7("opponent"),
+      notes: text7("notes"),
+      availabilityDeadline: timestamp7("availability_deadline"),
+      filmSessionId: text7("film_session_id"),
+      practicePlanId: text7("practice_plan_id"),
+      createdByUserId: text7("created_by_user_id").notNull(),
+      createdAt: timestamp7("created_at").defaultNow().notNull(),
+      updatedAt: timestamp7("updated_at").defaultNow().notNull(),
+      deletedAt: timestamp7("deleted_at")
     });
-    eventAvailability = (0, import_pg_core8.pgTable)("event_availability", {
-      id: (0, import_pg_core8.text)("id").primaryKey().$defaultFn(() => (0, import_nanoid2.nanoid)()),
-      eventId: (0, import_pg_core8.text)("event_id").notNull(),
-      playerId: (0, import_pg_core8.text)("player_id").notNull(),
-      orgId: (0, import_pg_core8.text)("org_id").notNull(),
+    eventAvailability = pgTable7("event_availability", {
+      id: text7("id").primaryKey().$defaultFn(() => nanoid2()),
+      eventId: text7("event_id").notNull(),
+      playerId: text7("player_id").notNull(),
+      orgId: text7("org_id").notNull(),
       response: availabilityResponseEnum("response").notNull(),
-      note: (0, import_pg_core8.text)("note"),
-      respondedAt: (0, import_pg_core8.timestamp)("responded_at").defaultNow().notNull()
+      note: text7("note"),
+      respondedAt: timestamp7("responded_at").defaultNow().notNull()
     });
-    eventAttendance = (0, import_pg_core8.pgTable)("event_attendance", {
-      id: (0, import_pg_core8.text)("id").primaryKey().$defaultFn(() => (0, import_nanoid2.nanoid)()),
-      eventId: (0, import_pg_core8.text)("event_id").notNull(),
-      playerId: (0, import_pg_core8.text)("player_id").notNull(),
-      orgId: (0, import_pg_core8.text)("org_id").notNull(),
+    eventAttendance = pgTable7("event_attendance", {
+      id: text7("id").primaryKey().$defaultFn(() => nanoid2()),
+      eventId: text7("event_id").notNull(),
+      playerId: text7("player_id").notNull(),
+      orgId: text7("org_id").notNull(),
       status: attendanceStatusEnum("status").notNull(),
-      note: (0, import_pg_core8.text)("note"),
-      recordedByUserId: (0, import_pg_core8.text)("recorded_by_user_id").notNull(),
-      recordedAt: (0, import_pg_core8.timestamp)("recorded_at").defaultNow().notNull()
+      note: text7("note"),
+      recordedByUserId: text7("recorded_by_user_id").notNull(),
+      recordedAt: timestamp7("recorded_at").defaultNow().notNull()
     });
   }
 });
 
 // shared/db/schema/assignments.ts
-var import_pg_core9, import_nanoid3, assignmentStatusEnum, assignments;
+import { pgEnum as pgEnum4, pgTable as pgTable8, text as text8, timestamp as timestamp8, jsonb as jsonb6 } from "drizzle-orm/pg-core";
+import { nanoid as nanoid3 } from "nanoid";
+var assignmentStatusEnum, assignments;
 var init_assignments = __esm({
   "shared/db/schema/assignments.ts"() {
     "use strict";
-    import_pg_core9 = require("drizzle-orm/pg-core");
-    import_nanoid3 = require("nanoid");
-    assignmentStatusEnum = (0, import_pg_core9.pgEnum)("assignment_status", ["draft", "assigned", "in_progress", "submitted", "reviewed", "overdue"]);
-    assignments = (0, import_pg_core9.pgTable)("assignments", {
-      id: (0, import_pg_core9.text)("id").primaryKey().$defaultFn(() => (0, import_nanoid3.nanoid)()),
-      orgId: (0, import_pg_core9.text)("org_id").notNull(),
-      title: (0, import_pg_core9.text)("title").notNull(),
-      description: (0, import_pg_core9.text)("description"),
+    assignmentStatusEnum = pgEnum4("assignment_status", ["draft", "assigned", "in_progress", "submitted", "reviewed", "overdue"]);
+    assignments = pgTable8("assignments", {
+      id: text8("id").primaryKey().$defaultFn(() => nanoid3()),
+      orgId: text8("org_id").notNull(),
+      title: text8("title").notNull(),
+      description: text8("description"),
       status: assignmentStatusEnum("status").notNull().default("assigned"),
-      dueAt: (0, import_pg_core9.timestamp)("due_at"),
-      createdByUserId: (0, import_pg_core9.text)("created_by_user_id").notNull(),
-      playerId: (0, import_pg_core9.text)("player_id"),
-      filmClipId: (0, import_pg_core9.text)("film_clip_id"),
+      dueAt: timestamp8("due_at"),
+      createdByUserId: text8("created_by_user_id").notNull(),
+      playerId: text8("player_id"),
+      filmClipId: text8("film_clip_id"),
       // annotation id from annotations table
-      practicePlanId: (0, import_pg_core9.text)("practice_plan_id"),
-      idpFocusAreaId: (0, import_pg_core9.text)("idp_focus_area_id"),
-      submittedAt: (0, import_pg_core9.timestamp)("submitted_at"),
-      reviewedAt: (0, import_pg_core9.timestamp)("reviewed_at"),
-      reviewedByUserId: (0, import_pg_core9.text)("reviewed_by_user_id"),
-      payload: (0, import_pg_core9.jsonb)("payload"),
+      practicePlanId: text8("practice_plan_id"),
+      idpFocusAreaId: text8("idp_focus_area_id"),
+      submittedAt: timestamp8("submitted_at"),
+      reviewedAt: timestamp8("reviewed_at"),
+      reviewedByUserId: text8("reviewed_by_user_id"),
+      payload: jsonb6("payload"),
       // { drills, reps, notes, submissionData }
-      createdAt: (0, import_pg_core9.timestamp)("created_at").defaultNow().notNull(),
-      updatedAt: (0, import_pg_core9.timestamp)("updated_at").defaultNow().notNull(),
-      deletedAt: (0, import_pg_core9.timestamp)("deleted_at")
+      createdAt: timestamp8("created_at").defaultNow().notNull(),
+      updatedAt: timestamp8("updated_at").defaultNow().notNull(),
+      deletedAt: timestamp8("deleted_at")
     });
   }
 });
 
 // shared/db/schema/practice_plans.ts
-var import_pg_core10, import_nanoid4, practicePlanStatusEnum, practicePlans;
+import { pgEnum as pgEnum5, pgTable as pgTable9, text as text9, integer as integer6, timestamp as timestamp9, jsonb as jsonb7 } from "drizzle-orm/pg-core";
+import { nanoid as nanoid4 } from "nanoid";
+var practicePlanStatusEnum, practicePlans;
 var init_practice_plans = __esm({
   "shared/db/schema/practice_plans.ts"() {
     "use strict";
-    import_pg_core10 = require("drizzle-orm/pg-core");
-    import_nanoid4 = require("nanoid");
-    practicePlanStatusEnum = (0, import_pg_core10.pgEnum)("practice_plan_status", ["draft", "published", "completed", "archived"]);
-    practicePlans = (0, import_pg_core10.pgTable)("practice_plans", {
-      id: (0, import_pg_core10.text)("id").primaryKey().$defaultFn(() => (0, import_nanoid4.nanoid)()),
-      orgId: (0, import_pg_core10.text)("org_id").notNull(),
-      title: (0, import_pg_core10.text)("title").notNull(),
-      scheduledAt: (0, import_pg_core10.timestamp)("scheduled_at"),
+    practicePlanStatusEnum = pgEnum5("practice_plan_status", ["draft", "published", "completed", "archived"]);
+    practicePlans = pgTable9("practice_plans", {
+      id: text9("id").primaryKey().$defaultFn(() => nanoid4()),
+      orgId: text9("org_id").notNull(),
+      title: text9("title").notNull(),
+      scheduledAt: timestamp9("scheduled_at"),
       status: practicePlanStatusEnum("status").notNull().default("draft"),
-      location: (0, import_pg_core10.text)("location"),
-      durationMins: (0, import_pg_core10.integer)("duration_mins"),
+      location: text9("location"),
+      durationMins: integer6("duration_mins"),
       // planned duration
-      actualDurationMins: (0, import_pg_core10.integer)("actual_duration_mins"),
+      actualDurationMins: integer6("actual_duration_mins"),
       // filled post-practice
-      payload: (0, import_pg_core10.jsonb)("payload"),
+      payload: jsonb7("payload"),
       // full plan blocks/drills (Zustand shape)
-      coachNotes: (0, import_pg_core10.text)("coach_notes"),
-      postPracticeNotes: (0, import_pg_core10.text)("post_practice_notes"),
+      coachNotes: text9("coach_notes"),
+      postPracticeNotes: text9("post_practice_notes"),
       // Outcome-driven metadata (Prompt 8 phase 2 upgrade)
-      objectives: (0, import_pg_core10.jsonb)("objectives"),
+      objectives: jsonb7("objectives"),
       // PracticeObjective[]
-      targetGroup: (0, import_pg_core10.jsonb)("target_group"),
+      targetGroup: jsonb7("target_group"),
       // PracticeTargetGroup
-      skillEmphasis: (0, import_pg_core10.jsonb)("skill_emphasis"),
+      skillEmphasis: jsonb7("skill_emphasis"),
       // Record<categoryId, weight 0–100>
-      plannedIntensity: (0, import_pg_core10.text)("planned_intensity"),
+      plannedIntensity: text9("planned_intensity"),
       // "RECOVERY"|"MODERATE"|"HIGH"|"MAX"
-      opponentName: (0, import_pg_core10.text)("opponent_name"),
+      opponentName: text9("opponent_name"),
       // game-prep context
-      linkedEventId: (0, import_pg_core10.text)("linked_event_id"),
+      linkedEventId: text9("linked_event_id"),
       // events.id
       // Post-practice structured reflection
-      reflection: (0, import_pg_core10.jsonb)("reflection"),
+      reflection: jsonb7("reflection"),
       // PracticeReflection (whatWorked, drillFeedback…)
-      followUpActionIds: (0, import_pg_core10.jsonb)("follow_up_action_ids"),
+      followUpActionIds: jsonb7("follow_up_action_ids"),
       // string[] coaching_actions.id
-      createdByUserId: (0, import_pg_core10.text)("created_by_user_id").notNull(),
-      createdAt: (0, import_pg_core10.timestamp)("created_at").defaultNow().notNull(),
-      updatedAt: (0, import_pg_core10.timestamp)("updated_at").defaultNow().notNull(),
-      deletedAt: (0, import_pg_core10.timestamp)("deleted_at")
+      createdByUserId: text9("created_by_user_id").notNull(),
+      createdAt: timestamp9("created_at").defaultNow().notNull(),
+      updatedAt: timestamp9("updated_at").defaultNow().notNull(),
+      deletedAt: timestamp9("deleted_at")
     });
   }
 });
 
 // shared/db/schema/idps.ts
-var import_pg_core11, import_nanoid5, idpStatusEnum, idps;
+import { pgEnum as pgEnum6, pgTable as pgTable10, text as text10, timestamp as timestamp10, jsonb as jsonb8 } from "drizzle-orm/pg-core";
+import { nanoid as nanoid5 } from "nanoid";
+var idpStatusEnum, idps;
 var init_idps = __esm({
   "shared/db/schema/idps.ts"() {
     "use strict";
-    import_pg_core11 = require("drizzle-orm/pg-core");
-    import_nanoid5 = require("nanoid");
-    idpStatusEnum = (0, import_pg_core11.pgEnum)("idp_status", ["active", "paused", "completed", "archived"]);
-    idps = (0, import_pg_core11.pgTable)("idps", {
-      id: (0, import_pg_core11.text)("id").primaryKey().$defaultFn(() => (0, import_nanoid5.nanoid)()),
-      orgId: (0, import_pg_core11.text)("org_id").notNull(),
-      playerId: (0, import_pg_core11.text)("player_id").notNull(),
-      season: (0, import_pg_core11.text)("season").notNull(),
+    idpStatusEnum = pgEnum6("idp_status", ["active", "paused", "completed", "archived"]);
+    idps = pgTable10("idps", {
+      id: text10("id").primaryKey().$defaultFn(() => nanoid5()),
+      orgId: text10("org_id").notNull(),
+      playerId: text10("player_id").notNull(),
+      season: text10("season").notNull(),
       // "2024-25"
       status: idpStatusEnum("status").notNull().default("active"),
-      coachId: (0, import_pg_core11.text)("coach_id").notNull(),
-      payload: (0, import_pg_core11.jsonb)("payload"),
+      coachId: text10("coach_id").notNull(),
+      payload: jsonb8("payload"),
       // focus areas, goals, training load, milestones
-      aiRecommendations: (0, import_pg_core11.jsonb)("ai_recommendations").default([]),
-      createdAt: (0, import_pg_core11.timestamp)("created_at").defaultNow().notNull(),
-      updatedAt: (0, import_pg_core11.timestamp)("updated_at").defaultNow().notNull(),
-      deletedAt: (0, import_pg_core11.timestamp)("deleted_at")
+      aiRecommendations: jsonb8("ai_recommendations").default([]),
+      createdAt: timestamp10("created_at").defaultNow().notNull(),
+      updatedAt: timestamp10("updated_at").defaultNow().notNull(),
+      deletedAt: timestamp10("deleted_at")
     });
   }
 });
 
 // shared/db/schema/readiness.ts
-var import_pg_core12, import_nanoid6, readinessCheckins;
+import { pgTable as pgTable11, text as text11, integer as integer7, boolean as boolean2, timestamp as timestamp11 } from "drizzle-orm/pg-core";
+import { nanoid as nanoid6 } from "nanoid";
+var readinessCheckins;
 var init_readiness = __esm({
   "shared/db/schema/readiness.ts"() {
     "use strict";
-    import_pg_core12 = require("drizzle-orm/pg-core");
-    import_nanoid6 = require("nanoid");
-    readinessCheckins = (0, import_pg_core12.pgTable)("readiness_checkins", {
-      id: (0, import_pg_core12.text)("id").primaryKey().$defaultFn(() => (0, import_nanoid6.nanoid)()),
-      orgId: (0, import_pg_core12.text)("org_id").notNull(),
-      playerId: (0, import_pg_core12.text)("player_id").notNull(),
-      fatigue: (0, import_pg_core12.integer)("fatigue").notNull(),
+    readinessCheckins = pgTable11("readiness_checkins", {
+      id: text11("id").primaryKey().$defaultFn(() => nanoid6()),
+      orgId: text11("org_id").notNull(),
+      playerId: text11("player_id").notNull(),
+      fatigue: integer7("fatigue").notNull(),
       // 1–10
-      sleep: (0, import_pg_core12.integer)("sleep").notNull(),
+      sleep: integer7("sleep").notNull(),
       // hours
-      soreness: (0, import_pg_core12.integer)("soreness").notNull(),
+      soreness: integer7("soreness").notNull(),
       // 1–10
-      mood: (0, import_pg_core12.integer)("mood"),
+      mood: integer7("mood"),
       // 1–10, optional
-      note: (0, import_pg_core12.text)("note"),
-      flagged: (0, import_pg_core12.boolean)("flagged").notNull().default(false),
-      checkedInAt: (0, import_pg_core12.timestamp)("checked_in_at").defaultNow().notNull(),
-      createdAt: (0, import_pg_core12.timestamp)("created_at").defaultNow().notNull()
+      note: text11("note"),
+      flagged: boolean2("flagged").notNull().default(false),
+      checkedInAt: timestamp11("checked_in_at").defaultNow().notNull(),
+      createdAt: timestamp11("created_at").defaultNow().notNull()
     });
   }
 });
 
 // shared/db/schema/messages.ts
-var import_pg_core13, import_nanoid7, threadTypeEnum, audienceModeEnum, recipientTypeEnum, deliveryStatusEnum, messageThreads, messages, messageRecipients;
+import { pgEnum as pgEnum7, pgTable as pgTable12, text as text12, integer as integer8, timestamp as timestamp12 } from "drizzle-orm/pg-core";
+import { nanoid as nanoid7 } from "nanoid";
+var threadTypeEnum, audienceModeEnum, recipientTypeEnum, deliveryStatusEnum, messageThreads, messages, messageRecipients;
 var init_messages = __esm({
   "shared/db/schema/messages.ts"() {
     "use strict";
-    import_pg_core13 = require("drizzle-orm/pg-core");
-    import_nanoid7 = require("nanoid");
-    threadTypeEnum = (0, import_pg_core13.pgEnum)("thread_type", [
+    threadTypeEnum = pgEnum7("thread_type", [
       "broadcast",
       "dm",
       "parent_dm",
       "staff"
     ]);
-    audienceModeEnum = (0, import_pg_core13.pgEnum)("audience_mode", [
+    audienceModeEnum = pgEnum7("audience_mode", [
       "players",
       "parents",
       "both",
       "individuals"
     ]);
-    recipientTypeEnum = (0, import_pg_core13.pgEnum)("recipient_type", [
+    recipientTypeEnum = pgEnum7("recipient_type", [
       "player",
       "guardian"
     ]);
-    deliveryStatusEnum = (0, import_pg_core13.pgEnum)("delivery_status", [
+    deliveryStatusEnum = pgEnum7("delivery_status", [
       "pending",
       "sent",
       "delivered",
       "failed",
       "opted_out"
     ]);
-    messageThreads = (0, import_pg_core13.pgTable)("message_threads", {
-      id: (0, import_pg_core13.text)("id").primaryKey().$defaultFn(() => (0, import_nanoid7.nanoid)()),
-      orgId: (0, import_pg_core13.text)("org_id").notNull(),
+    messageThreads = pgTable12("message_threads", {
+      id: text12("id").primaryKey().$defaultFn(() => nanoid7()),
+      orgId: text12("org_id").notNull(),
       type: threadTypeEnum("type").notNull(),
       audienceMode: audienceModeEnum("audience_mode"),
-      title: (0, import_pg_core13.text)("title"),
-      participantIds: (0, import_pg_core13.text)("participant_ids").array().notNull().default([]),
-      resolvedRecipientCount: (0, import_pg_core13.integer)("resolved_recipient_count").notNull().default(0),
-      createdByUserId: (0, import_pg_core13.text)("created_by_user_id").notNull(),
-      lastMessageAt: (0, import_pg_core13.timestamp)("last_message_at"),
-      createdAt: (0, import_pg_core13.timestamp)("created_at").defaultNow().notNull(),
-      deletedAt: (0, import_pg_core13.timestamp)("deleted_at")
+      title: text12("title"),
+      participantIds: text12("participant_ids").array().notNull().default([]),
+      resolvedRecipientCount: integer8("resolved_recipient_count").notNull().default(0),
+      createdByUserId: text12("created_by_user_id").notNull(),
+      lastMessageAt: timestamp12("last_message_at"),
+      createdAt: timestamp12("created_at").defaultNow().notNull(),
+      deletedAt: timestamp12("deleted_at")
     });
-    messages = (0, import_pg_core13.pgTable)("messages", {
-      id: (0, import_pg_core13.text)("id").primaryKey().$defaultFn(() => (0, import_nanoid7.nanoid)()),
-      orgId: (0, import_pg_core13.text)("org_id").notNull(),
-      threadId: (0, import_pg_core13.text)("thread_id").notNull(),
-      senderUserId: (0, import_pg_core13.text)("sender_user_id").notNull(),
-      body: (0, import_pg_core13.text)("body").notNull(),
-      readBy: (0, import_pg_core13.text)("read_by").array().notNull().default([]),
-      sentAt: (0, import_pg_core13.timestamp)("sent_at").defaultNow().notNull(),
-      deletedAt: (0, import_pg_core13.timestamp)("deleted_at")
+    messages = pgTable12("messages", {
+      id: text12("id").primaryKey().$defaultFn(() => nanoid7()),
+      orgId: text12("org_id").notNull(),
+      threadId: text12("thread_id").notNull(),
+      senderUserId: text12("sender_user_id").notNull(),
+      body: text12("body").notNull(),
+      readBy: text12("read_by").array().notNull().default([]),
+      sentAt: timestamp12("sent_at").defaultNow().notNull(),
+      deletedAt: timestamp12("deleted_at")
     });
-    messageRecipients = (0, import_pg_core13.pgTable)("message_recipients", {
-      id: (0, import_pg_core13.text)("id").primaryKey().$defaultFn(() => (0, import_nanoid7.nanoid)()),
-      orgId: (0, import_pg_core13.text)("org_id").notNull(),
-      threadId: (0, import_pg_core13.text)("thread_id").notNull(),
-      messageId: (0, import_pg_core13.text)("message_id").notNull(),
+    messageRecipients = pgTable12("message_recipients", {
+      id: text12("id").primaryKey().$defaultFn(() => nanoid7()),
+      orgId: text12("org_id").notNull(),
+      threadId: text12("thread_id").notNull(),
+      messageId: text12("message_id").notNull(),
       recipientType: recipientTypeEnum("recipient_type").notNull(),
-      playerId: (0, import_pg_core13.text)("player_id").notNull(),
-      guardianId: (0, import_pg_core13.text)("guardian_id"),
+      playerId: text12("player_id").notNull(),
+      guardianId: text12("guardian_id"),
       // null for player recipients
-      userId: (0, import_pg_core13.text)("user_id"),
+      userId: text12("user_id"),
       // Clerk userId if they have an account
-      contactEmail: (0, import_pg_core13.text)("contact_email"),
-      contactPhone: (0, import_pg_core13.text)("contact_phone"),
+      contactEmail: text12("contact_email"),
+      contactPhone: text12("contact_phone"),
       deliveryStatus: deliveryStatusEnum("delivery_status").notNull().default("pending"),
-      readAt: (0, import_pg_core13.timestamp)("read_at"),
-      smsDeliveredAt: (0, import_pg_core13.timestamp)("sms_delivered_at"),
-      smsStatus: (0, import_pg_core13.text)("sms_status"),
-      createdAt: (0, import_pg_core13.timestamp)("created_at").defaultNow().notNull()
+      readAt: timestamp12("read_at"),
+      smsDeliveredAt: timestamp12("sms_delivered_at"),
+      smsStatus: text12("sms_status"),
+      createdAt: timestamp12("created_at").defaultNow().notNull()
     });
   }
 });
 
 // shared/db/schema/wearables.ts
-var import_pg_core14, import_nanoid8, wearableProviderEnum, wearableConnectionStatusEnum, wearableConnections, wearableMetrics, wearableSharing;
+import {
+  pgEnum as pgEnum8,
+  pgTable as pgTable13,
+  text as text13,
+  integer as integer9,
+  boolean as boolean3,
+  timestamp as timestamp13,
+  date,
+  numeric,
+  jsonb as jsonb9,
+  unique
+} from "drizzle-orm/pg-core";
+import { nanoid as nanoid8 } from "nanoid";
+var wearableProviderEnum, wearableConnectionStatusEnum, wearableConnections, wearableMetrics, wearableSharing;
 var init_wearables = __esm({
   "shared/db/schema/wearables.ts"() {
     "use strict";
-    import_pg_core14 = require("drizzle-orm/pg-core");
-    import_nanoid8 = require("nanoid");
-    wearableProviderEnum = (0, import_pg_core14.pgEnum)("wearable_provider", [
+    wearableProviderEnum = pgEnum8("wearable_provider", [
       "apple_health",
       "whoop",
       "garmin",
       "oura"
     ]);
-    wearableConnectionStatusEnum = (0, import_pg_core14.pgEnum)("wearable_connection_status", [
+    wearableConnectionStatusEnum = pgEnum8("wearable_connection_status", [
       "connected",
       "disconnected",
       "error",
       "pending"
     ]);
-    wearableConnections = (0, import_pg_core14.pgTable)("wearable_connections", {
-      id: (0, import_pg_core14.text)("id").primaryKey().$defaultFn(() => (0, import_nanoid8.nanoid)()),
-      orgId: (0, import_pg_core14.text)("org_id").notNull(),
-      playerId: (0, import_pg_core14.text)("player_id").notNull(),
+    wearableConnections = pgTable13("wearable_connections", {
+      id: text13("id").primaryKey().$defaultFn(() => nanoid8()),
+      orgId: text13("org_id").notNull(),
+      playerId: text13("player_id").notNull(),
       provider: wearableProviderEnum("provider").notNull(),
       status: wearableConnectionStatusEnum("status").notNull().default("pending"),
-      providerUserId: (0, import_pg_core14.text)("provider_user_id"),
-      accessToken: (0, import_pg_core14.text)("access_token"),
-      refreshToken: (0, import_pg_core14.text)("refresh_token"),
-      tokenExpiresAt: (0, import_pg_core14.timestamp)("token_expires_at"),
-      lastSyncedAt: (0, import_pg_core14.timestamp)("last_synced_at"),
-      createdAt: (0, import_pg_core14.timestamp)("created_at").defaultNow().notNull(),
-      updatedAt: (0, import_pg_core14.timestamp)("updated_at").defaultNow().notNull(),
-      deletedAt: (0, import_pg_core14.timestamp)("deleted_at")
+      providerUserId: text13("provider_user_id"),
+      accessToken: text13("access_token"),
+      refreshToken: text13("refresh_token"),
+      tokenExpiresAt: timestamp13("token_expires_at"),
+      lastSyncedAt: timestamp13("last_synced_at"),
+      createdAt: timestamp13("created_at").defaultNow().notNull(),
+      updatedAt: timestamp13("updated_at").defaultNow().notNull(),
+      deletedAt: timestamp13("deleted_at")
     });
-    wearableMetrics = (0, import_pg_core14.pgTable)(
+    wearableMetrics = pgTable13(
       "wearable_metrics",
       {
-        id: (0, import_pg_core14.text)("id").primaryKey().$defaultFn(() => (0, import_nanoid8.nanoid)()),
-        orgId: (0, import_pg_core14.text)("org_id").notNull(),
-        playerId: (0, import_pg_core14.text)("player_id").notNull(),
-        connectionId: (0, import_pg_core14.text)("connection_id").notNull(),
-        provider: (0, import_pg_core14.text)("provider").notNull(),
-        recordedDate: (0, import_pg_core14.date)("recorded_date").notNull(),
-        recoveryScore: (0, import_pg_core14.integer)("recovery_score"),
+        id: text13("id").primaryKey().$defaultFn(() => nanoid8()),
+        orgId: text13("org_id").notNull(),
+        playerId: text13("player_id").notNull(),
+        connectionId: text13("connection_id").notNull(),
+        provider: text13("provider").notNull(),
+        recordedDate: date("recorded_date").notNull(),
+        recoveryScore: integer9("recovery_score"),
         // 0-100 (WHOOP/Oura recovery)
-        hrv: (0, import_pg_core14.numeric)("hrv"),
+        hrv: numeric("hrv"),
         // HRV in ms
-        restingHr: (0, import_pg_core14.integer)("resting_hr"),
+        restingHr: integer9("resting_hr"),
         // bpm
-        sleepScore: (0, import_pg_core14.integer)("sleep_score"),
+        sleepScore: integer9("sleep_score"),
         // 0-100
-        sleepDurationMins: (0, import_pg_core14.integer)("sleep_duration_mins"),
-        deepSleepMins: (0, import_pg_core14.integer)("deep_sleep_mins"),
-        remSleepMins: (0, import_pg_core14.integer)("rem_sleep_mins"),
-        strainScore: (0, import_pg_core14.numeric)("strain_score"),
+        sleepDurationMins: integer9("sleep_duration_mins"),
+        deepSleepMins: integer9("deep_sleep_mins"),
+        remSleepMins: integer9("rem_sleep_mins"),
+        strainScore: numeric("strain_score"),
         // WHOOP strain 0-21, or normalized
-        steps: (0, import_pg_core14.integer)("steps"),
-        activeCalories: (0, import_pg_core14.integer)("active_calories"),
-        rawPayload: (0, import_pg_core14.jsonb)("raw_payload"),
+        steps: integer9("steps"),
+        activeCalories: integer9("active_calories"),
+        rawPayload: jsonb9("raw_payload"),
         // full provider response
-        createdAt: (0, import_pg_core14.timestamp)("created_at").defaultNow().notNull()
+        createdAt: timestamp13("created_at").defaultNow().notNull()
       },
       (t) => ({
-        uniquePerDay: (0, import_pg_core14.unique)("wearable_metrics_player_provider_date_key").on(
+        uniquePerDay: unique("wearable_metrics_player_provider_date_key").on(
           t.playerId,
           t.provider,
           t.recordedDate
         )
       })
     );
-    wearableSharing = (0, import_pg_core14.pgTable)(
+    wearableSharing = pgTable13(
       "wearable_sharing",
       {
-        id: (0, import_pg_core14.text)("id").primaryKey().$defaultFn(() => (0, import_nanoid8.nanoid)()),
-        orgId: (0, import_pg_core14.text)("org_id").notNull(),
-        playerId: (0, import_pg_core14.text)("player_id").notNull(),
-        shareRecovery: (0, import_pg_core14.boolean)("share_recovery").notNull().default(false),
-        shareSleep: (0, import_pg_core14.boolean)("share_sleep").notNull().default(false),
-        shareStrain: (0, import_pg_core14.boolean)("share_strain").notNull().default(false),
-        shareHeartRate: (0, import_pg_core14.boolean)("share_heart_rate").notNull().default(false),
-        shareWithCoaches: (0, import_pg_core14.boolean)("share_with_coaches").notNull().default(false),
-        shareWithTeam: (0, import_pg_core14.boolean)("share_with_team").notNull().default(false),
-        updatedAt: (0, import_pg_core14.timestamp)("updated_at").defaultNow().notNull()
+        id: text13("id").primaryKey().$defaultFn(() => nanoid8()),
+        orgId: text13("org_id").notNull(),
+        playerId: text13("player_id").notNull(),
+        shareRecovery: boolean3("share_recovery").notNull().default(false),
+        shareSleep: boolean3("share_sleep").notNull().default(false),
+        shareStrain: boolean3("share_strain").notNull().default(false),
+        shareHeartRate: boolean3("share_heart_rate").notNull().default(false),
+        shareWithCoaches: boolean3("share_with_coaches").notNull().default(false),
+        shareWithTeam: boolean3("share_with_team").notNull().default(false),
+        updatedAt: timestamp13("updated_at").defaultNow().notNull()
       },
       (t) => ({
-        uniquePerPlayer: (0, import_pg_core14.unique)("wearable_sharing_org_player_key").on(t.orgId, t.playerId)
+        uniquePerPlayer: unique("wearable_sharing_org_player_key").on(t.orgId, t.playerId)
       })
     );
   }
 });
 
 // shared/db/schema/guardians.ts
-var import_pg_core15, import_nanoid9, guardianRelationshipEnum, playerGuardians;
+import { pgEnum as pgEnum9, pgTable as pgTable14, text as text14, boolean as boolean4, timestamp as timestamp14 } from "drizzle-orm/pg-core";
+import { nanoid as nanoid9 } from "nanoid";
+var guardianRelationshipEnum, playerGuardians;
 var init_guardians = __esm({
   "shared/db/schema/guardians.ts"() {
     "use strict";
-    import_pg_core15 = require("drizzle-orm/pg-core");
-    import_nanoid9 = require("nanoid");
-    guardianRelationshipEnum = (0, import_pg_core15.pgEnum)("guardian_relationship", [
+    guardianRelationshipEnum = pgEnum9("guardian_relationship", [
       "parent",
       "stepparent",
       "grandparent",
       "guardian",
       "other"
     ]);
-    playerGuardians = (0, import_pg_core15.pgTable)("player_guardians", {
-      id: (0, import_pg_core15.text)("id").primaryKey().$defaultFn(() => (0, import_nanoid9.nanoid)()),
-      orgId: (0, import_pg_core15.text)("org_id").notNull(),
-      playerId: (0, import_pg_core15.text)("player_id").notNull(),
+    playerGuardians = pgTable14("player_guardians", {
+      id: text14("id").primaryKey().$defaultFn(() => nanoid9()),
+      orgId: text14("org_id").notNull(),
+      playerId: text14("player_id").notNull(),
       // Clerk user ID of the guardian's HoopsOS account.  Null until the guardian
       // has been invited and claimed their account.
-      guardianUserId: (0, import_pg_core15.text)("guardian_user_id"),
-      name: (0, import_pg_core15.text)("name").notNull(),
-      email: (0, import_pg_core15.text)("email"),
-      phone: (0, import_pg_core15.text)("phone"),
+      guardianUserId: text14("guardian_user_id"),
+      name: text14("name").notNull(),
+      email: text14("email"),
+      phone: text14("phone"),
       relationship: guardianRelationshipEnum("relationship").notNull().default("parent"),
-      isPrimary: (0, import_pg_core15.boolean)("is_primary").notNull().default(false),
-      canReceiveMessages: (0, import_pg_core15.boolean)("can_receive_messages").notNull().default(true),
-      createdAt: (0, import_pg_core15.timestamp)("created_at").defaultNow().notNull(),
-      deletedAt: (0, import_pg_core15.timestamp)("deleted_at")
+      isPrimary: boolean4("is_primary").notNull().default(false),
+      canReceiveMessages: boolean4("can_receive_messages").notNull().default(true),
+      createdAt: timestamp14("created_at").defaultNow().notNull(),
+      deletedAt: timestamp14("deleted_at")
     });
   }
 });
 
 // shared/db/schema/player_notes.ts
-var import_pg_core16, import_nanoid10, playerNoteTypeEnum, playerNotes;
+import { pgEnum as pgEnum10, pgTable as pgTable15, text as text15, boolean as boolean5, timestamp as timestamp15 } from "drizzle-orm/pg-core";
+import { nanoid as nanoid10 } from "nanoid";
+var playerNoteTypeEnum, playerNotes;
 var init_player_notes = __esm({
   "shared/db/schema/player_notes.ts"() {
     "use strict";
-    import_pg_core16 = require("drizzle-orm/pg-core");
-    import_nanoid10 = require("nanoid");
-    playerNoteTypeEnum = (0, import_pg_core16.pgEnum)("player_note_type", [
+    playerNoteTypeEnum = pgEnum10("player_note_type", [
       "coach",
       "academic",
       "health",
@@ -815,56 +845,56 @@ var init_player_notes = __esm({
       "recruiting",
       "general"
     ]);
-    playerNotes = (0, import_pg_core16.pgTable)("player_notes", {
-      id: (0, import_pg_core16.text)("id").primaryKey().$defaultFn(() => (0, import_nanoid10.nanoid)()),
-      orgId: (0, import_pg_core16.text)("org_id").notNull(),
-      playerId: (0, import_pg_core16.text)("player_id").notNull(),
+    playerNotes = pgTable15("player_notes", {
+      id: text15("id").primaryKey().$defaultFn(() => nanoid10()),
+      orgId: text15("org_id").notNull(),
+      playerId: text15("player_id").notNull(),
       noteType: playerNoteTypeEnum("note_type").notNull().default("coach"),
-      body: (0, import_pg_core16.text)("body").notNull(),
-      isPinned: (0, import_pg_core16.boolean)("is_pinned").notNull().default(false),
-      createdByUserId: (0, import_pg_core16.text)("created_by_user_id").notNull(),
-      createdAt: (0, import_pg_core16.timestamp)("created_at").defaultNow().notNull(),
-      updatedAt: (0, import_pg_core16.timestamp)("updated_at").defaultNow().notNull(),
-      deletedAt: (0, import_pg_core16.timestamp)("deleted_at")
+      body: text15("body").notNull(),
+      isPinned: boolean5("is_pinned").notNull().default(false),
+      createdByUserId: text15("created_by_user_id").notNull(),
+      createdAt: timestamp15("created_at").defaultNow().notNull(),
+      updatedAt: timestamp15("updated_at").defaultNow().notNull(),
+      deletedAt: timestamp15("deleted_at")
     });
   }
 });
 
 // shared/db/schema/skill_assessments.ts
-var import_pg_core17, import_nanoid11, skillAssessments;
+import { pgTable as pgTable16, text as text16, integer as integer10, timestamp as timestamp16 } from "drizzle-orm/pg-core";
+import { nanoid as nanoid11 } from "nanoid";
+var skillAssessments;
 var init_skill_assessments = __esm({
   "shared/db/schema/skill_assessments.ts"() {
     "use strict";
-    import_pg_core17 = require("drizzle-orm/pg-core");
-    import_nanoid11 = require("nanoid");
-    skillAssessments = (0, import_pg_core17.pgTable)("skill_assessments", {
-      id: (0, import_pg_core17.text)("id").primaryKey().$defaultFn(() => (0, import_nanoid11.nanoid)()),
-      orgId: (0, import_pg_core17.text)("org_id").notNull(),
-      playerId: (0, import_pg_core17.text)("player_id").notNull(),
-      assessedByUserId: (0, import_pg_core17.text)("assessed_by_user_id").notNull(),
-      season: (0, import_pg_core17.text)("season"),
+    skillAssessments = pgTable16("skill_assessments", {
+      id: text16("id").primaryKey().$defaultFn(() => nanoid11()),
+      orgId: text16("org_id").notNull(),
+      playerId: text16("player_id").notNull(),
+      assessedByUserId: text16("assessed_by_user_id").notNull(),
+      season: text16("season"),
       // "2024-25"
-      category: (0, import_pg_core17.text)("category").notNull(),
+      category: text16("category").notNull(),
       // "Shooting" | "Ball Handling" | etc.
-      subSkill: (0, import_pg_core17.text)("sub_skill").notNull(),
+      subSkill: text16("sub_skill").notNull(),
       // "Catch & Shoot" | etc.
-      score: (0, import_pg_core17.integer)("score").notNull(),
+      score: integer10("score").notNull(),
       // 1–10
-      notes: (0, import_pg_core17.text)("notes"),
-      assessedAt: (0, import_pg_core17.timestamp)("assessed_at").defaultNow().notNull(),
-      createdAt: (0, import_pg_core17.timestamp)("created_at").defaultNow().notNull()
+      notes: text16("notes"),
+      assessedAt: timestamp16("assessed_at").defaultNow().notNull(),
+      createdAt: timestamp16("created_at").defaultNow().notNull()
     });
   }
 });
 
 // shared/db/schema/injury_records.ts
-var import_pg_core18, import_nanoid12, injuryStatusEnum, injuryRecords;
+import { pgEnum as pgEnum11, pgTable as pgTable17, text as text17, timestamp as timestamp17 } from "drizzle-orm/pg-core";
+import { nanoid as nanoid12 } from "nanoid";
+var injuryStatusEnum, injuryRecords;
 var init_injury_records = __esm({
   "shared/db/schema/injury_records.ts"() {
     "use strict";
-    import_pg_core18 = require("drizzle-orm/pg-core");
-    import_nanoid12 = require("nanoid");
-    injuryStatusEnum = (0, import_pg_core18.pgEnum)("injury_status", [
+    injuryStatusEnum = pgEnum11("injury_status", [
       "active",
       // sidelined — no full participation
       "monitoring",
@@ -872,126 +902,126 @@ var init_injury_records = __esm({
       "cleared"
       // return-to-play complete
     ]);
-    injuryRecords = (0, import_pg_core18.pgTable)("injury_records", {
-      id: (0, import_pg_core18.text)("id").primaryKey().$defaultFn(() => (0, import_nanoid12.nanoid)()),
-      orgId: (0, import_pg_core18.text)("org_id").notNull(),
-      playerId: (0, import_pg_core18.text)("player_id").notNull(),
-      description: (0, import_pg_core18.text)("description").notNull(),
+    injuryRecords = pgTable17("injury_records", {
+      id: text17("id").primaryKey().$defaultFn(() => nanoid12()),
+      orgId: text17("org_id").notNull(),
+      playerId: text17("player_id").notNull(),
+      description: text17("description").notNull(),
       // "Left ankle sprain — Grade 1"
-      bodyPart: (0, import_pg_core18.text)("body_part"),
+      bodyPart: text17("body_part"),
       // "Ankle" | "Knee" | "Shoulder" …
       status: injuryStatusEnum("status").notNull().default("active"),
-      restrictions: (0, import_pg_core18.text)("restrictions"),
+      restrictions: text17("restrictions"),
       // "No jumping, limited contact"
-      injuredAt: (0, import_pg_core18.timestamp)("injured_at").notNull(),
-      expectedReturnAt: (0, import_pg_core18.timestamp)("expected_return_at"),
-      clearedAt: (0, import_pg_core18.timestamp)("cleared_at"),
-      clearanceNotes: (0, import_pg_core18.text)("clearance_notes"),
-      createdByUserId: (0, import_pg_core18.text)("created_by_user_id").notNull(),
-      createdAt: (0, import_pg_core18.timestamp)("created_at").defaultNow().notNull(),
-      updatedAt: (0, import_pg_core18.timestamp)("updated_at").defaultNow().notNull(),
-      deletedAt: (0, import_pg_core18.timestamp)("deleted_at")
+      injuredAt: timestamp17("injured_at").notNull(),
+      expectedReturnAt: timestamp17("expected_return_at"),
+      clearedAt: timestamp17("cleared_at"),
+      clearanceNotes: text17("clearance_notes"),
+      createdByUserId: text17("created_by_user_id").notNull(),
+      createdAt: timestamp17("created_at").defaultNow().notNull(),
+      updatedAt: timestamp17("updated_at").defaultNow().notNull(),
+      deletedAt: timestamp17("deleted_at")
     });
   }
 });
 
 // shared/db/schema/idp_structured.ts
-var import_pg_core19, import_nanoid13, idpFocusAreaStatusEnum, idpCommentTypeEnum, idpFocusAreas, idpMilestones, idpDrillLinks, idpComments;
+import { pgEnum as pgEnum12, pgTable as pgTable18, text as text18, timestamp as timestamp18, integer as integer11, boolean as boolean6 } from "drizzle-orm/pg-core";
+import { nanoid as nanoid13 } from "nanoid";
+var idpFocusAreaStatusEnum, idpCommentTypeEnum, idpFocusAreas, idpMilestones, idpDrillLinks, idpComments;
 var init_idp_structured = __esm({
   "shared/db/schema/idp_structured.ts"() {
     "use strict";
-    import_pg_core19 = require("drizzle-orm/pg-core");
-    import_nanoid13 = require("nanoid");
-    idpFocusAreaStatusEnum = (0, import_pg_core19.pgEnum)("idp_focus_area_status", [
+    idpFocusAreaStatusEnum = pgEnum12("idp_focus_area_status", [
       "draft",
       "active",
       "completed",
       "paused"
     ]);
-    idpCommentTypeEnum = (0, import_pg_core19.pgEnum)("idp_comment_type", [
+    idpCommentTypeEnum = pgEnum12("idp_comment_type", [
       "weekly_review",
       "film_note",
       "assessment",
       "general"
     ]);
-    idpFocusAreas = (0, import_pg_core19.pgTable)("idp_focus_areas", {
-      id: (0, import_pg_core19.text)("id").primaryKey().$defaultFn(() => (0, import_nanoid13.nanoid)()),
-      orgId: (0, import_pg_core19.text)("org_id").notNull(),
-      idpId: (0, import_pg_core19.text)("idp_id").notNull(),
+    idpFocusAreas = pgTable18("idp_focus_areas", {
+      id: text18("id").primaryKey().$defaultFn(() => nanoid13()),
+      orgId: text18("org_id").notNull(),
+      idpId: text18("idp_id").notNull(),
       // FK → idps.id
-      playerId: (0, import_pg_core19.text)("player_id").notNull(),
-      priority: (0, import_pg_core19.integer)("priority").notNull().default(1),
+      playerId: text18("player_id").notNull(),
+      priority: integer11("priority").notNull().default(1),
       // 1 = highest
-      category: (0, import_pg_core19.text)("category").notNull(),
+      category: text18("category").notNull(),
       // "Shooting", "Finishing" …
-      subSkill: (0, import_pg_core19.text)("sub_skill").notNull(),
+      subSkill: text18("sub_skill").notNull(),
       // "Contact Layup"
-      emoji: (0, import_pg_core19.text)("emoji").default("\u{1F3C0}"),
-      currentScore: (0, import_pg_core19.integer)("current_score"),
+      emoji: text18("emoji").default("\u{1F3C0}"),
+      currentScore: integer11("current_score"),
       // 1-10 snapshot at creation
-      targetScore: (0, import_pg_core19.integer)("target_score"),
+      targetScore: integer11("target_score"),
       // 1-10 goal
-      deadline: (0, import_pg_core19.text)("deadline"),
+      deadline: text18("deadline"),
       // ISO date string "2025-06-15"
       status: idpFocusAreaStatusEnum("status").notNull().default("active"),
-      coachNotes: (0, import_pg_core19.text)("coach_notes"),
-      createdAt: (0, import_pg_core19.timestamp)("created_at").defaultNow().notNull(),
-      updatedAt: (0, import_pg_core19.timestamp)("updated_at").defaultNow().notNull(),
-      deletedAt: (0, import_pg_core19.timestamp)("deleted_at")
+      coachNotes: text18("coach_notes"),
+      createdAt: timestamp18("created_at").defaultNow().notNull(),
+      updatedAt: timestamp18("updated_at").defaultNow().notNull(),
+      deletedAt: timestamp18("deleted_at")
     });
-    idpMilestones = (0, import_pg_core19.pgTable)("idp_milestones", {
-      id: (0, import_pg_core19.text)("id").primaryKey().$defaultFn(() => (0, import_nanoid13.nanoid)()),
-      orgId: (0, import_pg_core19.text)("org_id").notNull(),
-      focusAreaId: (0, import_pg_core19.text)("focus_area_id").notNull(),
+    idpMilestones = pgTable18("idp_milestones", {
+      id: text18("id").primaryKey().$defaultFn(() => nanoid13()),
+      orgId: text18("org_id").notNull(),
+      focusAreaId: text18("focus_area_id").notNull(),
       // FK → idp_focus_areas.id
-      idpId: (0, import_pg_core19.text)("idp_id").notNull(),
-      title: (0, import_pg_core19.text)("title").notNull(),
-      dueDate: (0, import_pg_core19.text)("due_date"),
+      idpId: text18("idp_id").notNull(),
+      title: text18("title").notNull(),
+      dueDate: text18("due_date"),
       // ISO date string
-      completedAt: (0, import_pg_core19.timestamp)("completed_at"),
-      createdAt: (0, import_pg_core19.timestamp)("created_at").defaultNow().notNull()
+      completedAt: timestamp18("completed_at"),
+      createdAt: timestamp18("created_at").defaultNow().notNull()
     });
-    idpDrillLinks = (0, import_pg_core19.pgTable)("idp_drill_links", {
-      id: (0, import_pg_core19.text)("id").primaryKey().$defaultFn(() => (0, import_nanoid13.nanoid)()),
-      orgId: (0, import_pg_core19.text)("org_id").notNull(),
-      focusAreaId: (0, import_pg_core19.text)("focus_area_id").notNull(),
-      idpId: (0, import_pg_core19.text)("idp_id").notNull(),
-      drillId: (0, import_pg_core19.text)("drill_id"),
+    idpDrillLinks = pgTable18("idp_drill_links", {
+      id: text18("id").primaryKey().$defaultFn(() => nanoid13()),
+      orgId: text18("org_id").notNull(),
+      focusAreaId: text18("focus_area_id").notNull(),
+      idpId: text18("idp_id").notNull(),
+      drillId: text18("drill_id"),
       // ref to drill library id (nullable = custom)
-      drillTitle: (0, import_pg_core19.text)("drill_title").notNull(),
-      reps: (0, import_pg_core19.text)("reps"),
+      drillTitle: text18("drill_title").notNull(),
+      reps: text18("reps"),
       // "5 sets of 10", "50 reps each side"
-      frequency: (0, import_pg_core19.text)("frequency"),
+      frequency: text18("frequency"),
       // "daily", "3x per week"
-      isDueToday: (0, import_pg_core19.boolean)("is_due_today").notNull().default(false),
-      createdAt: (0, import_pg_core19.timestamp)("created_at").defaultNow().notNull(),
-      deletedAt: (0, import_pg_core19.timestamp)("deleted_at")
+      isDueToday: boolean6("is_due_today").notNull().default(false),
+      createdAt: timestamp18("created_at").defaultNow().notNull(),
+      deletedAt: timestamp18("deleted_at")
     });
-    idpComments = (0, import_pg_core19.pgTable)("idp_comments", {
-      id: (0, import_pg_core19.text)("id").primaryKey().$defaultFn(() => (0, import_nanoid13.nanoid)()),
-      orgId: (0, import_pg_core19.text)("org_id").notNull(),
-      idpId: (0, import_pg_core19.text)("idp_id").notNull(),
-      focusAreaId: (0, import_pg_core19.text)("focus_area_id"),
+    idpComments = pgTable18("idp_comments", {
+      id: text18("id").primaryKey().$defaultFn(() => nanoid13()),
+      orgId: text18("org_id").notNull(),
+      idpId: text18("idp_id").notNull(),
+      focusAreaId: text18("focus_area_id"),
       // null = IDP-level comment
-      authorUserId: (0, import_pg_core19.text)("author_user_id").notNull(),
+      authorUserId: text18("author_user_id").notNull(),
       type: idpCommentTypeEnum("type").notNull().default("general"),
-      body: (0, import_pg_core19.text)("body").notNull(),
-      linkedFilmSessionId: (0, import_pg_core19.text)("linked_film_session_id"),
-      linkedAnnotationId: (0, import_pg_core19.text)("linked_annotation_id"),
-      createdAt: (0, import_pg_core19.timestamp)("created_at").defaultNow().notNull(),
-      deletedAt: (0, import_pg_core19.timestamp)("deleted_at")
+      body: text18("body").notNull(),
+      linkedFilmSessionId: text18("linked_film_session_id"),
+      linkedAnnotationId: text18("linked_annotation_id"),
+      createdAt: timestamp18("created_at").defaultNow().notNull(),
+      deletedAt: timestamp18("deleted_at")
     });
   }
 });
 
 // shared/db/schema/coaching_actions.ts
-var import_pg_core20, import_nanoid14, coachingActionTypeEnum, coachingActionStatusEnum, coachingActions;
+import { pgEnum as pgEnum13, pgTable as pgTable19, text as text19, timestamp as timestamp19, integer as integer12, jsonb as jsonb10 } from "drizzle-orm/pg-core";
+import { nanoid as nanoid14 } from "nanoid";
+var coachingActionTypeEnum, coachingActionStatusEnum, coachingActions;
 var init_coaching_actions = __esm({
   "shared/db/schema/coaching_actions.ts"() {
     "use strict";
-    import_pg_core20 = require("drizzle-orm/pg-core");
-    import_nanoid14 = require("nanoid");
-    coachingActionTypeEnum = (0, import_pg_core20.pgEnum)("coaching_action_type", [
+    coachingActionTypeEnum = pgEnum13("coaching_action_type", [
       "assign_clip",
       // Send clip to athlete as a film-review assignment
       "recommend_drill",
@@ -1005,7 +1035,7 @@ var init_coaching_actions = __esm({
       "mark_addressed"
       // Close the loop — no follow-up needed
     ]);
-    coachingActionStatusEnum = (0, import_pg_core20.pgEnum)("coaching_action_status", [
+    coachingActionStatusEnum = pgEnum13("coaching_action_status", [
       "open",
       // Created, no athlete response yet
       "in_progress",
@@ -1015,254 +1045,264 @@ var init_coaching_actions = __esm({
       "dismissed"
       // Coach decided not to pursue
     ]);
-    coachingActions = (0, import_pg_core20.pgTable)("coaching_actions", {
-      id: (0, import_pg_core20.text)("id").primaryKey().$defaultFn(() => (0, import_nanoid14.nanoid)()),
-      orgId: (0, import_pg_core20.text)("org_id").notNull(),
+    coachingActions = pgTable19("coaching_actions", {
+      id: text19("id").primaryKey().$defaultFn(() => nanoid14()),
+      orgId: text19("org_id").notNull(),
       // Source context ─────────────────────────────────────────────────────────────
-      sessionId: (0, import_pg_core20.text)("session_id").notNull(),
+      sessionId: text19("session_id").notNull(),
       // film_sessions.id
-      annotationId: (0, import_pg_core20.text)("annotation_id"),
+      annotationId: text19("annotation_id"),
       // annotations.id — nullable for session-level actions
-      playerId: (0, import_pg_core20.text)("player_id"),
+      playerId: text19("player_id"),
       // target player (null = team action)
-      authorUserId: (0, import_pg_core20.text)("author_user_id").notNull(),
+      authorUserId: text19("author_user_id").notNull(),
       // Issue context (from AI observation or coach tag) ───────────────────────────
-      issueCategory: (0, import_pg_core20.text)("issue_category"),
+      issueCategory: text19("issue_category"),
       // "Balance", "Release", "Finishing" …
-      issueSeverity: (0, import_pg_core20.text)("issue_severity"),
+      issueSeverity: text19("issue_severity"),
       // "minor" | "major"
-      timestampMs: (0, import_pg_core20.integer)("timestamp_ms"),
+      timestampMs: integer12("timestamp_ms"),
       // ms into the video
-      coachNote: (0, import_pg_core20.text)("coach_note"),
+      coachNote: text19("coach_note"),
       // coach's framing of the action
       // Action type and status ─────────────────────────────────────────────────────
       actionType: coachingActionTypeEnum("action_type").notNull(),
       status: coachingActionStatusEnum("status").notNull().default("open"),
       // Downstream resolution references ───────────────────────────────────────────
-      assignmentId: (0, import_pg_core20.text)("assignment_id"),
+      assignmentId: text19("assignment_id"),
       // assignments.id if action spawned one
-      idpFocusAreaId: (0, import_pg_core20.text)("idp_focus_area_id"),
+      idpFocusAreaId: text19("idp_focus_area_id"),
       // idp_focus_areas.id if linked
-      followUpSessionId: (0, import_pg_core20.text)("follow_up_session_id"),
+      followUpSessionId: text19("follow_up_session_id"),
       // film_sessions.id for re-upload evidence
-      resolvedAt: (0, import_pg_core20.timestamp)("resolved_at"),
-      resolvedNote: (0, import_pg_core20.text)("resolved_note"),
+      resolvedAt: timestamp19("resolved_at"),
+      resolvedNote: text19("resolved_note"),
       // brief note on how/why resolved
       // AI resolution quality — computed by Inngest after analyzing follow-up session
-      resolutionScore: (0, import_pg_core20.jsonb)("resolution_score"),
+      resolutionScore: jsonb10("resolution_score"),
       // { originalCount, followUpCount, improvement, autoResolved }
-      createdAt: (0, import_pg_core20.timestamp)("created_at").defaultNow().notNull(),
-      updatedAt: (0, import_pg_core20.timestamp)("updated_at").defaultNow().notNull()
+      createdAt: timestamp19("created_at").defaultNow().notNull(),
+      updatedAt: timestamp19("updated_at").defaultNow().notNull()
     });
   }
 });
 
 // shared/db/schema/readiness_overrides.ts
-var import_pg_core21, import_nanoid15, readinessOverrides;
+import { pgTable as pgTable20, text as text20, timestamp as timestamp20 } from "drizzle-orm/pg-core";
+import { nanoid as nanoid15 } from "nanoid";
+var readinessOverrides;
 var init_readiness_overrides = __esm({
   "shared/db/schema/readiness_overrides.ts"() {
     "use strict";
-    import_pg_core21 = require("drizzle-orm/pg-core");
-    import_nanoid15 = require("nanoid");
-    readinessOverrides = (0, import_pg_core21.pgTable)("readiness_overrides", {
-      id: (0, import_pg_core21.text)("id").primaryKey().$defaultFn(() => (0, import_nanoid15.nanoid)()),
-      orgId: (0, import_pg_core21.text)("org_id").notNull(),
-      playerId: (0, import_pg_core21.text)("player_id").notNull(),
-      coachUserId: (0, import_pg_core21.text)("coach_user_id").notNull(),
-      status: (0, import_pg_core21.text)("status").notNull(),
+    readinessOverrides = pgTable20("readiness_overrides", {
+      id: text20("id").primaryKey().$defaultFn(() => nanoid15()),
+      orgId: text20("org_id").notNull(),
+      playerId: text20("player_id").notNull(),
+      coachUserId: text20("coach_user_id").notNull(),
+      status: text20("status").notNull(),
       // "READY" | "FLAGGED" | "RESTRICTED"
-      note: (0, import_pg_core21.text)("note"),
-      expiresAt: (0, import_pg_core21.timestamp)("expires_at").notNull(),
-      createdAt: (0, import_pg_core21.timestamp)("created_at").defaultNow().notNull()
+      note: text20("note"),
+      expiresAt: timestamp20("expires_at").notNull(),
+      createdAt: timestamp20("created_at").defaultNow().notNull()
     });
   }
 });
 
 // shared/db/schema/opponents.ts
-var import_pg_core22, import_nanoid16, opponents;
+import { pgTable as pgTable21, text as text21, jsonb as jsonb11, timestamp as timestamp21 } from "drizzle-orm/pg-core";
+import { nanoid as nanoid16 } from "nanoid";
+var opponents;
 var init_opponents = __esm({
   "shared/db/schema/opponents.ts"() {
     "use strict";
-    import_pg_core22 = require("drizzle-orm/pg-core");
-    import_nanoid16 = require("nanoid");
-    opponents = (0, import_pg_core22.pgTable)("opponents", {
-      id: (0, import_pg_core22.text)("id").primaryKey().$defaultFn(() => (0, import_nanoid16.nanoid)()),
-      orgId: (0, import_pg_core22.text)("org_id").notNull(),
-      name: (0, import_pg_core22.text)("name").notNull(),
-      abbreviation: (0, import_pg_core22.text)("abbreviation"),
-      level: (0, import_pg_core22.text)("level").notNull().default("varsity"),
+    opponents = pgTable21("opponents", {
+      id: text21("id").primaryKey().$defaultFn(() => nanoid16()),
+      orgId: text21("org_id").notNull(),
+      name: text21("name").notNull(),
+      abbreviation: text21("abbreviation"),
+      level: text21("level").notNull().default("varsity"),
       // varsity|jv|aau|academy|club
-      conference: (0, import_pg_core22.text)("conference"),
-      division: (0, import_pg_core22.text)("division"),
-      coachName: (0, import_pg_core22.text)("coach_name"),
-      record: (0, import_pg_core22.jsonb)("record"),
+      conference: text21("conference"),
+      division: text21("division"),
+      coachName: text21("coach_name"),
+      record: jsonb11("record"),
       // { wins, losses }
-      primaryColor: (0, import_pg_core22.text)("primary_color"),
+      primaryColor: text21("primary_color"),
       // OKLCH or hex for team chip
       // Denormalised link arrays (in production, use join tables)
-      linkedEventIds: (0, import_pg_core22.jsonb)("linked_event_ids"),
+      linkedEventIds: jsonb11("linked_event_ids"),
       // string[]
-      filmSessionIds: (0, import_pg_core22.jsonb)("film_session_ids"),
+      filmSessionIds: jsonb11("film_session_ids"),
       // string[]
-      notes: (0, import_pg_core22.text)("notes"),
-      createdByUserId: (0, import_pg_core22.text)("created_by_user_id").notNull(),
-      createdAt: (0, import_pg_core22.timestamp)("created_at").defaultNow().notNull(),
-      updatedAt: (0, import_pg_core22.timestamp)("updated_at").defaultNow().notNull(),
-      deletedAt: (0, import_pg_core22.timestamp)("deleted_at")
+      notes: text21("notes"),
+      createdByUserId: text21("created_by_user_id").notNull(),
+      createdAt: timestamp21("created_at").defaultNow().notNull(),
+      updatedAt: timestamp21("updated_at").defaultNow().notNull(),
+      deletedAt: timestamp21("deleted_at")
     });
   }
 });
 
 // shared/db/schema/scout_reports.ts
-var import_pg_core23, import_nanoid17, scoutReportStatusEnum, scoutReports;
+import { pgEnum as pgEnum14, pgTable as pgTable22, text as text22, jsonb as jsonb12, timestamp as timestamp22 } from "drizzle-orm/pg-core";
+import { nanoid as nanoid17 } from "nanoid";
+var scoutReportStatusEnum, scoutReports;
 var init_scout_reports = __esm({
   "shared/db/schema/scout_reports.ts"() {
     "use strict";
-    import_pg_core23 = require("drizzle-orm/pg-core");
-    import_nanoid17 = require("nanoid");
-    scoutReportStatusEnum = (0, import_pg_core23.pgEnum)("scout_report_status", [
+    scoutReportStatusEnum = pgEnum14("scout_report_status", [
       "draft",
       "final",
       "archived"
     ]);
-    scoutReports = (0, import_pg_core23.pgTable)("scout_reports", {
-      id: (0, import_pg_core23.text)("id").primaryKey().$defaultFn(() => (0, import_nanoid17.nanoid)()),
-      orgId: (0, import_pg_core23.text)("org_id").notNull(),
-      opponentId: (0, import_pg_core23.text)("opponent_id").notNull(),
+    scoutReports = pgTable22("scout_reports", {
+      id: text22("id").primaryKey().$defaultFn(() => nanoid17()),
+      orgId: text22("org_id").notNull(),
+      opponentId: text22("opponent_id").notNull(),
       // → opponents.id
-      opponentName: (0, import_pg_core23.text)("opponent_name").notNull(),
-      gameDate: (0, import_pg_core23.text)("game_date"),
+      opponentName: text22("opponent_name").notNull(),
+      gameDate: text22("game_date"),
       // ISO "YYYY-MM-DD"
-      linkedEventId: (0, import_pg_core23.text)("linked_event_id"),
+      linkedEventId: text22("linked_event_id"),
       // → events.id
       status: scoutReportStatusEnum("status").notNull().default("draft"),
       // Game plan
-      gamePlanSummary: (0, import_pg_core23.text)("game_plan_summary"),
-      keysToWin: (0, import_pg_core23.jsonb)("keys_to_win"),
+      gamePlanSummary: text22("game_plan_summary"),
+      keysToWin: jsonb12("keys_to_win"),
       // string[]
       // Tendencies — JSONB arrays so no join tables needed for HS/AAU scale
-      offenseTendencies: (0, import_pg_core23.jsonb)("offense_tendencies"),
+      offenseTendencies: jsonb12("offense_tendencies"),
       // ScoutTendency[]
-      defenseTendencies: (0, import_pg_core23.jsonb)("defense_tendencies"),
+      defenseTendencies: jsonb12("defense_tendencies"),
       // ScoutTendency[]
       // Personnel
-      keyPlayers: (0, import_pg_core23.jsonb)("key_players"),
+      keyPlayers: jsonb12("key_players"),
       // ScoutKeyPlayer[]
-      matchupNotes: (0, import_pg_core23.jsonb)("matchup_notes"),
+      matchupNotes: jsonb12("matchup_notes"),
       // MatchupNote[]
       // Assignments
-      assignments: (0, import_pg_core23.jsonb)("assignments"),
+      assignments: jsonb12("assignments"),
       // ScoutAssignment[]
       // Linked content
-      linkedClipIds: (0, import_pg_core23.jsonb)("linked_clip_ids"),
+      linkedClipIds: jsonb12("linked_clip_ids"),
       // string[]
-      linkedPracticePlanId: (0, import_pg_core23.text)("linked_practice_plan_id"),
-      linkedPlayIds: (0, import_pg_core23.jsonb)("linked_play_ids"),
+      linkedPracticePlanId: text22("linked_practice_plan_id"),
+      linkedPlayIds: jsonb12("linked_play_ids"),
       // string[] — scout-team plays
-      authorUserId: (0, import_pg_core23.text)("author_user_id").notNull(),
-      authorName: (0, import_pg_core23.text)("author_name").notNull(),
-      createdAt: (0, import_pg_core23.timestamp)("created_at").defaultNow().notNull(),
-      updatedAt: (0, import_pg_core23.timestamp)("updated_at").defaultNow().notNull(),
-      deletedAt: (0, import_pg_core23.timestamp)("deleted_at")
+      authorUserId: text22("author_user_id").notNull(),
+      authorName: text22("author_name").notNull(),
+      createdAt: timestamp22("created_at").defaultNow().notNull(),
+      updatedAt: timestamp22("updated_at").defaultNow().notNull(),
+      deletedAt: timestamp22("deleted_at")
     });
   }
 });
 
 // shared/db/schema/announcements.ts
-var import_pg_core24, import_nanoid18, announcementPriorityEnum, announcements;
+import { pgEnum as pgEnum15, pgTable as pgTable23, text as text23, timestamp as timestamp23, boolean as boolean7 } from "drizzle-orm/pg-core";
+import { nanoid as nanoid18 } from "nanoid";
+var announcementPriorityEnum, announcements;
 var init_announcements = __esm({
   "shared/db/schema/announcements.ts"() {
     "use strict";
-    import_pg_core24 = require("drizzle-orm/pg-core");
-    import_nanoid18 = require("nanoid");
-    announcementPriorityEnum = (0, import_pg_core24.pgEnum)("announcement_priority", [
+    announcementPriorityEnum = pgEnum15("announcement_priority", [
       "normal",
       "urgent",
       "info"
     ]);
-    announcements = (0, import_pg_core24.pgTable)("announcements", {
-      id: (0, import_pg_core24.text)("id").primaryKey().$defaultFn(() => (0, import_nanoid18.nanoid)()),
-      orgId: (0, import_pg_core24.text)("org_id").notNull(),
-      teamId: (0, import_pg_core24.text)("team_id"),
-      title: (0, import_pg_core24.text)("title").notNull(),
-      body: (0, import_pg_core24.text)("body").notNull(),
+    announcements = pgTable23("announcements", {
+      id: text23("id").primaryKey().$defaultFn(() => nanoid18()),
+      orgId: text23("org_id").notNull(),
+      teamId: text23("team_id"),
+      title: text23("title").notNull(),
+      body: text23("body").notNull(),
       priority: announcementPriorityEnum("priority").notNull().default("normal"),
-      pinned: (0, import_pg_core24.boolean)("pinned").notNull().default(false),
-      tags: (0, import_pg_core24.text)("tags").array().notNull().default([]),
+      pinned: boolean7("pinned").notNull().default(false),
+      tags: text23("tags").array().notNull().default([]),
       // Audience scoping: null = entire org; array of role strings narrows
-      audienceRoles: (0, import_pg_core24.text)("audience_roles").array(),
-      authorUserId: (0, import_pg_core24.text)("author_user_id").notNull(),
-      authorName: (0, import_pg_core24.text)("author_name").notNull(),
-      publishedAt: (0, import_pg_core24.timestamp)("published_at").defaultNow().notNull(),
-      expiresAt: (0, import_pg_core24.timestamp)("expires_at"),
-      createdAt: (0, import_pg_core24.timestamp)("created_at").defaultNow().notNull(),
-      updatedAt: (0, import_pg_core24.timestamp)("updated_at").defaultNow().notNull(),
-      deletedAt: (0, import_pg_core24.timestamp)("deleted_at")
+      audienceRoles: text23("audience_roles").array(),
+      authorUserId: text23("author_user_id").notNull(),
+      authorName: text23("author_name").notNull(),
+      publishedAt: timestamp23("published_at").defaultNow().notNull(),
+      expiresAt: timestamp23("expires_at"),
+      createdAt: timestamp23("created_at").defaultNow().notNull(),
+      updatedAt: timestamp23("updated_at").defaultNow().notNull(),
+      deletedAt: timestamp23("deleted_at")
     });
   }
 });
 
 // shared/db/schema/waivers.ts
-var import_pg_core25, import_nanoid19, waiverCategoryEnum, waiverStatusEnum, waiverTemplates, waiverSignatures;
+import { pgEnum as pgEnum16, pgTable as pgTable24, text as text24, timestamp as timestamp24, boolean as boolean8 } from "drizzle-orm/pg-core";
+import { nanoid as nanoid19 } from "nanoid";
+var waiverCategoryEnum, waiverStatusEnum, waiverTemplates, waiverSignatures;
 var init_waivers = __esm({
   "shared/db/schema/waivers.ts"() {
     "use strict";
-    import_pg_core25 = require("drizzle-orm/pg-core");
-    import_nanoid19 = require("nanoid");
-    waiverCategoryEnum = (0, import_pg_core25.pgEnum)("waiver_category", [
+    waiverCategoryEnum = pgEnum16("waiver_category", [
       "waiver",
       "consent",
       "medical",
       "media",
       "emergency"
     ]);
-    waiverStatusEnum = (0, import_pg_core25.pgEnum)("waiver_status", [
+    waiverStatusEnum = pgEnum16("waiver_status", [
       "pending",
       "signed",
       "expired",
       "voided"
     ]);
-    waiverTemplates = (0, import_pg_core25.pgTable)("waiver_templates", {
-      id: (0, import_pg_core25.text)("id").primaryKey().$defaultFn(() => (0, import_nanoid19.nanoid)()),
-      orgId: (0, import_pg_core25.text)("org_id").notNull(),
-      title: (0, import_pg_core25.text)("title").notNull(),
-      description: (0, import_pg_core25.text)("description").notNull(),
+    waiverTemplates = pgTable24("waiver_templates", {
+      id: text24("id").primaryKey().$defaultFn(() => nanoid19()),
+      orgId: text24("org_id").notNull(),
+      title: text24("title").notNull(),
+      description: text24("description").notNull(),
       category: waiverCategoryEnum("category").notNull(),
-      bodyMarkdown: (0, import_pg_core25.text)("body_markdown").notNull().default(""),
-      required: (0, import_pg_core25.boolean)("required").notNull().default(true),
-      expiresAfterDays: (0, import_pg_core25.text)("expires_after_days"),
+      bodyMarkdown: text24("body_markdown").notNull().default(""),
+      required: boolean8("required").notNull().default(true),
+      expiresAfterDays: text24("expires_after_days"),
       // e.g. "365" for annual
-      createdByUserId: (0, import_pg_core25.text)("created_by_user_id").notNull(),
-      createdAt: (0, import_pg_core25.timestamp)("created_at").defaultNow().notNull(),
-      updatedAt: (0, import_pg_core25.timestamp)("updated_at").defaultNow().notNull(),
-      deletedAt: (0, import_pg_core25.timestamp)("deleted_at")
+      createdByUserId: text24("created_by_user_id").notNull(),
+      createdAt: timestamp24("created_at").defaultNow().notNull(),
+      updatedAt: timestamp24("updated_at").defaultNow().notNull(),
+      deletedAt: timestamp24("deleted_at")
     });
-    waiverSignatures = (0, import_pg_core25.pgTable)("waiver_signatures", {
-      id: (0, import_pg_core25.text)("id").primaryKey().$defaultFn(() => (0, import_nanoid19.nanoid)()),
-      templateId: (0, import_pg_core25.text)("template_id").notNull(),
-      orgId: (0, import_pg_core25.text)("org_id").notNull(),
-      signedByUserId: (0, import_pg_core25.text)("signed_by_user_id").notNull(),
+    waiverSignatures = pgTable24("waiver_signatures", {
+      id: text24("id").primaryKey().$defaultFn(() => nanoid19()),
+      templateId: text24("template_id").notNull(),
+      orgId: text24("org_id").notNull(),
+      signedByUserId: text24("signed_by_user_id").notNull(),
       // parent or guardian
-      playerId: (0, import_pg_core25.text)("player_id").notNull(),
+      playerId: text24("player_id").notNull(),
       status: waiverStatusEnum("status").notNull().default("pending"),
-      signedAt: (0, import_pg_core25.timestamp)("signed_at"),
-      expiresAt: (0, import_pg_core25.timestamp)("expires_at"),
-      ipAddress: (0, import_pg_core25.text)("ip_address"),
-      userAgent: (0, import_pg_core25.text)("user_agent"),
-      createdAt: (0, import_pg_core25.timestamp)("created_at").defaultNow().notNull(),
-      updatedAt: (0, import_pg_core25.timestamp)("updated_at").defaultNow().notNull()
+      signedAt: timestamp24("signed_at"),
+      expiresAt: timestamp24("expires_at"),
+      ipAddress: text24("ip_address"),
+      userAgent: text24("user_agent"),
+      createdAt: timestamp24("created_at").defaultNow().notNull(),
+      updatedAt: timestamp24("updated_at").defaultNow().notNull()
     });
   }
 });
 
 // shared/db/schema/seasons.ts
-var import_pg_core26, seasonStatusEnum, seasons, teamAgeGroupEnum, teamGenderEnum, teams, teamRosterStatusEnum, teamRoster;
+import {
+  pgTable as pgTable25,
+  pgEnum as pgEnum17,
+  uuid as uuid6,
+  text as text25,
+  timestamp as timestamp25,
+  boolean as boolean9,
+  integer as integer14,
+  index as index6,
+  uniqueIndex as uniqueIndex2
+} from "drizzle-orm/pg-core";
+var seasonStatusEnum, seasons, teamAgeGroupEnum, teamGenderEnum, teams, teamRosterStatusEnum, teamRoster;
 var init_seasons = __esm({
   "shared/db/schema/seasons.ts"() {
     "use strict";
-    import_pg_core26 = require("drizzle-orm/pg-core");
     init_orgs();
-    seasonStatusEnum = (0, import_pg_core26.pgEnum)("season_status", [
+    seasonStatusEnum = pgEnum17("season_status", [
       "draft",
       // being set up, not visible to families
       "open",
@@ -1274,35 +1314,35 @@ var init_seasons = __esm({
       "archived"
       // soft-hidden from UI
     ]);
-    seasons = (0, import_pg_core26.pgTable)(
+    seasons = pgTable25(
       "seasons",
       {
-        id: (0, import_pg_core26.uuid)("id").primaryKey().defaultRandom(),
-        orgId: (0, import_pg_core26.uuid)("org_id").notNull().references(() => orgs.id, { onDelete: "cascade" }),
-        name: (0, import_pg_core26.text)("name").notNull(),
+        id: uuid6("id").primaryKey().defaultRandom(),
+        orgId: uuid6("org_id").notNull().references(() => orgs.id, { onDelete: "cascade" }),
+        name: text25("name").notNull(),
         // "Fall 2025 AAU", "Spring 2026 Travel"
-        slug: (0, import_pg_core26.text)("slug").notNull(),
+        slug: text25("slug").notNull(),
         status: seasonStatusEnum("status").notNull().default("draft"),
-        description: (0, import_pg_core26.text)("description"),
+        description: text25("description"),
         // Date window the season covers (games / practices)
-        startsAt: (0, import_pg_core26.timestamp)("starts_at", { withTimezone: true }),
-        endsAt: (0, import_pg_core26.timestamp)("ends_at", { withTimezone: true }),
+        startsAt: timestamp25("starts_at", { withTimezone: true }),
+        endsAt: timestamp25("ends_at", { withTimezone: true }),
         // Registration window (can differ from season dates)
-        registrationOpensAt: (0, import_pg_core26.timestamp)("registration_opens_at", { withTimezone: true }),
-        registrationClosesAt: (0, import_pg_core26.timestamp)("registration_closes_at", { withTimezone: true }),
+        registrationOpensAt: timestamp25("registration_opens_at", { withTimezone: true }),
+        registrationClosesAt: timestamp25("registration_closes_at", { withTimezone: true }),
         // Capacity cap (null = unlimited)
-        maxRoster: (0, import_pg_core26.integer)("max_roster"),
-        createdByUserId: (0, import_pg_core26.text)("created_by_user_id").notNull(),
-        createdAt: (0, import_pg_core26.timestamp)("created_at", { withTimezone: true }).notNull().defaultNow(),
-        updatedAt: (0, import_pg_core26.timestamp)("updated_at", { withTimezone: true }).notNull().defaultNow(),
-        deletedAt: (0, import_pg_core26.timestamp)("deleted_at", { withTimezone: true })
+        maxRoster: integer14("max_roster"),
+        createdByUserId: text25("created_by_user_id").notNull(),
+        createdAt: timestamp25("created_at", { withTimezone: true }).notNull().defaultNow(),
+        updatedAt: timestamp25("updated_at", { withTimezone: true }).notNull().defaultNow(),
+        deletedAt: timestamp25("deleted_at", { withTimezone: true })
       },
       (t) => ({
-        byOrg: (0, import_pg_core26.index)("seasons_org_idx").on(t.orgId),
-        orgSlugUnique: (0, import_pg_core26.uniqueIndex)("seasons_org_slug_unique").on(t.orgId, t.slug)
+        byOrg: index6("seasons_org_idx").on(t.orgId),
+        orgSlugUnique: uniqueIndex2("seasons_org_slug_unique").on(t.orgId, t.slug)
       })
     );
-    teamAgeGroupEnum = (0, import_pg_core26.pgEnum)("team_age_group", [
+    teamAgeGroupEnum = pgEnum17("team_age_group", [
       "u8",
       "u10",
       "u12",
@@ -1318,79 +1358,90 @@ var init_seasons = __esm({
       "adult",
       "other"
     ]);
-    teamGenderEnum = (0, import_pg_core26.pgEnum)("team_gender", [
+    teamGenderEnum = pgEnum17("team_gender", [
       "boys",
       "girls",
       "co_ed",
       "open"
     ]);
-    teams = (0, import_pg_core26.pgTable)(
+    teams = pgTable25(
       "teams",
       {
-        id: (0, import_pg_core26.uuid)("id").primaryKey().defaultRandom(),
-        orgId: (0, import_pg_core26.uuid)("org_id").notNull().references(() => orgs.id, { onDelete: "cascade" }),
-        seasonId: (0, import_pg_core26.uuid)("season_id").references(() => seasons.id, { onDelete: "set null" }),
-        name: (0, import_pg_core26.text)("name").notNull(),
+        id: uuid6("id").primaryKey().defaultRandom(),
+        orgId: uuid6("org_id").notNull().references(() => orgs.id, { onDelete: "cascade" }),
+        seasonId: uuid6("season_id").references(() => seasons.id, { onDelete: "set null" }),
+        name: text25("name").notNull(),
         // "Varsity Boys", "10U Tigers"
-        slug: (0, import_pg_core26.text)("slug").notNull(),
+        slug: text25("slug").notNull(),
         ageGroup: teamAgeGroupEnum("age_group").notNull().default("other"),
         gender: teamGenderEnum("gender").notNull().default("boys"),
-        headCoachUserId: (0, import_pg_core26.text)("head_coach_user_id"),
-        assistantCoachUserIds: (0, import_pg_core26.text)("assistant_coach_user_ids").array().notNull().default([]),
-        colorPrimary: (0, import_pg_core26.text)("color_primary"),
+        headCoachUserId: text25("head_coach_user_id"),
+        assistantCoachUserIds: text25("assistant_coach_user_ids").array().notNull().default([]),
+        colorPrimary: text25("color_primary"),
         // hex
-        colorSecondary: (0, import_pg_core26.text)("color_secondary"),
-        logoUrl: (0, import_pg_core26.text)("logo_url"),
-        isActive: (0, import_pg_core26.boolean)("is_active").notNull().default(true),
-        createdByUserId: (0, import_pg_core26.text)("created_by_user_id").notNull(),
-        createdAt: (0, import_pg_core26.timestamp)("created_at", { withTimezone: true }).notNull().defaultNow(),
-        updatedAt: (0, import_pg_core26.timestamp)("updated_at", { withTimezone: true }).notNull().defaultNow(),
-        deletedAt: (0, import_pg_core26.timestamp)("deleted_at", { withTimezone: true })
+        colorSecondary: text25("color_secondary"),
+        logoUrl: text25("logo_url"),
+        isActive: boolean9("is_active").notNull().default(true),
+        createdByUserId: text25("created_by_user_id").notNull(),
+        createdAt: timestamp25("created_at", { withTimezone: true }).notNull().defaultNow(),
+        updatedAt: timestamp25("updated_at", { withTimezone: true }).notNull().defaultNow(),
+        deletedAt: timestamp25("deleted_at", { withTimezone: true })
       },
       (t) => ({
-        byOrg: (0, import_pg_core26.index)("teams_org_idx").on(t.orgId),
-        bySeason: (0, import_pg_core26.index)("teams_season_idx").on(t.seasonId),
-        orgSlugUnique: (0, import_pg_core26.uniqueIndex)("teams_org_slug_unique").on(t.orgId, t.slug)
+        byOrg: index6("teams_org_idx").on(t.orgId),
+        bySeason: index6("teams_season_idx").on(t.seasonId),
+        orgSlugUnique: uniqueIndex2("teams_org_slug_unique").on(t.orgId, t.slug)
       })
     );
-    teamRosterStatusEnum = (0, import_pg_core26.pgEnum)("team_roster_status", [
+    teamRosterStatusEnum = pgEnum17("team_roster_status", [
       "active",
       "inactive",
       "tryout",
       "suspended"
     ]);
-    teamRoster = (0, import_pg_core26.pgTable)(
+    teamRoster = pgTable25(
       "team_roster",
       {
-        id: (0, import_pg_core26.uuid)("id").primaryKey().defaultRandom(),
-        teamId: (0, import_pg_core26.uuid)("team_id").notNull().references(() => teams.id, { onDelete: "cascade" }),
-        orgId: (0, import_pg_core26.uuid)("org_id").notNull().references(() => orgs.id, { onDelete: "cascade" }),
-        playerId: (0, import_pg_core26.uuid)("player_id").notNull(),
+        id: uuid6("id").primaryKey().defaultRandom(),
+        teamId: uuid6("team_id").notNull().references(() => teams.id, { onDelete: "cascade" }),
+        orgId: uuid6("org_id").notNull().references(() => orgs.id, { onDelete: "cascade" }),
+        playerId: uuid6("player_id").notNull(),
         // FK → players.id (no circular import)
-        jerseyNumber: (0, import_pg_core26.text)("jersey_number"),
+        jerseyNumber: text25("jersey_number"),
         status: teamRosterStatusEnum("status").notNull().default("active"),
-        addedByUserId: (0, import_pg_core26.text)("added_by_user_id").notNull(),
-        addedAt: (0, import_pg_core26.timestamp)("added_at", { withTimezone: true }).notNull().defaultNow(),
-        removedAt: (0, import_pg_core26.timestamp)("removed_at", { withTimezone: true })
+        addedByUserId: text25("added_by_user_id").notNull(),
+        addedAt: timestamp25("added_at", { withTimezone: true }).notNull().defaultNow(),
+        removedAt: timestamp25("removed_at", { withTimezone: true })
       },
       (t) => ({
-        byTeam: (0, import_pg_core26.index)("team_roster_team_idx").on(t.teamId),
-        byPlayer: (0, import_pg_core26.index)("team_roster_player_idx").on(t.playerId),
-        teamPlayerUnique: (0, import_pg_core26.uniqueIndex)("team_roster_team_player_unique").on(t.teamId, t.playerId)
+        byTeam: index6("team_roster_team_idx").on(t.teamId),
+        byPlayer: index6("team_roster_player_idx").on(t.playerId),
+        teamPlayerUnique: uniqueIndex2("team_roster_team_player_unique").on(t.teamId, t.playerId)
       })
     );
   }
 });
 
 // shared/db/schema/memberships.ts
-var import_pg_core27, planTypeEnum, planStatusEnum, membershipPlans, registrationStatusEnum, registrations;
+import {
+  pgTable as pgTable26,
+  pgEnum as pgEnum18,
+  uuid as uuid7,
+  text as text26,
+  integer as integer15,
+  boolean as boolean10,
+  timestamp as timestamp26,
+  jsonb as jsonb13,
+  index as index7,
+  uniqueIndex as uniqueIndex3
+} from "drizzle-orm/pg-core";
+var planTypeEnum, planStatusEnum, membershipPlans, registrationStatusEnum, registrations;
 var init_memberships = __esm({
   "shared/db/schema/memberships.ts"() {
     "use strict";
-    import_pg_core27 = require("drizzle-orm/pg-core");
     init_orgs();
     init_seasons();
-    planTypeEnum = (0, import_pg_core27.pgEnum)("plan_type", [
+    planTypeEnum = pgEnum18("plan_type", [
       "season",
       // one-time fee for the whole season
       "monthly",
@@ -1404,7 +1455,7 @@ var init_memberships = __esm({
       "custom"
       // admin-defined, no automatic billing
     ]);
-    planStatusEnum = (0, import_pg_core27.pgEnum)("plan_status", [
+    planStatusEnum = pgEnum18("plan_status", [
       "draft",
       // not visible to families
       "active",
@@ -1412,53 +1463,53 @@ var init_memberships = __esm({
       "archived"
       // no new registrations
     ]);
-    membershipPlans = (0, import_pg_core27.pgTable)(
+    membershipPlans = pgTable26(
       "membership_plans",
       {
-        id: (0, import_pg_core27.uuid)("id").primaryKey().defaultRandom(),
-        orgId: (0, import_pg_core27.uuid)("org_id").notNull().references(() => orgs.id, { onDelete: "cascade" }),
-        seasonId: (0, import_pg_core27.uuid)("season_id").references(() => seasons.id, { onDelete: "set null" }),
-        name: (0, import_pg_core27.text)("name").notNull(),
+        id: uuid7("id").primaryKey().defaultRandom(),
+        orgId: uuid7("org_id").notNull().references(() => orgs.id, { onDelete: "cascade" }),
+        seasonId: uuid7("season_id").references(() => seasons.id, { onDelete: "set null" }),
+        name: text26("name").notNull(),
         // "Fall 2025 Varsity", "Monthly Academy Training"
-        description: (0, import_pg_core27.text)("description"),
+        description: text26("description"),
         type: planTypeEnum("type").notNull().default("season"),
         status: planStatusEnum("status").notNull().default("draft"),
         // Price in cents (USD)
-        priceAmount: (0, import_pg_core27.integer)("price_amount").notNull(),
+        priceAmount: integer15("price_amount").notNull(),
         // e.g. 45000 = $450.00
         // For monthly plans: how many billing cycles? null = indefinite
-        billingCycles: (0, import_pg_core27.integer)("billing_cycles"),
+        billingCycles: integer15("billing_cycles"),
         // Payment plan: allow installments?
-        allowsPaymentPlan: (0, import_pg_core27.boolean)("allows_payment_plan").notNull().default(false),
+        allowsPaymentPlan: boolean10("allows_payment_plan").notNull().default(false),
         // Number of installments allowed (if allowsPaymentPlan)
-        installmentCount: (0, import_pg_core27.integer)("installment_count"),
+        installmentCount: integer15("installment_count"),
         // Down-payment required in cents (0 = no down-payment required)
-        depositAmount: (0, import_pg_core27.integer)("deposit_amount").notNull().default(0),
+        depositAmount: integer15("deposit_amount").notNull().default(0),
         // Early-bird discount: amount in cents off before earlyBirdDeadline
-        earlyBirdAmount: (0, import_pg_core27.integer)("early_bird_amount"),
-        earlyBirdDeadline: (0, import_pg_core27.timestamp)("early_bird_deadline", { withTimezone: true }),
+        earlyBirdAmount: integer15("early_bird_amount"),
+        earlyBirdDeadline: timestamp26("early_bird_deadline", { withTimezone: true }),
         // Sibling discount: flat amount per additional sibling
-        siblingDiscountAmount: (0, import_pg_core27.integer)("sibling_discount_amount"),
+        siblingDiscountAmount: integer15("sibling_discount_amount"),
         // Which teams are included (null = all teams)
-        teamIds: (0, import_pg_core27.uuid)("team_ids").array(),
+        teamIds: uuid7("team_ids").array(),
         // Additional per-player fees bundled in (uniform, insurance, etc.)
-        includedFees: (0, import_pg_core27.jsonb)("included_fees").notNull().default([]),
+        includedFees: jsonb13("included_fees").notNull().default([]),
         // e.g. [{ label: "Uniform", amount: 8500 }, { label: "Insurance", amount: 2500 }]
-        maxEnrollment: (0, import_pg_core27.integer)("max_enrollment"),
+        maxEnrollment: integer15("max_enrollment"),
         // cap per plan; null = unlimited
         // Stripe price ID (set when plan is pushed to Stripe)
-        stripePriceId: (0, import_pg_core27.text)("stripe_price_id"),
-        createdByUserId: (0, import_pg_core27.text)("created_by_user_id").notNull(),
-        createdAt: (0, import_pg_core27.timestamp)("created_at", { withTimezone: true }).notNull().defaultNow(),
-        updatedAt: (0, import_pg_core27.timestamp)("updated_at", { withTimezone: true }).notNull().defaultNow(),
-        deletedAt: (0, import_pg_core27.timestamp)("deleted_at", { withTimezone: true })
+        stripePriceId: text26("stripe_price_id"),
+        createdByUserId: text26("created_by_user_id").notNull(),
+        createdAt: timestamp26("created_at", { withTimezone: true }).notNull().defaultNow(),
+        updatedAt: timestamp26("updated_at", { withTimezone: true }).notNull().defaultNow(),
+        deletedAt: timestamp26("deleted_at", { withTimezone: true })
       },
       (t) => ({
-        byOrg: (0, import_pg_core27.index)("membership_plans_org_idx").on(t.orgId),
-        bySeason: (0, import_pg_core27.index)("membership_plans_season_idx").on(t.seasonId)
+        byOrg: index7("membership_plans_org_idx").on(t.orgId),
+        bySeason: index7("membership_plans_season_idx").on(t.seasonId)
       })
     );
-    registrationStatusEnum = (0, import_pg_core27.pgEnum)("registration_status", [
+    registrationStatusEnum = pgEnum18("registration_status", [
       "pending",
       // submitted but not yet reviewed/accepted
       "waitlisted",
@@ -1474,58 +1525,67 @@ var init_memberships = __esm({
       "incomplete"
       // started but not finished (e.g., forms outstanding)
     ]);
-    registrations = (0, import_pg_core27.pgTable)(
+    registrations = pgTable26(
       "registrations",
       {
-        id: (0, import_pg_core27.uuid)("id").primaryKey().defaultRandom(),
-        orgId: (0, import_pg_core27.uuid)("org_id").notNull().references(() => orgs.id, { onDelete: "cascade" }),
-        seasonId: (0, import_pg_core27.uuid)("season_id").references(() => seasons.id, { onDelete: "set null" }),
-        planId: (0, import_pg_core27.uuid)("plan_id").references(() => membershipPlans.id, { onDelete: "set null" }),
-        teamId: (0, import_pg_core27.uuid)("team_id").references(() => teams.id, { onDelete: "set null" }),
+        id: uuid7("id").primaryKey().defaultRandom(),
+        orgId: uuid7("org_id").notNull().references(() => orgs.id, { onDelete: "cascade" }),
+        seasonId: uuid7("season_id").references(() => seasons.id, { onDelete: "set null" }),
+        planId: uuid7("plan_id").references(() => membershipPlans.id, { onDelete: "set null" }),
+        teamId: uuid7("team_id").references(() => teams.id, { onDelete: "set null" }),
         // The player being registered
-        playerId: (0, import_pg_core27.uuid)("player_id").notNull(),
+        playerId: uuid7("player_id").notNull(),
         // FK → players.id
         // The guardian/user who submitted registration
-        submittedByUserId: (0, import_pg_core27.text)("submitted_by_user_id").notNull(),
+        submittedByUserId: text26("submitted_by_user_id").notNull(),
         status: registrationStatusEnum("status").notNull().default("pending"),
         // Snapshot of the effective price at registration time (cents)
-        effectiveAmount: (0, import_pg_core27.integer)("effective_amount").notNull().default(0),
-        discountAmount: (0, import_pg_core27.integer)("discount_amount").notNull().default(0),
+        effectiveAmount: integer15("effective_amount").notNull().default(0),
+        discountAmount: integer15("discount_amount").notNull().default(0),
         // Reason for discount: "early_bird", "sibling", "scholarship", "admin_override"
-        discountReason: (0, import_pg_core27.text)("discount_reason"),
+        discountReason: text26("discount_reason"),
         // Admin notes (internal)
-        adminNotes: (0, import_pg_core27.text)("admin_notes"),
+        adminNotes: text26("admin_notes"),
         // Timestamps
-        submittedAt: (0, import_pg_core27.timestamp)("submitted_at", { withTimezone: true }).notNull().defaultNow(),
-        acceptedAt: (0, import_pg_core27.timestamp)("accepted_at", { withTimezone: true }),
-        acceptedByUserId: (0, import_pg_core27.text)("accepted_by_user_id"),
-        cancelledAt: (0, import_pg_core27.timestamp)("cancelled_at", { withTimezone: true }),
-        cancelledByUserId: (0, import_pg_core27.text)("cancelled_by_user_id"),
-        createdAt: (0, import_pg_core27.timestamp)("created_at", { withTimezone: true }).notNull().defaultNow(),
-        updatedAt: (0, import_pg_core27.timestamp)("updated_at", { withTimezone: true }).notNull().defaultNow()
+        submittedAt: timestamp26("submitted_at", { withTimezone: true }).notNull().defaultNow(),
+        acceptedAt: timestamp26("accepted_at", { withTimezone: true }),
+        acceptedByUserId: text26("accepted_by_user_id"),
+        cancelledAt: timestamp26("cancelled_at", { withTimezone: true }),
+        cancelledByUserId: text26("cancelled_by_user_id"),
+        createdAt: timestamp26("created_at", { withTimezone: true }).notNull().defaultNow(),
+        updatedAt: timestamp26("updated_at", { withTimezone: true }).notNull().defaultNow()
       },
       (t) => ({
-        byOrg: (0, import_pg_core27.index)("registrations_org_idx").on(t.orgId),
-        bySeason: (0, import_pg_core27.index)("registrations_season_idx").on(t.seasonId),
-        byPlayer: (0, import_pg_core27.index)("registrations_player_idx").on(t.playerId),
-        byStatus: (0, import_pg_core27.index)("registrations_status_idx").on(t.status),
+        byOrg: index7("registrations_org_idx").on(t.orgId),
+        bySeason: index7("registrations_season_idx").on(t.seasonId),
+        byPlayer: index7("registrations_player_idx").on(t.playerId),
+        byStatus: index7("registrations_status_idx").on(t.status),
         // A player can only have one registration per plan
-        playerPlanUnique: (0, import_pg_core27.uniqueIndex)("registrations_player_plan_unique").on(t.playerId, t.planId)
+        playerPlanUnique: uniqueIndex3("registrations_player_plan_unique").on(t.playerId, t.planId)
       })
     );
   }
 });
 
 // shared/db/schema/billing.ts
-var import_pg_core28, invoiceStatusEnum, paymentMethodEnum, paymentStatusEnum, invoices, invoiceItemTypeEnum, invoiceItems, payments, paymentPlanStatusEnum, paymentPlans;
+import {
+  pgTable as pgTable27,
+  pgEnum as pgEnum19,
+  uuid as uuid8,
+  text as text27,
+  integer as integer16,
+  timestamp as timestamp27,
+  jsonb as jsonb14,
+  index as index8
+} from "drizzle-orm/pg-core";
+var invoiceStatusEnum, paymentMethodEnum, paymentStatusEnum, invoices, invoiceItemTypeEnum, invoiceItems, payments, paymentPlanStatusEnum, paymentPlans;
 var init_billing = __esm({
   "shared/db/schema/billing.ts"() {
     "use strict";
-    import_pg_core28 = require("drizzle-orm/pg-core");
     init_orgs();
     init_seasons();
     init_memberships();
-    invoiceStatusEnum = (0, import_pg_core28.pgEnum)("invoice_status", [
+    invoiceStatusEnum = pgEnum19("invoice_status", [
       "draft",
       // being built, not sent
       "open",
@@ -1543,7 +1603,7 @@ var init_billing = __esm({
       "write_off"
       // admin wrote off the balance
     ]);
-    paymentMethodEnum = (0, import_pg_core28.pgEnum)("payment_method", [
+    paymentMethodEnum = pgEnum19("payment_method", [
       "stripe_card",
       "stripe_ach",
       "cash",
@@ -1553,7 +1613,7 @@ var init_billing = __esm({
       "paypal",
       "other"
     ]);
-    paymentStatusEnum = (0, import_pg_core28.pgEnum)("payment_status", [
+    paymentStatusEnum = pgEnum19("payment_status", [
       "pending",
       // initiated but not confirmed
       "succeeded",
@@ -1565,57 +1625,57 @@ var init_billing = __esm({
       "disputed"
       // chargeback in progress
     ]);
-    invoices = (0, import_pg_core28.pgTable)(
+    invoices = pgTable27(
       "invoices",
       {
-        id: (0, import_pg_core28.uuid)("id").primaryKey().defaultRandom(),
-        orgId: (0, import_pg_core28.uuid)("org_id").notNull().references(() => orgs.id, { onDelete: "cascade" }),
-        seasonId: (0, import_pg_core28.uuid)("season_id").references(() => seasons.id, { onDelete: "set null" }),
-        registrationId: (0, import_pg_core28.uuid)("registration_id").references(() => registrations.id, { onDelete: "set null" }),
+        id: uuid8("id").primaryKey().defaultRandom(),
+        orgId: uuid8("org_id").notNull().references(() => orgs.id, { onDelete: "cascade" }),
+        seasonId: uuid8("season_id").references(() => seasons.id, { onDelete: "set null" }),
+        registrationId: uuid8("registration_id").references(() => registrations.id, { onDelete: "set null" }),
         // The player / family this invoice is for
-        playerId: (0, import_pg_core28.uuid)("player_id").notNull(),
-        guardianUserId: (0, import_pg_core28.text)("guardian_user_id"),
+        playerId: uuid8("player_id").notNull(),
+        guardianUserId: text27("guardian_user_id"),
         // null if admin-generated
         // Human-readable invoice number: "INV-2025-0042"
-        invoiceNumber: (0, import_pg_core28.text)("invoice_number").notNull(),
+        invoiceNumber: text27("invoice_number").notNull(),
         status: invoiceStatusEnum("status").notNull().default("draft"),
         // All amounts in cents
-        subtotal: (0, import_pg_core28.integer)("subtotal").notNull().default(0),
-        discountAmount: (0, import_pg_core28.integer)("discount_amount").notNull().default(0),
-        taxAmount: (0, import_pg_core28.integer)("tax_amount").notNull().default(0),
-        totalAmount: (0, import_pg_core28.integer)("total_amount").notNull().default(0),
-        amountPaid: (0, import_pg_core28.integer)("amount_paid").notNull().default(0),
-        amountDue: (0, import_pg_core28.integer)("amount_due").notNull().default(0),
+        subtotal: integer16("subtotal").notNull().default(0),
+        discountAmount: integer16("discount_amount").notNull().default(0),
+        taxAmount: integer16("tax_amount").notNull().default(0),
+        totalAmount: integer16("total_amount").notNull().default(0),
+        amountPaid: integer16("amount_paid").notNull().default(0),
+        amountDue: integer16("amount_due").notNull().default(0),
         // totalAmount - amountPaid
-        dueDate: (0, import_pg_core28.timestamp)("due_date", { withTimezone: true }),
-        issuedAt: (0, import_pg_core28.timestamp)("issued_at", { withTimezone: true }),
-        paidAt: (0, import_pg_core28.timestamp)("paid_at", { withTimezone: true }),
+        dueDate: timestamp27("due_date", { withTimezone: true }),
+        issuedAt: timestamp27("issued_at", { withTimezone: true }),
+        paidAt: timestamp27("paid_at", { withTimezone: true }),
         // Memo shown to families
-        memo: (0, import_pg_core28.text)("memo"),
+        memo: text27("memo"),
         // Internal admin notes
-        adminNotes: (0, import_pg_core28.text)("admin_notes"),
+        adminNotes: text27("admin_notes"),
         // Stripe integration
-        stripeInvoiceId: (0, import_pg_core28.text)("stripe_invoice_id"),
-        stripeCustomerId: (0, import_pg_core28.text)("stripe_customer_id"),
+        stripeInvoiceId: text27("stripe_invoice_id"),
+        stripeCustomerId: text27("stripe_customer_id"),
         // Is this invoice part of a payment plan?
-        paymentPlanId: (0, import_pg_core28.uuid)("payment_plan_id"),
+        paymentPlanId: uuid8("payment_plan_id"),
         // FK → paymentPlans.id (self-ref avoided)
-        installmentNumber: (0, import_pg_core28.integer)("installment_number"),
+        installmentNumber: integer16("installment_number"),
         // 1 of 3, 2 of 3, etc.
-        createdByUserId: (0, import_pg_core28.text)("created_by_user_id").notNull(),
-        createdAt: (0, import_pg_core28.timestamp)("created_at", { withTimezone: true }).notNull().defaultNow(),
-        updatedAt: (0, import_pg_core28.timestamp)("updated_at", { withTimezone: true }).notNull().defaultNow()
+        createdByUserId: text27("created_by_user_id").notNull(),
+        createdAt: timestamp27("created_at", { withTimezone: true }).notNull().defaultNow(),
+        updatedAt: timestamp27("updated_at", { withTimezone: true }).notNull().defaultNow()
       },
       (t) => ({
-        byOrg: (0, import_pg_core28.index)("invoices_org_idx").on(t.orgId),
-        byPlayer: (0, import_pg_core28.index)("invoices_player_idx").on(t.playerId),
-        bySeason: (0, import_pg_core28.index)("invoices_season_idx").on(t.seasonId),
-        byStatus: (0, import_pg_core28.index)("invoices_status_idx").on(t.status),
-        byDueDate: (0, import_pg_core28.index)("invoices_due_date_idx").on(t.dueDate),
-        byStripeInvoice: (0, import_pg_core28.index)("invoices_stripe_idx").on(t.stripeInvoiceId)
+        byOrg: index8("invoices_org_idx").on(t.orgId),
+        byPlayer: index8("invoices_player_idx").on(t.playerId),
+        bySeason: index8("invoices_season_idx").on(t.seasonId),
+        byStatus: index8("invoices_status_idx").on(t.status),
+        byDueDate: index8("invoices_due_date_idx").on(t.dueDate),
+        byStripeInvoice: index8("invoices_stripe_idx").on(t.stripeInvoiceId)
       })
     );
-    invoiceItemTypeEnum = (0, import_pg_core28.pgEnum)("invoice_item_type", [
+    invoiceItemTypeEnum = pgEnum19("invoice_item_type", [
       "membership",
       // season or monthly membership fee
       "registration",
@@ -1636,65 +1696,65 @@ var init_billing = __esm({
       // negative: credit/scholarship applied
       "other"
     ]);
-    invoiceItems = (0, import_pg_core28.pgTable)(
+    invoiceItems = pgTable27(
       "invoice_items",
       {
-        id: (0, import_pg_core28.uuid)("id").primaryKey().defaultRandom(),
-        invoiceId: (0, import_pg_core28.uuid)("invoice_id").notNull().references(() => invoices.id, { onDelete: "cascade" }),
-        orgId: (0, import_pg_core28.uuid)("org_id").notNull().references(() => orgs.id, { onDelete: "cascade" }),
+        id: uuid8("id").primaryKey().defaultRandom(),
+        invoiceId: uuid8("invoice_id").notNull().references(() => invoices.id, { onDelete: "cascade" }),
+        orgId: uuid8("org_id").notNull().references(() => orgs.id, { onDelete: "cascade" }),
         type: invoiceItemTypeEnum("type").notNull().default("membership"),
-        description: (0, import_pg_core28.text)("description").notNull(),
-        quantity: (0, import_pg_core28.integer)("quantity").notNull().default(1),
-        unitAmount: (0, import_pg_core28.integer)("unit_amount").notNull(),
+        description: text27("description").notNull(),
+        quantity: integer16("quantity").notNull().default(1),
+        unitAmount: integer16("unit_amount").notNull(),
         // cents; negative for credits
-        totalAmount: (0, import_pg_core28.integer)("total_amount").notNull(),
+        totalAmount: integer16("total_amount").notNull(),
         // quantity * unitAmount
         // Link back to a plan or event if applicable
-        membershipPlanId: (0, import_pg_core28.uuid)("membership_plan_id"),
-        eventId: (0, import_pg_core28.uuid)("event_id"),
-        sortOrder: (0, import_pg_core28.integer)("sort_order").notNull().default(0),
-        createdAt: (0, import_pg_core28.timestamp)("created_at", { withTimezone: true }).notNull().defaultNow()
+        membershipPlanId: uuid8("membership_plan_id"),
+        eventId: uuid8("event_id"),
+        sortOrder: integer16("sort_order").notNull().default(0),
+        createdAt: timestamp27("created_at", { withTimezone: true }).notNull().defaultNow()
       },
       (t) => ({
-        byInvoice: (0, import_pg_core28.index)("invoice_items_invoice_idx").on(t.invoiceId),
-        byOrg: (0, import_pg_core28.index)("invoice_items_org_idx").on(t.orgId)
+        byInvoice: index8("invoice_items_invoice_idx").on(t.invoiceId),
+        byOrg: index8("invoice_items_org_idx").on(t.orgId)
       })
     );
-    payments = (0, import_pg_core28.pgTable)(
+    payments = pgTable27(
       "payments",
       {
-        id: (0, import_pg_core28.uuid)("id").primaryKey().defaultRandom(),
-        orgId: (0, import_pg_core28.uuid)("org_id").notNull().references(() => orgs.id, { onDelete: "cascade" }),
-        invoiceId: (0, import_pg_core28.uuid)("invoice_id").notNull().references(() => invoices.id, { onDelete: "cascade" }),
-        playerId: (0, import_pg_core28.uuid)("player_id").notNull(),
-        guardianUserId: (0, import_pg_core28.text)("guardian_user_id"),
-        amount: (0, import_pg_core28.integer)("amount").notNull(),
+        id: uuid8("id").primaryKey().defaultRandom(),
+        orgId: uuid8("org_id").notNull().references(() => orgs.id, { onDelete: "cascade" }),
+        invoiceId: uuid8("invoice_id").notNull().references(() => invoices.id, { onDelete: "cascade" }),
+        playerId: uuid8("player_id").notNull(),
+        guardianUserId: text27("guardian_user_id"),
+        amount: integer16("amount").notNull(),
         // cents
         method: paymentMethodEnum("method").notNull(),
         status: paymentStatusEnum("status").notNull().default("pending"),
         // Stripe fields
-        stripePaymentIntentId: (0, import_pg_core28.text)("stripe_payment_intent_id"),
-        stripeChargeId: (0, import_pg_core28.text)("stripe_charge_id"),
+        stripePaymentIntentId: text27("stripe_payment_intent_id"),
+        stripeChargeId: text27("stripe_charge_id"),
         // Manual payment tracking
-        referenceNote: (0, import_pg_core28.text)("reference_note"),
+        referenceNote: text27("reference_note"),
         // e.g. "Check #1042", "Zelle conf: XYZ"
-        recordedByUserId: (0, import_pg_core28.text)("recorded_by_user_id"),
+        recordedByUserId: text27("recorded_by_user_id"),
         // who logged it (for manual)
-        paidAt: (0, import_pg_core28.timestamp)("paid_at", { withTimezone: true }),
-        failedAt: (0, import_pg_core28.timestamp)("failed_at", { withTimezone: true }),
-        failureReason: (0, import_pg_core28.text)("failure_reason"),
-        metadata: (0, import_pg_core28.jsonb)("metadata").notNull().default({}),
-        createdAt: (0, import_pg_core28.timestamp)("created_at", { withTimezone: true }).notNull().defaultNow(),
-        updatedAt: (0, import_pg_core28.timestamp)("updated_at", { withTimezone: true }).notNull().defaultNow()
+        paidAt: timestamp27("paid_at", { withTimezone: true }),
+        failedAt: timestamp27("failed_at", { withTimezone: true }),
+        failureReason: text27("failure_reason"),
+        metadata: jsonb14("metadata").notNull().default({}),
+        createdAt: timestamp27("created_at", { withTimezone: true }).notNull().defaultNow(),
+        updatedAt: timestamp27("updated_at", { withTimezone: true }).notNull().defaultNow()
       },
       (t) => ({
-        byOrg: (0, import_pg_core28.index)("payments_org_idx").on(t.orgId),
-        byInvoice: (0, import_pg_core28.index)("payments_invoice_idx").on(t.invoiceId),
-        byPlayer: (0, import_pg_core28.index)("payments_player_idx").on(t.playerId),
-        byStripe: (0, import_pg_core28.index)("payments_stripe_pi_idx").on(t.stripePaymentIntentId)
+        byOrg: index8("payments_org_idx").on(t.orgId),
+        byInvoice: index8("payments_invoice_idx").on(t.invoiceId),
+        byPlayer: index8("payments_player_idx").on(t.playerId),
+        byStripe: index8("payments_stripe_pi_idx").on(t.stripePaymentIntentId)
       })
     );
-    paymentPlanStatusEnum = (0, import_pg_core28.pgEnum)("payment_plan_status", [
+    paymentPlanStatusEnum = pgEnum19("payment_plan_status", [
       "active",
       "completed",
       // all installments paid
@@ -1702,29 +1762,29 @@ var init_billing = __esm({
       // missed payment(s)
       "cancelled"
     ]);
-    paymentPlans = (0, import_pg_core28.pgTable)(
+    paymentPlans = pgTable27(
       "payment_plans",
       {
-        id: (0, import_pg_core28.uuid)("id").primaryKey().defaultRandom(),
-        orgId: (0, import_pg_core28.uuid)("org_id").notNull().references(() => orgs.id, { onDelete: "cascade" }),
-        registrationId: (0, import_pg_core28.uuid)("registration_id").references(() => registrations.id, { onDelete: "set null" }),
-        playerId: (0, import_pg_core28.uuid)("player_id").notNull(),
-        totalAmount: (0, import_pg_core28.integer)("total_amount").notNull(),
+        id: uuid8("id").primaryKey().defaultRandom(),
+        orgId: uuid8("org_id").notNull().references(() => orgs.id, { onDelete: "cascade" }),
+        registrationId: uuid8("registration_id").references(() => registrations.id, { onDelete: "set null" }),
+        playerId: uuid8("player_id").notNull(),
+        totalAmount: integer16("total_amount").notNull(),
         // cents; full amount
-        installmentCount: (0, import_pg_core28.integer)("installment_count").notNull(),
+        installmentCount: integer16("installment_count").notNull(),
         status: paymentPlanStatusEnum("status").notNull().default("active"),
         // First payment (deposit) may differ from equal installments
-        depositAmount: (0, import_pg_core28.integer)("deposit_amount").notNull().default(0),
+        depositAmount: integer16("deposit_amount").notNull().default(0),
         // Schedule: array of {dueDate: ISO, amount: cents}
-        schedule: (0, import_pg_core28.jsonb)("schedule").notNull().default([]),
-        createdByUserId: (0, import_pg_core28.text)("created_by_user_id").notNull(),
-        createdAt: (0, import_pg_core28.timestamp)("created_at", { withTimezone: true }).notNull().defaultNow(),
-        updatedAt: (0, import_pg_core28.timestamp)("updated_at", { withTimezone: true }).notNull().defaultNow()
+        schedule: jsonb14("schedule").notNull().default([]),
+        createdByUserId: text27("created_by_user_id").notNull(),
+        createdAt: timestamp27("created_at", { withTimezone: true }).notNull().defaultNow(),
+        updatedAt: timestamp27("updated_at", { withTimezone: true }).notNull().defaultNow()
       },
       (t) => ({
-        byOrg: (0, import_pg_core28.index)("payment_plans_org_idx").on(t.orgId),
-        byPlayer: (0, import_pg_core28.index)("payment_plans_player_idx").on(t.playerId),
-        byRegistration: (0, import_pg_core28.index)("payment_plans_registration_idx").on(t.registrationId)
+        byOrg: index8("payment_plans_org_idx").on(t.orgId),
+        byPlayer: index8("payment_plans_player_idx").on(t.playerId),
+        byRegistration: index8("payment_plans_registration_idx").on(t.registrationId)
       })
     );
   }
@@ -1867,6 +1927,8 @@ __export(client_exports, {
   resetDb: () => resetDb,
   schema: () => schema_exports
 });
+import { neon, neonConfig } from "@neondatabase/serverless";
+import { drizzle } from "drizzle-orm/neon-http";
 function getDb() {
   if (_db) return _db;
   const url = process.env.DATABASE_URL;
@@ -1875,32 +1937,31 @@ function getDb() {
       "DATABASE_URL is not set. Set it in Vercel for Development/Preview/Production."
     );
   }
-  const sql9 = (0, import_serverless.neon)(url);
-  _db = (0, import_neon_http.drizzle)(sql9, { schema: schema_exports });
+  const sql9 = neon(url);
+  _db = drizzle(sql9, { schema: schema_exports });
   return _db;
 }
 function resetDb() {
   _db = null;
 }
-var import_serverless, import_neon_http, _db;
+var _db;
 var init_client = __esm({
   "shared/db/client.ts"() {
     "use strict";
-    import_serverless = require("@neondatabase/serverless");
-    import_neon_http = require("drizzle-orm/neon-http");
     init_schema();
-    import_serverless.neonConfig.fetchConnectionCache = true;
+    neonConfig.fetchConnectionCache = true;
     _db = null;
   }
 });
 
 // server/lib/sms.ts
+import twilio from "twilio";
 function getClient() {
   if (!twilioClient) {
     const sid = process.env.TWILIO_ACCOUNT_SID;
     const token = process.env.TWILIO_AUTH_TOKEN;
     if (!sid || !token) throw new Error("Twilio credentials not configured");
-    twilioClient = (0, import_twilio.default)(sid, token);
+    twilioClient = twilio(sid, token);
   }
   return twilioClient;
 }
@@ -1910,11 +1971,10 @@ async function sendSms(to, body) {
   const normalized = to.startsWith("+") ? to : `+1${to.replace(/\D/g, "")}`;
   await getClient().messages.create({ to: normalized, from, body });
 }
-var import_twilio, twilioClient;
+var twilioClient;
 var init_sms = __esm({
   "server/lib/sms.ts"() {
     "use strict";
-    import_twilio = __toESM(require("twilio"), 1);
     twilioClient = null;
   }
 });
@@ -1931,21 +1991,14 @@ var init_twilio = __esm({
   }
 });
 
-// server/_vercel_entry.ts
-var vercel_entry_exports = {};
-__export(vercel_entry_exports, {
-  default: () => vercel_entry_default
-});
-module.exports = __toCommonJS(vercel_entry_exports);
-
 // server/app.ts
-var import_express3 = __toESM(require("express"), 1);
-var import_express4 = require("@clerk/express");
-var import_express5 = require("inngest/express");
+import express2 from "express";
+import { clerkMiddleware } from "@clerk/express";
+import { serve } from "inngest/express";
 
 // server/auth/tenant.ts
-var import_express = require("@clerk/express");
-var import_drizzle_orm15 = require("drizzle-orm");
+import { getAuth } from "@clerk/express";
+import { and as and15, eq as eq15, isNull as isNull15, or, sql as sql7 } from "drizzle-orm";
 
 // shared/db/index.ts
 init_client();
@@ -1956,8 +2009,8 @@ init_schema();
 init_client();
 
 // shared/db/repositories/film.ts
-var import_drizzle_orm = require("drizzle-orm");
 init_schema();
+import { and, desc, eq, isNull } from "drizzle-orm";
 function createFilmRepository(db, ctx) {
   return {
     filmSessions: {
@@ -1965,18 +2018,18 @@ function createFilmRepository(db, ctx) {
         const limit = Math.min(opts.limit ?? 50, 200);
         const offset = opts.offset ?? 0;
         return db.select().from(filmSessions).where(
-          (0, import_drizzle_orm.and)(
-            (0, import_drizzle_orm.eq)(filmSessions.orgId, ctx.orgId),
-            (0, import_drizzle_orm.isNull)(filmSessions.deletedAt)
+          and(
+            eq(filmSessions.orgId, ctx.orgId),
+            isNull(filmSessions.deletedAt)
           )
-        ).orderBy((0, import_drizzle_orm.desc)(filmSessions.createdAt)).limit(limit).offset(offset);
+        ).orderBy(desc(filmSessions.createdAt)).limit(limit).offset(offset);
       },
       async getById(id) {
         const rows = await db.select().from(filmSessions).where(
-          (0, import_drizzle_orm.and)(
-            (0, import_drizzle_orm.eq)(filmSessions.id, id),
-            (0, import_drizzle_orm.eq)(filmSessions.orgId, ctx.orgId),
-            (0, import_drizzle_orm.isNull)(filmSessions.deletedAt)
+          and(
+            eq(filmSessions.id, id),
+            eq(filmSessions.orgId, ctx.orgId),
+            isNull(filmSessions.deletedAt)
           )
         ).limit(1);
         return rows[0] ?? null;
@@ -1991,25 +2044,25 @@ function createFilmRepository(db, ctx) {
       },
       async softDelete(id) {
         await db.update(filmSessions).set({ deletedAt: /* @__PURE__ */ new Date() }).where(
-          (0, import_drizzle_orm.and)(
-            (0, import_drizzle_orm.eq)(filmSessions.id, id),
-            (0, import_drizzle_orm.eq)(filmSessions.orgId, ctx.orgId)
+          and(
+            eq(filmSessions.id, id),
+            eq(filmSessions.orgId, ctx.orgId)
           )
         );
       },
       async update(id, patch) {
         await db.update(filmSessions).set({ ...patch, updatedAt: /* @__PURE__ */ new Date() }).where(
-          (0, import_drizzle_orm.and)((0, import_drizzle_orm.eq)(filmSessions.id, id), (0, import_drizzle_orm.eq)(filmSessions.orgId, ctx.orgId))
+          and(eq(filmSessions.id, id), eq(filmSessions.orgId, ctx.orgId))
         );
       }
     },
     filmAssets: {
       async listForSession(sessionId) {
         return db.select().from(filmAssets).where(
-          (0, import_drizzle_orm.and)(
-            (0, import_drizzle_orm.eq)(filmAssets.sessionId, sessionId),
-            (0, import_drizzle_orm.eq)(filmAssets.orgId, ctx.orgId),
-            (0, import_drizzle_orm.isNull)(filmAssets.deletedAt)
+          and(
+            eq(filmAssets.sessionId, sessionId),
+            eq(filmAssets.orgId, ctx.orgId),
+            isNull(filmAssets.deletedAt)
           )
         );
       },
@@ -2019,27 +2072,27 @@ function createFilmRepository(db, ctx) {
       },
       async getById(id) {
         const rows = await db.select().from(filmAssets).where(
-          (0, import_drizzle_orm.and)(
-            (0, import_drizzle_orm.eq)(filmAssets.id, id),
-            (0, import_drizzle_orm.eq)(filmAssets.orgId, ctx.orgId),
-            (0, import_drizzle_orm.isNull)(filmAssets.deletedAt)
+          and(
+            eq(filmAssets.id, id),
+            eq(filmAssets.orgId, ctx.orgId),
+            isNull(filmAssets.deletedAt)
           )
         ).limit(1);
         return rows[0] ?? null;
       },
       async update(id, patch) {
-        await db.update(filmAssets).set({ ...patch, updatedAt: /* @__PURE__ */ new Date() }).where((0, import_drizzle_orm.and)((0, import_drizzle_orm.eq)(filmAssets.id, id), (0, import_drizzle_orm.eq)(filmAssets.orgId, ctx.orgId)));
+        await db.update(filmAssets).set({ ...patch, updatedAt: /* @__PURE__ */ new Date() }).where(and(eq(filmAssets.id, id), eq(filmAssets.orgId, ctx.orgId)));
       }
     },
     analysisJobs: {
       async listForSession(sessionId) {
         return db.select().from(analysisJobs).where(
-          (0, import_drizzle_orm.and)(
-            (0, import_drizzle_orm.eq)(analysisJobs.sessionId, sessionId),
-            (0, import_drizzle_orm.eq)(analysisJobs.orgId, ctx.orgId),
-            (0, import_drizzle_orm.isNull)(analysisJobs.deletedAt)
+          and(
+            eq(analysisJobs.sessionId, sessionId),
+            eq(analysisJobs.orgId, ctx.orgId),
+            isNull(analysisJobs.deletedAt)
           )
-        ).orderBy((0, import_drizzle_orm.desc)(analysisJobs.createdAt));
+        ).orderBy(desc(analysisJobs.createdAt));
       },
       async enqueue(input) {
         const [row] = await db.insert(analysisJobs).values({ ...input, orgId: ctx.orgId, status: "queued" }).returning();
@@ -2049,10 +2102,10 @@ function createFilmRepository(db, ctx) {
     annotations: {
       async listForSession(sessionId) {
         return db.select().from(annotations).where(
-          (0, import_drizzle_orm.and)(
-            (0, import_drizzle_orm.eq)(annotations.sessionId, sessionId),
-            (0, import_drizzle_orm.eq)(annotations.orgId, ctx.orgId),
-            (0, import_drizzle_orm.isNull)(annotations.deletedAt)
+          and(
+            eq(annotations.sessionId, sessionId),
+            eq(annotations.orgId, ctx.orgId),
+            isNull(annotations.deletedAt)
           )
         ).orderBy(annotations.startMs);
       },
@@ -2065,17 +2118,17 @@ function createFilmRepository(db, ctx) {
 }
 
 // shared/db/repositories/roster.ts
-var import_drizzle_orm2 = require("drizzle-orm");
 init_schema();
+import { and as and2, eq as eq2, isNull as isNull2 } from "drizzle-orm";
 function createRosterRepository(db, ctx) {
   return {
     orgMembers: {
       async getMembership() {
         const rows = await db.select().from(orgMembers).where(
-          (0, import_drizzle_orm2.and)(
-            (0, import_drizzle_orm2.eq)(orgMembers.orgId, ctx.orgId),
-            (0, import_drizzle_orm2.eq)(orgMembers.userId, ctx.userId),
-            (0, import_drizzle_orm2.isNull)(orgMembers.deletedAt)
+          and2(
+            eq2(orgMembers.orgId, ctx.orgId),
+            eq2(orgMembers.userId, ctx.userId),
+            isNull2(orgMembers.deletedAt)
           )
         ).limit(1);
         return rows[0] ?? null;
@@ -2085,23 +2138,23 @@ function createRosterRepository(db, ctx) {
       async list(opts = {}) {
         const limit = Math.min(opts.limit ?? 100, 500);
         const offset = opts.offset ?? 0;
-        return db.select().from(players).where((0, import_drizzle_orm2.and)((0, import_drizzle_orm2.eq)(players.orgId, ctx.orgId), (0, import_drizzle_orm2.isNull)(players.deletedAt))).orderBy(players.name).limit(limit).offset(offset);
+        return db.select().from(players).where(and2(eq2(players.orgId, ctx.orgId), isNull2(players.deletedAt))).orderBy(players.name).limit(limit).offset(offset);
       },
       async listActive() {
         return db.select().from(players).where(
-          (0, import_drizzle_orm2.and)(
-            (0, import_drizzle_orm2.eq)(players.orgId, ctx.orgId),
-            (0, import_drizzle_orm2.eq)(players.status, "active"),
-            (0, import_drizzle_orm2.isNull)(players.deletedAt)
+          and2(
+            eq2(players.orgId, ctx.orgId),
+            eq2(players.status, "active"),
+            isNull2(players.deletedAt)
           )
         ).orderBy(players.name);
       },
       async getById(id) {
         const rows = await db.select().from(players).where(
-          (0, import_drizzle_orm2.and)(
-            (0, import_drizzle_orm2.eq)(players.id, id),
-            (0, import_drizzle_orm2.eq)(players.orgId, ctx.orgId),
-            (0, import_drizzle_orm2.isNull)(players.deletedAt)
+          and2(
+            eq2(players.id, id),
+            eq2(players.orgId, ctx.orgId),
+            isNull2(players.deletedAt)
           )
         ).limit(1);
         return rows[0] ?? null;
@@ -2111,38 +2164,38 @@ function createRosterRepository(db, ctx) {
         return row;
       },
       async update(id, patch) {
-        await db.update(players).set({ ...patch, updatedAt: /* @__PURE__ */ new Date() }).where((0, import_drizzle_orm2.and)((0, import_drizzle_orm2.eq)(players.id, id), (0, import_drizzle_orm2.eq)(players.orgId, ctx.orgId)));
+        await db.update(players).set({ ...patch, updatedAt: /* @__PURE__ */ new Date() }).where(and2(eq2(players.id, id), eq2(players.orgId, ctx.orgId)));
       },
       async softDelete(id) {
-        await db.update(players).set({ deletedAt: /* @__PURE__ */ new Date() }).where((0, import_drizzle_orm2.and)((0, import_drizzle_orm2.eq)(players.id, id), (0, import_drizzle_orm2.eq)(players.orgId, ctx.orgId)));
+        await db.update(players).set({ deletedAt: /* @__PURE__ */ new Date() }).where(and2(eq2(players.id, id), eq2(players.orgId, ctx.orgId)));
       }
     }
   };
 }
 
 // shared/db/repositories/events.ts
-var import_drizzle_orm3 = require("drizzle-orm");
 init_schema();
+import { and as and3, desc as desc3, eq as eq3, gte, isNull as isNull3, sql } from "drizzle-orm";
 function createEventsRepository(db, ctx) {
   return {
     events: {
       async list(opts = {}) {
         const limit = Math.min(opts.limit ?? 50, 200);
         const conditions = [
-          (0, import_drizzle_orm3.eq)(events.orgId, ctx.orgId),
-          (0, import_drizzle_orm3.isNull)(events.deletedAt)
+          eq3(events.orgId, ctx.orgId),
+          isNull3(events.deletedAt)
         ];
         if (opts.from) {
-          conditions.push((0, import_drizzle_orm3.gte)(events.startsAt, opts.from));
+          conditions.push(gte(events.startsAt, opts.from));
         }
-        return db.select().from(events).where((0, import_drizzle_orm3.and)(...conditions)).orderBy(events.startsAt).limit(limit);
+        return db.select().from(events).where(and3(...conditions)).orderBy(events.startsAt).limit(limit);
       },
       async getById(id) {
         const rows = await db.select().from(events).where(
-          (0, import_drizzle_orm3.and)(
-            (0, import_drizzle_orm3.eq)(events.id, id),
-            (0, import_drizzle_orm3.eq)(events.orgId, ctx.orgId),
-            (0, import_drizzle_orm3.isNull)(events.deletedAt)
+          and3(
+            eq3(events.id, id),
+            eq3(events.orgId, ctx.orgId),
+            isNull3(events.deletedAt)
           )
         ).limit(1);
         return rows[0] ?? null;
@@ -2156,18 +2209,18 @@ function createEventsRepository(db, ctx) {
         return row;
       },
       async update(id, patch) {
-        await db.update(events).set({ ...patch, updatedAt: /* @__PURE__ */ new Date() }).where((0, import_drizzle_orm3.and)((0, import_drizzle_orm3.eq)(events.id, id), (0, import_drizzle_orm3.eq)(events.orgId, ctx.orgId)));
+        await db.update(events).set({ ...patch, updatedAt: /* @__PURE__ */ new Date() }).where(and3(eq3(events.id, id), eq3(events.orgId, ctx.orgId)));
       },
       async softDelete(id) {
-        await db.update(events).set({ deletedAt: /* @__PURE__ */ new Date() }).where((0, import_drizzle_orm3.and)((0, import_drizzle_orm3.eq)(events.id, id), (0, import_drizzle_orm3.eq)(events.orgId, ctx.orgId)));
+        await db.update(events).set({ deletedAt: /* @__PURE__ */ new Date() }).where(and3(eq3(events.id, id), eq3(events.orgId, ctx.orgId)));
       },
       /** Upcoming events from now onwards (used by parent portal). */
       async listUpcoming(limit = 50) {
         return db.select().from(events).where(
-          (0, import_drizzle_orm3.and)(
-            (0, import_drizzle_orm3.eq)(events.orgId, ctx.orgId),
-            (0, import_drizzle_orm3.isNull)(events.deletedAt),
-            (0, import_drizzle_orm3.gte)(events.startsAt, /* @__PURE__ */ new Date())
+          and3(
+            eq3(events.orgId, ctx.orgId),
+            isNull3(events.deletedAt),
+            gte(events.startsAt, /* @__PURE__ */ new Date())
           )
         ).orderBy(events.startsAt).limit(limit);
       },
@@ -2182,12 +2235,12 @@ function createEventsRepository(db, ctx) {
           recordedAt: eventAttendance.recordedAt,
           eventTitle: events.title,
           eventDate: events.startsAt
-        }).from(eventAttendance).innerJoin(events, (0, import_drizzle_orm3.eq)(eventAttendance.eventId, events.id)).where(
-          (0, import_drizzle_orm3.and)(
-            (0, import_drizzle_orm3.eq)(eventAttendance.orgId, ctx.orgId),
-            (0, import_drizzle_orm3.eq)(eventAttendance.playerId, playerId)
+        }).from(eventAttendance).innerJoin(events, eq3(eventAttendance.eventId, events.id)).where(
+          and3(
+            eq3(eventAttendance.orgId, ctx.orgId),
+            eq3(eventAttendance.playerId, playerId)
           )
-        ).orderBy((0, import_drizzle_orm3.desc)(events.startsAt)).limit(limit);
+        ).orderBy(desc3(events.startsAt)).limit(limit);
       },
       /** Upsert an availability/RSVP for a player (used by parent portal). */
       async upsertAvailability(input) {
@@ -2212,9 +2265,9 @@ function createEventsRepository(db, ctx) {
     eventAvailability: {
       async listForEvent(eventId) {
         return db.select().from(eventAvailability).where(
-          (0, import_drizzle_orm3.and)(
-            (0, import_drizzle_orm3.eq)(eventAvailability.eventId, eventId),
-            (0, import_drizzle_orm3.eq)(eventAvailability.orgId, ctx.orgId)
+          and3(
+            eq3(eventAvailability.eventId, eventId),
+            eq3(eventAvailability.orgId, ctx.orgId)
           )
         );
       },
@@ -2233,9 +2286,9 @@ function createEventsRepository(db, ctx) {
     eventAttendance: {
       async listForEvent(eventId) {
         return db.select().from(eventAttendance).where(
-          (0, import_drizzle_orm3.and)(
-            (0, import_drizzle_orm3.eq)(eventAttendance.eventId, eventId),
-            (0, import_drizzle_orm3.eq)(eventAttendance.orgId, ctx.orgId)
+          and3(
+            eq3(eventAttendance.eventId, eventId),
+            eq3(eventAttendance.orgId, ctx.orgId)
           )
         );
       },
@@ -2252,9 +2305,9 @@ function createEventsRepository(db, ctx) {
         return db.insert(eventAttendance).values(values).onConflictDoUpdate({
           target: [eventAttendance.eventId, eventAttendance.playerId],
           set: {
-            status: import_drizzle_orm3.sql`excluded.status`,
-            note: import_drizzle_orm3.sql`excluded.note`,
-            recordedByUserId: import_drizzle_orm3.sql`excluded.recorded_by_user_id`,
+            status: sql`excluded.status`,
+            note: sql`excluded.note`,
+            recordedByUserId: sql`excluded.recorded_by_user_id`,
             recordedAt: /* @__PURE__ */ new Date()
           }
         }).returning();
@@ -2264,41 +2317,41 @@ function createEventsRepository(db, ctx) {
 }
 
 // shared/db/repositories/assignments.ts
-var import_drizzle_orm4 = require("drizzle-orm");
 init_schema();
+import { and as and4, desc as desc4, eq as eq4, isNull as isNull4, sql as sql2 } from "drizzle-orm";
 function createAssignmentsRepository(db, ctx) {
   return {
     assignments: {
       async listForPlayer(playerId) {
         return db.select().from(assignments).where(
-          (0, import_drizzle_orm4.and)(
-            (0, import_drizzle_orm4.eq)(assignments.orgId, ctx.orgId),
-            (0, import_drizzle_orm4.eq)(assignments.playerId, playerId),
-            (0, import_drizzle_orm4.isNull)(assignments.deletedAt)
+          and4(
+            eq4(assignments.orgId, ctx.orgId),
+            eq4(assignments.playerId, playerId),
+            isNull4(assignments.deletedAt)
           )
-        ).orderBy((0, import_drizzle_orm4.desc)(assignments.createdAt));
+        ).orderBy(desc4(assignments.createdAt));
       },
       async list(opts = {}) {
         const conditions = [
-          (0, import_drizzle_orm4.eq)(assignments.orgId, ctx.orgId),
-          (0, import_drizzle_orm4.isNull)(assignments.deletedAt)
+          eq4(assignments.orgId, ctx.orgId),
+          isNull4(assignments.deletedAt)
         ];
         if (opts.playerId) {
-          conditions.push((0, import_drizzle_orm4.eq)(assignments.playerId, opts.playerId));
+          conditions.push(eq4(assignments.playerId, opts.playerId));
         }
         if (opts.status) {
           conditions.push(
-            (0, import_drizzle_orm4.eq)(assignments.status, opts.status)
+            eq4(assignments.status, opts.status)
           );
         }
-        return db.select().from(assignments).where((0, import_drizzle_orm4.and)(...conditions)).orderBy((0, import_drizzle_orm4.desc)(assignments.createdAt));
+        return db.select().from(assignments).where(and4(...conditions)).orderBy(desc4(assignments.createdAt));
       },
       async getById(id) {
         const rows = await db.select().from(assignments).where(
-          (0, import_drizzle_orm4.and)(
-            (0, import_drizzle_orm4.eq)(assignments.id, id),
-            (0, import_drizzle_orm4.eq)(assignments.orgId, ctx.orgId),
-            (0, import_drizzle_orm4.isNull)(assignments.deletedAt)
+          and4(
+            eq4(assignments.id, id),
+            eq4(assignments.orgId, ctx.orgId),
+            isNull4(assignments.deletedAt)
           )
         ).limit(1);
         return rows[0] ?? null;
@@ -2308,17 +2361,17 @@ function createAssignmentsRepository(db, ctx) {
         return row;
       },
       async update(id, patch) {
-        await db.update(assignments).set({ ...patch, updatedAt: /* @__PURE__ */ new Date() }).where((0, import_drizzle_orm4.and)((0, import_drizzle_orm4.eq)(assignments.id, id), (0, import_drizzle_orm4.eq)(assignments.orgId, ctx.orgId)));
+        await db.update(assignments).set({ ...patch, updatedAt: /* @__PURE__ */ new Date() }).where(and4(eq4(assignments.id, id), eq4(assignments.orgId, ctx.orgId)));
       },
       async softDelete(id) {
-        await db.update(assignments).set({ deletedAt: /* @__PURE__ */ new Date() }).where((0, import_drizzle_orm4.and)((0, import_drizzle_orm4.eq)(assignments.id, id), (0, import_drizzle_orm4.eq)(assignments.orgId, ctx.orgId)));
+        await db.update(assignments).set({ deletedAt: /* @__PURE__ */ new Date() }).where(and4(eq4(assignments.id, id), eq4(assignments.orgId, ctx.orgId)));
       },
       async complianceByPlayer() {
         const rows = await db.select({
           playerId: assignments.playerId,
-          total: import_drizzle_orm4.sql`count(*)::int`,
-          completed: import_drizzle_orm4.sql`count(*) filter (where ${assignments.status} in ('submitted','reviewed'))::int`
-        }).from(assignments).where((0, import_drizzle_orm4.and)((0, import_drizzle_orm4.eq)(assignments.orgId, ctx.orgId), (0, import_drizzle_orm4.isNull)(assignments.deletedAt))).groupBy(assignments.playerId);
+          total: sql2`count(*)::int`,
+          completed: sql2`count(*) filter (where ${assignments.status} in ('submitted','reviewed'))::int`
+        }).from(assignments).where(and4(eq4(assignments.orgId, ctx.orgId), isNull4(assignments.deletedAt))).groupBy(assignments.playerId);
         return rows.map((r) => ({
           playerId: r.playerId,
           total: r.total,
@@ -2331,23 +2384,23 @@ function createAssignmentsRepository(db, ctx) {
 }
 
 // shared/db/repositories/practice.ts
-var import_drizzle_orm5 = require("drizzle-orm");
 init_schema();
+import { and as and5, desc as desc5, eq as eq5, isNull as isNull5 } from "drizzle-orm";
 function createPracticeRepository(db, ctx) {
   return {
     practicePlans: {
       async list(opts = {}) {
         const limit = Math.min(opts.limit ?? 50, 200);
         return db.select().from(practicePlans).where(
-          (0, import_drizzle_orm5.and)((0, import_drizzle_orm5.eq)(practicePlans.orgId, ctx.orgId), (0, import_drizzle_orm5.isNull)(practicePlans.deletedAt))
-        ).orderBy((0, import_drizzle_orm5.desc)(practicePlans.createdAt)).limit(limit);
+          and5(eq5(practicePlans.orgId, ctx.orgId), isNull5(practicePlans.deletedAt))
+        ).orderBy(desc5(practicePlans.createdAt)).limit(limit);
       },
       async getById(id) {
         const rows = await db.select().from(practicePlans).where(
-          (0, import_drizzle_orm5.and)(
-            (0, import_drizzle_orm5.eq)(practicePlans.id, id),
-            (0, import_drizzle_orm5.eq)(practicePlans.orgId, ctx.orgId),
-            (0, import_drizzle_orm5.isNull)(practicePlans.deletedAt)
+          and5(
+            eq5(practicePlans.id, id),
+            eq5(practicePlans.orgId, ctx.orgId),
+            isNull5(practicePlans.deletedAt)
           )
         ).limit(1);
         return rows[0] ?? null;
@@ -2357,18 +2410,18 @@ function createPracticeRepository(db, ctx) {
         return row;
       },
       async update(id, patch) {
-        await db.update(practicePlans).set({ ...patch, updatedAt: /* @__PURE__ */ new Date() }).where((0, import_drizzle_orm5.and)((0, import_drizzle_orm5.eq)(practicePlans.id, id), (0, import_drizzle_orm5.eq)(practicePlans.orgId, ctx.orgId)));
+        await db.update(practicePlans).set({ ...patch, updatedAt: /* @__PURE__ */ new Date() }).where(and5(eq5(practicePlans.id, id), eq5(practicePlans.orgId, ctx.orgId)));
       },
       async softDelete(id) {
-        await db.update(practicePlans).set({ deletedAt: /* @__PURE__ */ new Date() }).where((0, import_drizzle_orm5.and)((0, import_drizzle_orm5.eq)(practicePlans.id, id), (0, import_drizzle_orm5.eq)(practicePlans.orgId, ctx.orgId)));
+        await db.update(practicePlans).set({ deletedAt: /* @__PURE__ */ new Date() }).where(and5(eq5(practicePlans.id, id), eq5(practicePlans.orgId, ctx.orgId)));
       }
     }
   };
 }
 
 // shared/db/repositories/readiness.ts
-var import_drizzle_orm6 = require("drizzle-orm");
 init_schema();
+import { and as and6, desc as desc6, eq as eq6, gte as gte2, sql as sql3 } from "drizzle-orm";
 function createReadinessRepository(db, ctx) {
   return {
     readiness: {
@@ -2379,23 +2432,23 @@ function createReadinessRepository(db, ctx) {
         const end = new Date(d);
         end.setHours(23, 59, 59, 999);
         return db.select().from(readinessCheckins).where(
-          (0, import_drizzle_orm6.and)(
-            (0, import_drizzle_orm6.eq)(readinessCheckins.orgId, ctx.orgId),
-            (0, import_drizzle_orm6.gte)(readinessCheckins.checkedInAt, start),
-            import_drizzle_orm6.sql`${readinessCheckins.checkedInAt} <= ${end}`
+          and6(
+            eq6(readinessCheckins.orgId, ctx.orgId),
+            gte2(readinessCheckins.checkedInAt, start),
+            sql3`${readinessCheckins.checkedInAt} <= ${end}`
           )
-        ).orderBy((0, import_drizzle_orm6.desc)(readinessCheckins.checkedInAt));
+        ).orderBy(desc6(readinessCheckins.checkedInAt));
       },
       async listForPlayer(playerId, days = 30) {
         const since = /* @__PURE__ */ new Date();
         since.setDate(since.getDate() - days);
         return db.select().from(readinessCheckins).where(
-          (0, import_drizzle_orm6.and)(
-            (0, import_drizzle_orm6.eq)(readinessCheckins.orgId, ctx.orgId),
-            (0, import_drizzle_orm6.eq)(readinessCheckins.playerId, playerId),
-            (0, import_drizzle_orm6.gte)(readinessCheckins.checkedInAt, since)
+          and6(
+            eq6(readinessCheckins.orgId, ctx.orgId),
+            eq6(readinessCheckins.playerId, playerId),
+            gte2(readinessCheckins.checkedInAt, since)
           )
-        ).orderBy((0, import_drizzle_orm6.desc)(readinessCheckins.checkedInAt));
+        ).orderBy(desc6(readinessCheckins.checkedInAt));
       },
       async create(input) {
         const [row] = await db.insert(readinessCheckins).values({ ...input, orgId: ctx.orgId }).returning();
@@ -2405,21 +2458,21 @@ function createReadinessRepository(db, ctx) {
     readinessOverrides: {
       async listActive(orgId) {
         return db.select().from(readinessOverrides).where(
-          (0, import_drizzle_orm6.and)(
-            (0, import_drizzle_orm6.eq)(readinessOverrides.orgId, orgId),
-            (0, import_drizzle_orm6.gte)(readinessOverrides.expiresAt, /* @__PURE__ */ new Date())
+          and6(
+            eq6(readinessOverrides.orgId, orgId),
+            gte2(readinessOverrides.expiresAt, /* @__PURE__ */ new Date())
           )
         );
       },
       async upsert(input) {
         const existing = await db.select().from(readinessOverrides).where(
-          (0, import_drizzle_orm6.and)(
-            (0, import_drizzle_orm6.eq)(readinessOverrides.orgId, input.orgId),
-            (0, import_drizzle_orm6.eq)(readinessOverrides.playerId, input.playerId)
+          and6(
+            eq6(readinessOverrides.orgId, input.orgId),
+            eq6(readinessOverrides.playerId, input.playerId)
           )
         ).limit(1);
         if (existing[0]) {
-          const [row2] = await db.update(readinessOverrides).set({ status: input.status, note: input.note, expiresAt: input.expiresAt, coachUserId: input.coachUserId }).where((0, import_drizzle_orm6.eq)(readinessOverrides.id, existing[0].id)).returning();
+          const [row2] = await db.update(readinessOverrides).set({ status: input.status, note: input.note, expiresAt: input.expiresAt, coachUserId: input.coachUserId }).where(eq6(readinessOverrides.id, existing[0].id)).returning();
           return row2;
         }
         const [row] = await db.insert(readinessOverrides).values(input).returning();
@@ -2427,9 +2480,9 @@ function createReadinessRepository(db, ctx) {
       },
       async remove(orgId, playerId) {
         await db.delete(readinessOverrides).where(
-          (0, import_drizzle_orm6.and)(
-            (0, import_drizzle_orm6.eq)(readinessOverrides.orgId, orgId),
-            (0, import_drizzle_orm6.eq)(readinessOverrides.playerId, playerId)
+          and6(
+            eq6(readinessOverrides.orgId, orgId),
+            eq6(readinessOverrides.playerId, playerId)
           )
         );
       }
@@ -2438,22 +2491,22 @@ function createReadinessRepository(db, ctx) {
 }
 
 // shared/db/repositories/messaging.ts
-var import_drizzle_orm7 = require("drizzle-orm");
 init_schema();
+import { and as and7, desc as desc7, eq as eq7, isNull as isNull7 } from "drizzle-orm";
 function createMessagingRepository(db, ctx) {
   return {
     messages: {
       async listThreads() {
         return db.select().from(messageThreads).where(
-          (0, import_drizzle_orm7.and)((0, import_drizzle_orm7.eq)(messageThreads.orgId, ctx.orgId), (0, import_drizzle_orm7.isNull)(messageThreads.deletedAt))
-        ).orderBy((0, import_drizzle_orm7.desc)(messageThreads.createdAt));
+          and7(eq7(messageThreads.orgId, ctx.orgId), isNull7(messageThreads.deletedAt))
+        ).orderBy(desc7(messageThreads.createdAt));
       },
       async getThread(threadId) {
         const rows = await db.select().from(messageThreads).where(
-          (0, import_drizzle_orm7.and)(
-            (0, import_drizzle_orm7.eq)(messageThreads.id, threadId),
-            (0, import_drizzle_orm7.eq)(messageThreads.orgId, ctx.orgId),
-            (0, import_drizzle_orm7.isNull)(messageThreads.deletedAt)
+          and7(
+            eq7(messageThreads.id, threadId),
+            eq7(messageThreads.orgId, ctx.orgId),
+            isNull7(messageThreads.deletedAt)
           )
         ).limit(1);
         return rows[0] ?? null;
@@ -2464,10 +2517,10 @@ function createMessagingRepository(db, ctx) {
       },
       async listMessages(threadId) {
         return db.select().from(messages).where(
-          (0, import_drizzle_orm7.and)(
-            (0, import_drizzle_orm7.eq)(messages.threadId, threadId),
-            (0, import_drizzle_orm7.eq)(messages.orgId, ctx.orgId),
-            (0, import_drizzle_orm7.isNull)(messages.deletedAt)
+          and7(
+            eq7(messages.threadId, threadId),
+            eq7(messages.orgId, ctx.orgId),
+            isNull7(messages.deletedAt)
           )
         ).orderBy(messages.sentAt);
       },
@@ -2480,29 +2533,29 @@ function createMessagingRepository(db, ctx) {
 }
 
 // shared/db/repositories/wearables.ts
-var import_drizzle_orm8 = require("drizzle-orm");
 init_schema();
+import { and as and8, desc as desc8, eq as eq8, gte as gte3, isNull as isNull8 } from "drizzle-orm";
 function createWearablesRepository(db, ctx) {
   return {
     wearableConnections: {
       async list(opts = {}) {
         const conditions = [
-          (0, import_drizzle_orm8.eq)(wearableConnections.orgId, ctx.orgId),
-          (0, import_drizzle_orm8.isNull)(wearableConnections.deletedAt)
+          eq8(wearableConnections.orgId, ctx.orgId),
+          isNull8(wearableConnections.deletedAt)
         ];
         if (opts.playerId) {
-          conditions.push((0, import_drizzle_orm8.eq)(wearableConnections.playerId, opts.playerId));
+          conditions.push(eq8(wearableConnections.playerId, opts.playerId));
         }
-        return db.select().from(wearableConnections).where((0, import_drizzle_orm8.and)(...conditions)).orderBy((0, import_drizzle_orm8.desc)(wearableConnections.createdAt));
+        return db.select().from(wearableConnections).where(and8(...conditions)).orderBy(desc8(wearableConnections.createdAt));
       },
       async getByPlayer(playerId) {
         return db.select().from(wearableConnections).where(
-          (0, import_drizzle_orm8.and)(
-            (0, import_drizzle_orm8.eq)(wearableConnections.orgId, ctx.orgId),
-            (0, import_drizzle_orm8.eq)(wearableConnections.playerId, playerId),
-            (0, import_drizzle_orm8.isNull)(wearableConnections.deletedAt)
+          and8(
+            eq8(wearableConnections.orgId, ctx.orgId),
+            eq8(wearableConnections.playerId, playerId),
+            isNull8(wearableConnections.deletedAt)
           )
-        ).orderBy((0, import_drizzle_orm8.desc)(wearableConnections.createdAt));
+        ).orderBy(desc8(wearableConnections.createdAt));
       },
       async upsertConnection(input) {
         const [row] = await db.insert(wearableConnections).values({ ...input, orgId: ctx.orgId }).onConflictDoUpdate({
@@ -2528,17 +2581,17 @@ function createWearablesRepository(db, ctx) {
           ...extra?.lastSyncedAt ? { lastSyncedAt: extra.lastSyncedAt } : {},
           updatedAt: /* @__PURE__ */ new Date()
         }).where(
-          (0, import_drizzle_orm8.and)(
-            (0, import_drizzle_orm8.eq)(wearableConnections.id, id),
-            (0, import_drizzle_orm8.eq)(wearableConnections.orgId, ctx.orgId)
+          and8(
+            eq8(wearableConnections.id, id),
+            eq8(wearableConnections.orgId, ctx.orgId)
           )
         );
       },
       async disconnect(id) {
         await db.update(wearableConnections).set({ deletedAt: /* @__PURE__ */ new Date(), updatedAt: /* @__PURE__ */ new Date() }).where(
-          (0, import_drizzle_orm8.and)(
-            (0, import_drizzle_orm8.eq)(wearableConnections.id, id),
-            (0, import_drizzle_orm8.eq)(wearableConnections.orgId, ctx.orgId)
+          and8(
+            eq8(wearableConnections.id, id),
+            eq8(wearableConnections.orgId, ctx.orgId)
           )
         );
       }
@@ -2548,23 +2601,23 @@ function createWearablesRepository(db, ctx) {
         const since = /* @__PURE__ */ new Date();
         since.setDate(since.getDate() - 7);
         return db.select().from(wearableMetrics).where(
-          (0, import_drizzle_orm8.and)(
-            (0, import_drizzle_orm8.eq)(wearableMetrics.orgId, ctx.orgId),
-            (0, import_drizzle_orm8.eq)(wearableMetrics.playerId, playerId),
-            (0, import_drizzle_orm8.gte)(wearableMetrics.recordedDate, since.toISOString().slice(0, 10))
+          and8(
+            eq8(wearableMetrics.orgId, ctx.orgId),
+            eq8(wearableMetrics.playerId, playerId),
+            gte3(wearableMetrics.recordedDate, since.toISOString().slice(0, 10))
           )
-        ).orderBy((0, import_drizzle_orm8.desc)(wearableMetrics.recordedDate)).limit(20);
+        ).orderBy(desc8(wearableMetrics.recordedDate)).limit(20);
       },
       async getHistory(playerId, days = 30) {
         const since = /* @__PURE__ */ new Date();
         since.setDate(since.getDate() - days);
         return db.select().from(wearableMetrics).where(
-          (0, import_drizzle_orm8.and)(
-            (0, import_drizzle_orm8.eq)(wearableMetrics.orgId, ctx.orgId),
-            (0, import_drizzle_orm8.eq)(wearableMetrics.playerId, playerId),
-            (0, import_drizzle_orm8.gte)(wearableMetrics.recordedDate, since.toISOString().slice(0, 10))
+          and8(
+            eq8(wearableMetrics.orgId, ctx.orgId),
+            eq8(wearableMetrics.playerId, playerId),
+            gte3(wearableMetrics.recordedDate, since.toISOString().slice(0, 10))
           )
-        ).orderBy((0, import_drizzle_orm8.desc)(wearableMetrics.recordedDate));
+        ).orderBy(desc8(wearableMetrics.recordedDate));
       },
       async upsert(input) {
         const [row] = await db.insert(wearableMetrics).values({ ...input, orgId: ctx.orgId }).onConflictDoUpdate({
@@ -2593,9 +2646,9 @@ function createWearablesRepository(db, ctx) {
     wearableSharing: {
       async get(playerId) {
         const rows = await db.select().from(wearableSharing).where(
-          (0, import_drizzle_orm8.and)(
-            (0, import_drizzle_orm8.eq)(wearableSharing.orgId, ctx.orgId),
-            (0, import_drizzle_orm8.eq)(wearableSharing.playerId, playerId)
+          and8(
+            eq8(wearableSharing.orgId, ctx.orgId),
+            eq8(wearableSharing.playerId, playerId)
           )
         ).limit(1);
         return rows[0] ?? null;
@@ -2609,9 +2662,9 @@ function createWearablesRepository(db, ctx) {
       },
       async canCoachView(playerId) {
         const rows = await db.select({ shareWithCoaches: wearableSharing.shareWithCoaches }).from(wearableSharing).where(
-          (0, import_drizzle_orm8.and)(
-            (0, import_drizzle_orm8.eq)(wearableSharing.orgId, ctx.orgId),
-            (0, import_drizzle_orm8.eq)(wearableSharing.playerId, playerId)
+          and8(
+            eq8(wearableSharing.orgId, ctx.orgId),
+            eq8(wearableSharing.playerId, playerId)
           )
         ).limit(1);
         return rows[0]?.shareWithCoaches ?? false;
@@ -2621,39 +2674,39 @@ function createWearablesRepository(db, ctx) {
 }
 
 // shared/db/repositories/player-notes.ts
-var import_drizzle_orm9 = require("drizzle-orm");
 init_schema();
+import { and as and9, desc as desc9, eq as eq9, isNull as isNull9 } from "drizzle-orm";
 function createPlayerNotesRepository(db, ctx) {
   return {
     playerNotes: {
       async listForPlayer(playerId, limit = 50) {
         return db.select().from(playerNotes).where(
-          (0, import_drizzle_orm9.and)(
-            (0, import_drizzle_orm9.eq)(playerNotes.orgId, ctx.orgId),
-            (0, import_drizzle_orm9.eq)(playerNotes.playerId, playerId),
-            (0, import_drizzle_orm9.isNull)(playerNotes.deletedAt)
+          and9(
+            eq9(playerNotes.orgId, ctx.orgId),
+            eq9(playerNotes.playerId, playerId),
+            isNull9(playerNotes.deletedAt)
           )
-        ).orderBy((0, import_drizzle_orm9.desc)(playerNotes.createdAt)).limit(Math.min(limit, 200));
+        ).orderBy(desc9(playerNotes.createdAt)).limit(Math.min(limit, 200));
       },
       async create(input) {
         const [row] = await db.insert(playerNotes).values({ ...input, orgId: ctx.orgId, createdByUserId: ctx.userId }).returning();
         return row;
       },
       async softDelete(id) {
-        await db.update(playerNotes).set({ deletedAt: /* @__PURE__ */ new Date() }).where((0, import_drizzle_orm9.and)((0, import_drizzle_orm9.eq)(playerNotes.id, id), (0, import_drizzle_orm9.eq)(playerNotes.orgId, ctx.orgId)));
+        await db.update(playerNotes).set({ deletedAt: /* @__PURE__ */ new Date() }).where(and9(eq9(playerNotes.id, id), eq9(playerNotes.orgId, ctx.orgId)));
       },
       async togglePin(id, isPinned) {
-        await db.update(playerNotes).set({ isPinned, updatedAt: /* @__PURE__ */ new Date() }).where((0, import_drizzle_orm9.and)((0, import_drizzle_orm9.eq)(playerNotes.id, id), (0, import_drizzle_orm9.eq)(playerNotes.orgId, ctx.orgId)));
+        await db.update(playerNotes).set({ isPinned, updatedAt: /* @__PURE__ */ new Date() }).where(and9(eq9(playerNotes.id, id), eq9(playerNotes.orgId, ctx.orgId)));
       }
     },
     skillAssessments: {
       async listForPlayer(playerId, limit = 100) {
         return db.select().from(skillAssessments).where(
-          (0, import_drizzle_orm9.and)(
-            (0, import_drizzle_orm9.eq)(skillAssessments.orgId, ctx.orgId),
-            (0, import_drizzle_orm9.eq)(skillAssessments.playerId, playerId)
+          and9(
+            eq9(skillAssessments.orgId, ctx.orgId),
+            eq9(skillAssessments.playerId, playerId)
           )
-        ).orderBy((0, import_drizzle_orm9.desc)(skillAssessments.assessedAt)).limit(Math.min(limit, 500));
+        ).orderBy(desc9(skillAssessments.assessedAt)).limit(Math.min(limit, 500));
       },
       async create(input) {
         const [row] = await db.insert(skillAssessments).values({ ...input, orgId: ctx.orgId, assessedByUserId: ctx.userId }).returning();
@@ -2663,58 +2716,58 @@ function createPlayerNotesRepository(db, ctx) {
     injuries: {
       async listActive() {
         return db.select().from(injuryRecords).where(
-          (0, import_drizzle_orm9.and)(
-            (0, import_drizzle_orm9.eq)(injuryRecords.orgId, ctx.orgId),
-            (0, import_drizzle_orm9.isNull)(injuryRecords.deletedAt)
+          and9(
+            eq9(injuryRecords.orgId, ctx.orgId),
+            isNull9(injuryRecords.deletedAt)
           )
-        ).orderBy((0, import_drizzle_orm9.desc)(injuryRecords.injuredAt));
+        ).orderBy(desc9(injuryRecords.injuredAt));
       }
     },
     injuryRecords: {
       async listForPlayer(playerId) {
         return db.select().from(injuryRecords).where(
-          (0, import_drizzle_orm9.and)(
-            (0, import_drizzle_orm9.eq)(injuryRecords.orgId, ctx.orgId),
-            (0, import_drizzle_orm9.eq)(injuryRecords.playerId, playerId),
-            (0, import_drizzle_orm9.isNull)(injuryRecords.deletedAt)
+          and9(
+            eq9(injuryRecords.orgId, ctx.orgId),
+            eq9(injuryRecords.playerId, playerId),
+            isNull9(injuryRecords.deletedAt)
           )
-        ).orderBy((0, import_drizzle_orm9.desc)(injuryRecords.injuredAt));
+        ).orderBy(desc9(injuryRecords.injuredAt));
       },
       async create(input) {
         const [row] = await db.insert(injuryRecords).values({ ...input, orgId: ctx.orgId, createdByUserId: ctx.userId }).returning();
         return row;
       },
       async update(id, patch) {
-        await db.update(injuryRecords).set({ ...patch, updatedAt: /* @__PURE__ */ new Date() }).where((0, import_drizzle_orm9.and)((0, import_drizzle_orm9.eq)(injuryRecords.id, id), (0, import_drizzle_orm9.eq)(injuryRecords.orgId, ctx.orgId)));
+        await db.update(injuryRecords).set({ ...patch, updatedAt: /* @__PURE__ */ new Date() }).where(and9(eq9(injuryRecords.id, id), eq9(injuryRecords.orgId, ctx.orgId)));
       },
       async softDelete(id) {
-        await db.update(injuryRecords).set({ deletedAt: /* @__PURE__ */ new Date() }).where((0, import_drizzle_orm9.and)((0, import_drizzle_orm9.eq)(injuryRecords.id, id), (0, import_drizzle_orm9.eq)(injuryRecords.orgId, ctx.orgId)));
+        await db.update(injuryRecords).set({ deletedAt: /* @__PURE__ */ new Date() }).where(and9(eq9(injuryRecords.id, id), eq9(injuryRecords.orgId, ctx.orgId)));
       }
     }
   };
 }
 
 // shared/db/repositories/idp.ts
-var import_drizzle_orm10 = require("drizzle-orm");
 init_schema();
+import { and as and10, desc as desc10, eq as eq10, isNull as isNull10 } from "drizzle-orm";
 function createIdpRepository(db, ctx) {
   return {
     idpFocusAreas: {
       async listForIdp(idpId) {
         return db.select().from(idpFocusAreas).where(
-          (0, import_drizzle_orm10.and)(
-            (0, import_drizzle_orm10.eq)(idpFocusAreas.idpId, idpId),
-            (0, import_drizzle_orm10.eq)(idpFocusAreas.orgId, ctx.orgId),
-            (0, import_drizzle_orm10.isNull)(idpFocusAreas.deletedAt)
+          and10(
+            eq10(idpFocusAreas.idpId, idpId),
+            eq10(idpFocusAreas.orgId, ctx.orgId),
+            isNull10(idpFocusAreas.deletedAt)
           )
         ).orderBy(idpFocusAreas.priority);
       },
       async listForPlayer(playerId) {
         return db.select().from(idpFocusAreas).where(
-          (0, import_drizzle_orm10.and)(
-            (0, import_drizzle_orm10.eq)(idpFocusAreas.playerId, playerId),
-            (0, import_drizzle_orm10.eq)(idpFocusAreas.orgId, ctx.orgId),
-            (0, import_drizzle_orm10.isNull)(idpFocusAreas.deletedAt)
+          and10(
+            eq10(idpFocusAreas.playerId, playerId),
+            eq10(idpFocusAreas.orgId, ctx.orgId),
+            isNull10(idpFocusAreas.deletedAt)
           )
         ).orderBy(idpFocusAreas.priority);
       },
@@ -2723,18 +2776,18 @@ function createIdpRepository(db, ctx) {
         return row;
       },
       async update(id, patch) {
-        await db.update(idpFocusAreas).set({ ...patch, updatedAt: /* @__PURE__ */ new Date() }).where((0, import_drizzle_orm10.and)((0, import_drizzle_orm10.eq)(idpFocusAreas.id, id), (0, import_drizzle_orm10.eq)(idpFocusAreas.orgId, ctx.orgId)));
+        await db.update(idpFocusAreas).set({ ...patch, updatedAt: /* @__PURE__ */ new Date() }).where(and10(eq10(idpFocusAreas.id, id), eq10(idpFocusAreas.orgId, ctx.orgId)));
       },
       async softDelete(id) {
-        await db.update(idpFocusAreas).set({ deletedAt: /* @__PURE__ */ new Date() }).where((0, import_drizzle_orm10.and)((0, import_drizzle_orm10.eq)(idpFocusAreas.id, id), (0, import_drizzle_orm10.eq)(idpFocusAreas.orgId, ctx.orgId)));
+        await db.update(idpFocusAreas).set({ deletedAt: /* @__PURE__ */ new Date() }).where(and10(eq10(idpFocusAreas.id, id), eq10(idpFocusAreas.orgId, ctx.orgId)));
       }
     },
     idpMilestones: {
       async listForFocusArea(focusAreaId) {
         return db.select().from(idpMilestones).where(
-          (0, import_drizzle_orm10.and)(
-            (0, import_drizzle_orm10.eq)(idpMilestones.focusAreaId, focusAreaId),
-            (0, import_drizzle_orm10.eq)(idpMilestones.orgId, ctx.orgId)
+          and10(
+            eq10(idpMilestones.focusAreaId, focusAreaId),
+            eq10(idpMilestones.orgId, ctx.orgId)
           )
         ).orderBy(idpMilestones.createdAt);
       },
@@ -2743,19 +2796,19 @@ function createIdpRepository(db, ctx) {
         return row;
       },
       async complete(id) {
-        await db.update(idpMilestones).set({ completedAt: /* @__PURE__ */ new Date() }).where((0, import_drizzle_orm10.and)((0, import_drizzle_orm10.eq)(idpMilestones.id, id), (0, import_drizzle_orm10.eq)(idpMilestones.orgId, ctx.orgId)));
+        await db.update(idpMilestones).set({ completedAt: /* @__PURE__ */ new Date() }).where(and10(eq10(idpMilestones.id, id), eq10(idpMilestones.orgId, ctx.orgId)));
       },
       async unComplete(id) {
-        await db.update(idpMilestones).set({ completedAt: null }).where((0, import_drizzle_orm10.and)((0, import_drizzle_orm10.eq)(idpMilestones.id, id), (0, import_drizzle_orm10.eq)(idpMilestones.orgId, ctx.orgId)));
+        await db.update(idpMilestones).set({ completedAt: null }).where(and10(eq10(idpMilestones.id, id), eq10(idpMilestones.orgId, ctx.orgId)));
       }
     },
     idpDrillLinks: {
       async listForFocusArea(focusAreaId) {
         return db.select().from(idpDrillLinks).where(
-          (0, import_drizzle_orm10.and)(
-            (0, import_drizzle_orm10.eq)(idpDrillLinks.focusAreaId, focusAreaId),
-            (0, import_drizzle_orm10.eq)(idpDrillLinks.orgId, ctx.orgId),
-            (0, import_drizzle_orm10.isNull)(idpDrillLinks.deletedAt)
+          and10(
+            eq10(idpDrillLinks.focusAreaId, focusAreaId),
+            eq10(idpDrillLinks.orgId, ctx.orgId),
+            isNull10(idpDrillLinks.deletedAt)
           )
         ).orderBy(idpDrillLinks.createdAt);
       },
@@ -2764,41 +2817,41 @@ function createIdpRepository(db, ctx) {
         return row;
       },
       async softDelete(id) {
-        await db.update(idpDrillLinks).set({ deletedAt: /* @__PURE__ */ new Date() }).where((0, import_drizzle_orm10.and)((0, import_drizzle_orm10.eq)(idpDrillLinks.id, id), (0, import_drizzle_orm10.eq)(idpDrillLinks.orgId, ctx.orgId)));
+        await db.update(idpDrillLinks).set({ deletedAt: /* @__PURE__ */ new Date() }).where(and10(eq10(idpDrillLinks.id, id), eq10(idpDrillLinks.orgId, ctx.orgId)));
       }
     },
     idpComments: {
       async listForIdp(idpId) {
         return db.select().from(idpComments).where(
-          (0, import_drizzle_orm10.and)(
-            (0, import_drizzle_orm10.eq)(idpComments.idpId, idpId),
-            (0, import_drizzle_orm10.eq)(idpComments.orgId, ctx.orgId),
-            (0, import_drizzle_orm10.isNull)(idpComments.deletedAt)
+          and10(
+            eq10(idpComments.idpId, idpId),
+            eq10(idpComments.orgId, ctx.orgId),
+            isNull10(idpComments.deletedAt)
           )
-        ).orderBy((0, import_drizzle_orm10.desc)(idpComments.createdAt));
+        ).orderBy(desc10(idpComments.createdAt));
       },
       async create(input) {
         const [row] = await db.insert(idpComments).values({ ...input, orgId: ctx.orgId, authorUserId: ctx.userId }).returning();
         return row;
       },
       async softDelete(id) {
-        await db.update(idpComments).set({ deletedAt: /* @__PURE__ */ new Date() }).where((0, import_drizzle_orm10.and)((0, import_drizzle_orm10.eq)(idpComments.id, id), (0, import_drizzle_orm10.eq)(idpComments.orgId, ctx.orgId)));
+        await db.update(idpComments).set({ deletedAt: /* @__PURE__ */ new Date() }).where(and10(eq10(idpComments.id, id), eq10(idpComments.orgId, ctx.orgId)));
       }
     },
     coachingActions: {
       async listForSession(sessionId) {
-        return db.select().from(coachingActions).where((0, import_drizzle_orm10.and)((0, import_drizzle_orm10.eq)(coachingActions.sessionId, sessionId), (0, import_drizzle_orm10.eq)(coachingActions.orgId, ctx.orgId))).orderBy((0, import_drizzle_orm10.desc)(coachingActions.createdAt));
+        return db.select().from(coachingActions).where(and10(eq10(coachingActions.sessionId, sessionId), eq10(coachingActions.orgId, ctx.orgId))).orderBy(desc10(coachingActions.createdAt));
       },
       async listForPlayer(playerId, limit = 50) {
-        return db.select().from(coachingActions).where((0, import_drizzle_orm10.and)((0, import_drizzle_orm10.eq)(coachingActions.playerId, playerId), (0, import_drizzle_orm10.eq)(coachingActions.orgId, ctx.orgId))).orderBy((0, import_drizzle_orm10.desc)(coachingActions.createdAt)).limit(Math.min(limit, 200));
+        return db.select().from(coachingActions).where(and10(eq10(coachingActions.playerId, playerId), eq10(coachingActions.orgId, ctx.orgId))).orderBy(desc10(coachingActions.createdAt)).limit(Math.min(limit, 200));
       },
       async listOpen() {
         return db.select().from(coachingActions).where(
-          (0, import_drizzle_orm10.and)(
-            (0, import_drizzle_orm10.eq)(coachingActions.orgId, ctx.orgId),
-            (0, import_drizzle_orm10.eq)(coachingActions.status, "open")
+          and10(
+            eq10(coachingActions.orgId, ctx.orgId),
+            eq10(coachingActions.status, "open")
           )
-        ).orderBy((0, import_drizzle_orm10.desc)(coachingActions.createdAt));
+        ).orderBy(desc10(coachingActions.createdAt));
       },
       async create(input) {
         const [row] = await db.insert(coachingActions).values({ ...input, orgId: ctx.orgId, authorUserId: ctx.userId }).returning();
@@ -2810,55 +2863,55 @@ function createIdpRepository(db, ctx) {
           updatedAt: /* @__PURE__ */ new Date(),
           ...status === "resolved" ? { resolvedAt: /* @__PURE__ */ new Date() } : {},
           ...patch
-        }).where((0, import_drizzle_orm10.and)((0, import_drizzle_orm10.eq)(coachingActions.id, id), (0, import_drizzle_orm10.eq)(coachingActions.orgId, ctx.orgId)));
+        }).where(and10(eq10(coachingActions.id, id), eq10(coachingActions.orgId, ctx.orgId)));
       }
     }
   };
 }
 
 // shared/db/repositories/guardian.ts
-var import_drizzle_orm11 = require("drizzle-orm");
 init_schema();
+import { and as and11, eq as eq11, isNull as isNull11 } from "drizzle-orm";
 function createGuardianRepository(db, ctx) {
   return {
     guardians: {
       /** All guardian rows for a specific player (coach / admin view). */
       async listForPlayer(playerId) {
         return db.select().from(playerGuardians).where(
-          (0, import_drizzle_orm11.and)(
-            (0, import_drizzle_orm11.eq)(playerGuardians.orgId, ctx.orgId),
-            (0, import_drizzle_orm11.eq)(playerGuardians.playerId, playerId),
-            (0, import_drizzle_orm11.isNull)(playerGuardians.deletedAt)
+          and11(
+            eq11(playerGuardians.orgId, ctx.orgId),
+            eq11(playerGuardians.playerId, playerId),
+            isNull11(playerGuardians.deletedAt)
           )
         );
       },
       /** All players the authenticated guardian user can access. */
       async listPlayersForGuardian(guardianUserId) {
         return db.select().from(playerGuardians).where(
-          (0, import_drizzle_orm11.and)(
-            (0, import_drizzle_orm11.eq)(playerGuardians.orgId, ctx.orgId),
-            (0, import_drizzle_orm11.eq)(playerGuardians.guardianUserId, guardianUserId),
-            (0, import_drizzle_orm11.isNull)(playerGuardians.deletedAt)
+          and11(
+            eq11(playerGuardians.orgId, ctx.orgId),
+            eq11(playerGuardians.guardianUserId, guardianUserId),
+            isNull11(playerGuardians.deletedAt)
           )
         );
       },
       /** Single access-check: returns the row or null. */
       async findRelationship(guardianUserId, playerId) {
         const [row] = await db.select().from(playerGuardians).where(
-          (0, import_drizzle_orm11.and)(
-            (0, import_drizzle_orm11.eq)(playerGuardians.orgId, ctx.orgId),
-            (0, import_drizzle_orm11.eq)(playerGuardians.guardianUserId, guardianUserId),
-            (0, import_drizzle_orm11.eq)(playerGuardians.playerId, playerId),
-            (0, import_drizzle_orm11.isNull)(playerGuardians.deletedAt)
+          and11(
+            eq11(playerGuardians.orgId, ctx.orgId),
+            eq11(playerGuardians.guardianUserId, guardianUserId),
+            eq11(playerGuardians.playerId, playerId),
+            isNull11(playerGuardians.deletedAt)
           )
         ).limit(1);
         return row ?? null;
       },
       async linkUser(guardianId, guardianUserId) {
         await db.update(playerGuardians).set({ guardianUserId }).where(
-          (0, import_drizzle_orm11.and)(
-            (0, import_drizzle_orm11.eq)(playerGuardians.id, guardianId),
-            (0, import_drizzle_orm11.eq)(playerGuardians.orgId, ctx.orgId)
+          and11(
+            eq11(playerGuardians.id, guardianId),
+            eq11(playerGuardians.orgId, ctx.orgId)
           )
         );
       }
@@ -2867,8 +2920,8 @@ function createGuardianRepository(db, ctx) {
 }
 
 // shared/db/repositories/comms.ts
-var import_drizzle_orm12 = require("drizzle-orm");
 init_schema();
+import { and as and12, desc as desc11, eq as eq12, isNull as isNull12, sql as sql4 } from "drizzle-orm";
 function createCommsRepository(db, ctx) {
   return {
     announcements: {
@@ -2879,12 +2932,12 @@ function createCommsRepository(db, ctx) {
        */
       async listForRole(role) {
         return db.select().from(announcements).where(
-          (0, import_drizzle_orm12.and)(
-            (0, import_drizzle_orm12.eq)(announcements.orgId, ctx.orgId),
-            (0, import_drizzle_orm12.isNull)(announcements.deletedAt),
-            import_drizzle_orm12.sql`(${announcements.audienceRoles} IS NULL OR ${role} = ANY(${announcements.audienceRoles}))`
+          and12(
+            eq12(announcements.orgId, ctx.orgId),
+            isNull12(announcements.deletedAt),
+            sql4`(${announcements.audienceRoles} IS NULL OR ${role} = ANY(${announcements.audienceRoles}))`
           )
-        ).orderBy((0, import_drizzle_orm12.desc)(announcements.publishedAt));
+        ).orderBy(desc11(announcements.publishedAt));
       },
       async create(input) {
         const [row] = await db.insert(announcements).values({ ...input, orgId: ctx.orgId, authorUserId: ctx.userId }).returning();
@@ -2892,17 +2945,17 @@ function createCommsRepository(db, ctx) {
       },
       async pin(id, pinned) {
         await db.update(announcements).set({ pinned, updatedAt: /* @__PURE__ */ new Date() }).where(
-          (0, import_drizzle_orm12.and)(
-            (0, import_drizzle_orm12.eq)(announcements.id, id),
-            (0, import_drizzle_orm12.eq)(announcements.orgId, ctx.orgId)
+          and12(
+            eq12(announcements.id, id),
+            eq12(announcements.orgId, ctx.orgId)
           )
         );
       },
       async softDelete(id) {
         await db.update(announcements).set({ deletedAt: /* @__PURE__ */ new Date() }).where(
-          (0, import_drizzle_orm12.and)(
-            (0, import_drizzle_orm12.eq)(announcements.id, id),
-            (0, import_drizzle_orm12.eq)(announcements.orgId, ctx.orgId)
+          and12(
+            eq12(announcements.id, id),
+            eq12(announcements.orgId, ctx.orgId)
           )
         );
       }
@@ -2910,27 +2963,27 @@ function createCommsRepository(db, ctx) {
     waivers: {
       async listTemplates() {
         return db.select().from(waiverTemplates).where(
-          (0, import_drizzle_orm12.and)(
-            (0, import_drizzle_orm12.eq)(waiverTemplates.orgId, ctx.orgId),
-            (0, import_drizzle_orm12.isNull)(waiverTemplates.deletedAt)
+          and12(
+            eq12(waiverTemplates.orgId, ctx.orgId),
+            isNull12(waiverTemplates.deletedAt)
           )
         );
       },
       async listSignaturesForPlayer(playerId) {
         return db.select().from(waiverSignatures).where(
-          (0, import_drizzle_orm12.and)(
-            (0, import_drizzle_orm12.eq)(waiverSignatures.orgId, ctx.orgId),
-            (0, import_drizzle_orm12.eq)(waiverSignatures.playerId, playerId)
+          and12(
+            eq12(waiverSignatures.orgId, ctx.orgId),
+            eq12(waiverSignatures.playerId, playerId)
           )
         );
       },
       async signWaiver(input) {
         const [existing] = await db.select({ id: waiverSignatures.id }).from(waiverSignatures).where(
-          (0, import_drizzle_orm12.and)(
-            (0, import_drizzle_orm12.eq)(waiverSignatures.orgId, ctx.orgId),
-            (0, import_drizzle_orm12.eq)(waiverSignatures.templateId, input.templateId),
-            (0, import_drizzle_orm12.eq)(waiverSignatures.playerId, input.playerId),
-            (0, import_drizzle_orm12.eq)(waiverSignatures.signedByUserId, ctx.userId)
+          and12(
+            eq12(waiverSignatures.orgId, ctx.orgId),
+            eq12(waiverSignatures.templateId, input.templateId),
+            eq12(waiverSignatures.playerId, input.playerId),
+            eq12(waiverSignatures.signedByUserId, ctx.userId)
           )
         ).limit(1);
         if (existing) {
@@ -2940,7 +2993,7 @@ function createCommsRepository(db, ctx) {
             ipAddress: input.ipAddress,
             userAgent: input.userAgent,
             updatedAt: /* @__PURE__ */ new Date()
-          }).where((0, import_drizzle_orm12.eq)(waiverSignatures.id, existing.id)).returning();
+          }).where(eq12(waiverSignatures.id, existing.id)).returning();
           return row2;
         }
         const [row] = await db.insert(waiverSignatures).values({ ...input, orgId: ctx.orgId, signedByUserId: ctx.userId }).returning();
@@ -2951,23 +3004,23 @@ function createCommsRepository(db, ctx) {
 }
 
 // shared/db/repositories/club-ops.ts
-var import_drizzle_orm13 = require("drizzle-orm");
 init_schema();
+import { and as and13, desc as desc12, eq as eq13, isNull as isNull13, sql as sql5 } from "drizzle-orm";
 function createClubOpsRepository(db, ctx) {
   return {
     seasons: {
       async list(opts = {}) {
         const conditions = [
-          (0, import_drizzle_orm13.eq)(seasons.orgId, ctx.orgId),
-          (0, import_drizzle_orm13.isNull)(seasons.deletedAt)
+          eq13(seasons.orgId, ctx.orgId),
+          isNull13(seasons.deletedAt)
         ];
         if (!opts.includeArchived) {
-          conditions.push(import_drizzle_orm13.sql`${seasons.status} != 'archived'`);
+          conditions.push(sql5`${seasons.status} != 'archived'`);
         }
-        return db.select().from(seasons).where((0, import_drizzle_orm13.and)(...conditions)).orderBy((0, import_drizzle_orm13.desc)(seasons.createdAt));
+        return db.select().from(seasons).where(and13(...conditions)).orderBy(desc12(seasons.createdAt));
       },
       async getById(id) {
-        const [row] = await db.select().from(seasons).where((0, import_drizzle_orm13.and)((0, import_drizzle_orm13.eq)(seasons.id, id), (0, import_drizzle_orm13.eq)(seasons.orgId, ctx.orgId), (0, import_drizzle_orm13.isNull)(seasons.deletedAt))).limit(1);
+        const [row] = await db.select().from(seasons).where(and13(eq13(seasons.id, id), eq13(seasons.orgId, ctx.orgId), isNull13(seasons.deletedAt))).limit(1);
         return row ?? null;
       },
       async create(input) {
@@ -2975,25 +3028,25 @@ function createClubOpsRepository(db, ctx) {
         return row;
       },
       async update(id, patch) {
-        const [row] = await db.update(seasons).set({ ...patch, updatedAt: /* @__PURE__ */ new Date() }).where((0, import_drizzle_orm13.and)((0, import_drizzle_orm13.eq)(seasons.id, id), (0, import_drizzle_orm13.eq)(seasons.orgId, ctx.orgId))).returning();
+        const [row] = await db.update(seasons).set({ ...patch, updatedAt: /* @__PURE__ */ new Date() }).where(and13(eq13(seasons.id, id), eq13(seasons.orgId, ctx.orgId))).returning();
         return row;
       },
       async softDelete(id) {
-        await db.update(seasons).set({ deletedAt: /* @__PURE__ */ new Date() }).where((0, import_drizzle_orm13.and)((0, import_drizzle_orm13.eq)(seasons.id, id), (0, import_drizzle_orm13.eq)(seasons.orgId, ctx.orgId)));
+        await db.update(seasons).set({ deletedAt: /* @__PURE__ */ new Date() }).where(and13(eq13(seasons.id, id), eq13(seasons.orgId, ctx.orgId)));
       }
     },
     teams: {
       async list(opts = {}) {
         const conditions = [
-          (0, import_drizzle_orm13.eq)(teams.orgId, ctx.orgId),
-          (0, import_drizzle_orm13.isNull)(teams.deletedAt)
+          eq13(teams.orgId, ctx.orgId),
+          isNull13(teams.deletedAt)
         ];
-        if (opts.seasonId) conditions.push((0, import_drizzle_orm13.eq)(teams.seasonId, opts.seasonId));
-        if (opts.activeOnly) conditions.push((0, import_drizzle_orm13.eq)(teams.isActive, true));
-        return db.select().from(teams).where((0, import_drizzle_orm13.and)(...conditions)).orderBy(teams.name);
+        if (opts.seasonId) conditions.push(eq13(teams.seasonId, opts.seasonId));
+        if (opts.activeOnly) conditions.push(eq13(teams.isActive, true));
+        return db.select().from(teams).where(and13(...conditions)).orderBy(teams.name);
       },
       async getById(id) {
-        const [row] = await db.select().from(teams).where((0, import_drizzle_orm13.and)((0, import_drizzle_orm13.eq)(teams.id, id), (0, import_drizzle_orm13.eq)(teams.orgId, ctx.orgId), (0, import_drizzle_orm13.isNull)(teams.deletedAt))).limit(1);
+        const [row] = await db.select().from(teams).where(and13(eq13(teams.id, id), eq13(teams.orgId, ctx.orgId), isNull13(teams.deletedAt))).limit(1);
         return row ?? null;
       },
       async create(input) {
@@ -3001,15 +3054,15 @@ function createClubOpsRepository(db, ctx) {
         return row;
       },
       async update(id, patch) {
-        const [row] = await db.update(teams).set({ ...patch, updatedAt: /* @__PURE__ */ new Date() }).where((0, import_drizzle_orm13.and)((0, import_drizzle_orm13.eq)(teams.id, id), (0, import_drizzle_orm13.eq)(teams.orgId, ctx.orgId))).returning();
+        const [row] = await db.update(teams).set({ ...patch, updatedAt: /* @__PURE__ */ new Date() }).where(and13(eq13(teams.id, id), eq13(teams.orgId, ctx.orgId))).returning();
         return row;
       },
       async softDelete(id) {
-        await db.update(teams).set({ deletedAt: /* @__PURE__ */ new Date() }).where((0, import_drizzle_orm13.and)((0, import_drizzle_orm13.eq)(teams.id, id), (0, import_drizzle_orm13.eq)(teams.orgId, ctx.orgId)));
+        await db.update(teams).set({ deletedAt: /* @__PURE__ */ new Date() }).where(and13(eq13(teams.id, id), eq13(teams.orgId, ctx.orgId)));
       },
       // Roster management
       async getRoster(teamId) {
-        return db.select().from(teamRoster).where((0, import_drizzle_orm13.and)((0, import_drizzle_orm13.eq)(teamRoster.teamId, teamId), (0, import_drizzle_orm13.eq)(teamRoster.orgId, ctx.orgId), (0, import_drizzle_orm13.isNull)(teamRoster.removedAt)));
+        return db.select().from(teamRoster).where(and13(eq13(teamRoster.teamId, teamId), eq13(teamRoster.orgId, ctx.orgId), isNull13(teamRoster.removedAt)));
       },
       async addToRoster(input) {
         const [row] = await db.insert(teamRoster).values({ ...input, orgId: ctx.orgId, addedByUserId: ctx.userId }).onConflictDoUpdate({
@@ -3019,21 +3072,21 @@ function createClubOpsRepository(db, ctx) {
         return row;
       },
       async removeFromRoster(teamId, playerId) {
-        await db.update(teamRoster).set({ removedAt: /* @__PURE__ */ new Date() }).where((0, import_drizzle_orm13.and)((0, import_drizzle_orm13.eq)(teamRoster.teamId, teamId), (0, import_drizzle_orm13.eq)(teamRoster.playerId, playerId), (0, import_drizzle_orm13.eq)(teamRoster.orgId, ctx.orgId)));
+        await db.update(teamRoster).set({ removedAt: /* @__PURE__ */ new Date() }).where(and13(eq13(teamRoster.teamId, teamId), eq13(teamRoster.playerId, playerId), eq13(teamRoster.orgId, ctx.orgId)));
       }
     },
     membershipPlans: {
       async list(opts = {}) {
         const conditions = [
-          (0, import_drizzle_orm13.eq)(membershipPlans.orgId, ctx.orgId),
-          (0, import_drizzle_orm13.isNull)(membershipPlans.deletedAt)
+          eq13(membershipPlans.orgId, ctx.orgId),
+          isNull13(membershipPlans.deletedAt)
         ];
-        if (opts.seasonId) conditions.push((0, import_drizzle_orm13.eq)(membershipPlans.seasonId, opts.seasonId));
-        if (opts.status) conditions.push(import_drizzle_orm13.sql`${membershipPlans.status} = ${opts.status}`);
-        return db.select().from(membershipPlans).where((0, import_drizzle_orm13.and)(...conditions)).orderBy(membershipPlans.createdAt);
+        if (opts.seasonId) conditions.push(eq13(membershipPlans.seasonId, opts.seasonId));
+        if (opts.status) conditions.push(sql5`${membershipPlans.status} = ${opts.status}`);
+        return db.select().from(membershipPlans).where(and13(...conditions)).orderBy(membershipPlans.createdAt);
       },
       async getById(id) {
-        const [row] = await db.select().from(membershipPlans).where((0, import_drizzle_orm13.and)((0, import_drizzle_orm13.eq)(membershipPlans.id, id), (0, import_drizzle_orm13.eq)(membershipPlans.orgId, ctx.orgId), (0, import_drizzle_orm13.isNull)(membershipPlans.deletedAt))).limit(1);
+        const [row] = await db.select().from(membershipPlans).where(and13(eq13(membershipPlans.id, id), eq13(membershipPlans.orgId, ctx.orgId), isNull13(membershipPlans.deletedAt))).limit(1);
         return row ?? null;
       },
       async create(input) {
@@ -3041,23 +3094,23 @@ function createClubOpsRepository(db, ctx) {
         return row;
       },
       async update(id, patch) {
-        const [row] = await db.update(membershipPlans).set({ ...patch, updatedAt: /* @__PURE__ */ new Date() }).where((0, import_drizzle_orm13.and)((0, import_drizzle_orm13.eq)(membershipPlans.id, id), (0, import_drizzle_orm13.eq)(membershipPlans.orgId, ctx.orgId))).returning();
+        const [row] = await db.update(membershipPlans).set({ ...patch, updatedAt: /* @__PURE__ */ new Date() }).where(and13(eq13(membershipPlans.id, id), eq13(membershipPlans.orgId, ctx.orgId))).returning();
         return row;
       },
       async softDelete(id) {
-        await db.update(membershipPlans).set({ deletedAt: /* @__PURE__ */ new Date() }).where((0, import_drizzle_orm13.and)((0, import_drizzle_orm13.eq)(membershipPlans.id, id), (0, import_drizzle_orm13.eq)(membershipPlans.orgId, ctx.orgId)));
+        await db.update(membershipPlans).set({ deletedAt: /* @__PURE__ */ new Date() }).where(and13(eq13(membershipPlans.id, id), eq13(membershipPlans.orgId, ctx.orgId)));
       }
     },
     registrations: {
       async list(opts = {}) {
-        const conditions = [(0, import_drizzle_orm13.eq)(registrations.orgId, ctx.orgId)];
-        if (opts.seasonId) conditions.push((0, import_drizzle_orm13.eq)(registrations.seasonId, opts.seasonId));
-        if (opts.status) conditions.push(import_drizzle_orm13.sql`${registrations.status} = ${opts.status}`);
-        if (opts.playerId) conditions.push((0, import_drizzle_orm13.eq)(registrations.playerId, opts.playerId));
-        return db.select().from(registrations).where((0, import_drizzle_orm13.and)(...conditions)).orderBy((0, import_drizzle_orm13.desc)(registrations.submittedAt));
+        const conditions = [eq13(registrations.orgId, ctx.orgId)];
+        if (opts.seasonId) conditions.push(eq13(registrations.seasonId, opts.seasonId));
+        if (opts.status) conditions.push(sql5`${registrations.status} = ${opts.status}`);
+        if (opts.playerId) conditions.push(eq13(registrations.playerId, opts.playerId));
+        return db.select().from(registrations).where(and13(...conditions)).orderBy(desc12(registrations.submittedAt));
       },
       async getById(id) {
-        const [row] = await db.select().from(registrations).where((0, import_drizzle_orm13.and)((0, import_drizzle_orm13.eq)(registrations.id, id), (0, import_drizzle_orm13.eq)(registrations.orgId, ctx.orgId))).limit(1);
+        const [row] = await db.select().from(registrations).where(and13(eq13(registrations.id, id), eq13(registrations.orgId, ctx.orgId))).limit(1);
         return row ?? null;
       },
       async create(input) {
@@ -3078,49 +3131,49 @@ function createClubOpsRepository(db, ctx) {
           patch.cancelledAt = /* @__PURE__ */ new Date();
           patch.cancelledByUserId = ctx.userId;
         }
-        const [row] = await db.update(registrations).set(patch).where((0, import_drizzle_orm13.and)((0, import_drizzle_orm13.eq)(registrations.id, id), (0, import_drizzle_orm13.eq)(registrations.orgId, ctx.orgId))).returning();
+        const [row] = await db.update(registrations).set(patch).where(and13(eq13(registrations.id, id), eq13(registrations.orgId, ctx.orgId))).returning();
         return row;
       },
       /** Count by status for dashboard KPIs */
       async countByStatus(seasonId) {
-        const conditions = [(0, import_drizzle_orm13.eq)(registrations.orgId, ctx.orgId)];
-        if (seasonId) conditions.push((0, import_drizzle_orm13.eq)(registrations.seasonId, seasonId));
+        const conditions = [eq13(registrations.orgId, ctx.orgId)];
+        if (seasonId) conditions.push(eq13(registrations.seasonId, seasonId));
         return db.select({
           status: registrations.status,
-          count: import_drizzle_orm13.sql`count(*)::int`
-        }).from(registrations).where((0, import_drizzle_orm13.and)(...conditions)).groupBy(registrations.status);
+          count: sql5`count(*)::int`
+        }).from(registrations).where(and13(...conditions)).groupBy(registrations.status);
       }
     }
   };
 }
 
 // shared/db/repositories/billing.ts
-var import_drizzle_orm14 = require("drizzle-orm");
 init_schema();
+import { and as and14, desc as desc13, eq as eq14, lte, sql as sql6 } from "drizzle-orm";
 function createBillingRepository(db, ctx) {
   return {
     invoices: {
       async list(opts = {}) {
-        const conditions = [(0, import_drizzle_orm14.eq)(invoices.orgId, ctx.orgId)];
-        if (opts.playerId) conditions.push((0, import_drizzle_orm14.eq)(invoices.playerId, opts.playerId));
-        if (opts.status) conditions.push(import_drizzle_orm14.sql`${invoices.status} = ${opts.status}`);
-        if (opts.seasonId) conditions.push((0, import_drizzle_orm14.eq)(invoices.seasonId, opts.seasonId));
+        const conditions = [eq14(invoices.orgId, ctx.orgId)];
+        if (opts.playerId) conditions.push(eq14(invoices.playerId, opts.playerId));
+        if (opts.status) conditions.push(sql6`${invoices.status} = ${opts.status}`);
+        if (opts.seasonId) conditions.push(eq14(invoices.seasonId, opts.seasonId));
         if (opts.overdue) {
           conditions.push(
-            import_drizzle_orm14.sql`${invoices.status} IN ('open','partial')`,
-            (0, import_drizzle_orm14.lte)(invoices.dueDate, /* @__PURE__ */ new Date())
+            sql6`${invoices.status} IN ('open','partial')`,
+            lte(invoices.dueDate, /* @__PURE__ */ new Date())
           );
         }
-        return db.select().from(invoices).where((0, import_drizzle_orm14.and)(...conditions)).orderBy((0, import_drizzle_orm14.desc)(invoices.createdAt));
+        return db.select().from(invoices).where(and14(...conditions)).orderBy(desc13(invoices.createdAt));
       },
       async getById(id) {
-        const [row] = await db.select().from(invoices).where((0, import_drizzle_orm14.and)((0, import_drizzle_orm14.eq)(invoices.id, id), (0, import_drizzle_orm14.eq)(invoices.orgId, ctx.orgId))).limit(1);
+        const [row] = await db.select().from(invoices).where(and14(eq14(invoices.id, id), eq14(invoices.orgId, ctx.orgId))).limit(1);
         return row ?? null;
       },
       async getWithItems(id) {
         const invoice = await this.getById(id);
         if (!invoice) return null;
-        const items = await db.select().from(invoiceItems).where((0, import_drizzle_orm14.eq)(invoiceItems.invoiceId, id)).orderBy(invoiceItems.sortOrder);
+        const items = await db.select().from(invoiceItems).where(eq14(invoiceItems.invoiceId, id)).orderBy(invoiceItems.sortOrder);
         return { ...invoice, items };
       },
       async create(input) {
@@ -3137,45 +3190,45 @@ function createBillingRepository(db, ctx) {
           patch.amountPaid = paidAmount;
         }
         if (status === "paid") patch.paidAt = /* @__PURE__ */ new Date();
-        const [row] = await db.update(invoices).set(patch).where((0, import_drizzle_orm14.and)((0, import_drizzle_orm14.eq)(invoices.id, id), (0, import_drizzle_orm14.eq)(invoices.orgId, ctx.orgId))).returning();
+        const [row] = await db.update(invoices).set(patch).where(and14(eq14(invoices.id, id), eq14(invoices.orgId, ctx.orgId))).returning();
         return row;
       },
       /** Recalculate amountDue after a payment is applied */
       async applyPayment(invoiceId, paymentAmount) {
         const [row] = await db.update(invoices).set({
-          amountPaid: import_drizzle_orm14.sql`amount_paid + ${paymentAmount}`,
-          amountDue: import_drizzle_orm14.sql`GREATEST(0, amount_due - ${paymentAmount})`,
-          status: import_drizzle_orm14.sql`CASE
+          amountPaid: sql6`amount_paid + ${paymentAmount}`,
+          amountDue: sql6`GREATEST(0, amount_due - ${paymentAmount})`,
+          status: sql6`CASE
               WHEN amount_paid + ${paymentAmount} >= total_amount THEN 'paid'::invoice_status
               WHEN amount_paid + ${paymentAmount} > 0 THEN 'partial'::invoice_status
               ELSE status
             END`,
-          paidAt: import_drizzle_orm14.sql`CASE WHEN amount_paid + ${paymentAmount} >= total_amount THEN now() ELSE paid_at END`,
+          paidAt: sql6`CASE WHEN amount_paid + ${paymentAmount} >= total_amount THEN now() ELSE paid_at END`,
           updatedAt: /* @__PURE__ */ new Date()
-        }).where((0, import_drizzle_orm14.and)((0, import_drizzle_orm14.eq)(invoices.id, invoiceId), (0, import_drizzle_orm14.eq)(invoices.orgId, ctx.orgId))).returning();
+        }).where(and14(eq14(invoices.id, invoiceId), eq14(invoices.orgId, ctx.orgId))).returning();
         return row;
       },
       /** Revenue summary for admin dashboard */
       async revenueSummary(seasonId) {
-        const conditions = [(0, import_drizzle_orm14.eq)(invoices.orgId, ctx.orgId)];
-        if (seasonId) conditions.push((0, import_drizzle_orm14.eq)(invoices.seasonId, seasonId));
+        const conditions = [eq14(invoices.orgId, ctx.orgId)];
+        if (seasonId) conditions.push(eq14(invoices.seasonId, seasonId));
         const [row] = await db.select({
-          totalBilled: import_drizzle_orm14.sql`coalesce(sum(total_amount),0)::int`,
-          totalCollected: import_drizzle_orm14.sql`coalesce(sum(amount_paid),0)::int`,
-          totalOutstanding: import_drizzle_orm14.sql`coalesce(sum(amount_due),0)::int`,
-          overdueCount: import_drizzle_orm14.sql`count(*) filter (where status = 'overdue')::int`,
-          openCount: import_drizzle_orm14.sql`count(*) filter (where status IN ('open','partial'))::int`,
-          paidCount: import_drizzle_orm14.sql`count(*) filter (where status = 'paid')::int`
-        }).from(invoices).where((0, import_drizzle_orm14.and)(...conditions));
+          totalBilled: sql6`coalesce(sum(total_amount),0)::int`,
+          totalCollected: sql6`coalesce(sum(amount_paid),0)::int`,
+          totalOutstanding: sql6`coalesce(sum(amount_due),0)::int`,
+          overdueCount: sql6`count(*) filter (where status = 'overdue')::int`,
+          openCount: sql6`count(*) filter (where status IN ('open','partial'))::int`,
+          paidCount: sql6`count(*) filter (where status = 'paid')::int`
+        }).from(invoices).where(and14(...conditions));
         return row;
       }
     },
     payments: {
       async listForInvoice(invoiceId) {
-        return db.select().from(payments).where((0, import_drizzle_orm14.and)((0, import_drizzle_orm14.eq)(payments.invoiceId, invoiceId), (0, import_drizzle_orm14.eq)(payments.orgId, ctx.orgId))).orderBy((0, import_drizzle_orm14.desc)(payments.createdAt));
+        return db.select().from(payments).where(and14(eq14(payments.invoiceId, invoiceId), eq14(payments.orgId, ctx.orgId))).orderBy(desc13(payments.createdAt));
       },
       async listForPlayer(playerId) {
-        return db.select().from(payments).where((0, import_drizzle_orm14.and)((0, import_drizzle_orm14.eq)(payments.playerId, playerId), (0, import_drizzle_orm14.eq)(payments.orgId, ctx.orgId))).orderBy((0, import_drizzle_orm14.desc)(payments.createdAt));
+        return db.select().from(payments).where(and14(eq14(payments.playerId, playerId), eq14(payments.orgId, ctx.orgId))).orderBy(desc13(payments.createdAt));
       },
       async record(input) {
         const [row] = await db.insert(payments).values({ ...input, orgId: ctx.orgId }).returning();
@@ -3188,16 +3241,16 @@ function createBillingRepository(db, ctx) {
           patch.failedAt = /* @__PURE__ */ new Date();
           patch.failureReason = opts.failureReason;
         }
-        const [row] = await db.update(payments).set(patch).where((0, import_drizzle_orm14.and)((0, import_drizzle_orm14.eq)(payments.id, id), (0, import_drizzle_orm14.eq)(payments.orgId, ctx.orgId))).returning();
+        const [row] = await db.update(payments).set(patch).where(and14(eq14(payments.id, id), eq14(payments.orgId, ctx.orgId))).returning();
         return row;
       }
     },
     paymentPlans: {
       async listForPlayer(playerId) {
-        return db.select().from(paymentPlans).where((0, import_drizzle_orm14.and)((0, import_drizzle_orm14.eq)(paymentPlans.playerId, playerId), (0, import_drizzle_orm14.eq)(paymentPlans.orgId, ctx.orgId))).orderBy((0, import_drizzle_orm14.desc)(paymentPlans.createdAt));
+        return db.select().from(paymentPlans).where(and14(eq14(paymentPlans.playerId, playerId), eq14(paymentPlans.orgId, ctx.orgId))).orderBy(desc13(paymentPlans.createdAt));
       },
       async getById(id) {
-        const [row] = await db.select().from(paymentPlans).where((0, import_drizzle_orm14.and)((0, import_drizzle_orm14.eq)(paymentPlans.id, id), (0, import_drizzle_orm14.eq)(paymentPlans.orgId, ctx.orgId))).limit(1);
+        const [row] = await db.select().from(paymentPlans).where(and14(eq14(paymentPlans.id, id), eq14(paymentPlans.orgId, ctx.orgId))).limit(1);
         return row ?? null;
       },
       async create(input) {
@@ -3205,7 +3258,7 @@ function createBillingRepository(db, ctx) {
         return row;
       },
       async updateStatus(id, status) {
-        const [row] = await db.update(paymentPlans).set({ status, updatedAt: /* @__PURE__ */ new Date() }).where((0, import_drizzle_orm14.and)((0, import_drizzle_orm14.eq)(paymentPlans.id, id), (0, import_drizzle_orm14.eq)(paymentPlans.orgId, ctx.orgId))).returning();
+        const [row] = await db.update(paymentPlans).set({ status, updatedAt: /* @__PURE__ */ new Date() }).where(and14(eq14(paymentPlans.id, id), eq14(paymentPlans.orgId, ctx.orgId))).returning();
         return row;
       }
     }
@@ -3235,7 +3288,7 @@ function createRepository(ctx) {
 
 // server/auth/tenant.ts
 function auth(req) {
-  return (0, import_express.getAuth)(req);
+  return getAuth(req);
 }
 var HttpError = class extends Error {
   constructor(status, message) {
@@ -3270,13 +3323,13 @@ async function resolveDbOrgId(clerkOrgId, orgSlug) {
   const db = getDb();
   const clauses = [];
   if (looksLikeUuid(clerkOrgId)) {
-    clauses.push((0, import_drizzle_orm15.eq)(orgs.id, clerkOrgId));
+    clauses.push(eq15(orgs.id, clerkOrgId));
   }
-  clauses.push(import_drizzle_orm15.sql`(${orgs.payload}->>'clerkOrgId') = ${clerkOrgId}`);
+  clauses.push(sql7`(${orgs.payload}->>'clerkOrgId') = ${clerkOrgId}`);
   if (orgSlug) {
-    clauses.push((0, import_drizzle_orm15.eq)(orgs.slug, orgSlug));
+    clauses.push(eq15(orgs.slug, orgSlug));
   }
-  const rows = await db.select().from(orgs).where((0, import_drizzle_orm15.and)((0, import_drizzle_orm15.or)(...clauses), (0, import_drizzle_orm15.isNull)(orgs.deletedAt))).limit(1);
+  const rows = await db.select().from(orgs).where(and15(or(...clauses), isNull15(orgs.deletedAt))).limit(1);
   return rows[0]?.id ?? null;
 }
 function teamIdFromRequest(req) {
@@ -3314,10 +3367,10 @@ async function requireOrg(req) {
   try {
     const db = getDb();
     [membership] = await db.select().from(orgMembers).where(
-      (0, import_drizzle_orm15.and)(
-        (0, import_drizzle_orm15.eq)(orgMembers.orgId, orgId),
-        (0, import_drizzle_orm15.eq)(orgMembers.userId, clerkAuth.userId),
-        (0, import_drizzle_orm15.isNull)(orgMembers.deletedAt)
+      and15(
+        eq15(orgMembers.orgId, orgId),
+        eq15(orgMembers.userId, clerkAuth.userId),
+        isNull15(orgMembers.deletedAt)
       )
     ).limit(1);
   } catch (e) {
@@ -3712,7 +3765,7 @@ function registerFilmAnalysisRoutes(router, service) {
 }
 
 // server/lib/mux.ts
-var import_mux_node = __toESM(require("@mux/mux-node"), 1);
+import Mux from "@mux/mux-node";
 var muxClient = null;
 function getMux() {
   if (!muxClient) {
@@ -3722,7 +3775,7 @@ function getMux() {
         "Film upload is not available in this environment. MUX_TOKEN_ID and MUX_TOKEN_SECRET are not configured."
       );
     }
-    muxClient = new import_mux_node.default({
+    muxClient = new Mux({
       tokenId: process.env.MUX_TOKEN_ID,
       tokenSecret: process.env.MUX_TOKEN_SECRET
     });
@@ -4461,7 +4514,7 @@ function registerMeRoute(router) {
 }
 
 // server/modules/roster/routes.ts
-var import_drizzle_orm16 = require("drizzle-orm");
+import { and as and16, desc as desc14, eq as eq16, isNull as isNull16 } from "drizzle-orm";
 function registerRosterRoutes(router) {
   router.get("/", async (req, res) => {
     try {
@@ -4542,17 +4595,17 @@ function registerRosterRoutes(router) {
         pinnedNotes
       ] = await Promise.all([
         // Guardians
-        db.select().from(playerGuardians2).where((0, import_drizzle_orm16.and)(
-          (0, import_drizzle_orm16.eq)(playerGuardians2.orgId, ctx.orgId),
-          (0, import_drizzle_orm16.eq)(playerGuardians2.playerId, req.params.id),
-          (0, import_drizzle_orm16.isNull)(playerGuardians2.deletedAt)
-        )).orderBy((0, import_drizzle_orm16.desc)(playerGuardians2.isPrimary)),
+        db.select().from(playerGuardians2).where(and16(
+          eq16(playerGuardians2.orgId, ctx.orgId),
+          eq16(playerGuardians2.playerId, req.params.id),
+          isNull16(playerGuardians2.deletedAt)
+        )).orderBy(desc14(playerGuardians2.isPrimary)),
         // Latest IDP
-        db.select().from(idps2).where((0, import_drizzle_orm16.and)(
-          (0, import_drizzle_orm16.eq)(idps2.orgId, ctx.orgId),
-          (0, import_drizzle_orm16.eq)(idps2.playerId, req.params.id),
-          (0, import_drizzle_orm16.isNull)(idps2.deletedAt)
-        )).orderBy((0, import_drizzle_orm16.desc)(idps2.createdAt)).limit(1),
+        db.select().from(idps2).where(and16(
+          eq16(idps2.orgId, ctx.orgId),
+          eq16(idps2.playerId, req.params.id),
+          isNull16(idps2.deletedAt)
+        )).orderBy(desc14(idps2.createdAt)).limit(1),
         // Last 20 attendance records (joined with event for type/title)
         db.select({
           id: eventAttendance2.id,
@@ -4563,20 +4616,20 @@ function registerRosterRoutes(router) {
           eventTitle: events2.title,
           eventType: events2.type,
           eventStartsAt: events2.startsAt
-        }).from(eventAttendance2).leftJoin(events2, (0, import_drizzle_orm16.eq)(eventAttendance2.eventId, events2.id)).where((0, import_drizzle_orm16.and)(
-          (0, import_drizzle_orm16.eq)(eventAttendance2.orgId, ctx.orgId),
-          (0, import_drizzle_orm16.eq)(eventAttendance2.playerId, req.params.id)
-        )).orderBy((0, import_drizzle_orm16.desc)(events2.startsAt)).limit(20),
+        }).from(eventAttendance2).leftJoin(events2, eq16(eventAttendance2.eventId, events2.id)).where(and16(
+          eq16(eventAttendance2.orgId, ctx.orgId),
+          eq16(eventAttendance2.playerId, req.params.id)
+        )).orderBy(desc14(events2.startsAt)).limit(20),
         // Recent assignments
         repo.assignments.list({ playerId: req.params.id }),
         // 14-day readiness
         repo.readiness.listForPlayer(req.params.id, 14),
         // Active / monitoring injuries
-        db.select().from(injuryRecords2).where((0, import_drizzle_orm16.and)(
-          (0, import_drizzle_orm16.eq)(injuryRecords2.orgId, ctx.orgId),
-          (0, import_drizzle_orm16.eq)(injuryRecords2.playerId, req.params.id),
-          (0, import_drizzle_orm16.isNull)(injuryRecords2.deletedAt)
-        )).orderBy((0, import_drizzle_orm16.desc)(injuryRecords2.injuredAt)).limit(10),
+        db.select().from(injuryRecords2).where(and16(
+          eq16(injuryRecords2.orgId, ctx.orgId),
+          eq16(injuryRecords2.playerId, req.params.id),
+          isNull16(injuryRecords2.deletedAt)
+        )).orderBy(desc14(injuryRecords2.injuredAt)).limit(10),
         // Recent notes
         repo.playerNotes.listForPlayer(req.params.id, 10)
       ]);
@@ -4743,12 +4796,12 @@ function registerRosterRoutes(router) {
       const db = getDb();
       const { idps: idps2 } = schema_exports;
       const idpRows = await db.select().from(idps2).where(
-        (0, import_drizzle_orm16.and)(
-          (0, import_drizzle_orm16.eq)(idps2.orgId, ctx.orgId),
-          (0, import_drizzle_orm16.eq)(idps2.playerId, req.params.id),
-          (0, import_drizzle_orm16.isNull)(idps2.deletedAt)
+        and16(
+          eq16(idps2.orgId, ctx.orgId),
+          eq16(idps2.playerId, req.params.id),
+          isNull16(idps2.deletedAt)
         )
-      ).orderBy((0, import_drizzle_orm16.desc)(idps2.createdAt)).limit(1);
+      ).orderBy(desc14(idps2.createdAt)).limit(1);
       const idp = idpRows[0] ?? null;
       if (!idp) return res.json({ idp: null, focusAreas: [], comments: [] });
       const repo = createRepository(ctx);
@@ -4998,12 +5051,12 @@ function registerRosterRoutes(router) {
         eventType: events2.type,
         eventStartsAt: events2.startsAt,
         opponent: events2.opponent
-      }).from(eventAttendance2).leftJoin(events2, (0, import_drizzle_orm16.eq)(eventAttendance2.eventId, events2.id)).where(
-        (0, import_drizzle_orm16.and)(
-          (0, import_drizzle_orm16.eq)(eventAttendance2.orgId, ctx.orgId),
-          (0, import_drizzle_orm16.eq)(eventAttendance2.playerId, req.params.id)
+      }).from(eventAttendance2).leftJoin(events2, eq16(eventAttendance2.eventId, events2.id)).where(
+        and16(
+          eq16(eventAttendance2.orgId, ctx.orgId),
+          eq16(eventAttendance2.playerId, req.params.id)
         )
-      ).orderBy((0, import_drizzle_orm16.desc)(events2.startsAt)).limit(limit);
+      ).orderBy(desc14(events2.startsAt)).limit(limit);
       res.json(rows);
     } catch (e) {
       res.status(e.status ?? 500).json({ error: e.message });
@@ -5173,8 +5226,8 @@ function registerPracticePlanRoutes(router) {
 }
 
 // server/inngest/client.ts
-var import_inngest = require("inngest");
-var inngest = new import_inngest.Inngest({
+import { Inngest } from "inngest";
+var inngest = new Inngest({
   id: "hoopsos",
   eventKey: process.env.INNGEST_EVENT_KEY
 });
@@ -5580,8 +5633,8 @@ function registerReadinessRoutes(router) {
 init_players();
 init_guardians();
 init_messages();
-var import_drizzle_orm17 = require("drizzle-orm");
 init_twilio();
+import { eq as eq17, and as and17, isNull as isNull17 } from "drizzle-orm";
 
 // server/modules/messaging/recipient-resolver.ts
 function activeOnly(players2) {
@@ -5793,8 +5846,8 @@ function registerMessagingRoutes(router) {
       const ctx = await requireOrg(req);
       const spec = req.body;
       const [allPlayers, allGuardians] = await Promise.all([
-        getDb().select().from(players).where((0, import_drizzle_orm17.and)((0, import_drizzle_orm17.eq)(players.orgId, ctx.orgId), (0, import_drizzle_orm17.isNull)(players.deletedAt))),
-        getDb().select().from(playerGuardians).where((0, import_drizzle_orm17.and)((0, import_drizzle_orm17.eq)(playerGuardians.orgId, ctx.orgId), (0, import_drizzle_orm17.isNull)(playerGuardians.deletedAt)))
+        getDb().select().from(players).where(and17(eq17(players.orgId, ctx.orgId), isNull17(players.deletedAt))),
+        getDb().select().from(playerGuardians).where(and17(eq17(playerGuardians.orgId, ctx.orgId), isNull17(playerGuardians.deletedAt)))
       ]);
       const audience = resolveRecipients(spec, allPlayers, allGuardians);
       res.json({
@@ -5816,8 +5869,8 @@ function registerMessagingRoutes(router) {
         return res.status(400).json({ error: "Message body is required" });
       }
       const [allPlayers, allGuardians] = await Promise.all([
-        getDb().select().from(players).where((0, import_drizzle_orm17.and)((0, import_drizzle_orm17.eq)(players.orgId, ctx.orgId), (0, import_drizzle_orm17.isNull)(players.deletedAt))),
-        getDb().select().from(playerGuardians).where((0, import_drizzle_orm17.and)((0, import_drizzle_orm17.eq)(playerGuardians.orgId, ctx.orgId), (0, import_drizzle_orm17.isNull)(playerGuardians.deletedAt)))
+        getDb().select().from(players).where(and17(eq17(players.orgId, ctx.orgId), isNull17(players.deletedAt))),
+        getDb().select().from(playerGuardians).where(and17(eq17(playerGuardians.orgId, ctx.orgId), isNull17(playerGuardians.deletedAt)))
       ]);
       const audience = resolveRecipients(spec, allPlayers, allGuardians);
       if (audience.totalContacts === 0) {
@@ -6047,12 +6100,12 @@ function registerWearableRoutes(router) {
 }
 
 // server/lib/openai.ts
-var import_openai = __toESM(require("openai"), 1);
+import OpenAI from "openai";
 var client = null;
 function getOpenAI() {
   if (!client) {
     if (!process.env.OPENAI_API_KEY) throw new Error("OPENAI_API_KEY not set");
-    client = new import_openai.default({ apiKey: process.env.OPENAI_API_KEY });
+    client = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
   }
   return client;
 }
@@ -6286,16 +6339,16 @@ function registerCoachingActionRoutes(router) {
 }
 
 // server/modules/parent/access.ts
-var import_drizzle_orm18 = require("drizzle-orm");
+import { and as and18, eq as eq18, isNull as isNull18 } from "drizzle-orm";
 init_guardians();
 async function validateParentChildAccess(orgId, guardianUserId, playerId) {
   const db = getDb();
   const [row] = await db.select({ id: playerGuardians.id }).from(playerGuardians).where(
-    (0, import_drizzle_orm18.and)(
-      (0, import_drizzle_orm18.eq)(playerGuardians.orgId, orgId),
-      (0, import_drizzle_orm18.eq)(playerGuardians.guardianUserId, guardianUserId),
-      (0, import_drizzle_orm18.eq)(playerGuardians.playerId, playerId),
-      (0, import_drizzle_orm18.isNull)(playerGuardians.deletedAt)
+    and18(
+      eq18(playerGuardians.orgId, orgId),
+      eq18(playerGuardians.guardianUserId, guardianUserId),
+      eq18(playerGuardians.playerId, playerId),
+      isNull18(playerGuardians.deletedAt)
     )
   ).limit(1);
   if (!row) {
@@ -6820,11 +6873,11 @@ function registerTeamRoutes(router) {
 }
 
 // server/lib/invoiceNumber.ts
-var import_drizzle_orm19 = require("drizzle-orm");
+import { eq as eq19, sql as sql8 } from "drizzle-orm";
 async function generateInvoiceNumber(orgId) {
   const db = getDb();
   const year = (/* @__PURE__ */ new Date()).getFullYear();
-  const [result] = await db.select({ count: import_drizzle_orm19.sql`count(*)::int` }).from(invoices).where((0, import_drizzle_orm19.eq)(invoices.orgId, orgId));
+  const [result] = await db.select({ count: sql8`count(*)::int` }).from(invoices).where(eq19(invoices.orgId, orgId));
   const seq = (result?.count ?? 0) + 1;
   return `INV-${year}-${String(seq).padStart(4, "0")}`;
 }
@@ -7374,12 +7427,12 @@ function registerAdminRoutes(router) {
 }
 
 // server/routes/webhooks.ts
-var import_crypto = require("crypto");
-var import_express2 = __toESM(require("express"), 1);
+import { createHmac, timingSafeEqual } from "crypto";
+import express from "express";
 function registerWebhookRoutes(router) {
   router.post(
     "/mux",
-    import_express2.default.raw({ type: "application/json" }),
+    express.raw({ type: "application/json" }),
     async (req, res, next) => {
       try {
         const sigHeader = req.headers["mux-signature"];
@@ -7393,13 +7446,13 @@ function registerWebhookRoutes(router) {
           }
           const timestamp28 = tPart.slice(2);
           const received = v1Part.slice(3);
-          const expected = (0, import_crypto.createHmac)(
+          const expected = createHmac(
             "sha256",
             process.env.MUX_WEBHOOK_SIGNING_SECRET
           ).update(`${timestamp28}.${req.body}`).digest("hex");
           let valid = false;
           try {
-            valid = (0, import_crypto.timingSafeEqual)(
+            valid = timingSafeEqual(
               Buffer.from(expected),
               Buffer.from(received)
             );
@@ -7426,7 +7479,7 @@ function registerWebhookRoutes(router) {
 }
 
 // server/lib/gemini.ts
-var import_generative_ai = require("@google/generative-ai");
+import { GoogleGenerativeAI, SchemaType } from "@google/generative-ai";
 var client2 = null;
 function getClient2() {
   if (!client2) {
@@ -7436,39 +7489,39 @@ function getClient2() {
         "Film analysis is not available in this environment. GEMINI_API_KEY is not configured."
       );
     }
-    client2 = new import_generative_ai.GoogleGenerativeAI(process.env.GEMINI_API_KEY);
+    client2 = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
   }
   return client2;
 }
 var ANALYSIS_SCHEMA = {
-  type: import_generative_ai.SchemaType.OBJECT,
+  type: SchemaType.OBJECT,
   properties: {
-    summary: { type: import_generative_ai.SchemaType.STRING },
-    keyObservations: { type: import_generative_ai.SchemaType.ARRAY, items: { type: import_generative_ai.SchemaType.STRING } },
+    summary: { type: SchemaType.STRING },
+    keyObservations: { type: SchemaType.ARRAY, items: { type: SchemaType.STRING } },
     teachableClips: {
-      type: import_generative_ai.SchemaType.ARRAY,
+      type: SchemaType.ARRAY,
       items: {
-        type: import_generative_ai.SchemaType.OBJECT,
+        type: SchemaType.OBJECT,
         properties: {
-          startSec: { type: import_generative_ai.SchemaType.NUMBER },
-          endSec: { type: import_generative_ai.SchemaType.NUMBER },
-          category: { type: import_generative_ai.SchemaType.STRING },
-          playerName: { type: import_generative_ai.SchemaType.STRING },
-          note: { type: import_generative_ai.SchemaType.STRING },
-          sentiment: { type: import_generative_ai.SchemaType.STRING },
-          teachable: { type: import_generative_ai.SchemaType.BOOLEAN }
+          startSec: { type: SchemaType.NUMBER },
+          endSec: { type: SchemaType.NUMBER },
+          category: { type: SchemaType.STRING },
+          playerName: { type: SchemaType.STRING },
+          note: { type: SchemaType.STRING },
+          sentiment: { type: SchemaType.STRING },
+          teachable: { type: SchemaType.BOOLEAN }
         },
         required: ["startSec", "endSec", "category", "note", "sentiment", "teachable"]
       }
     },
     suggestedFocusAreas: {
-      type: import_generative_ai.SchemaType.ARRAY,
+      type: SchemaType.ARRAY,
       items: {
-        type: import_generative_ai.SchemaType.OBJECT,
+        type: SchemaType.OBJECT,
         properties: {
-          playerName: { type: import_generative_ai.SchemaType.STRING },
-          category: { type: import_generative_ai.SchemaType.STRING },
-          reasoning: { type: import_generative_ai.SchemaType.STRING }
+          playerName: { type: SchemaType.STRING },
+          category: { type: SchemaType.STRING },
+          reasoning: { type: SchemaType.STRING }
         },
         required: ["category", "reasoning"]
       }
@@ -7491,20 +7544,20 @@ async function analyzeFilmSession(params) {
   return JSON.parse(text28);
 }
 var WOD_BLOCK_SCHEMA = {
-  type: import_generative_ai.SchemaType.OBJECT,
+  type: SchemaType.OBJECT,
   properties: {
-    theme: { type: import_generative_ai.SchemaType.STRING },
-    rationale: { type: import_generative_ai.SchemaType.STRING },
+    theme: { type: SchemaType.STRING },
+    rationale: { type: SchemaType.STRING },
     blocks: {
-      type: import_generative_ai.SchemaType.ARRAY,
+      type: SchemaType.ARRAY,
       items: {
-        type: import_generative_ai.SchemaType.OBJECT,
+        type: SchemaType.OBJECT,
         properties: {
-          block_type: { type: import_generative_ai.SchemaType.STRING },
-          drill_name: { type: import_generative_ai.SchemaType.STRING },
-          minutes: { type: import_generative_ai.SchemaType.NUMBER },
-          coaching_points: { type: import_generative_ai.SchemaType.ARRAY, items: { type: import_generative_ai.SchemaType.STRING } },
-          success_metrics: { type: import_generative_ai.SchemaType.ARRAY, items: { type: import_generative_ai.SchemaType.STRING } }
+          block_type: { type: SchemaType.STRING },
+          drill_name: { type: SchemaType.STRING },
+          minutes: { type: SchemaType.NUMBER },
+          coaching_points: { type: SchemaType.ARRAY, items: { type: SchemaType.STRING } },
+          success_metrics: { type: SchemaType.ARRAY, items: { type: SchemaType.STRING } }
         },
         required: ["block_type", "drill_name", "minutes", "coaching_points", "success_metrics"]
       }
@@ -7542,8 +7595,8 @@ Return structured JSON following the schema exactly.`;
 // server/inngest/functions/analyze-film.ts
 init_client();
 init_schema();
-var import_drizzle_orm20 = require("drizzle-orm");
-var import_nanoid20 = require("nanoid");
+import { eq as eq20, and as and19 } from "drizzle-orm";
+import { nanoid as nanoid20 } from "nanoid";
 var analyzeFilmFn = inngest.createFunction(
   {
     id: "analyze-film-session",
@@ -7555,7 +7608,7 @@ var analyzeFilmFn = inngest.createFunction(
     const { sessionId, orgId, muxPlaybackId, durationSecs } = event.data;
     const sessionData = await step.run("load-session", async () => {
       const db = getDb();
-      const [session] = await db.select().from(filmSessions).where((0, import_drizzle_orm20.and)((0, import_drizzle_orm20.eq)(filmSessions.id, sessionId), (0, import_drizzle_orm20.eq)(filmSessions.orgId, orgId))).limit(1);
+      const [session] = await db.select().from(filmSessions).where(and19(eq20(filmSessions.id, sessionId), eq20(filmSessions.orgId, orgId))).limit(1);
       return session ?? null;
     });
     if (!sessionData) throw new Error(`Session ${sessionId} not found`);
@@ -7581,12 +7634,12 @@ var analyzeFilmFn = inngest.createFunction(
           aiAnalyzedAt: (/* @__PURE__ */ new Date()).toISOString()
         },
         status: "ready"
-      }).where((0, import_drizzle_orm20.eq)(filmSessions.id, sessionId));
+      }).where(eq20(filmSessions.id, sessionId));
     });
     await step.run("create-annotations", async () => {
       const db = getDb();
       const annotationRows = analysis.teachableClips.map((clip) => ({
-        id: (0, import_nanoid20.nanoid)(),
+        id: nanoid20(),
         sessionId,
         orgId,
         startMs: Math.round(clip.startSec * 1e3),
@@ -7612,10 +7665,10 @@ var analyzeFilmFn = inngest.createFunction(
     const resolutionResult = await step.run("check-resolutions", async () => {
       const db = getDb();
       const pendingActions = await db.select().from(coachingActions).where(
-        (0, import_drizzle_orm20.and)(
-          (0, import_drizzle_orm20.eq)(coachingActions.followUpSessionId, sessionId),
-          (0, import_drizzle_orm20.eq)(coachingActions.status, "in_progress"),
-          (0, import_drizzle_orm20.eq)(coachingActions.orgId, orgId)
+        and19(
+          eq20(coachingActions.followUpSessionId, sessionId),
+          eq20(coachingActions.status, "in_progress"),
+          eq20(coachingActions.orgId, orgId)
         )
       );
       if (pendingActions.length === 0) return { checked: 0, resolved: 0 };
@@ -7643,7 +7696,7 @@ var analyzeFilmFn = inngest.createFunction(
               autoResolved: true
             },
             updatedAt: /* @__PURE__ */ new Date()
-          }).where((0, import_drizzle_orm20.eq)(coachingActions.id, action.id));
+          }).where(eq20(coachingActions.id, action.id));
           resolved++;
         }
       }
@@ -7715,7 +7768,7 @@ var attendanceNotifyFn = inngest.createFunction(
 // server/inngest/functions/notify-coaching-action.ts
 init_client();
 init_schema();
-var import_drizzle_orm21 = require("drizzle-orm");
+import { eq as eq21 } from "drizzle-orm";
 var notifyCoachingActionFn = inngest.createFunction(
   {
     id: "notify-coaching-action",
@@ -7731,7 +7784,7 @@ var notifyCoachingActionFn = inngest.createFunction(
     }
     const action = await step.run("load-action", async () => {
       const db = getDb();
-      const [row] = await db.select().from(coachingActions).where((0, import_drizzle_orm21.eq)(coachingActions.id, actionId)).limit(1);
+      const [row] = await db.select().from(coachingActions).where(eq21(coachingActions.id, actionId)).limit(1);
       return row ?? null;
     });
     if (!action || action.status === "dismissed") {
@@ -7805,73 +7858,73 @@ function actionTypeTitle(actionType) {
 
 // server/app.ts
 function createApp() {
-  const app = (0, import_express3.default)();
+  const app = express2();
   app.set("trust proxy", 1);
-  const webhookRouter = import_express3.default.Router();
+  const webhookRouter = express2.Router();
   registerWebhookRoutes(webhookRouter);
   app.use("/webhooks", webhookRouter);
-  app.use(import_express3.default.json());
-  app.use((0, import_express4.clerkMiddleware)());
-  const filmRouter = import_express3.default.Router();
+  app.use(express2.json());
+  app.use(clerkMiddleware());
+  const filmRouter = express2.Router();
   registerFilmAnalysisRoutes(filmRouter, new DbFilmAnalysisService());
   app.use("/api/film-analysis", filmRouter);
-  const meRouter = import_express3.default.Router();
+  const meRouter = express2.Router();
   registerMeRoute(meRouter);
   app.use("/api", meRouter);
-  const rosterRouter = import_express3.default.Router();
+  const rosterRouter = express2.Router();
   registerRosterRoutes(rosterRouter);
   app.use("/api/roster", rosterRouter);
-  const assignmentsRouter = import_express3.default.Router();
+  const assignmentsRouter = express2.Router();
   registerAssignmentRoutes(assignmentsRouter);
   app.use("/api/assignments", assignmentsRouter);
-  const practicePlansRouter = import_express3.default.Router();
+  const practicePlansRouter = express2.Router();
   registerPracticePlanRoutes(practicePlansRouter);
   app.use("/api/practice-plans", practicePlansRouter);
-  const eventsRouter = import_express3.default.Router();
+  const eventsRouter = express2.Router();
   registerEventRoutes(eventsRouter);
   app.use("/api/events", eventsRouter);
-  const readinessRouter = import_express3.default.Router();
+  const readinessRouter = express2.Router();
   registerReadinessRoutes(readinessRouter);
   app.use("/api/readiness", readinessRouter);
-  const messagingRouter = import_express3.default.Router();
+  const messagingRouter = express2.Router();
   registerMessagingRoutes(messagingRouter);
   app.use("/api/messages", messagingRouter);
-  const wearablesRouter = import_express3.default.Router();
+  const wearablesRouter = express2.Router();
   registerWearableRoutes(wearablesRouter);
   app.use("/api/wearables", wearablesRouter);
-  const wodsRouter = import_express3.default.Router();
+  const wodsRouter = express2.Router();
   registerWodRoutes(wodsRouter);
   app.use("/api/wods", wodsRouter);
-  const coachingActionsRouter = import_express3.default.Router();
+  const coachingActionsRouter = express2.Router();
   registerCoachingActionRoutes(coachingActionsRouter);
   app.use("/api/coaching-actions", coachingActionsRouter);
-  const parentRouter = import_express3.default.Router();
+  const parentRouter = express2.Router();
   registerParentRoutes(parentRouter);
   app.use("/api/parent", parentRouter);
-  const announcementsRouter = import_express3.default.Router();
+  const announcementsRouter = express2.Router();
   registerAnnouncementRoutes(announcementsRouter);
   app.use("/api/announcements", announcementsRouter);
-  const waiversRouter = import_express3.default.Router();
+  const waiversRouter = express2.Router();
   registerWaiverRoutes(waiversRouter);
   app.use("/api/waivers", waiversRouter);
-  const seasonsRouter = import_express3.default.Router();
+  const seasonsRouter = express2.Router();
   registerSeasonRoutes(seasonsRouter);
   app.use("/api/seasons", seasonsRouter);
-  const teamsRouter = import_express3.default.Router();
+  const teamsRouter = express2.Router();
   registerTeamRoutes(teamsRouter);
   app.use("/api/teams", teamsRouter);
-  const registrationsRouter = import_express3.default.Router();
+  const registrationsRouter = express2.Router();
   registerRegistrationRoutes(registrationsRouter);
   app.use("/api/registrations", registrationsRouter);
-  const invoicesRouter = import_express3.default.Router();
+  const invoicesRouter = express2.Router();
   registerInvoiceRoutes(invoicesRouter);
   app.use("/api/invoices", invoicesRouter);
-  const adminRouter = import_express3.default.Router();
+  const adminRouter = express2.Router();
   registerAdminRoutes(adminRouter);
   app.use("/api/admin", adminRouter);
   app.use(
     "/api/inngest",
-    (0, import_express5.serve)({
+    serve({
       client: inngest,
       functions: [analyzeFilmFn, readinessAlertFn, attendanceNotifyFn, notifyCoachingActionFn]
     })
@@ -7881,3 +7934,6 @@ function createApp() {
 
 // server/_vercel_entry.ts
 var vercel_entry_default = createApp();
+export {
+  vercel_entry_default as default
+};
