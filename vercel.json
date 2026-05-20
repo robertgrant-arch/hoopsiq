@@ -13,11 +13,11 @@
     },
     {
       "source": "/api/:path+",
-      "destination": "/api"
+      "destination": "/api/server"
     },
     {
       "source": "/webhooks/:path*",
-      "destination": "/api"
+      "destination": "/api/server"
     },
     {
       "source": "/(.*)",
