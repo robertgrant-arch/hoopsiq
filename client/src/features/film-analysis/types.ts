@@ -265,6 +265,58 @@ export function buildSuggestedNote(
     .replace("{zone}", zone ? COURT_ZONE_LABELS[zone] : "this zone");
 }
 
+// ── Analysis pipeline status ───────────────────────────────────────────────────
+//
+// Tracks WHERE IN THE PIPELINE a clip is — distinct from CoachReviewStatus,
+// which tracks what the coach has done. A clip can be `inferred` (pipeline done)
+// but still `pending` from the coach's perspective.
+//
+// Lifecycle:
+//   pending → observed → inferred → needs_review? → (approved | corrected | rejected)
+//
+//   pending:      clip ingested, analysis not yet started
+//   observed:     observation layer complete — detections recorded, no inference yet
+//   inferred:     inference complete — event type + evidence attached
+//   needs_review: requiresReview=true OR coach manually flagged
+//   approved:     coach confirmed the inference (coachDecision.status=confirmed)
+//   corrected:    coach edited the label (coachDecision.status=edited)
+//   rejected:     coach rejected as irrelevant/wrong (coachDecision.status=rejected)
+
+export type AnalysisStatus =
+  | "pending"
+  | "observed"
+  | "inferred"
+  | "needs_review"
+  | "approved"
+  | "corrected"
+  | "rejected";
+
+export const ANALYSIS_STATUS_LABELS: Record<AnalysisStatus, string> = {
+  pending:      "Pending",
+  observed:     "Observed",
+  inferred:     "Inferred — awaiting review",
+  needs_review: "Needs review",
+  approved:     "Approved",
+  corrected:    "Coach corrected",
+  rejected:     "Rejected",
+};
+
+/** Derive AnalysisStatus from the pipeline state + coach decision. */
+export function deriveAnalysisStatus(
+  hasObservations: boolean,
+  hasInference: boolean,
+  requiresReview: boolean,
+  coachStatus: CoachReviewStatus | null,
+): AnalysisStatus {
+  if (coachStatus === "confirmed")             return "approved";
+  if (coachStatus === "edited")                return "corrected";
+  if (coachStatus === "rejected")              return "rejected";
+  if (!hasObservations)                        return "pending";
+  if (!hasInference)                           return "observed";
+  if (requiresReview || coachStatus === null)  return "needs_review";
+  return "inferred";
+}
+
 // ── AnalysisClip ───────────────────────────────────────────────────────────────
 //
 // The primary unit of structured analysis. One timestamped event, fully
@@ -273,6 +325,9 @@ export function buildSuggestedNote(
 export type AnalysisClip = {
   id:            string;
   sessionId:     string;
+
+  // Pipeline lifecycle — derived from observation + inference + coachDecision
+  analysisStatus: AnalysisStatus;
 
   // Time range
   startMs:       number;

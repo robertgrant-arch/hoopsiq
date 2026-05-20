@@ -5,6 +5,7 @@
 
 export type {
   AnalysisClip,
+  AnalysisStatus,
   Observation,
   ObservationType,
   Inference,
@@ -23,8 +24,10 @@ export {
   COURT_ZONE_LABELS,
   EVENT_LABELS,
   COACHING_NOTE_TEMPLATES,
+  ANALYSIS_STATUS_LABELS,
   buildSuggestedNote,
   confidenceTier,
+  deriveAnalysisStatus,
 } from "./types";
 
 export {

@@ -378,4 +378,82 @@ export function registerFilmAnalysisRoutes(
       }
     },
   );
+
+  // ── Structured analysis clips (features/film-analysis slice) ─────────────
+  //
+  // GET  /sessions/:sessionId/clips   — returns AnalysisClip[] for a session
+  // POST /clips/:clipId/review        — records coach decision
+  //
+  // These endpoints serve the bounded, evidence-backed analysis layer.
+  // Responses are structured AnalysisClip objects, not free-form prose.
+  // Until the CV pipeline emits real clips, we serve the structured mock
+  // so the UI hooks have a real route to call.
+
+  router.get(
+    "/sessions/:sessionId/clips",
+    async (req: Request, res: Response, next: NextFunction) => {
+      try {
+        await requireOrg(req);
+        const { sessionId } = req.params;
+
+        // When real CV pipeline is wired:
+        //   const clips = await service.getStructuredClips(sessionId, orgId, teamId);
+        // For now: import mock and filter by sessionId
+
+        const { MOCK_ANALYSIS_CLIPS } = await import(
+          // Dynamic import keeps this from being bundled into the main build
+          "../../client/src/features/film-analysis/mock" as any
+        ).catch(() => ({ MOCK_ANALYSIS_CLIPS: [] }));
+
+        const clips = Array.isArray(MOCK_ANALYSIS_CLIPS)
+          ? MOCK_ANALYSIS_CLIPS.filter(
+              (c: any) => !sessionId || c.sessionId === sessionId || sessionId === "session_001"
+            )
+          : [];
+
+        res.json(clips);
+      } catch (e) {
+        handleError(e, res, next);
+      }
+    },
+  );
+
+  router.post(
+    "/clips/:clipId/review",
+    async (req: Request, res: Response, next: NextFunction) => {
+      try {
+        const { orgId, userId } = await requireOrg(req);
+        const { clipId } = req.params;
+        const {
+          status,
+          note,
+          editedEventType,
+        }: { status: string; note?: string; editedEventType?: string } = req.body;
+
+        // Validate status against allowed coach review values
+        const VALID_STATUSES = [
+          "confirmed", "edited", "rejected", "flagged_for_teaching",
+        ];
+        if (!VALID_STATUSES.includes(status)) {
+          res.status(400).json({ error: `Invalid status: ${status}. Must be one of: ${VALID_STATUSES.join(", ")}` });
+          return;
+        }
+
+        // When persistence is wired:
+        //   await service.recordCoachDecision(clipId, orgId, userId, { status, note, editedEventType });
+
+        // For now: acknowledge optimistically (the client already applied the update)
+        res.json({
+          clipId,
+          status,
+          note: note ?? null,
+          editedEventType: editedEventType ?? null,
+          reviewedAt: new Date().toISOString(),
+          reviewedBy: userId,
+        });
+      } catch (e) {
+        handleError(e, res, next);
+      }
+    },
+  );
 }

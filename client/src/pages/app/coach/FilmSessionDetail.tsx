@@ -34,6 +34,8 @@ import { toast } from "sonner";
 import { ClipActionBar } from "@/components/film/ClipActionBar";
 import { TelestrationCanvas, type SavedTelestration } from "@/components/film/TelestrationCanvas";
 import { apiGet } from "@/lib/api/client";
+import { useAnalysisClips, useCoachReviewClip } from "@/features/film-analysis";
+import { AnalysisClipCard } from "@/features/film-analysis/components/AnalysisClipCard";
 
 // ── Mock data ──────────────────────────────────────────────────────────────────
 
@@ -183,6 +185,12 @@ const TOTAL_SECS = 6153;
 export function FilmSessionDetail() {
   const [, params] = useRoute("/app/coach/film/sessions/:id");
   const _sessionId = params?.id ?? SESSION.id;
+
+  // Structured analysis hooks (features/film-analysis slice)
+  // Uses session_001 as the demo session — real sessions use _sessionId
+  const ANALYSIS_SESSION_ID = "session_001";
+  const { data: analysisClips = [], isLoading: analysisLoading } = useAnalysisClips(ANALYSIS_SESSION_ID);
+  const { mutate: reviewClip, isPending: reviewPending } = useCoachReviewClip(ANALYSIS_SESSION_ID);
 
   // Video player state
   const [isPlaying, setIsPlaying] = useState(false);
@@ -786,151 +794,67 @@ export function FilmSessionDetail() {
 
               {/* ── AI Analysis tab ────────────────────────────────────────── */}
               {activeTab === "ai" && (
-                <div className="flex flex-col divide-y divide-border overflow-y-auto max-h-[680px]">
-                  {/* Session Summary */}
-                  <div className="px-4 py-3">
-                    <div className="flex items-center gap-1.5 mb-2">
+                <div className="flex flex-col overflow-y-auto max-h-[680px]">
+                  {/* Header */}
+                  <div className="px-4 py-3 border-b border-border">
+                    <div className="flex items-center gap-2 mb-1">
                       <Brain className="w-3.5 h-3.5 text-primary" />
-                      <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-                        Session Summary
+                      <span className="text-[13px] font-semibold">Structured Analysis</span>
+                      <span className="text-[10px] font-mono text-muted-foreground ml-1 uppercase tracking-[0.1em]">
+                        observation · inference · evidence
                       </span>
                     </div>
-                    <p className="text-[13.5px] text-foreground/85 leading-relaxed">
-                      {AI_ANALYSIS.summary}
+                    <p className="text-[11.5px] text-muted-foreground">
+                      Each clip shows what was detected, how it was interpreted, and why.
+                      Approve or correct each one — your decisions are recorded.
                     </p>
-                  </div>
-
-                  {/* Key Observations */}
-                  <div className="px-4 py-3">
-                    <div className="flex items-center gap-1.5 mb-2.5">
-                      <Target className="w-3.5 h-3.5 text-primary" />
-                      <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-                        Key Observations
+                    <div className="flex items-center gap-4 mt-2">
+                      <span className="text-[11px] text-muted-foreground">
+                        <span className="font-semibold text-foreground">
+                          {analysisClips.filter(c => !c.coachDecision).length}
+                        </span> pending
                       </span>
-                    </div>
-                    <ul className="flex flex-col gap-2">
-                      {AI_ANALYSIS.keyObservations.map((obs, i) => (
-                        <li key={i} className="flex items-start gap-2">
-                          <span className="w-1.5 h-1.5 rounded-full bg-primary/60 mt-[5px] shrink-0" />
-                          <span className="text-[12.5px] text-foreground/80 leading-snug">{obs}</span>
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-
-                  {/* Teachable Moments */}
-                  <div className="px-4 py-3">
-                    <div className="flex items-center gap-1.5 mb-2.5">
-                      <Sparkles className="w-3.5 h-3.5 text-amber-400" />
-                      <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-                        Teachable Moments
+                      <span className="text-[11px] text-muted-foreground">
+                        <span className="font-semibold" style={{ color: "oklch(0.78 0.16 75)" }}>
+                          {analysisClips.filter(c => c.inference.requiresReview && !c.coachDecision).length}
+                        </span> needs review
                       </span>
-                      <Badge className="ml-auto text-[10px] h-4 bg-amber-400/15 text-amber-400 border-0 font-medium">
-                        {AI_ANALYSIS.teachableMoments} detected
-                      </Badge>
-                    </div>
-                    <div className="flex flex-col gap-2">
-                      {teachableClips.map((clip) => {
-                        const colors = CATEGORY_COLORS[clip.category] ?? CATEGORY_COLORS.offense;
-                        return (
-                          <div
-                            key={clip.id}
-                            className="flex items-start gap-2.5 p-2 rounded-lg bg-muted/40 hover:bg-muted/60 transition-colors cursor-pointer"
-                            onClick={() => {
-                              setSelectedClipId(clip.id);
-                              setActiveTab("clips");
-                            }}
-                          >
-                            <Lightbulb className="w-3.5 h-3.5 text-amber-400 shrink-0 mt-0.5" />
-                            <div className="flex-1 min-w-0">
-                              <div className="flex items-center gap-1.5 mb-0.5">
-                                <span className="text-[11px] font-mono text-muted-foreground">{clip.label}</span>
-                                <span className="text-[11px] font-medium">{clip.player}</span>
-                                <span
-                                  className={`text-[10px] px-1.5 py-px rounded-full capitalize ${colors.bg} ${colors.text}`}
-                                >
-                                  {clip.category}
-                                </span>
-                              </div>
-                              <p className="text-[11.5px] text-muted-foreground line-clamp-1 leading-snug">
-                                {clip.note}
-                              </p>
-                            </div>
-                          </div>
-                        );
-                      })}
+                      <span className="text-[11px] text-muted-foreground">
+                        <span className="font-semibold" style={{ color: "oklch(0.75 0.12 140)" }}>
+                          {analysisClips.filter(c => c.coachDecision?.status === "confirmed" || c.coachDecision?.status === "edited").length}
+                        </span> approved
+                      </span>
                     </div>
                   </div>
 
-                  {/* Suggested Assignments */}
-                  <div className="px-4 py-3">
-                    <div className="flex items-center gap-1.5 mb-2.5">
-                      <ClipboardList className="w-3.5 h-3.5 text-primary" />
-                      <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-                        Suggested Assignments
-                      </span>
-                    </div>
-                    <div className="flex flex-col gap-3">
-                      {AI_ANALYSIS.suggestedAssignments
-                        .filter((s) => !dismissedSuggestions.has(s.id))
-                        .map((suggestion) => {
-                          const linkedClip = getClipForSuggestion(suggestion.clipId);
-                          return (
-                            <div
-                              key={suggestion.id}
-                              className="rounded-lg border border-border bg-muted/30 p-3 flex flex-col gap-2"
-                            >
-                              <div className="flex items-start justify-between gap-2">
-                                <div>
-                                  <p className="text-[12.5px] font-semibold leading-tight">
-                                    {suggestion.player}
-                                  </p>
-                                  <p className="text-[12px] text-foreground/80 mt-0.5">
-                                    {suggestion.drill}
-                                  </p>
-                                </div>
-                              </div>
-                              <p className="text-[11.5px] text-muted-foreground leading-snug">
-                                {suggestion.reason}
-                              </p>
-                              {linkedClip && (
-                                <button
-                                  onClick={() => {
-                                    setSelectedClipId(linkedClip.id);
-                                    setActiveTab("clips");
-                                  }}
-                                  className="text-[11px] text-primary hover:underline flex items-center gap-1 w-fit"
-                                >
-                                  <Film className="w-3 h-3" />
-                                  Clip at {linkedClip.label}
-                                </button>
-                              )}
-                              <ClipActionBar
-                                clipId={suggestion.clipId}
-                                sessionId={SESSION.id}
-                                playerId={suggestion.playerId}
-                                playerName={suggestion.player}
-                                issueCategory="Finishing"
-                                compact={false}
-                                onActionCreated={() => {
-                                  setDismissedSuggestions((prev) => new Set(Array.from(prev).concat(suggestion.id)));
-                                }}
-                              />
-                              <Button
-                                size="sm"
-                                variant="ghost"
-                                className="h-6 text-[11px] text-muted-foreground w-full"
-                                onClick={() => {
-                                  setDismissedSuggestions((prev) => new Set(Array.from(prev).concat(suggestion.id)));
-                                  toast("Suggestion dismissed");
-                                }}
-                              >
-                                Dismiss suggestion
-                              </Button>
-                            </div>
-                          );
-                        })}
-                    </div>
+                  {/* Structured clip cards */}
+                  <div className="p-3 flex flex-col gap-3">
+                    {analysisLoading ? (
+                      <div className="space-y-2 p-2">
+                        {[1, 2, 3].map(i => (
+                          <div key={i} className="h-20 rounded-xl bg-muted animate-pulse" />
+                        ))}
+                      </div>
+                    ) : analysisClips.length === 0 ? (
+                      <div className="px-4 py-8 text-center text-[13px] text-muted-foreground">
+                        No structured analysis available for this session yet.
+                      </div>
+                    ) : (
+                      analysisClips.map(clip => (
+                        <AnalysisClipCard
+                          key={clip.id}
+                          clip={clip}
+                          onReview={(clipId, status, note, editedType) =>
+                            reviewClip({ clipId, status, note, editedEventType: editedType })
+                          }
+                          isPending={reviewPending}
+                        />
+                      ))
+                    )}
+                    <p className="text-[10.5px] text-center text-muted-foreground/50 pt-2 border-t border-border/30">
+                      Scope: shot attempts · drives · turnovers · closeouts · on-ball defense.
+                      Off-ball reads and multi-possession patterns are not classified.
+                    </p>
                   </div>
                 </div>
               )}

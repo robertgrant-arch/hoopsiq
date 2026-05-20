@@ -18,7 +18,7 @@ import type {
   AnalysisClip,
   SessionAnalysisSummary,
 } from "./types";
-import { buildSuggestedNote, confidenceTier } from "./types";
+import { buildSuggestedNote, confidenceTier, deriveAnalysisStatus } from "./types";
 
 const SESSION = "session_001";
 
@@ -43,6 +43,7 @@ export const MOCK_ANALYSIS_CLIPS: AnalysisClip[] = [
     primaryPlayerName:   "Marcus Davis",
     primaryPlayerJersey: "3",
     teamSide:            "home",
+    analysisStatus:      "needs_review",
 
     observations: [
       {
@@ -134,6 +135,7 @@ export const MOCK_ANALYSIS_CLIPS: AnalysisClip[] = [
     primaryPlayerName:   "Marcus Davis",
     primaryPlayerJersey: "3",
     teamSide:            "home",
+    analysisStatus:      "inferred",
 
     observations: [
       {
@@ -218,6 +220,7 @@ export const MOCK_ANALYSIS_CLIPS: AnalysisClip[] = [
     primaryPlayerName:   "James Carter",
     primaryPlayerJersey: "11",
     teamSide:            "home",
+    analysisStatus:      "needs_review",
 
     observations: [
       {
@@ -284,6 +287,7 @@ export const MOCK_ANALYSIS_CLIPS: AnalysisClip[] = [
     primaryPlayerName:   "James Carter",
     primaryPlayerJersey: "11",
     teamSide:            "home",
+    analysisStatus:      "approved",
 
     observations: [
       {
@@ -370,6 +374,7 @@ export const MOCK_ANALYSIS_CLIPS: AnalysisClip[] = [
     primaryPlayerName:   "Marcus Davis",
     primaryPlayerJersey: "3",
     teamSide:            "home",
+    analysisStatus:      "corrected",
 
     observations: [
       {
@@ -449,6 +454,7 @@ export const MOCK_ANALYSIS_CLIPS: AnalysisClip[] = [
     primaryPlayerName:   "Marcus Davis",
     primaryPlayerJersey: "3",
     teamSide:            "home",
+    analysisStatus:      "approved",
 
     observations: [
       {
