@@ -1,5 +1,5 @@
 {
-  "buildCommand": "npx vite build",
+  "buildCommand": "npx vite build && npx esbuild api/index.ts --bundle --platform=node --format=esm --packages=external --outfile=api/index.js --alias:@shared/db=./shared/db --alias:@shared/db/client=./shared/db/client --alias:@shared/db/schema=./shared/db/schema --alias:@shared/db/schema/analysis_jobs=./shared/db/schema/analysis_jobs --alias:@shared/db/schema/annotations=./shared/db/schema/annotations --alias:@shared/db/schema/film_sessions=./shared/db/schema/film_sessions --alias:@shared/db/schema/guardians=./shared/db/schema/guardians --alias:@shared/db/schema/messages=./shared/db/schema/messages --alias:@shared/db/schema/players=./shared/db/schema/players",
   "outputDirectory": "dist/public",
     "installCommand": "pnpm install --frozen-lockfile",
   "rewrites": [
