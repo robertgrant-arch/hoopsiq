@@ -393,23 +393,94 @@ export function registerFilmAnalysisRoutes(
     },
   );
 
-  // ── Structured analysis routes (features/film-analysis slice) ──────────────
+  // ── Candidate clip routes (features/film-analysis slice) ──────────────────
   //
-  // GET  /sessions/:sessionId/clips    — AnalysisClip[] (empty until CV pipeline runs)
+  // Clips are derived from DetectedEvent annotations written by
+  // CandidateEventSpotter. The mapper converts DetectedEvent fields to the
+  // AnalysisClip shape the UI (AnalysisClipCard) expects.
+  //
+  // GET  /sessions/:sessionId/clips    — AnalysisClip[] from spotter candidates
   // GET  /sessions/:sessionId/summary  — SessionAnalysisSummary aggregate counts
   // POST /clips/:clipId/review         — coach decision (confirm/edit/reject/flag)
-  //
-  // All three return 401 in demo mode (no Clerk session).
-  // Client hooks in features/film-analysis/hooks.ts fall back to
-  // MOCK_ANALYSIS_CLIPS / MOCK_SESSION_SUMMARY on any error — no 500 possible.
+
+  // DetectedEventType → BoundedEventType (UI vocabulary)
+  const DET_TO_BOUNDED: Record<string, string> = {
+    make_2:      "shot_made_2",
+    miss_2:      "shot_missed_2",
+    make_3:      "shot_made_3",
+    miss_3:      "shot_missed_3",
+    ft_make:     "free_throw_made",
+    ft_miss:     "free_throw_missed",
+    drive:       "drive_right",
+    pass:        "pass_completed",
+    turnover:    "turnover_live_ball",
+    steal:       "steal",
+    block:       "block",
+    rebound_off: "transition_offense",
+    rebound_def: "transition_defense",
+  };
+
+  function fmtMs(ms: number): string {
+    const s = Math.floor(ms / 1000);
+    return `${Math.floor(s / 60)}:${String(s % 60).padStart(2, "0")}`;
+  }
+
+  function confTier(c: number): "high" | "medium" | "low" {
+    return c >= 0.85 ? "high" : c >= 0.60 ? "medium" : "low";
+  }
+
+  function eventToClip(event: import("../../../shared/film-analysis/types").DetectedEvent) {
+    const boundedType = DET_TO_BOUNDED[event.type] ?? "pass_completed";
+    const conf = event.confidence;
+    const endMs = event.endMs ?? event.tMs + 8_000;
+    return {
+      id: event.id,
+      sessionId: event.sessionId,
+      analysisStatus: "needs_review",
+      startMs: event.tMs,
+      endMs,
+      timestamp: fmtMs(event.tMs),
+      primaryPlayerId: event.primaryPlayerId ?? null,
+      primaryPlayerName: event.primaryPlayerName ?? null,
+      primaryPlayerJersey: null as null,
+      teamSide: "unknown" as const,
+      observations: [
+        {
+          type: "player_movement",
+          description: "Candidate window — review to confirm or reject this event",
+          startMs: event.tMs,
+          endMs,
+          detectionConfidence: conf,
+        },
+      ],
+      inference: {
+        eventType: boundedType,
+        confidence: conf,
+        tier: confTier(conf),
+        requiresReview: event.needsReview,
+        evidenceItems: [
+          {
+            type: "zone_entry",
+            description:
+              "Window identified by rule-based temporal spotter v1. " +
+              "No video frames analyzed — timestamp is an estimate.",
+            strength: "weak",
+          },
+        ],
+      },
+      suggestedCoachNote: null as null,
+      linkedSkillCategory: null as null,
+      coachDecision: null as null,
+    };
+  }
 
   router.get(
     "/sessions/:sessionId/clips",
     async (req: Request, res: Response, next: NextFunction) => {
       try {
-        await requireOrg(req);
-        // CV pipeline result goes here. Empty array → client falls back to MOCK_ANALYSIS_CLIPS.
-        res.json([]);
+        const { orgId, teamId } = await requireOrg(req);
+        const events = await service.getEvents(orgId, teamId, req.params.sessionId, {});
+        res.json(events.map(eventToClip));
       } catch (e) {
         handleError(e, res, next);
       }
@@ -420,9 +491,30 @@ export function registerFilmAnalysisRoutes(
     "/sessions/:sessionId/summary",
     async (req: Request, res: Response, next: NextFunction) => {
       try {
-        await requireOrg(req);
-        // Aggregate counts go here. null → client falls back to MOCK_SESSION_SUMMARY.
-        res.json(null);
+        const { orgId, teamId } = await requireOrg(req);
+        const { sessionId } = req.params;
+        const events = await service.getEvents(orgId, teamId, sessionId, {});
+        const clips = events.map(eventToClip);
+
+        const byEventType: Record<string, number> = {};
+        for (const c of clips) {
+          const t = c.inference.eventType;
+          byEventType[t] = (byEventType[t] ?? 0) + 1;
+        }
+
+        res.json({
+          sessionId,
+          totalClips: clips.length,
+          pendingReview: clips.filter((c) => !c.coachDecision).length,
+          confirmed: 0,
+          requiresAttention: clips.filter(
+            (c) => c.inference.requiresReview && !c.coachDecision
+          ).length,
+          byEventType,
+          byPlayer: {},
+          analysisVersion: "rule_based_spotter_v1",
+          processedAt: new Date().toISOString(),
+        });
       } catch (e) {
         handleError(e, res, next);
       }

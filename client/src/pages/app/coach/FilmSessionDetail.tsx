@@ -186,11 +186,9 @@ export function FilmSessionDetail() {
   const [, params] = useRoute("/app/coach/film/sessions/:id");
   const _sessionId = params?.id ?? SESSION.id;
 
-  // Structured analysis hooks (features/film-analysis slice)
-  // Uses session_001 as the demo session — real sessions use _sessionId
-  const ANALYSIS_SESSION_ID = "session_001";
-  const { data: analysisClips = [], isLoading: analysisLoading } = useAnalysisClips(ANALYSIS_SESSION_ID);
-  const { mutate: reviewClip, isPending: reviewPending } = useCoachReviewClip(ANALYSIS_SESSION_ID);
+  // Structured analysis hooks — use the real session ID from the URL
+  const { data: analysisClips = [], isLoading: analysisLoading } = useAnalysisClips(_sessionId);
+  const { mutate: reviewClip, isPending: reviewPending } = useCoachReviewClip(_sessionId);
 
   // Video player state
   const [isPlaying, setIsPlaying] = useState(false);

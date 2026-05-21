@@ -34,9 +34,12 @@ export function useAnalysisClips(sessionId: string) {
         const data = await apiGet<AnalysisClip[]>(
           `/film-analysis/sessions/${sessionId}/clips`
         );
-        if (Array.isArray(data) && data.length > 0) return data;
+        // Return the real array — including empty [] when no analysis has run.
+        // Only fall back to mock on a non-array (unexpected shape) or catch block.
+        if (Array.isArray(data)) return data;
         return MOCK_ANALYSIS_CLIPS;
       } catch {
+        // 401 in demo mode, network errors → show mock clips so UI is not blank
         return MOCK_ANALYSIS_CLIPS;
       }
     },
