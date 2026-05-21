@@ -10,7 +10,7 @@
 
 import { useState, useCallback } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { apiGet, apiPost } from "@/lib/api/client";
+import { apiGet, apiPost, apiPatch } from "@/lib/api/client";
 import type {
   AnalysisClip,
   BoundedEventType,
@@ -157,6 +157,51 @@ export function useCoachReviewClip(sessionId: string) {
     onSuccess: () => {
       // Invalidate summary and approved-clips so counts and the clips tab update
       qc.invalidateQueries({ queryKey: KEYS.summary(sessionId) });
+      qc.invalidateQueries({ queryKey: KEYS.approvedClips(sessionId) });
+    },
+  });
+}
+
+// ── Session playback info (Mux playbackId + duration) ────────────────────────
+
+export function useSessionPlayback(sessionId: string) {
+  return useQuery<{ playbackId: string | null; durationSec: number | null }>({
+    queryKey: ["film-session-playback", sessionId],
+    queryFn: async () => {
+      try {
+        return await apiGet<{ playbackId: string | null; durationSec: number | null }>(
+          `/film-analysis/sessions/${sessionId}/playback-info`,
+        );
+      } catch {
+        return { playbackId: null, durationSec: null };
+      }
+    },
+    staleTime: 10 * 60 * 1_000, // 10 min — playbackId rarely changes
+  });
+}
+
+// ── Clip boundary update ──────────────────────────────────────────────────────
+
+export function useUpdateClipBoundaries(sessionId: string) {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: async ({
+      clipId,
+      startMs,
+      endMs,
+    }: {
+      clipId: string;
+      startMs: number;
+      endMs: number;
+    }) => {
+      return apiPatch<{ clipId: string; startMs: number; endMs: number; updatedAt: string }>(
+        `/film-analysis/clips/${clipId}/boundaries`,
+        { startMs, endMs },
+      );
+    },
+    onSuccess: () => {
+      // Invalidate clip lists so the new boundaries appear immediately
+      qc.invalidateQueries({ queryKey: KEYS.clips(sessionId) });
       qc.invalidateQueries({ queryKey: KEYS.approvedClips(sessionId) });
     },
   });

@@ -197,7 +197,7 @@ export function createFilmRepository(db: Db, ctx: RepoContext) {
 
       async update(
         id: string,
-        patch: Partial<Pick<NewAnnotation, "data" | "label" | "body" | "updatedAt">>,
+        patch: Partial<Pick<NewAnnotation, "data" | "label" | "body" | "startMs" | "endMs" | "updatedAt">>,
       ) {
         const [row] = await db
           .update(annotations)

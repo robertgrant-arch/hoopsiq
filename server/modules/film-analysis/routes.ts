@@ -580,8 +580,93 @@ export function registerFilmAnalysisRoutes(
     },
   );
 
+  // ── GET /sessions/:sessionId/playback-info ────────────────────────────────
+  // Returns the Mux playbackId for the session's primary video asset.
+  // Used by the clip playback UI to seek the full-game video to a clip window.
   router.get(
-    "/sessions/:sessionId/approved-clips",
+    "/sessions/:sessionId/playback-info",
+    async (req: Request, res: Response, next: NextFunction) => {
+      try {
+        const { orgId, teamId } = await requireOrg(req);
+        const { sessionId } = req.params;
+        const repo = createRepository({ orgId, userId: "system" });
+        const session = await repo.filmSessions.getById(sessionId);
+        if (!session || !teamScopeMatches(session, teamId)) {
+          return res.status(404).json({ error: "Session not found" });
+        }
+        const assets = await repo.filmAssets.listForSession(sessionId);
+        const primary = assets.find((a) => a.kind === "source" && a.status === "ready")
+          ?? assets.find((a) => a.kind === "source")
+          ?? assets[0]
+          ?? null;
+        res.json({
+          playbackId:  primary?.playbackId  ?? null,
+          durationSec: primary?.durationSeconds ?? null,
+        });
+      } catch (e) {
+        handleError(e, res, next);
+      }
+    },
+  );
+
+  // ── PATCH /clips/:clipId/boundaries ───────────────────────────────────────
+  // Persists adjusted start/end times for a candidate clip.
+  // Previous boundaries are appended to data.boundaryHistory (append-only log).
+  router.patch(
+    "/clips/:clipId/boundaries",
+    async (req: Request, res: Response, next: NextFunction) => {
+      try {
+        const { orgId, userId } = await requireOrg(req);
+        const { clipId } = req.params;
+        const { startMs, endMs }: { startMs: number; endMs: number } = req.body;
+
+        if (
+          !Number.isInteger(startMs) ||
+          !Number.isInteger(endMs) ||
+          startMs < 0 ||
+          endMs <= startMs
+        ) {
+          return res.status(400).json({
+            error: "startMs and endMs must be non-negative integers with endMs > startMs",
+          });
+        }
+
+        const repo = createRepository({ orgId, userId });
+        const annotation = await repo.annotations.getById(clipId);
+        if (!annotation) {
+          return res.status(404).json({ error: "Clip not found" });
+        }
+
+        const currentData = (
+          annotation.data && typeof annotation.data === "object" ? annotation.data : {}
+        ) as Record<string, unknown>;
+
+        // Append the OLD boundary to history before overwriting
+        const boundaryHistory = Array.isArray(currentData.boundaryHistory)
+          ? [...(currentData.boundaryHistory as unknown[])]
+          : [];
+        boundaryHistory.push({
+          startMs: annotation.startMs,
+          endMs:   annotation.endMs ?? null,
+          savedAt: new Date().toISOString(),
+          savedBy: userId,
+        });
+
+        await repo.annotations.update(clipId, {
+          startMs,
+          endMs,
+          data: { ...currentData, boundaryHistory },
+        });
+
+        const updatedAt = new Date().toISOString();
+        res.json({ clipId, startMs, endMs, updatedAt, boundaryHistory });
+      } catch (e) {
+        handleError(e, res, next);
+      }
+    },
+  );
+
+
     async (req: Request, res: Response, next: NextFunction) => {
       try {
         const { orgId, teamId } = await requireOrg(req);

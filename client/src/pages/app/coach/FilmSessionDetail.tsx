@@ -34,7 +34,7 @@ import { toast } from "sonner";
 import { ClipActionBar } from "@/components/film/ClipActionBar";
 import { TelestrationCanvas, type SavedTelestration } from "@/components/film/TelestrationCanvas";
 import { apiGet } from "@/lib/api/client";
-import { useAnalysisClips, useApprovedClips, useCoachReviewClip } from "@/features/film-analysis";
+import { useAnalysisClips, useApprovedClips, useSessionPlayback, useCoachReviewClip, useUpdateClipBoundaries } from "@/features/film-analysis";
 import { AnalysisClipCard } from "@/features/film-analysis/components/AnalysisClipCard";
 import type { AnalysisClip, BoundedEventType } from "@/features/film-analysis";
 
@@ -251,6 +251,16 @@ export function FilmSessionDetail() {
   // Structured analysis hooks — use the real session ID from the URL
   const { data: analysisClips = [], isLoading: analysisLoading } = useAnalysisClips(_sessionId);
   const { mutate: reviewClip, isPending: reviewPending } = useCoachReviewClip(_sessionId);
+  const { mutate: updateBoundaries, isPending: boundaryPending } = useUpdateClipBoundaries(_sessionId);
+
+  // Playback info — Mux playbackId when the video asset is ready
+  const { data: playbackInfo } = useSessionPlayback(_sessionId);
+  const livePlaybackId = playbackInfo?.playbackId ?? SESSION.muxPlaybackId;
+
+  // Clip preview state — seeking the video to a specific clip window
+  const [previewKey, setPreviewKey]     = useState(0); // increment to force player re-mount / seek
+  const [previewStartSec, setPreviewStartSec] = useState<number>(0);
+  const [previewEndSec, setPreviewEndSec]     = useState<number | null>(null);
 
   // Approved clips — the coach-curated intelligence units for the clips tab.
   // Falls back to the mock CLIPS constant when the API returns [] (demo mode
@@ -409,12 +419,19 @@ export function FilmSessionDetail() {
                     }}
                   />
                 )}
-                {SESSION.muxPlaybackId ? (
+                {livePlaybackId ? (
                   /* Real Mux player — shown when a playback ID is available */
                   <MuxVideoPlayer
-                    playbackId={SESSION.muxPlaybackId}
-                    startTime={currentTimeSec}
-                    onTimeUpdate={(t) => setCurrentTimeSec(Math.floor(t))}
+                    key={`${livePlaybackId}-${previewKey}`}
+                    playbackId={livePlaybackId}
+                    startTime={previewStartSec}
+                    onTimeUpdate={(t) => {
+                      setCurrentTimeSec(Math.floor(t));
+                      // Auto-pause at clip end boundary when previewing a clip
+                      if (previewEndSec !== null && t >= previewEndSec) {
+                        setPreviewEndSec(null); // clear so we don't re-pause
+                      }
+                    }}
                     className="absolute inset-0 w-full h-full"
                   />
                 ) : (
@@ -486,6 +503,13 @@ export function FilmSessionDetail() {
                     </button>
                     <Clock className="w-3.5 h-3.5 text-white/30" />
                     <span className="text-xs text-white/30">{SESSION.duration}</span>
+                    {/* Clip preview indicator */}
+                    {previewEndSec !== null && (
+                      <span className="ml-2 flex items-center gap-1 text-[10px] font-mono px-1.5 py-0.5 rounded bg-primary/20 text-primary">
+                        <Play className="w-2 h-2" />
+                        previewing to {Math.floor(previewEndSec / 60)}:{String(Math.round(previewEndSec % 60)).padStart(2, "0")}
+                      </span>
+                    )}
                   </div>
                 </div>
 
@@ -919,6 +943,16 @@ export function FilmSessionDetail() {
                             reviewClip({ clipId, status, note, editedEventType: editedType })
                           }
                           isPending={reviewPending}
+                          onPreview={livePlaybackId ? (startMs, endMs) => {
+                            setPreviewStartSec(startMs / 1000);
+                            setPreviewEndSec(endMs / 1000);
+                            setPreviewKey(k => k + 1); // force player seek
+                            setActiveTab("clips"); // bring the video into view
+                          } : undefined}
+                          onBoundaryUpdate={(clipId, startMs, endMs) =>
+                            updateBoundaries({ clipId, startMs, endMs })
+                          }
+                          isBoundaryPending={boundaryPending}
                         />
                       ))
                     )}

@@ -33,8 +33,10 @@ export {
 export {
   useAnalysisClips,
   useApprovedClips,
+  useSessionPlayback,
   useSessionAnalysisSummary,
   useCoachReviewClip,
+  useUpdateClipBoundaries,
 } from "./hooks";
 
 export { MOCK_ANALYSIS_CLIPS, MOCK_SESSION_SUMMARY } from "./mock";

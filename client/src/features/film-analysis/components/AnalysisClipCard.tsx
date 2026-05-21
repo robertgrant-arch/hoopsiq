@@ -17,7 +17,7 @@
  */
 
 import { useState } from "react";
-import { Film, ChevronDown, ChevronRight, Check, X, AlertTriangle, Edit3, BookOpen, Info } from "lucide-react";
+import { Film, ChevronDown, ChevronRight, Check, X, AlertTriangle, Edit3, BookOpen, Info, Play, Scissors } from "lucide-react";
 import { toast } from "sonner";
 import { Badge } from "@/components/ui/badge";
 import {
@@ -117,21 +117,50 @@ function EvidenceList({ evidence }: { evidence: AnalysisClip["inference"]["evide
   );
 }
 
+// ── Helpers for boundary editing ──────────────────────────────────────────────
+
+function msToMmSs(ms: number): string {
+  const s = Math.floor(ms / 1000);
+  return `${Math.floor(s / 60)}:${String(s % 60).padStart(2, "0")}`;
+}
+
+function mmSsToMs(str: string): number | null {
+  const parts = str.trim().split(":");
+  if (parts.length === 2) {
+    const m = parseInt(parts[0], 10);
+    const s = parseInt(parts[1], 10);
+    if (!isNaN(m) && !isNaN(s) && s < 60) return (m * 60 + s) * 1000;
+  }
+  const sec = parseInt(str, 10);
+  if (!isNaN(sec) && sec >= 0) return sec * 1000;
+  return null;
+}
+
 // ── Main card ─────────────────────────────────────────────────────────────────
 
 interface AnalysisClipCardProps {
   clip:     AnalysisClip;
   onReview: (clipId: string, status: CoachReviewStatus, note?: string, editedType?: BoundedEventType) => void;
   isPending?: boolean;
+  /** Called when the coach clicks the play button — parent seeks its video player */
+  onPreview?: (startMs: number, endMs: number) => void;
+  /** Called when the coach saves adjusted boundaries */
+  onBoundaryUpdate?: (clipId: string, startMs: number, endMs: number) => void;
+  isBoundaryPending?: boolean;
 }
 
-export function AnalysisClipCard({ clip, onReview, isPending }: AnalysisClipCardProps) {
+export function AnalysisClipCard({ clip, onReview, isPending, onPreview, onBoundaryUpdate, isBoundaryPending }: AnalysisClipCardProps) {
   const [observationsOpen, setObservationsOpen] = useState(false);
   const [editMode, setEditMode]               = useState(false);
   const [editNote, setEditNote]               = useState(clip.coachDecision?.note ?? "");
   const [editedType, setEditedType]           = useState<BoundedEventType | "">(
     (clip.coachDecision?.editedEventType as BoundedEventType | undefined) ?? ""
   );
+
+  // Boundary editing state — seeded from clip's current boundaries
+  const [boundaryMode, setBoundaryMode]       = useState(false);
+  const [editStartStr, setEditStartStr]       = useState(msToMmSs(clip.startMs));
+  const [editEndStr, setEditEndStr]           = useState(msToMmSs(clip.endMs));
 
   const hasDecision = clip.coachDecision !== null;
   const statusCfg   = hasDecision
@@ -177,6 +206,32 @@ export function AnalysisClipCard({ clip, onReview, isPending }: AnalysisClipCard
           )}
         </div>
         <div className="flex items-center gap-1.5">
+          {/* Play button — only when parent has a video player */}
+          {onPreview && (
+            <button
+              onClick={() => onPreview(clip.startMs, clip.endMs)}
+              title={`Preview ${msToMmSs(clip.startMs)}–${msToMmSs(clip.endMs)}`}
+              className="flex items-center gap-1 px-2 py-0.5 rounded-md text-[11px] font-medium border transition-all hover:brightness-110"
+              style={{ backgroundColor: `${COLORS.primary}15`, borderColor: `${COLORS.primary}30`, color: COLORS.primary }}
+            >
+              <Play className="w-2.5 h-2.5" />
+              {msToMmSs(clip.startMs)}
+            </button>
+          )}
+          {/* Scissors — adjust clip boundaries (always available) */}
+          {onBoundaryUpdate && !boundaryMode && !editMode && (
+            <button
+              onClick={() => {
+                setEditStartStr(msToMmSs(clip.startMs));
+                setEditEndStr(msToMmSs(clip.endMs));
+                setBoundaryMode(true);
+              }}
+              title="Adjust clip boundaries"
+              className="p-1 rounded-md text-muted-foreground/60 hover:text-muted-foreground transition-colors"
+            >
+              <Scissors className="w-3 h-3" />
+            </button>
+          )}
           {hasDecision && (
             <span
               className="inline-flex items-center gap-1 text-[10.5px] font-medium px-2 py-0.5 rounded-full border"
@@ -424,6 +479,104 @@ export function AnalysisClipCard({ clip, onReview, isPending }: AnalysisClipCard
             </div>
           </div>
         )}
+        {/* ── Boundary editing mode ────────────────────────────────────────── */}
+        {boundaryMode && (
+          <div className="flex flex-col gap-3 pt-1 border-t border-border/50">
+            <div className="text-[10px] font-mono uppercase tracking-[0.1em] text-muted-foreground">
+              Adjust clip window
+            </div>
+
+            <div className="flex items-center gap-3">
+              <div className="flex flex-col gap-1 flex-1">
+                <label className="text-[10px] text-muted-foreground font-mono uppercase tracking-widest">
+                  Start (MM:SS)
+                </label>
+                <input
+                  type="text"
+                  value={editStartStr}
+                  onChange={(e) => setEditStartStr(e.target.value)}
+                  placeholder="0:00"
+                  className="w-full px-3 py-2 text-[13px] font-mono rounded-xl border border-border bg-background focus:outline-none focus:ring-1 focus:ring-primary/40"
+                />
+              </div>
+              <span className="text-muted-foreground/40 mt-5">→</span>
+              <div className="flex flex-col gap-1 flex-1">
+                <label className="text-[10px] text-muted-foreground font-mono uppercase tracking-widest">
+                  End (MM:SS)
+                </label>
+                <input
+                  type="text"
+                  value={editEndStr}
+                  onChange={(e) => setEditEndStr(e.target.value)}
+                  placeholder="0:10"
+                  className="w-full px-3 py-2 text-[13px] font-mono rounded-xl border border-border bg-background focus:outline-none focus:ring-1 focus:ring-primary/40"
+                />
+              </div>
+            </div>
+
+            {/* Duration preview */}
+            {(() => {
+              const s = mmSsToMs(editStartStr);
+              const e = mmSsToMs(editEndStr);
+              const durSec = s !== null && e !== null && e > s
+                ? ((e - s) / 1000).toFixed(1)
+                : null;
+              return (
+                <div className="text-[11px] text-muted-foreground">
+                  {durSec !== null
+                    ? <span>Duration: <span className="font-semibold text-foreground">{durSec}s</span></span>
+                    : <span className="text-amber-500">⚠ End must be after start</span>
+                  }
+                </div>
+              );
+            })()}
+
+            {/* Preview with new boundaries */}
+            {onPreview && (
+              <button
+                onClick={() => {
+                  const s = mmSsToMs(editStartStr);
+                  const e = mmSsToMs(editEndStr);
+                  if (s !== null && e !== null && e > s) onPreview(s, e);
+                }}
+                className="flex items-center gap-1.5 w-fit text-[12px] font-medium px-3 py-1.5 rounded-lg border border-border hover:bg-muted/50 transition-colors"
+              >
+                <Play className="w-3 h-3" />
+                Preview new boundaries
+              </button>
+            )}
+
+            <div className="flex items-center gap-2">
+              <button
+                disabled={isBoundaryPending || (() => {
+                  const s = mmSsToMs(editStartStr);
+                  const e = mmSsToMs(editEndStr);
+                  return s === null || e === null || e <= s;
+                })()}
+                onClick={() => {
+                  const s = mmSsToMs(editStartStr);
+                  const e = mmSsToMs(editEndStr);
+                  if (s !== null && e !== null && e > s) {
+                    onBoundaryUpdate!(clip.id, s, e);
+                    setBoundaryMode(false);
+                    toast.success("Clip boundaries saved.");
+                  }
+                }}
+                className="h-8 px-3 rounded-lg text-[12px] font-semibold transition-all disabled:opacity-50"
+                style={{ backgroundColor: COLORS.primary, color: "#fff" }}
+              >
+                Save boundaries
+              </button>
+              <button
+                onClick={() => setBoundaryMode(false)}
+                className="h-8 px-3 rounded-lg text-[12px] font-semibold border border-border transition-all hover:bg-muted/50"
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+        )}
+
       </div>
     </div>
   );
