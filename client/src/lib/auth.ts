@@ -1,4 +1,5 @@
 import { useEffect, useState, useCallback } from "react";
+import { useUser, useClerk } from "@clerk/clerk-react";
 import { demoUsers, type DemoUser, type Role, ROLE_META } from "@/lib/mock/users";
 
 export type { Role };
@@ -43,11 +44,6 @@ function useClerkAuth(): {
   signOut: () => void;
   setRole: (role: Role) => void;
 } {
-  // Lazy-import Clerk hooks to avoid errors when the package isn't installed
-  // or the key isn't set. In practice this branch only runs when HAS_CLERK=true.
-  // eslint-disable-next-line @typescript-eslint/no-require-imports
-  const { useUser, useClerk } = require("@clerk/clerk-react") as typeof import("@clerk/clerk-react");
-
   const { user: clerkUser, isLoaded } = useUser();
   const clerk = useClerk();
 
