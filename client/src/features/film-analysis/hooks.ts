@@ -206,3 +206,22 @@ export function useUpdateClipBoundaries(sessionId: string) {
     },
   });
 }
+
+// ── Classify approved clips for a session ────────────────────────────────────
+
+export function useClassifySession(sessionId: string) {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: async () => {
+      return apiPost<{ classified: number; skipped: number; message: string }>(
+        `/film-analysis/sessions/${sessionId}/classify`,
+        {},
+      );
+    },
+    onSuccess: () => {
+      // Re-fetch clips so the upgraded inference appears immediately
+      qc.invalidateQueries({ queryKey: KEYS.clips(sessionId) });
+      qc.invalidateQueries({ queryKey: KEYS.approvedClips(sessionId) });
+    },
+  });
+}

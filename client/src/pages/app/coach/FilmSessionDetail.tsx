@@ -34,7 +34,7 @@ import { toast } from "sonner";
 import { ClipActionBar } from "@/components/film/ClipActionBar";
 import { TelestrationCanvas, type SavedTelestration } from "@/components/film/TelestrationCanvas";
 import { apiGet } from "@/lib/api/client";
-import { useAnalysisClips, useApprovedClips, useSessionPlayback, useCoachReviewClip, useUpdateClipBoundaries } from "@/features/film-analysis";
+import { useAnalysisClips, useApprovedClips, useSessionPlayback, useCoachReviewClip, useUpdateClipBoundaries, useClassifySession } from "@/features/film-analysis";
 import { AnalysisClipCard } from "@/features/film-analysis/components/AnalysisClipCard";
 import type { AnalysisClip, BoundedEventType } from "@/features/film-analysis";
 
@@ -252,6 +252,7 @@ export function FilmSessionDetail() {
   const { data: analysisClips = [], isLoading: analysisLoading } = useAnalysisClips(_sessionId);
   const { mutate: reviewClip, isPending: reviewPending } = useCoachReviewClip(_sessionId);
   const { mutate: updateBoundaries, isPending: boundaryPending } = useUpdateClipBoundaries(_sessionId);
+  const { mutate: classifySession, isPending: classifyPending, data: classifyResult } = useClassifySession(_sessionId);
 
   // Playback info — Mux playbackId when the video asset is ready
   const { data: playbackInfo } = useSessionPlayback(_sessionId);
@@ -919,6 +920,34 @@ export function FilmSessionDetail() {
                           {analysisClips.filter(c => c.coachDecision?.status === "confirmed" || c.coachDecision?.status === "edited").length}
                         </span> approved
                       </span>
+                      {/* Classify approved clips */}
+                      {(() => {
+                        const approvedCount = analysisClips.filter(c =>
+                          c.coachDecision?.status === "confirmed" ||
+                          c.coachDecision?.status === "edited" ||
+                          c.coachDecision?.status === "flagged_for_teaching"
+                        ).length;
+                        const classifiedCount = analysisClips.filter(c =>
+                          (c.inference.confidence ?? 0) >= 0.60 && c.coachDecision
+                        ).length;
+                        const unclassified = approvedCount - classifiedCount;
+                        return approvedCount > 0 ? (
+                          <button
+                            onClick={() => classifySession()}
+                            disabled={classifyPending}
+                            className="flex items-center gap-1.5 ml-auto h-7 px-2.5 rounded-lg text-[11px] font-semibold border transition-all hover:brightness-110 disabled:opacity-50"
+                            style={{ backgroundColor: "oklch(0.75 0.12 140 / 0.12)", borderColor: "oklch(0.75 0.12 140 / 0.35)", color: "oklch(0.75 0.12 140)" }}
+                            title={classifyResult ? classifyResult.message : `Run classification on ${approvedCount} approved clips`}
+                          >
+                            {classifyPending ? (
+                              <span className="animate-spin inline-block w-3 h-3 border border-current border-t-transparent rounded-full" />
+                            ) : (
+                              <Sparkles className="w-3 h-3" />
+                            )}
+                            {classifyPending ? "Classifying…" : unclassified > 0 ? `Classify ${unclassified}` : "Re-classify"}
+                          </button>
+                        ) : null;
+                      })()}
                     </div>
                   </div>
 

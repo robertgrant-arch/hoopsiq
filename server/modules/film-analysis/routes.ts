@@ -446,6 +446,9 @@ export function registerFilmAnalysisRoutes(
   // ── Annotation row → AnalysisClip ─────────────────────────────────────────
   // Reads raw annotation data including data.coachDecision so review state
   // survives the round-trip without a separate join or secondary table.
+  // When data.classification is present (set by POST /classify on approved
+  // clips), the higher-trust inference from the classifier replaces the
+  // spotter output — backward-compatible and purely additive.
   function annotationToClip(
     row: { id: string; sessionId: string; startMs: number; endMs: number | null; data: unknown },
     _teamId: string,
@@ -471,6 +474,28 @@ export function registerFilmAnalysisRoutes(
     // If coach relabelled the event, use their label; otherwise use spotter's
     const effectiveType = (coachDecision?.editedEventType ?? DET_TO_BOUNDED[rawType] ?? "pass_completed") as string;
 
+    // ── Classification upgrade ────────────────────────────────────────────────
+    // POST /sessions/:id/classify writes data.classification for each approved
+    // clip.  When present, substitute the spotter's weak inference with the
+    // classifier's higher-trust output.
+    const cls = data.classification as Record<string, unknown> | null | undefined;
+
+    const inferenceEventType = (cls?.eventType ?? effectiveType) as string;
+    const inferenceConf      = typeof cls?.confidence === "number" ? cls.confidence : rawConf;
+    const inferenceTier      = typeof cls?.tier === "string"
+      ? (cls.tier as "high" | "medium" | "low")
+      : confTier(inferenceConf);
+    const inferenceNeeds     = cls ? false : (rawNeeds && !coachDecision);
+    const inferenceEvidence  = Array.isArray(cls?.evidenceItems) && (cls.evidenceItems as unknown[]).length > 0
+      ? cls.evidenceItems as Array<{ type: string; description: string; strength: string }>
+      : [
+          {
+            type:        "zone_entry",
+            description: "Window identified by rule-based temporal spotter v1. No video frames analyzed.",
+            strength:    "weak",
+          },
+        ];
+
     return {
       id:                  row.id,
       sessionId:           row.sessionId,
@@ -492,17 +517,11 @@ export function registerFilmAnalysisRoutes(
         },
       ],
       inference: {
-        eventType:      effectiveType,
-        confidence:     rawConf,
-        tier:           confTier(rawConf),
-        requiresReview: rawNeeds && !coachDecision,
-        evidenceItems: [
-          {
-            type:        "zone_entry",
-            description: "Window identified by rule-based temporal spotter v1. No video frames analyzed.",
-            strength:    "weak",
-          },
-        ],
+        eventType:      inferenceEventType,
+        confidence:     inferenceConf,
+        tier:           inferenceTier,
+        requiresReview: inferenceNeeds,
+        evidenceItems:  inferenceEvidence,
       },
       suggestedCoachNote:  null as null,
       linkedSkillCategory: null as null,
@@ -694,6 +713,39 @@ export function registerFilmAnalysisRoutes(
   );
 
 
+  // ── POST /sessions/:sessionId/classify ──────────────────────────────────
+  router.post(
+    "/sessions/:sessionId/classify",
+    async (req: Request, res: Response, next: NextFunction) => {
+      try {
+        const { orgId, teamId, userId } = await requireOrg(req);
+        const { sessionId } = req.params;
+        const rows = await loadCandidateRows(orgId, teamId, sessionId);
+        if (!rows) return res.status(404).json({ error: "Session not found" });
+        const APPROVED = new Set(["confirmed", "edited", "flagged_for_teaching"]);
+        const { classify } = await import("./classification/ClipClassifier");
+        const repo = createRepository({ orgId, userId });
+        let classified = 0; let skipped = 0;
+        for (const row of rows) {
+          const d  = (row.data && typeof row.data === "object" ? row.data : {}) as Record<string, unknown>;
+          const cd = d.coachDecision as Record<string, unknown> | null | undefined;
+          const status = (cd?.status as string | undefined) ?? null;
+          if (!status || !APPROVED.has(status)) { skipped++; continue; }
+          const editedType     = cd?.editedEventType as string | null | undefined;
+          const rawType        = (d.eventType as string | undefined) ?? "pass_completed";
+          const eventType      = (editedType ?? DET_TO_BOUNDED[rawType] ?? "pass_completed") as string;
+          const result = classify(row.id, eventType, status);
+          await repo.annotations.update(row.id, { data: { ...d, classification: result } });
+          classified++;
+        }
+        res.json({ sessionId, classified, skipped,
+          message: `Classified ${classified} approved clip${classified !== 1 ? "s" : ""}; skipped ${skipped}.` });
+      } catch (e) { handleError(e, res, next); }
+    },
+  );
+
+  router.post(
+    "/clips/:clipId/review",
     async (req: Request, res: Response, next: NextFunction) => {
       try {
         const { orgId, userId } = await requireOrg(req);

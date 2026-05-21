@@ -37,6 +37,7 @@ export {
   useSessionAnalysisSummary,
   useCoachReviewClip,
   useUpdateClipBoundaries,
+  useClassifySession,
 } from "./hooks";
 
 export { MOCK_ANALYSIS_CLIPS, MOCK_SESSION_SUMMARY } from "./mock";
