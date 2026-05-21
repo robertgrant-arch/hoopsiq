@@ -521,6 +521,19 @@ export function registerFilmAnalysisRoutes(
       },
     ];
 
+    // ── Original AI inference snapshot ───────────────────────────────────────
+    // Preserved from data.classification — never overwritten by coach decisions.
+    // Exposed separately so the UI can show "AI said X → Coach said Y" when
+    // the coach has edited the event type.
+    const originalInference = cls
+      ? {
+          eventType:  (cls.eventType as string) ?? effectiveType,
+          confidence: typeof cls.confidence === "number" ? cls.confidence : rawConf,
+          tier:       (cls.tier as string) ?? confTier(rawConf),
+          source:     (cls.classificationSource as string) ?? "rule_based_spotter_v1",
+        }
+      : null;
+
     return {
       id:                  row.id,
       sessionId:           row.sessionId,
@@ -540,6 +553,7 @@ export function registerFilmAnalysisRoutes(
         requiresReview: inferenceNeeds,
         evidenceItems:  inferenceEvidence,
       },
+      originalInference,
       suggestedCoachNote:  null as null,
       linkedSkillCategory: null as null,
       coachDecision,
@@ -771,7 +785,13 @@ export function registerFilmAnalysisRoutes(
           status,
           note,
           editedEventType,
-        }: { status: string; note?: string; editedEventType?: string } = req.body;
+          teachingPoint,
+        }: {
+          status: string;
+          note?: string;
+          editedEventType?: string;
+          teachingPoint?: { skill: string; instruction: string; clipUsage: string };
+        } = req.body;
 
         const VALID_STATUSES = [
           "confirmed", "edited", "rejected", "flagged_for_teaching", "uncertain",
@@ -780,6 +800,18 @@ export function registerFilmAnalysisRoutes(
           return res.status(400).json({
             error: `Invalid status: ${status}. Must be one of: ${VALID_STATUSES.join(", ")}`,
           });
+        }
+
+        // Validate teachingPoint when status is flagged_for_teaching
+        if (status === "flagged_for_teaching" && teachingPoint) {
+          if (!teachingPoint.skill?.trim() || !teachingPoint.instruction?.trim()) {
+            return res.status(400).json({
+              error: "teachingPoint requires non-empty skill and instruction fields",
+            });
+          }
+          if (!["example", "counter_example"].includes(teachingPoint.clipUsage)) {
+            return res.status(400).json({ error: "teachingPoint.clipUsage must be 'example' or 'counter_example'" });
+          }
         }
 
         const repo = createRepository({ orgId, userId });
@@ -798,11 +830,13 @@ export function registerFilmAnalysisRoutes(
           status,
           note:            note ?? null,
           editedEventType: editedEventType ?? null,
+          teachingPoint:   teachingPoint ?? null,
           reviewedAt:      new Date().toISOString(),
           reviewedBy:      userId,
         };
 
-        // Persist: write coachDecision into the annotation's data JSONB field
+        // Persist: write coachDecision into the annotation's data JSONB field.
+        // data.classification is never overwritten — original AI output preserved.
         await repo.annotations.update(clipId, {
           data: { ...currentData, coachDecision: decision },
         });

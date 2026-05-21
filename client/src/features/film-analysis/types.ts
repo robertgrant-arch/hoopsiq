@@ -219,10 +219,19 @@ export type CoachReviewStatus =
   | "flagged_for_teaching"  // Will become a teaching point / player assignment
   | "uncertain";            // Coach reviewed but is unsure — still needs attention
 
+// Structured teaching annotation — only set when status === "flagged_for_teaching".
+// Free-form prose is not the source of truth; skill + instruction are separate fields.
+export type TeachingPoint = {
+  skill:       string;                          // e.g. "Left-hand finishing under contact"
+  instruction: string;                          // e.g. "Stay vertical through contact, trust left hand"
+  clipUsage:   "example" | "counter_example";  // positive rep or cautionary example
+};
+
 export type CoachDecision = {
   status:            CoachReviewStatus;
   editedEventType?:  BoundedEventType;  // Set when status === "edited"
   note?:             string;
+  teachingPoint?:    TeachingPoint;     // Set when status === "flagged_for_teaching"
   reviewedAt:        string;            // ISO timestamp
   reviewedBy:        string;            // userId
 };
@@ -344,6 +353,17 @@ export type AnalysisClip = {
   // Decomposed analysis
   observations:  Observation[];
   inference:     Inference;
+
+  // Original AI classification snapshot — preserved separately from coach override.
+  // null = clip has not been classified yet (still at spotter confidence level).
+  // When coachDecision.editedEventType differs from originalInference.eventType,
+  // both are shown in the UI so the coach's correction is explicit.
+  originalInference: {
+    eventType:   BoundedEventType;
+    confidence:  number;
+    tier:        ConfidenceTier;
+    source:      string;         // "coach_confirmed_v1" | "coach_edited_v1" etc.
+  } | null;
 
   // Suggested output (short, templated — not prose)
   suggestedCoachNote: string | null;

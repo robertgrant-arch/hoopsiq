@@ -29,6 +29,7 @@ import type {
   AnalysisClip,
   BoundedEventType,
   CoachReviewStatus,
+  TeachingPoint,
   EvidenceStrength,
 } from "../types";
 
@@ -140,7 +141,13 @@ function mmSsToMs(str: string): number | null {
 
 interface AnalysisClipCardProps {
   clip:     AnalysisClip;
-  onReview: (clipId: string, status: CoachReviewStatus, note?: string, editedType?: BoundedEventType) => void;
+  onReview: (
+    clipId: string,
+    status: CoachReviewStatus,
+    note?: string,
+    editedType?: BoundedEventType,
+    teachingPoint?: TeachingPoint,
+  ) => void;
   isPending?: boolean;
   /** Called when the coach clicks the play button — parent seeks its video player */
   onPreview?: (startMs: number, endMs: number) => void;
@@ -150,7 +157,6 @@ interface AnalysisClipCardProps {
 }
 
 export function AnalysisClipCard({ clip, onReview, isPending, onPreview, onBoundaryUpdate, isBoundaryPending }: AnalysisClipCardProps) {
-  const [observationsOpen, setObservationsOpen] = useState(false);
   const [editMode, setEditMode]               = useState(false);
   const [editNote, setEditNote]               = useState(clip.coachDecision?.note ?? "");
   const [editedType, setEditedType]           = useState<BoundedEventType | "">(
@@ -161,6 +167,17 @@ export function AnalysisClipCard({ clip, onReview, isPending, onPreview, onBound
   const [boundaryMode, setBoundaryMode]       = useState(false);
   const [editStartStr, setEditStartStr]       = useState(msToMmSs(clip.startMs));
   const [editEndStr, setEditEndStr]           = useState(msToMmSs(clip.endMs));
+
+  // Teaching point mode — opens when "Flag for teaching" is clicked
+  const [teachingMode, setTeachingMode]       = useState(false);
+  const [tpSkill, setTpSkill]                 = useState(clip.coachDecision?.teachingPoint?.skill ?? "");
+  const [tpInstruction, setTpInstruction]     = useState(clip.coachDecision?.teachingPoint?.instruction ?? "");
+  const [tpUsage, setTpUsage]                 = useState<"example" | "counter_example">(
+    clip.coachDecision?.teachingPoint?.clipUsage ?? "example"
+  );
+
+  // Revision mode — re-shows Zone C after a decision has been made
+  const [revisionMode, setRevisionMode]       = useState(false);
 
   // Auto-expand Zone A for classified clips (real observations vs placeholder)
   const isClassified = clip.observations.length > 1 ||
@@ -246,6 +263,15 @@ export function AnalysisClipCard({ clip, onReview, isPending, onPreview, onBound
               {statusCfg.icon}
               {statusCfg.label}
             </span>
+          )}
+          {/* Revise button — lets coach change a previous decision */}
+          {hasDecision && !revisionMode && !editMode && !teachingMode && !boundaryMode && (
+            <button
+              onClick={() => setRevisionMode(true)}
+              className="text-[10px] font-mono text-muted-foreground/40 hover:text-muted-foreground transition-colors underline underline-offset-2"
+            >
+              revise
+            </button>
           )}
         </div>
       </div>
@@ -345,7 +371,46 @@ export function AnalysisClipCard({ clip, onReview, isPending, onPreview, onBound
             />
           </div>
 
-          {/* Evidence */}
+          {/* AI → Coach correction strip — shown when coach changed the label */}
+          {clip.coachDecision?.editedEventType && clip.originalInference &&
+           clip.originalInference.eventType !== clip.coachDecision.editedEventType && (
+            <div className="flex items-center gap-2 rounded-lg px-3 py-2 text-[11.5px]"
+              style={{ backgroundColor: `${COLORS.medium}10`, border: `1px solid ${COLORS.medium}25` }}
+            >
+              <span className="text-muted-foreground/60 font-mono shrink-0">AI:</span>
+              <span className="text-muted-foreground/60 line-through">
+                {EVENT_LABELS[clip.originalInference.eventType as BoundedEventType] ?? clip.originalInference.eventType}
+              </span>
+              <span className="text-muted-foreground/40 shrink-0">→</span>
+              <span className="font-semibold text-foreground">
+                {EVENT_LABELS[clip.coachDecision.editedEventType] ?? clip.coachDecision.editedEventType}
+              </span>
+              <span className="ml-auto text-[10px] font-mono text-muted-foreground/40">
+                {Math.round((clip.originalInference.confidence ?? 0) * 100)}% → coach override
+              </span>
+            </div>
+          )}
+
+          {/* Teaching point detail — shown when flagged_for_teaching + tp recorded */}
+          {clip.coachDecision?.status === "flagged_for_teaching" &&
+           clip.coachDecision.teachingPoint && (
+            <div className="rounded-lg border px-3 py-2.5 flex flex-col gap-1.5"
+              style={{ borderColor: `${COLORS.medium}30`, backgroundColor: `${COLORS.medium}08` }}
+            >
+              <div className="flex items-center gap-2">
+                <span className="text-[9.5px] font-mono uppercase tracking-widest text-muted-foreground/50">
+                  Teaching point
+                </span>
+                <span className="text-[9.5px] font-mono px-1.5 py-0.5 rounded"
+                  style={{ backgroundColor: `${COLORS.medium}15`, color: COLORS.medium }}
+                >
+                  {clip.coachDecision.teachingPoint.clipUsage === "example" ? "✓ positive rep" : "✗ counter-example"}
+                </span>
+              </div>
+              <p className="text-[12px] font-semibold text-foreground/90">{clip.coachDecision.teachingPoint.skill}</p>
+              <p className="text-[12px] text-muted-foreground leading-relaxed">{clip.coachDecision.teachingPoint.instruction}</p>
+            </div>
+          )}
           <div>
             <div className="text-[10px] font-mono uppercase tracking-[0.1em] text-muted-foreground mb-2">
               Evidence ({clip.inference.evidenceItems.length})
@@ -393,15 +458,27 @@ export function AnalysisClipCard({ clip, onReview, isPending, onPreview, onBound
         )}
 
         {/* ── Zone C: Coach Review ──────────────────────────────────────────── */}
-        {!hasDecision && !editMode && (
+        {(!hasDecision || revisionMode) && !editMode && !teachingMode && (
           <div className="flex flex-col gap-2 pt-1 border-t border-border/50">
+            {revisionMode && (
+              <div className="flex items-center gap-2 px-2 py-1 rounded-lg text-[11px]"
+                style={{ backgroundColor: `${COLORS.medium}12`, color: COLORS.medium }}
+              >
+                <span>Previously: <strong>{statusCfg.label}</strong> — choose a new decision below</span>
+                <button onClick={() => setRevisionMode(false)}
+                  className="ml-auto text-muted-foreground/60 hover:text-muted-foreground"
+                >
+                  <X className="w-3 h-3" />
+                </button>
+              </div>
+            )}
             <div className="text-[10px] font-mono uppercase tracking-[0.1em] text-muted-foreground mb-1">
               Coach review
             </div>
             <div className="flex flex-wrap gap-2">
               <button
                 disabled={isPending}
-                onClick={() => { onReview(clip.id, "confirmed"); toast.success("Confirmed."); }}
+                onClick={() => { onReview(clip.id, "confirmed"); setRevisionMode(false); toast.success("Confirmed."); }}
                 className="h-8 px-3 rounded-lg text-[12px] font-semibold border transition-all hover:brightness-110 disabled:opacity-50"
                 style={{ backgroundColor: `${COLORS.high}15`, borderColor: `${COLORS.high}40`, color: COLORS.high }}
               >
@@ -419,7 +496,7 @@ export function AnalysisClipCard({ clip, onReview, isPending, onPreview, onBound
               </button>
               <button
                 disabled={isPending}
-                onClick={() => { onReview(clip.id, "flagged_for_teaching"); toast.success("Flagged for teaching."); }}
+                onClick={() => setTeachingMode(true)}
                 className="h-8 px-3 rounded-lg text-[12px] font-semibold border transition-all hover:brightness-110 disabled:opacity-50"
                 style={{ backgroundColor: `${COLORS.medium}12`, borderColor: `${COLORS.medium}35`, color: COLORS.medium }}
               >
@@ -428,7 +505,7 @@ export function AnalysisClipCard({ clip, onReview, isPending, onPreview, onBound
               </button>
               <button
                 disabled={isPending}
-                onClick={() => { onReview(clip.id, "uncertain"); toast("Marked uncertain — stays in review queue."); }}
+                onClick={() => { onReview(clip.id, "uncertain"); setRevisionMode(false); toast("Marked uncertain — stays in review queue."); }}
                 className="h-8 px-3 rounded-lg text-[12px] font-semibold border transition-all hover:brightness-110 disabled:opacity-50"
                 style={{ backgroundColor: `${COLORS.muted}18`, borderColor: `${COLORS.muted}40`, color: COLORS.muted }}
               >
@@ -437,12 +514,89 @@ export function AnalysisClipCard({ clip, onReview, isPending, onPreview, onBound
               </button>
               <button
                 disabled={isPending}
-                onClick={() => { onReview(clip.id, "rejected"); toast("Rejected."); }}
+                onClick={() => { onReview(clip.id, "rejected"); setRevisionMode(false); toast("Rejected."); }}
                 className="h-8 px-3 rounded-lg text-[12px] font-semibold border transition-all hover:brightness-110 disabled:opacity-50"
                 style={{ backgroundColor: `${COLORS.low}10`, borderColor: `${COLORS.low}30`, color: COLORS.low }}
               >
                 <X className="w-3.5 h-3.5 inline mr-1" />
                 Reject
+              </button>
+            </div>
+          </div>
+        )}
+
+        {/* ── Teaching point form ───────────────────────────────────────────── */}
+        {teachingMode && (
+          <div className="flex flex-col gap-3 pt-1 border-t border-border/50">
+            <div className="text-[10px] font-mono uppercase tracking-[0.1em] text-muted-foreground">
+              Teaching point
+            </div>
+
+            <div className="flex flex-col gap-1">
+              <label className="text-[10px] text-muted-foreground font-mono uppercase tracking-widest">
+                Skill or concept
+              </label>
+              <input
+                type="text"
+                value={tpSkill}
+                onChange={(e) => setTpSkill(e.target.value)}
+                placeholder="e.g. Left-hand finishing under contact"
+                className="w-full px-3 py-2 text-[13px] rounded-xl border border-border bg-background focus:outline-none focus:ring-1 focus:ring-primary/40"
+              />
+            </div>
+
+            <div className="flex flex-col gap-1">
+              <label className="text-[10px] text-muted-foreground font-mono uppercase tracking-widest">
+                Coaching instruction
+              </label>
+              <textarea
+                value={tpInstruction}
+                onChange={(e) => setTpInstruction(e.target.value)}
+                placeholder="e.g. Stay vertical through contact, trust the left hand"
+                rows={2}
+                className="w-full px-3 py-2 text-[13px] rounded-xl border border-border bg-background resize-none focus:outline-none focus:ring-1 focus:ring-primary/40"
+              />
+            </div>
+
+            <div className="flex gap-2">
+              {(["example", "counter_example"] as const).map((usage) => (
+                <button
+                  key={usage}
+                  onClick={() => setTpUsage(usage)}
+                  className="flex-1 h-8 px-2 rounded-lg text-[11.5px] font-semibold border transition-all"
+                  style={tpUsage === usage
+                    ? { backgroundColor: COLORS.primary, color: "#fff", borderColor: COLORS.primary }
+                    : { backgroundColor: "transparent", color: COLORS.muted, borderColor: `${COLORS.muted}40` }
+                  }
+                >
+                  {usage === "example" ? "✓ Positive rep" : "✗ Counter-example"}
+                </button>
+              ))}
+            </div>
+
+            <div className="flex items-center gap-2">
+              <button
+                disabled={!tpSkill.trim() || !tpInstruction.trim() || isPending}
+                onClick={() => {
+                  onReview(clip.id, "flagged_for_teaching", undefined, undefined, {
+                    skill: tpSkill.trim(),
+                    instruction: tpInstruction.trim(),
+                    clipUsage: tpUsage,
+                  });
+                  setTeachingMode(false);
+                  setRevisionMode(false);
+                  toast.success("Teaching point saved.");
+                }}
+                className="h-8 px-3 rounded-lg text-[12px] font-semibold transition-all disabled:opacity-50"
+                style={{ backgroundColor: COLORS.medium, color: "#fff" }}
+              >
+                Save teaching point
+              </button>
+              <button
+                onClick={() => setTeachingMode(false)}
+                className="h-8 px-3 rounded-lg text-[12px] font-semibold border border-border transition-all hover:bg-muted/50"
+              >
+                Cancel
               </button>
             </div>
           </div>

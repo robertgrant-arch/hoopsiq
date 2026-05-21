@@ -968,8 +968,8 @@ export function FilmSessionDetail() {
                         <AnalysisClipCard
                           key={clip.id}
                           clip={clip}
-                          onReview={(clipId, status, note, editedType) =>
-                            reviewClip({ clipId, status, note, editedEventType: editedType })
+                          onReview={(clipId, status, note, editedType, teachingPoint) =>
+                            reviewClip({ clipId, status, note, editedEventType: editedType, teachingPoint })
                           }
                           isPending={reviewPending}
                           onPreview={livePlaybackId ? (startMs, endMs) => {

@@ -109,21 +109,24 @@ export function useCoachReviewClip(sessionId: string) {
       status,
       note,
       editedEventType,
+      teachingPoint,
     }: {
       clipId:           string;
       status:           CoachReviewStatus;
       note?:            string;
       editedEventType?: BoundedEventType;
+      teachingPoint?:   { skill: string; instruction: string; clipUsage: string };
     }) => {
       // Let errors propagate — onError will roll back the optimistic update
       await apiPost(`/film-analysis/clips/${clipId}/review`, {
         status,
         note,
         editedEventType,
+        teachingPoint,
       });
     },
 
-    onMutate: async ({ clipId, status, note, editedEventType }) => {
+    onMutate: async ({ clipId, status, note, editedEventType, teachingPoint }) => {
       await qc.cancelQueries({ queryKey: KEYS.clips(sessionId) });
       const snapshot = qc.getQueryData<AnalysisClip[]>(KEYS.clips(sessionId));
 
@@ -137,6 +140,7 @@ export function useCoachReviewClip(sessionId: string) {
                   status,
                   note,
                   editedEventType,
+                  teachingPoint,
                   reviewedAt: new Date().toISOString(),
                   reviewedBy: "coach", // real impl: from auth context
                 },

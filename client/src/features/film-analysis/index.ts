@@ -15,6 +15,7 @@ export type {
   BoundedEventType,
   CoachReviewStatus,
   CoachDecision,
+  TeachingPoint,
   ConfidenceTier,
   SessionAnalysisSummary,
   SuggestedNoteTemplate,
