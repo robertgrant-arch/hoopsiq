@@ -34,7 +34,7 @@ import { toast } from "sonner";
 import { ClipActionBar } from "@/components/film/ClipActionBar";
 import { TelestrationCanvas, type SavedTelestration } from "@/components/film/TelestrationCanvas";
 import { apiGet } from "@/lib/api/client";
-import { useAnalysisClips, useApprovedClips, useSessionPlayback, useCoachReviewClip, useUpdateClipBoundaries, useClassifySession, useSessionTeachingPoints } from "@/features/film-analysis";
+import { useAnalysisClips, useApprovedClips, useSessionPlayback, useCoachReviewClip, useUpdateClipBoundaries, useClassifySession, useSessionTeachingPoints, useDispatchTeachingPoint } from "@/features/film-analysis";
 import { AnalysisClipCard } from "@/features/film-analysis/components/AnalysisClipCard";
 import type { AnalysisClip, BoundedEventType } from "@/features/film-analysis";
 
@@ -254,6 +254,7 @@ export function FilmSessionDetail() {
   const { mutate: updateBoundaries, isPending: boundaryPending } = useUpdateClipBoundaries(_sessionId);
   const { mutate: classifySession, isPending: classifyPending, data: classifyResult } = useClassifySession(_sessionId);
   const { data: teachingPoints = [] } = useSessionTeachingPoints(_sessionId);
+  const { mutate: dispatchTp, isPending: dispatching } = useDispatchTeachingPoint(_sessionId);
 
   // Playback info — Mux playbackId when the video asset is ready
   const { data: playbackInfo } = useSessionPlayback(_sessionId);
@@ -999,7 +1000,8 @@ export function FilmSessionDetail() {
                         <BookOpen className="w-3.5 h-3.5 text-amber-500 shrink-0" />
                         <span className="text-[12.5px] font-semibold">Teaching Points</span>
                         <span className="text-[10.5px] font-mono text-muted-foreground/50 ml-1">
-                          {teachingPoints.length} ready to send
+                          {teachingPoints.filter(tp => !tp.dispatched).length} pending ·{" "}
+                          {teachingPoints.filter(tp => tp.dispatched).length} dispatched
                         </span>
                       </div>
                       <div className="px-3 pb-3 flex flex-col gap-2.5">
@@ -1007,7 +1009,14 @@ export function FilmSessionDetail() {
                           <div
                             key={tp.id}
                             className="rounded-xl border p-3 flex flex-col gap-2"
-                            style={{ borderColor: "oklch(0.78 0.16 75 / 0.25)", backgroundColor: "oklch(0.78 0.16 75 / 0.05)" }}
+                            style={{
+                              borderColor: tp.dispatched
+                                ? "oklch(0.75 0.12 140 / 0.30)"
+                                : "oklch(0.78 0.16 75 / 0.25)",
+                              backgroundColor: tp.dispatched
+                                ? "oklch(0.75 0.12 140 / 0.04)"
+                                : "oklch(0.78 0.16 75 / 0.05)",
+                            }}
                           >
                             {/* Header row */}
                             <div className="flex items-start justify-between gap-2">
@@ -1033,10 +1042,25 @@ export function FilmSessionDetail() {
                                   {tp.clipUsage === "example" ? "✓ positive rep" : "✗ counter-example"}
                                 </span>
                               </div>
-                              {/* Feedback status badge */}
-                              <span className="text-[9.5px] font-mono text-muted-foreground/40 shrink-0">
-                                {tp.feedbackStatus === "ready" ? "● ready" : "○ needs player"}
-                              </span>
+                              {/* Status + dispatch action */}
+                              <div className="flex items-center gap-2 shrink-0">
+                                {tp.dispatched ? (
+                                  <span className="text-[9.5px] font-mono text-emerald-500">✓ assigned</span>
+                                ) : (
+                                  <button
+                                    disabled={dispatching}
+                                    onClick={() => dispatchTp({ clipId: tp.clipId })}
+                                    className="h-6 px-2.5 rounded-lg text-[10.5px] font-semibold border transition-all hover:brightness-110 disabled:opacity-50"
+                                    style={{
+                                      backgroundColor: "oklch(0.78 0.16 75 / 0.15)",
+                                      borderColor:     "oklch(0.78 0.16 75 / 0.40)",
+                                      color:           "oklch(0.78 0.16 75)",
+                                    }}
+                                  >
+                                    Assign
+                                  </button>
+                                )}
+                              </div>
                             </div>
 
                             {/* Tags */}

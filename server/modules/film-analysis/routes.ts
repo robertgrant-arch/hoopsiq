@@ -638,8 +638,18 @@ export function registerFilmAnalysisRoutes(
     clip: ReturnType<typeof annotationToClip>,
     tp: RawTp,
   ) {
-    const eventType = clip.inference.eventType as string;
-    const category  = inferTpCategory(eventType);
+    const eventType       = clip.inference.eventType as string;
+    const category        = inferTpCategory(eventType);
+    const cd              = clip.coachDecision as Record<string, unknown> | null;
+    const dispatchedAt    = (cd?.dispatchedAt as string | undefined) ?? null;
+    const coachingActionId = (cd?.coachingActionId as string | undefined) ?? null;
+    const dispatched      = Boolean(dispatchedAt);
+
+    let feedbackStatus: "ready" | "needs_player" | "dispatched" | "draft";
+    if (dispatched)                    feedbackStatus = "dispatched";
+    else if (clip.primaryPlayerId)     feedbackStatus = "ready";
+    else                               feedbackStatus = "needs_player";
+
     return {
       id:               clip.id,
       clipId:           clip.id,
@@ -653,7 +663,10 @@ export function registerFilmAnalysisRoutes(
       category,
       tags:             buildTpTags(eventType, category, tp.skill),
       playerFacingText: buildPlayerFacingText(tp, clip.timestamp, eventType),
-      feedbackStatus:   clip.primaryPlayerId ? "ready" : "needs_player",
+      feedbackStatus,
+      dispatched,
+      coachingActionId: coachingActionId ?? undefined,
+      dispatchedAt:     dispatchedAt ?? undefined,
       inferredEventType: eventType,
       coachNote:        clip.coachDecision?.note ?? undefined,
       reviewedBy:       clip.coachDecision?.reviewedBy ?? "unknown",
@@ -661,7 +674,102 @@ export function registerFilmAnalysisRoutes(
     };
   }
 
-  // ── GET /sessions/:sessionId/teaching-points ──────────────────────────────────
+  // ── POST /teaching-points/:clipId/dispatch ────────────────────────────────────
+  // Creates a coaching action from a teaching point and writes traceability back
+  // to the annotation row.  This is the film → player-development handoff.
+  //
+  // Uses the existing coaching_actions table:
+  //   annotationId  = clipId          (traceability to source clip)
+  //   issueCategory = tp.category     (links to IDP focus area vocabulary)
+  //   coachNote     = playerFacingText (athlete-appropriate wording)
+  //   actionType    = "assign_clip"
+  //
+  // Only dispatches clips with status === "flagged_for_teaching" + teachingPoint.
+  // Re-dispatch is idempotent: updates the existing coachingActionId if already set.
+  router.post(
+    "/teaching-points/:clipId/dispatch",
+    async (req: Request, res: Response, next: NextFunction) => {
+      try {
+        const { orgId, teamId, userId } = await requireOrg(req);
+        const { clipId } = req.params;
+        const { playerId }: { playerId?: string } = req.body;
+
+        // Load and validate the annotation
+        const repo = createRepository({ orgId, userId });
+        const annotation = await repo.annotations.getById(clipId);
+        if (!annotation) return res.status(404).json({ error: "Clip not found" });
+
+        const rows = await loadCandidateRows(orgId, teamId, annotation.sessionId);
+        if (!rows) return res.status(404).json({ error: "Session not found" });
+
+        const clip = rows
+          .map((r) => annotationToClip(r, teamId))
+          .find((c) => c.id === clipId);
+        if (!clip) return res.status(404).json({ error: "Clip not found in session" });
+
+        const cd = clip.coachDecision as Record<string, unknown> | null;
+        if (cd?.status !== "flagged_for_teaching") {
+          return res.status(400).json({
+            error: "Only flagged_for_teaching clips can be dispatched as teaching points",
+          });
+        }
+
+        const tp = cd.teachingPoint as RawTp | null | undefined;
+        if (!tp?.skill?.trim()) {
+          return res.status(400).json({
+            error: "Teaching point is incomplete — skill field required before dispatch",
+          });
+        }
+
+        const eventType = clip.inference.eventType as string;
+        const category  = inferTpCategory(eventType);
+
+        // Create the coaching action (reuses existing coaching-actions infrastructure)
+        const action = await repo.coachingActions.create({
+          sessionId:     annotation.sessionId,
+          annotationId:  clipId,               // ← traceability to source clip
+          playerId:      playerId ?? null,
+          issueCategory: category,             // ← IDP category linkage
+          issueSeverity: tp.clipUsage === "counter_example" ? "major" : "minor",
+          timestampMs:   clip.startMs,
+          coachNote:     buildPlayerFacingText(tp, clip.timestamp, eventType),
+          actionType:    "assign_clip",
+          status:        "open",
+        });
+
+        const dispatchedAt = new Date().toISOString();
+
+        // Write traceability back to the annotation so GET /teaching-points
+        // can report dispatched state without a secondary query.
+        const currentData = (
+          annotation.data && typeof annotation.data === "object" ? annotation.data : {}
+        ) as Record<string, unknown>;
+        await repo.annotations.update(clipId, {
+          data: {
+            ...currentData,
+            coachDecision: {
+              ...(currentData.coachDecision as Record<string, unknown> ?? {}),
+              dispatchedAt,
+              coachingActionId: action.id,
+            },
+          },
+        });
+
+        res.status(201).json({
+          coachingActionId: action.id,
+          clipId,
+          sessionId:        annotation.sessionId,
+          category,
+          dispatchedAt,
+          status:           "open",
+        });
+      } catch (e) {
+        handleError(e, res, next);
+      }
+    },
+  );
+
+
   router.get(
     "/sessions/:sessionId/teaching-points",
     async (req: Request, res: Response, next: NextFunction) => {

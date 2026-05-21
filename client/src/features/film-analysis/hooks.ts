@@ -252,3 +252,31 @@ export function useSessionTeachingPoints(sessionId: string) {
     staleTime: 2 * 60 * 1_000, // 2 min — refreshes after review actions
   });
 }
+
+// ── Dispatch teaching point → player development ─────────────────────────────
+// Creates a coaching action from a flagged_for_teaching clip and writes
+// dispatch traceability back to the annotation row.
+
+export function useDispatchTeachingPoint(sessionId: string) {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: async ({
+      clipId,
+      playerId,
+    }: {
+      clipId:    string;
+      playerId?: string;
+    }) => {
+      return apiPost<{ coachingActionId: string; dispatchedAt: string; status: string }>(
+        `/film-analysis/teaching-points/${clipId}/dispatch`,
+        { playerId },
+      );
+    },
+    onSuccess: () => {
+      // Refresh teaching points so the dispatched badge updates
+      qc.invalidateQueries({ queryKey: ["film-teaching-points", sessionId] });
+      // Refresh clips so coachDecision.dispatchedAt is visible in the review UI
+      qc.invalidateQueries({ queryKey: KEYS.clips(sessionId) });
+    },
+  });
+}

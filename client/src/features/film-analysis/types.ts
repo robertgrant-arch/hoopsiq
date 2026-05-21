@@ -233,7 +233,7 @@ export type TeachingPoint = {
 // Only generated from coach-reviewed analysis — never from raw spotter output.
 
 /** Whether this teaching point is ready to send to an athlete */
-export type FeedbackStatus = "ready" | "needs_player" | "draft";
+export type FeedbackStatus = "ready" | "needs_player" | "draft" | "dispatched";
 
 export type GeneratedTeachingPoint = {
   id:        string;   // = clip annotation ID
@@ -256,7 +256,12 @@ export type GeneratedTeachingPoint = {
   playerFacingText: string;
 
   // Feedback workflow state
-  feedbackStatus: FeedbackStatus; // "ready" | "needs_player" | "draft"
+  feedbackStatus: FeedbackStatus; // "ready" | "needs_player" | "dispatched" | "draft"
+
+  // Dispatch traceability — set when POST /teaching-points/:id/dispatch succeeds
+  dispatched:        boolean;
+  coachingActionId?: string;   // coaching_actions.id — links to player-dev record
+  dispatchedAt?:     string;   // ISO timestamp
 
   // Context
   inferredEventType: string;   // effective event type (coach edit wins)
@@ -272,6 +277,9 @@ export type CoachDecision = {
   teachingPoint?:    TeachingPoint;     // Set when status === "flagged_for_teaching"
   reviewedAt:        string;            // ISO timestamp
   reviewedBy:        string;            // userId
+  // Dispatch traceability — written when POST /teaching-points/:id/dispatch succeeds
+  dispatchedAt?:      string;           // ISO timestamp
+  coachingActionId?:  string;           // coaching_actions.id
 };
 
 // ── Suggested coaching note templates ─────────────────────────────────────────
