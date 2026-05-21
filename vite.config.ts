@@ -224,6 +224,9 @@ const pwaPlugin = VitePWA({
     ],
   },
   workbox: {
+          // Prevent SW from intercepting API/server routes — without this Workbox's
+          // navigateFallback returns the cached index.html for /api/* fetch calls.
+          navigateFallbackDenylist: [/^\/api\//, /^\/health$/, /^\/webhooks\//, /^\/inngest/],
     // Only precache files under 500 kB — skips the large vendor chunks (HLS.js, React,
     // canvas libs) which are already cached by the browser after first load.
     maximumFileSizeToCacheInBytes: 512 * 1024,
