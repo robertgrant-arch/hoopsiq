@@ -92,7 +92,7 @@ export const MOCK_ANALYSIS_CLIPS: AnalysisClip[] = [
       requiresReview: false,
       evidenceItems: [
         {
-          type:        "shot_attempt",
+          type:        "frame_observation",
           description: "Overhead ball extension detected at 2:14.7 — consistent with layup release posture",
           frameMs:     135_700,
           strength:    "strong",
@@ -103,7 +103,7 @@ export const MOCK_ANALYSIS_CLIPS: AnalysisClip[] = [
           strength:    "strong",
         },
         {
-          type:        "rim_contact",
+          type:        "trajectory_analysis",
           description: "Rim impact detected at front-left edge — consistent with ball hitting the near side rather than banking",
           frameMs:     136_900,
           strength:    "strong",
@@ -121,6 +121,7 @@ export const MOCK_ANALYSIS_CLIPS: AnalysisClip[] = [
 
     suggestedCoachNote:  buildSuggestedNote("shot_missed_2", "Marcus Davis", "paint_right", "2:14"),
     linkedSkillCategory: "finishing",
+    originalInference:   null,
     coachDecision:       null,
   },
 
@@ -206,6 +207,7 @@ export const MOCK_ANALYSIS_CLIPS: AnalysisClip[] = [
 
     suggestedCoachNote:  buildSuggestedNote("turnover_live_ball", "Marcus Davis", "half_court", "4:38"),
     linkedSkillCategory: "ball_handling",
+    originalInference:   null,
     coachDecision:       null,
   },
 
@@ -273,6 +275,7 @@ export const MOCK_ANALYSIS_CLIPS: AnalysisClip[] = [
 
     suggestedCoachNote:  buildSuggestedNote("closeout", "James Carter", "arc_left", "7:01"),
     linkedSkillCategory: "defensive_habits",
+    originalInference:   null,
     coachDecision:       null,
   },
 
@@ -346,7 +349,7 @@ export const MOCK_ANALYSIS_CLIPS: AnalysisClip[] = [
           strength:    "strong",
         },
         {
-          type:        "rim_contact",
+          type:        "trajectory_analysis",
           description: "Net-swish detected — no rim impact, confirming clean make",
           frameMs:     556_100,
           strength:    "strong",
@@ -356,6 +359,7 @@ export const MOCK_ANALYSIS_CLIPS: AnalysisClip[] = [
 
     suggestedCoachNote:  buildSuggestedNote("shot_made_3", "James Carter", "arc_right", "9:13"),
     linkedSkillCategory: "shooting",
+    originalInference:   null,
     coachDecision:       {
       status:      "confirmed",
       reviewedAt:  "2026-05-03T14:22:00Z",
@@ -424,7 +428,7 @@ export const MOCK_ANALYSIS_CLIPS: AnalysisClip[] = [
           strength:    "moderate",
         },
         {
-          type:        "rim_contact",
+          type:        "trajectory_analysis",
           description: "Ball enters net — this drive resulted in a made basket",
           frameMs:     695_100,
           strength:    "strong",
@@ -434,6 +438,7 @@ export const MOCK_ANALYSIS_CLIPS: AnalysisClip[] = [
 
     suggestedCoachNote:  "Good finish at 11:32 — Marcus Davis in Paint (R)",
     linkedSkillCategory: "finishing",
+    originalInference:   null,
     coachDecision:       {
       status:          "edited",
       editedEventType: "shot_made_2",   // Coach clarified: this was logged as drive, was actually a made layup
@@ -511,6 +516,7 @@ export const MOCK_ANALYSIS_CLIPS: AnalysisClip[] = [
 
     suggestedCoachNote:  buildSuggestedNote("on_ball_defense", "Marcus Davis", "arc_center", "13:51"),
     linkedSkillCategory: "defensive_habits",
+    originalInference:   null,
     coachDecision:       {
       status:     "flagged_for_teaching",
       note:       "Watch his feet at 13:52 — weight shifts back before opponent moves. Teaching point on stance.",

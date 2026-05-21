@@ -1,4 +1,5 @@
 import express from "express";
+import cors from "cors";
 import { clerkMiddleware } from "@clerk/express";
 import { serve } from "inngest/express";
 import { registerFilmAnalysisRoutes } from "./modules/film-analysis/routes";
@@ -33,6 +34,35 @@ export function createApp() {
   // (Render, Railway, Heroku, etc.).  Set to the number of trusted proxies
   // in front of the app in production.
   app.set("trust proxy", 1);
+
+  // ── CORS ───────────────────────────────────────────────────────────────────
+  // Allow requests from the Vercel frontend and localhost dev servers.
+  // APP_BASE_URL should be set to https://hoopsos-docs.vercel.app on Render.
+  const allowedOrigins: (string | RegExp)[] = [
+    /^http:\/\/localhost:\d+$/,
+    /^http:\/\/127\.0\.0\.1:\d+$/,
+  ];
+  if (process.env.APP_BASE_URL) {
+    allowedOrigins.push(process.env.APP_BASE_URL);
+  }
+  app.use(
+    cors({
+      origin: allowedOrigins,
+      credentials: true,
+    }),
+  );
+
+  // ── Health check ───────────────────────────────────────────────────────────
+  // Render uses this to confirm the service is up. Must come before
+  // clerkMiddleware so unauthenticated health checks always return 200.
+  app.get("/health", (_req, res) => {
+    res.json({
+      status: "ok",
+      db:     !!process.env.DATABASE_URL,
+      clerk:  !!process.env.CLERK_SECRET_KEY,
+      mux:    !!process.env.MUX_TOKEN_ID,
+    });
+  });
 
   // Webhooks MUST be registered before express.json() so express.raw()
   // inside registerWebhookRoutes can capture the raw body for Mux HMAC verification.

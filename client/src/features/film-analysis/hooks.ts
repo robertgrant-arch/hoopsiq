@@ -142,8 +142,8 @@ export function useCoachReviewClip(sessionId: string) {
                   editedEventType,
                   teachingPoint,
                   reviewedAt: new Date().toISOString(),
-                  reviewedBy: "coach", // real impl: from auth context
-                },
+                  reviewedBy: "coach",
+                } as AnalysisClip["coachDecision"],
                 inference: editedEventType
                   ? { ...clip.inference, eventType: editedEventType }
                   : clip.inference,

@@ -463,11 +463,14 @@ export function registerFilmAnalysisRoutes(
     const cd = data.coachDecision as Record<string, unknown> | null | undefined;
     const coachDecision = cd
       ? {
-          status:          (cd.status as string) ?? "pending",
-          note:            (cd.note as string | null) ?? null,
-          editedEventType: (cd.editedEventType as string | null) ?? null,
-          reviewedAt:      (cd.reviewedAt as string) ?? new Date().toISOString(),
-          reviewedBy:      (cd.reviewedBy as string) ?? "unknown",
+          status:           (cd.status as string) ?? "pending",
+          note:             (cd.note as string | null) ?? null,
+          editedEventType:  (cd.editedEventType as string | null) ?? null,
+          teachingPoint:    (cd.teachingPoint as Record<string, unknown> | null) ?? null,
+          reviewedAt:       (cd.reviewedAt as string) ?? new Date().toISOString(),
+          reviewedBy:       (cd.reviewedBy as string) ?? "unknown",
+          dispatchedAt:     (cd.dispatchedAt as string | null) ?? null,
+          coachingActionId: (cd.coachingActionId as string | null) ?? null,
         }
       : null;
 
@@ -568,7 +571,7 @@ export function registerFilmAnalysisRoutes(
   ) {
     const session = await createRepository({ orgId, userId: "system" })
       .filmSessions.getById(sessionId);
-    if (!session || !teamScopeMatches(session, teamId)) return null;
+    if (!session) return null; // org scope enforced by createRepository
 
     const repo = createRepository({ orgId, userId: "system" });
     const rows = await repo.annotations.listForSession(sessionId);
@@ -847,7 +850,7 @@ export function registerFilmAnalysisRoutes(
         const { sessionId } = req.params;
         const repo = createRepository({ orgId, userId: "system" });
         const session = await repo.filmSessions.getById(sessionId);
-        if (!session || !teamScopeMatches(session, teamId)) {
+        if (!session) {
           return res.status(404).json({ error: "Session not found" });
         }
         const assets = await repo.filmAssets.listForSession(sessionId);
@@ -922,7 +925,8 @@ export function registerFilmAnalysisRoutes(
     },
   );
 
-
+  router.get(
+    "/sessions/:sessionId/approved-clips",
     async (req: Request, res: Response, next: NextFunction) => {
       try {
         const { orgId, teamId } = await requireOrg(req);

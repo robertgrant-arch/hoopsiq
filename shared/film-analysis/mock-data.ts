@@ -61,6 +61,8 @@ export const mockFilmSession: FilmSession = {
   rosterSnapshotId: 'roster_snap_001',
   notes: 'Regional semifinal. Good intensity.',
   title: 'vs. Westbury Eagles — Regional Semi',
+  status: 'ready',
+  durationSec: 5400,
 };
 
 // ── AnalysisJob ──────────────────────────────────────────────
@@ -209,6 +211,8 @@ export const mockSessionsList: Array<FilmSession & { job: AnalysisJob }> = [
     rosterSnapshotId: 'roster_snap_001',
     notes: 'Half-court sets focus',
     title: 'Practice — Half Court Sets',
+    status: 'ready',
+    durationSec: 3600,
     job: mockAnalysisJobRunning,
   },
 ];
