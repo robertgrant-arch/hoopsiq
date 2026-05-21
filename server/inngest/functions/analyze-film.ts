@@ -1,7 +1,7 @@
 import { inngest } from "../client";
 import { analyzeFilmSession } from "../../lib/gemini";
 import { getDb } from "@shared/db/client";
-import { filmSessions, filmAssets, annotations, coachingActions } from "@shared/db/schema";
+import { filmSessions, filmAssets, annotations, coachingActions, analysisJobs } from "@shared/db/schema";
 import { eq, and } from "drizzle-orm";
 import { nanoid } from "nanoid";
 
@@ -87,6 +87,36 @@ export const analyzeFilmFn = inngest.createFunction(
       }
     });
 
+    // Step 4b: Generate candidate event windows via the rules-based spotter.
+    // Produces CandidateEvent annotations with needsReview: true so coaches
+    // can confirm/reject them in the AnalysisClipCard review UI.
+    const spotterResult = await step.run("candidate-event-spotting", async () => {
+      const { generateCandidates, toAnnotationRow, summarize } =
+        await import("../../modules/film-analysis/spotting/CandidateEventSpotter");
+
+      // Find the analysis_job row that was created for this session.
+      const db = getDb();
+      const jobRows = await db
+        .select()
+        .from(analysisJobs)
+        .where(and(eq(analysisJobs.sessionId, sessionId), eq(analysisJobs.orgId, orgId)))
+        .orderBy(analysisJobs.createdAt)
+        .limit(1);
+      const jobId = jobRows[0]?.id ?? nanoid(); // fallback id if no job row
+
+      const durationSec = durationSecs ?? sessionData.durationSeconds ?? 2400;
+      const candidates = generateCandidates({ sessionId, orgId, jobId, durationSec });
+
+      if (candidates.length > 0) {
+        await db
+          .insert(annotations)
+          .values(candidates.map((c) => toAnnotationRow(c, { sessionId, orgId, jobId })))
+          .onConflictDoNothing();
+      }
+
+      return summarize(candidates, durationSec);
+    });
+
     // Step 5: Auto-resolve coaching actions that linked this session as follow-up evidence.
     // If the original issue category no longer appears as a negative AI observation, mark resolved.
     const resolutionResult = await step.run("check-resolutions", async () => {
@@ -153,6 +183,8 @@ export const analyzeFilmFn = inngest.createFunction(
       sessionId,
       clipsCreated: analysis.teachableClips.length,
       summary: analysis.summary,
+      candidatesGenerated: spotterResult.total,
+      candidatesByFamily: spotterResult.byFamily,
       resolutionsChecked: resolutionResult.checked,
       resolutionsAutoResolved: resolutionResult.resolved,
     };

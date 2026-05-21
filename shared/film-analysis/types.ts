@@ -75,6 +75,10 @@ export enum DetectedEventType {
   Timeout = 'timeout',
   JumpBall = 'jumpball',
   PossessionChange = 'possession_change',
+  // ── Candidate event families (added for spotting pipeline) ──────────────
+  // Stored in annotations.data.eventType (JSONB); no DB migration needed.
+  Drive = 'drive',        // Player drives toward the basket
+  Pass = 'pass',          // Ball-handler executes a pass
 }
 
 export enum HighlightCandidateStatus {

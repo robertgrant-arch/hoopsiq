@@ -433,6 +433,47 @@ export class DbFilmAnalysisService implements FilmAnalysisService {
         modelVersion: "pr2",
       },
     });
+
+    // ── Candidate event spotting ──────────────────────────────────────────
+    // Generate deterministic candidate event windows and persist them as
+    // annotation rows so GET /sessions/:id/events returns real data.
+    // All candidates have needsReview: true and confidence < 0.6.
+    try {
+      const { generateCandidates, toAnnotationRow, summarize } =
+        await import("./spotting/CandidateEventSpotter");
+      const { getDb } = await import("@shared/db/client");
+      const { annotations } = await import("@shared/db/schema");
+
+      const durationSec = session.durationSeconds ?? 2400; // default 40 min
+      const candidates = generateCandidates({
+        sessionId,
+        orgId,
+        jobId: row.id,
+        durationSec,
+      });
+
+      if (candidates.length > 0) {
+        const db = getDb();
+        await db
+          .insert(annotations)
+          .values(
+            candidates.map((c) =>
+              toAnnotationRow(c, { sessionId, orgId, jobId: row.id }),
+            ),
+          )
+          .onConflictDoNothing(); // idempotent — same session + same IDs = no-op
+
+        const summary = summarize(candidates, durationSec);
+        console.info(
+          `[spotting] session=${sessionId} generated ${summary.total} candidates`,
+          summary.byFamily,
+        );
+      }
+    } catch (err) {
+      // Never block the job response on spotter failure.
+      console.warn("[spotting] candidate generation failed:", err);
+    }
+
     return mapDbJobToApi(row, { orgId, teamId, userId });
   }
 
