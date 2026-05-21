@@ -79,20 +79,17 @@ export function useCoachReviewClip(sessionId: string) {
       note,
       editedEventType,
     }: {
-      clipId:          string;
-      status:          CoachReviewStatus;
-      note?:           string;
+      clipId:           string;
+      status:           CoachReviewStatus;
+      note?:            string;
       editedEventType?: BoundedEventType;
     }) => {
-      try {
-        await apiPost(`/film-analysis/clips/${clipId}/review`, {
-          status,
-          note,
-          editedEventType,
-        });
-      } catch {
-        // Endpoint not yet built — optimistic update is the UX
-      }
+      // Let errors propagate — onError will roll back the optimistic update
+      await apiPost(`/film-analysis/clips/${clipId}/review`, {
+        status,
+        note,
+        editedEventType,
+      });
     },
 
     onMutate: async ({ clipId, status, note, editedEventType }) => {

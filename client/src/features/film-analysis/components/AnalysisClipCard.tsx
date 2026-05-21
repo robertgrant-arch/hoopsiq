@@ -83,6 +83,7 @@ const STATUS_CONFIG: Record<CoachReviewStatus, { label: string; color: string; i
   edited:              { label: "Coach edited",          color: COLORS.primary, icon: <Edit3 className="w-3 h-3" /> },
   rejected:            { label: "Rejected",              color: COLORS.low,     icon: <X className="w-3 h-3" /> },
   flagged_for_teaching:{ label: "Teaching point",        color: COLORS.medium,  icon: <BookOpen className="w-3 h-3" /> },
+  uncertain:           { label: "Uncertain — revisit",   color: COLORS.muted,   icon: <span className="font-bold">?</span> },
 };
 
 // ── Evidence list ─────────────────────────────────────────────────────────────
@@ -128,6 +129,9 @@ export function AnalysisClipCard({ clip, onReview, isPending }: AnalysisClipCard
   const [observationsOpen, setObservationsOpen] = useState(false);
   const [editMode, setEditMode]               = useState(false);
   const [editNote, setEditNote]               = useState(clip.coachDecision?.note ?? "");
+  const [editedType, setEditedType]           = useState<BoundedEventType | "">(
+    (clip.coachDecision?.editedEventType as BoundedEventType | undefined) ?? ""
+  );
 
   const hasDecision = clip.coachDecision !== null;
   const statusCfg   = hasDecision
@@ -321,6 +325,15 @@ export function AnalysisClipCard({ clip, onReview, isPending }: AnalysisClipCard
               </button>
               <button
                 disabled={isPending}
+                onClick={() => { onReview(clip.id, "uncertain"); toast("Marked uncertain — stays in review queue."); }}
+                className="h-8 px-3 rounded-lg text-[12px] font-semibold border transition-all hover:brightness-110 disabled:opacity-50"
+                style={{ backgroundColor: `${COLORS.muted}18`, borderColor: `${COLORS.muted}40`, color: COLORS.muted }}
+              >
+                <span className="font-bold inline mr-1">?</span>
+                Uncertain
+              </button>
+              <button
+                disabled={isPending}
                 onClick={() => { onReview(clip.id, "rejected"); toast("Rejected."); }}
                 className="h-8 px-3 rounded-lg text-[12px] font-semibold border transition-all hover:brightness-110 disabled:opacity-50"
                 style={{ backgroundColor: `${COLORS.low}10`, borderColor: `${COLORS.low}30`, color: COLORS.low }}
@@ -335,13 +348,52 @@ export function AnalysisClipCard({ clip, onReview, isPending }: AnalysisClipCard
         {editMode && (
           <div className="flex flex-col gap-3 pt-1 border-t border-border/50">
             <div className="text-[10px] font-mono uppercase tracking-[0.1em] text-muted-foreground">
-              Add a note (required for edits)
+              Relabel event
+            </div>
+
+            {/* Event-type selector */}
+            <select
+              value={editedType}
+              onChange={(e) => setEditedType(e.target.value as BoundedEventType | "")}
+              className="w-full px-3 py-2 text-[13px] rounded-xl border border-border bg-background focus:outline-none focus:ring-1 focus:ring-primary/40"
+            >
+              <option value="">— keep current label —</option>
+              <optgroup label="Shot Attempt">
+                <option value="shot_made_2">2PT Make</option>
+                <option value="shot_missed_2">2PT Miss</option>
+                <option value="shot_made_3">3PT Make</option>
+                <option value="shot_missed_3">3PT Miss</option>
+                <option value="free_throw_made">FT Made</option>
+                <option value="free_throw_missed">FT Missed</option>
+              </optgroup>
+              <optgroup label="Drive">
+                <option value="drive_left">Drive Left</option>
+                <option value="drive_right">Drive Right</option>
+              </optgroup>
+              <optgroup label="Pass">
+                <option value="pass_completed">Pass</option>
+                <option value="pass_lob">Lob</option>
+              </optgroup>
+              <optgroup label="Turnover">
+                <option value="turnover_live_ball">Live Ball Turnover</option>
+                <option value="turnover_out_of_bounds">Out-of-Bounds TO</option>
+              </optgroup>
+              <optgroup label="Defense">
+                <option value="steal">Steal</option>
+                <option value="block">Block</option>
+                <option value="closeout">Closeout</option>
+                <option value="contest_shot">Shot Contest</option>
+              </optgroup>
+            </select>
+
+            <div className="text-[10px] font-mono uppercase tracking-[0.1em] text-muted-foreground">
+              Correction note (required)
             </div>
             <textarea
               autoFocus
               value={editNote}
               onChange={(e) => setEditNote(e.target.value)}
-              placeholder="Describe the correction or teaching point…"
+              placeholder="Describe the correction…"
               rows={2}
               className="w-full px-3 py-2 text-[13px] rounded-xl border border-border bg-background resize-none focus:outline-none focus:ring-1 focus:ring-primary/40"
             />
@@ -349,17 +401,22 @@ export function AnalysisClipCard({ clip, onReview, isPending }: AnalysisClipCard
               <button
                 disabled={!editNote.trim() || isPending}
                 onClick={() => {
-                  onReview(clip.id, "edited", editNote.trim());
+                  onReview(
+                    clip.id,
+                    "edited",
+                    editNote.trim(),
+                    editedType ? (editedType as BoundedEventType) : undefined,
+                  );
                   setEditMode(false);
                   toast.success("Saved. Coach review logged.");
                 }}
                 className="h-8 px-3 rounded-lg text-[12px] font-semibold transition-all disabled:opacity-50"
                 style={{ backgroundColor: COLORS.primary, color: "#fff" }}
               >
-                Save note
+                Save
               </button>
               <button
-                onClick={() => { setEditMode(false); setEditNote(""); }}
+                onClick={() => { setEditMode(false); setEditNote(""); setEditedType(""); }}
                 className="h-8 px-3 rounded-lg text-[12px] font-semibold border border-border transition-all hover:bg-muted/50"
               >
                 Cancel

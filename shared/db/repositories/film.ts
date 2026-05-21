@@ -185,6 +185,27 @@ export function createFilmRepository(db: Db, ctx: RepoContext) {
           .returning();
         return row;
       },
+
+      async getById(id: string) {
+        const [row] = await db
+          .select()
+          .from(annotations)
+          .where(and(eq(annotations.id, id), eq(annotations.orgId, ctx.orgId)))
+          .limit(1);
+        return row ?? null;
+      },
+
+      async update(
+        id: string,
+        patch: Partial<Pick<NewAnnotation, "data" | "label" | "body" | "updatedAt">>,
+      ) {
+        const [row] = await db
+          .update(annotations)
+          .set({ ...patch, updatedAt: new Date() })
+          .where(and(eq(annotations.id, id), eq(annotations.orgId, ctx.orgId)))
+          .returning();
+        return row ?? null;
+      },
     },
   };
 }

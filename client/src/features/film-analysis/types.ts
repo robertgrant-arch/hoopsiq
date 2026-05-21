@@ -216,7 +216,8 @@ export type CoachReviewStatus =
   | "confirmed"             // Coach verified the inference is correct
   | "edited"                // Coach corrected the event type
   | "rejected"              // Coach flagged as incorrect / not relevant
-  | "flagged_for_teaching"; // Will become a teaching point / player assignment
+  | "flagged_for_teaching"  // Will become a teaching point / player assignment
+  | "uncertain";            // Coach reviewed but is unsure — still needs attention
 
 export type CoachDecision = {
   status:            CoachReviewStatus;

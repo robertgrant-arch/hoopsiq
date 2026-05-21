@@ -395,15 +395,14 @@ export function registerFilmAnalysisRoutes(
 
   // ── Candidate clip routes (features/film-analysis slice) ──────────────────
   //
-  // Clips are derived from DetectedEvent annotations written by
-  // CandidateEventSpotter. The mapper converts DetectedEvent fields to the
-  // AnalysisClip shape the UI (AnalysisClipCard) expects.
+  // Clips are spotter-generated annotation rows whose data.eventType is set.
+  // Review decisions are stored in data.coachDecision on the same row.
   //
-  // GET  /sessions/:sessionId/clips    — AnalysisClip[] from spotter candidates
+  // GET  /sessions/:sessionId/clips    — AnalysisClip[] with live coachDecision
   // GET  /sessions/:sessionId/summary  — SessionAnalysisSummary aggregate counts
-  // POST /clips/:clipId/review         — coach decision (confirm/edit/reject/flag)
+  // POST /clips/:clipId/review         — persists coach decision to annotation row
 
-  // DetectedEventType → BoundedEventType (UI vocabulary)
+  // ── DetectedEventType → BoundedEventType ──────────────────────────────────
   const DET_TO_BOUNDED: Record<string, string> = {
     make_2:      "shot_made_2",
     miss_2:      "shot_missed_2",
@@ -429,49 +428,105 @@ export function registerFilmAnalysisRoutes(
     return c >= 0.85 ? "high" : c >= 0.60 ? "medium" : "low";
   }
 
-  function eventToClip(event: import("../../../shared/film-analysis/types").DetectedEvent) {
-    const boundedType = DET_TO_BOUNDED[event.type] ?? "pass_completed";
-    const conf = event.confidence;
-    const endMs = event.endMs ?? event.tMs + 8_000;
+  // ── AnalysisStatus derivation ──────────────────────────────────────────────
+  // Maps the review decision status to the pipeline lifecycle state the UI shows.
+  function deriveAnalysisStatus(
+    decisionStatus: string | null | undefined,
+  ): string {
+    switch (decisionStatus) {
+      case "confirmed":
+      case "flagged_for_teaching": return "approved";
+      case "edited":               return "corrected";
+      case "rejected":             return "rejected";
+      case "uncertain":            return "needs_review";
+      default:                     return "needs_review";
+    }
+  }
+
+  // ── Annotation row → AnalysisClip ─────────────────────────────────────────
+  // Reads raw annotation data including data.coachDecision so review state
+  // survives the round-trip without a separate join or secondary table.
+  function annotationToClip(
+    row: { id: string; sessionId: string; startMs: number; endMs: number | null; data: unknown },
+    _teamId: string,
+  ) {
+    const data = (row.data && typeof row.data === "object" ? row.data : {}) as Record<string, unknown>;
+    const rawType  = (data.eventType  as string | undefined) ?? "pass_completed";
+    const rawConf  = typeof data.confidence === "number" ? data.confidence : 0;
+    const rawNeeds = Boolean(data.needsReview ?? true);
+    const endMs    = row.endMs ?? row.startMs + 8_000;
+
+    // Coach decision — stored in data.coachDecision on the same row
+    const cd = data.coachDecision as Record<string, unknown> | null | undefined;
+    const coachDecision = cd
+      ? {
+          status:          (cd.status as string) ?? "pending",
+          note:            (cd.note as string | null) ?? null,
+          editedEventType: (cd.editedEventType as string | null) ?? null,
+          reviewedAt:      (cd.reviewedAt as string) ?? new Date().toISOString(),
+          reviewedBy:      (cd.reviewedBy as string) ?? "unknown",
+        }
+      : null;
+
+    // If coach relabelled the event, use their label; otherwise use spotter's
+    const effectiveType = (coachDecision?.editedEventType ?? DET_TO_BOUNDED[rawType] ?? "pass_completed") as string;
+
     return {
-      id: event.id,
-      sessionId: event.sessionId,
-      analysisStatus: "needs_review",
-      startMs: event.tMs,
+      id:                  row.id,
+      sessionId:           row.sessionId,
+      analysisStatus:      deriveAnalysisStatus(coachDecision?.status),
+      startMs:             row.startMs,
       endMs,
-      timestamp: fmtMs(event.tMs),
-      primaryPlayerId: event.primaryPlayerId ?? null,
-      primaryPlayerName: event.primaryPlayerName ?? null,
+      timestamp:           fmtMs(row.startMs),
+      primaryPlayerId:     null as null,
+      primaryPlayerName:   null as null,
       primaryPlayerJersey: null as null,
-      teamSide: "unknown" as const,
+      teamSide:            "unknown" as const,
       observations: [
         {
-          type: "player_movement",
-          description: "Candidate window — review to confirm or reject this event",
-          startMs: event.tMs,
+          type:                "player_movement",
+          description:         "Candidate window — review to confirm or reject this event",
+          startMs:             row.startMs,
           endMs,
-          detectionConfidence: conf,
+          detectionConfidence: rawConf,
         },
       ],
       inference: {
-        eventType: boundedType,
-        confidence: conf,
-        tier: confTier(conf),
-        requiresReview: event.needsReview,
+        eventType:      effectiveType,
+        confidence:     rawConf,
+        tier:           confTier(rawConf),
+        requiresReview: rawNeeds && !coachDecision,
         evidenceItems: [
           {
-            type: "zone_entry",
-            description:
-              "Window identified by rule-based temporal spotter v1. " +
-              "No video frames analyzed — timestamp is an estimate.",
-            strength: "weak",
+            type:        "zone_entry",
+            description: "Window identified by rule-based temporal spotter v1. No video frames analyzed.",
+            strength:    "weak",
           },
         ],
       },
-      suggestedCoachNote: null as null,
+      suggestedCoachNote:  null as null,
       linkedSkillCategory: null as null,
-      coachDecision: null as null,
+      coachDecision,
     };
+  }
+
+  // ── Shared query: spotter-candidate annotations for a session ──────────────
+  async function loadCandidateRows(
+    orgId: string,
+    teamId: string,
+    sessionId: string,
+  ) {
+    const session = await createRepository({ orgId, userId: "system" })
+      .filmSessions.getById(sessionId);
+    if (!session || !teamScopeMatches(session, teamId)) return null;
+
+    const repo = createRepository({ orgId, userId: "system" });
+    const rows = await repo.annotations.listForSession(sessionId);
+    // Candidate annotations are identified by data.eventType being set
+    return rows.filter((r) => {
+      const d = r.data as Record<string, unknown> | null;
+      return typeof d?.eventType === "string";
+    });
   }
 
   router.get(
@@ -479,8 +534,9 @@ export function registerFilmAnalysisRoutes(
     async (req: Request, res: Response, next: NextFunction) => {
       try {
         const { orgId, teamId } = await requireOrg(req);
-        const events = await service.getEvents(orgId, teamId, req.params.sessionId, {});
-        res.json(events.map(eventToClip));
+        const rows = await loadCandidateRows(orgId, teamId, req.params.sessionId);
+        if (!rows) return res.status(404).json({ error: "Session not found" });
+        res.json(rows.map((r) => annotationToClip(r, teamId)));
       } catch (e) {
         handleError(e, res, next);
       }
@@ -493,27 +549,30 @@ export function registerFilmAnalysisRoutes(
       try {
         const { orgId, teamId } = await requireOrg(req);
         const { sessionId } = req.params;
-        const events = await service.getEvents(orgId, teamId, sessionId, {});
-        const clips = events.map(eventToClip);
+        const rows = await loadCandidateRows(orgId, teamId, sessionId);
+        if (!rows) return res.status(404).json({ error: "Session not found" });
 
+        const clips = rows.map((r) => annotationToClip(r, teamId));
         const byEventType: Record<string, number> = {};
+        let confirmed = 0;
         for (const c of clips) {
           const t = c.inference.eventType;
           byEventType[t] = (byEventType[t] ?? 0) + 1;
+          if (c.coachDecision?.status === "confirmed" || c.coachDecision?.status === "edited") confirmed++;
         }
 
         res.json({
           sessionId,
-          totalClips: clips.length,
-          pendingReview: clips.filter((c) => !c.coachDecision).length,
-          confirmed: 0,
+          totalClips:       clips.length,
+          pendingReview:    clips.filter((c) => !c.coachDecision).length,
+          confirmed,
           requiresAttention: clips.filter(
-            (c) => c.inference.requiresReview && !c.coachDecision
+            (c) => c.inference.requiresReview || c.coachDecision?.status === "uncertain",
           ).length,
           byEventType,
-          byPlayer: {},
-          analysisVersion: "rule_based_spotter_v1",
-          processedAt: new Date().toISOString(),
+          byPlayer:         {},
+          analysisVersion:  "rule_based_spotter_v1",
+          processedAt:      new Date().toISOString(),
         });
       } catch (e) {
         handleError(e, res, next);
@@ -533,27 +592,41 @@ export function registerFilmAnalysisRoutes(
           editedEventType,
         }: { status: string; note?: string; editedEventType?: string } = req.body;
 
-        // Validate status against allowed coach review values
         const VALID_STATUSES = [
-          "confirmed", "edited", "rejected", "flagged_for_teaching",
+          "confirmed", "edited", "rejected", "flagged_for_teaching", "uncertain",
         ];
         if (!VALID_STATUSES.includes(status)) {
-          res.status(400).json({ error: `Invalid status: ${status}. Must be one of: ${VALID_STATUSES.join(", ")}` });
-          return;
+          return res.status(400).json({
+            error: `Invalid status: ${status}. Must be one of: ${VALID_STATUSES.join(", ")}`,
+          });
         }
 
-        // When persistence is wired:
-        //   await service.recordCoachDecision(clipId, orgId, userId, { status, note, editedEventType });
+        const repo = createRepository({ orgId, userId });
 
-        // For now: acknowledge optimistically (the client already applied the update)
-        res.json({
-          clipId,
+        // Load the annotation to verify org scope and get current data
+        const annotation = await repo.annotations.getById(clipId);
+        if (!annotation) {
+          return res.status(404).json({ error: "Clip not found" });
+        }
+
+        const currentData = (
+          annotation.data && typeof annotation.data === "object" ? annotation.data : {}
+        ) as Record<string, unknown>;
+
+        const decision = {
           status,
-          note: note ?? null,
+          note:            note ?? null,
           editedEventType: editedEventType ?? null,
-          reviewedAt: new Date().toISOString(),
-          reviewedBy: userId,
+          reviewedAt:      new Date().toISOString(),
+          reviewedBy:      userId,
+        };
+
+        // Persist: write coachDecision into the annotation's data JSONB field
+        await repo.annotations.update(clipId, {
+          data: { ...currentData, coachDecision: decision },
         });
+
+        res.json({ clipId, ...decision });
       } catch (e) {
         handleError(e, res, next);
       }
