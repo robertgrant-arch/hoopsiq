@@ -129,6 +129,7 @@ type UploadPhase = "idle" | "uploading" | "processing" | "done";
 
 export function FilmUploadPage() {
   const [, setLocation] = useLocation();
+  const { invalidateSessions } = useFilmAnalysis();
 
   // If coach navigated here from a "Request Re-upload" action, the actionId is
   // in the query string (?resolves=ca_xxx). We pass it to the initiate endpoint
@@ -161,6 +162,7 @@ export function FilmUploadPage() {
         if (data.status === "ready" && !stopped) {
           stopped = true;
           clearInterval(interval);
+          invalidateSessions(); // refresh FilmRoomPage session list
           setPhase("done");
           setLocation(`/app/coach/film/sessions/${sessionId}`);
         }
@@ -215,13 +217,14 @@ export function FilmUploadPage() {
         throw new Error(err.error ?? `Server error ${initiateRes.status}`);
       }
 
-      const { assetId, uploadUrl } = (await initiateRes.json()) as {
+      const { assetId, sessionId, uploadUrl } = (await initiateRes.json()) as {
         assetId: string;
+        sessionId: string;
         uploadUrl: string;
         expiresAt: string;
       };
 
-      setSessionId(assetId); // assetId doubles as the handle we'll poll with
+      setSessionId(sessionId); // poll and navigate using the session row id
 
       // 2. Upload the file directly to Mux using UpChunk (chunked, resumable).
       await new Promise<void>((resolve, reject) => {
@@ -364,8 +367,14 @@ export function FilmUploadPage() {
 export function FilmSessionPage() {
   const [, params] = useRoute<{ id: string }>("/app/coach/film/sessions/:id");
   const sessionId = params?.id ?? "";
-  const { getSession } = useFilmAnalysis();
+  const { getSession, isLoading } = useFilmAnalysis();
   const session = getSession(sessionId);
+
+  if (isLoading) {
+    return (
+      <div className="p-6 text-sm text-muted-foreground">Loading session…</div>
+    );
+  }
 
   if (!session) {
     return <div className="p-6">Session not found.</div>;

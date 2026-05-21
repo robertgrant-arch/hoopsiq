@@ -181,6 +181,8 @@ function mapSessionRowToApi(
     rosterSnapshotId: null,
     notes: row.description ?? null,
     title: row.title,
+    status: row.status,
+    durationSec: row.durationSeconds ?? null,
   };
 }
 
@@ -287,6 +289,7 @@ export class DbFilmAnalysisService implements FilmAnalysisService {
       },
     });
     return {
+      sessionId: session.id,
       assetId: asset.id,
       uploadUrl,
       expiresAt: new Date(Date.now() + 3_600_000).toISOString(),

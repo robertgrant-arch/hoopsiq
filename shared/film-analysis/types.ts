@@ -166,6 +166,10 @@ export interface FilmSession extends BaseEntity {
   rosterSnapshotId?: string | null;
   notes?: string | null;
   title: string;
+  /** DB-level session status, e.g. "draft" | "uploading" | "queued" | "processing" | "ready" | "failed" */
+  status: string;
+  /** Duration of the primary video asset in seconds, null until Mux transcodes it */
+  durationSec: number | null;
 }
 
 export interface AnalysisJob extends BaseEntity {
@@ -455,6 +459,9 @@ export interface InitiateUploadRequest {
 }
 
 export interface InitiateUploadResponse {
+  /** The film_session row id — use this to poll GET /sessions/:sessionId */
+  sessionId: string;
+  /** The film_asset row id */
   assetId: string;
   uploadUrl: string; // presigned
   expiresAt: string;
