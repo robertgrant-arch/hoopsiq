@@ -32,6 +32,7 @@ export {
 
 export {
   useAnalysisClips,
+  useApprovedClips,
   useSessionAnalysisSummary,
   useCoachReviewClip,
 } from "./hooks";

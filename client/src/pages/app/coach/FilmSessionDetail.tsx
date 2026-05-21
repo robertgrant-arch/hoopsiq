@@ -34,8 +34,9 @@ import { toast } from "sonner";
 import { ClipActionBar } from "@/components/film/ClipActionBar";
 import { TelestrationCanvas, type SavedTelestration } from "@/components/film/TelestrationCanvas";
 import { apiGet } from "@/lib/api/client";
-import { useAnalysisClips, useCoachReviewClip } from "@/features/film-analysis";
+import { useAnalysisClips, useApprovedClips, useCoachReviewClip } from "@/features/film-analysis";
 import { AnalysisClipCard } from "@/features/film-analysis/components/AnalysisClipCard";
+import type { AnalysisClip, BoundedEventType } from "@/features/film-analysis";
 
 // ── Mock data ──────────────────────────────────────────────────────────────────
 
@@ -180,6 +181,67 @@ const CATEGORY_COLORS: Record<string, { bg: string; text: string; dot: string; b
 // Total duration in seconds for the seekbar (1:42:33)
 const TOTAL_SECS = 6153;
 
+// ── Approved clip → clips-tab shape ───────────────────────────────────────────
+//
+// Converts an AnalysisClip (from the approved-clips API) to the shape the
+// existing clips tab UI consumes.  The clips tab was built around the mock
+// CLIPS constant; this mapper preserves that interface while sourcing real data.
+
+type ClipsTabItem = {
+  id: string; startSec: number; endSec: number;
+  label: string; endLabel: string;
+  category: "offense" | "defense" | "finishing" | "transition";
+  player: string; initials: string; playerId: string | null;
+  note: string; teachable: boolean; coachReviewed: boolean;
+};
+
+function fmtSec(sec: number): string {
+  return `${Math.floor(sec / 60)}:${String(sec % 60).padStart(2, "0")}`;
+}
+
+function eventTypeToCategory(
+  eventType: string,
+): ClipsTabItem["category"] {
+  if (/transition|fast_break/.test(eventType)) return "transition";
+  if (/closeout|defense|steal|block|contest|box_out|help/.test(eventType)) return "defense";
+  if (/free_throw/.test(eventType)) return "finishing";
+  return "offense"; // shots, drives, passes, post-ups → offensive
+}
+
+function nameToInitials(name: string): string {
+  return name
+    .split(" ")
+    .map((w) => w[0] ?? "")
+    .join("")
+    .slice(0, 2)
+    .toUpperCase();
+}
+
+function clipToTabItem(clip: AnalysisClip): ClipsTabItem {
+  const startSec = Math.floor(clip.startMs / 1000);
+  const endSec   = Math.floor(clip.endMs   / 1000);
+  const player   = clip.primaryPlayerName ?? "Team";
+
+  // Use coach's note if they left one; otherwise use the event label as a stub
+  const note = clip.coachDecision?.note?.trim()
+    ?? `${clip.inference.eventType.replace(/_/g, " ")} detected at ${clip.timestamp}`;
+
+  return {
+    id:          clip.id,
+    startSec,
+    endSec,
+    label:       fmtSec(startSec),
+    endLabel:    fmtSec(endSec),
+    category:    eventTypeToCategory(clip.inference.eventType),
+    player,
+    initials:    nameToInitials(player),
+    playerId:    clip.primaryPlayerId ?? null,
+    note,
+    teachable:   clip.coachDecision?.status === "flagged_for_teaching",
+    coachReviewed: true, // all approved clips have been reviewed
+  };
+}
+
 // ── Component ──────────────────────────────────────────────────────────────────
 
 export function FilmSessionDetail() {
@@ -189,6 +251,14 @@ export function FilmSessionDetail() {
   // Structured analysis hooks — use the real session ID from the URL
   const { data: analysisClips = [], isLoading: analysisLoading } = useAnalysisClips(_sessionId);
   const { mutate: reviewClip, isPending: reviewPending } = useCoachReviewClip(_sessionId);
+
+  // Approved clips — the coach-curated intelligence units for the clips tab.
+  // Falls back to the mock CLIPS constant when the API returns [] (demo mode
+  // or no reviews recorded yet), so the tab is never blank in the demo.
+  const { data: approvedClipsRaw = [] } = useApprovedClips(_sessionId);
+  const ACTIVE_CLIPS = approvedClipsRaw.length > 0
+    ? approvedClipsRaw.map(clipToTabItem)
+    : CLIPS;
 
   // Video player state
   const [isPlaying, setIsPlaying] = useState(false);
@@ -205,7 +275,7 @@ export function FilmSessionDetail() {
 
   // Reviewed clips
   const [reviewedClips, setReviewedClips] = useState<Set<string>>(
-    new Set(CLIPS.filter((c) => c.coachReviewed).map((c) => c.id))
+    new Set(ACTIVE_CLIPS.filter((c) => c.coachReviewed).map((c) => c.id))
   );
 
   // Tag form state
@@ -239,11 +309,11 @@ export function FilmSessionDetail() {
       .catch(() => {});
   }, []);
 
-  const selectedClip = selectedClipId ? CLIPS.find((c) => c.id === selectedClipId) ?? null : null;
+  const selectedClip = selectedClipId ? ACTIVE_CLIPS.find((c) => c.id === selectedClipId) ?? null : null;
 
   const filteredClips = clipFilter === "all"
-    ? CLIPS
-    : CLIPS.filter((c) => c.category === clipFilter);
+    ? ACTIVE_CLIPS
+    : ACTIVE_CLIPS.filter((c) => c.category === clipFilter);
 
   function handleTagSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -255,10 +325,10 @@ export function FilmSessionDetail() {
   }
 
   function getClipForSuggestion(clipId: string) {
-    return CLIPS.find((c) => c.id === clipId);
+    return ACTIVE_CLIPS.find((c) => c.id === clipId);
   }
 
-  const teachableClips = CLIPS.filter((c) => c.teachable);
+  const teachableClips = ACTIVE_CLIPS.filter((c) => c.teachable);
 
   return (
     <AppShell>
@@ -422,7 +492,7 @@ export function FilmSessionDetail() {
                 {/* Clip marker seekbar */}
                 <div className="relative">
                   <div className="w-full h-2 rounded-full bg-white/[0.06] relative">
-                    {CLIPS.map((clip) => {
+                    {ACTIVE_CLIPS.map((clip) => {
                       const pct = (clip.startSec / TOTAL_SECS) * 100;
                       const colors = CATEGORY_COLORS[clip.category] ?? CATEGORY_COLORS.offense;
                       return (
@@ -608,6 +678,9 @@ export function FilmSessionDetail() {
                     ))}
                     <span className="ml-auto text-[11px] text-muted-foreground">
                       {filteredClips.length} clips
+                      {approvedClipsRaw.length > 0 && (
+                        <span className="ml-1.5 text-emerald-500 font-medium">· approved</span>
+                      )}
                     </span>
                   </div>
 

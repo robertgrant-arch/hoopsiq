@@ -580,8 +580,35 @@ export function registerFilmAnalysisRoutes(
     },
   );
 
-  router.post(
-    "/clips/:clipId/review",
+  router.get(
+    "/sessions/:sessionId/approved-clips",
+    async (req: Request, res: Response, next: NextFunction) => {
+      try {
+        const { orgId, teamId } = await requireOrg(req);
+        const rows = await loadCandidateRows(orgId, teamId, req.params.sessionId);
+        if (!rows) return res.status(404).json({ error: "Session not found" });
+
+        // Only statuses that gate downstream analysis.
+        // "uncertain" and null (pending) remain in the review queue.
+        // "rejected" is excluded — the clip is discarded.
+        const APPROVED_STATUSES = new Set([
+          "confirmed",
+          "edited",
+          "flagged_for_teaching",
+        ]);
+
+        const approved = rows
+          .map((r) => annotationToClip(r, teamId))
+          .filter((c) => c.coachDecision && APPROVED_STATUSES.has(c.coachDecision.status));
+
+        res.json(approved);
+      } catch (e) {
+        handleError(e, res, next);
+      }
+    },
+  );
+
+
     async (req: Request, res: Response, next: NextFunction) => {
       try {
         const { orgId, userId } = await requireOrg(req);

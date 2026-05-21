@@ -20,9 +20,40 @@ import type {
 import { MOCK_ANALYSIS_CLIPS, MOCK_SESSION_SUMMARY } from "./mock";
 
 const KEYS = {
-  clips:   (sessionId: string) => ["film-analysis-clips", sessionId] as const,
-  summary: (sessionId: string) => ["film-analysis-summary", sessionId] as const,
+  clips:         (sessionId: string) => ["film-analysis-clips", sessionId] as const,
+  approvedClips: (sessionId: string) => ["film-approved-clips", sessionId] as const,
+  summary:       (sessionId: string) => ["film-analysis-summary", sessionId] as const,
 };
+
+// ── Approved clips for a session ─────────────────────────────────────────────
+//
+// Returns only clips whose coachDecision.status is confirmed | edited |
+// flagged_for_teaching.  These are the canonical units for downstream
+// analysis — pending and rejected candidates are excluded.
+//
+// Falls back to [] on error (no mock — an empty approved list is the
+// correct state when no reviews have been recorded yet).
+//
+// Re-fetches whenever the clips cache is invalidated so approved counts
+// stay in sync with the review UI without a manual refresh.
+
+export function useApprovedClips(sessionId: string) {
+  return useQuery<AnalysisClip[]>({
+    queryKey: KEYS.approvedClips(sessionId),
+    queryFn: async () => {
+      try {
+        const data = await apiGet<AnalysisClip[]>(
+          `/film-analysis/sessions/${sessionId}/approved-clips`,
+        );
+        return Array.isArray(data) ? data : [];
+      } catch {
+        // 401 in demo mode, network errors → empty list (not mock)
+        return [];
+      }
+    },
+    staleTime: 60 * 1_000, // 1 min — short because reviews change this frequently
+  });
+}
 
 // ── Fetch clips for a session ─────────────────────────────────────────────────
 
@@ -124,8 +155,9 @@ export function useCoachReviewClip(sessionId: string) {
     },
 
     onSuccess: () => {
-      // Invalidate summary so counts update
+      // Invalidate summary and approved-clips so counts and the clips tab update
       qc.invalidateQueries({ queryKey: KEYS.summary(sessionId) });
+      qc.invalidateQueries({ queryKey: KEYS.approvedClips(sessionId) });
     },
   });
 }
