@@ -4,8 +4,9 @@
 // VITE_API_BASE: set to the Render server URL (e.g. https://hoopsos.onrender.com)
 // when the frontend (Vercel) and backend (Render) are hosted separately.
 // Defaults to "/api" so relative calls work in the monorepo / local dev.
-const BASE: string = (import.meta.env.VITE_API_BASE as string | undefined)?.replace(/\/$/, "") ?? "/api";
-
+const RAW_BASE: string = (import.meta.env.VITE_API_BASE as string | undefined)?.replace(/\/$/, "") ?? "";
+// Always end with /api so callers can use paths like "/film-analysis/sessions".
+const BASE: string = RAW_BASE.endsWith("/api") ? RAW_BASE : `${RAW_BASE}/api`;
 export async function apiFetch<T>(
   path: string,
   options: RequestInit = {},
