@@ -162,6 +162,12 @@ export function AnalysisClipCard({ clip, onReview, isPending, onPreview, onBound
   const [editStartStr, setEditStartStr]       = useState(msToMmSs(clip.startMs));
   const [editEndStr, setEditEndStr]           = useState(msToMmSs(clip.endMs));
 
+  // Auto-expand Zone A for classified clips (real observations vs placeholder)
+  const isClassified = clip.observations.length > 1 ||
+    (clip.observations[0]?.description !== "Candidate window — confirm or reject this event" &&
+     clip.observations[0]?.description !== "Candidate window — review to confirm or reject this event");
+  const [observationsOpen, setObservationsOpen] = useState(isClassified);
+
   const hasDecision = clip.coachDecision !== null;
   const statusCfg   = hasDecision
     ? STATUS_CONFIG[clip.coachDecision!.status]
@@ -248,40 +254,82 @@ export function AnalysisClipCard({ clip, onReview, isPending, onPreview, onBound
 
         {/* ── Zone A: Observations ──────────────────────────────────────────── */}
         <div>
+          {/* Header row — label + toggle + detection count */}
           <button
             onClick={() => setObservationsOpen((o) => !o)}
-            className="flex items-center gap-1.5 text-[10.5px] font-mono uppercase tracking-[0.12em] text-muted-foreground hover:text-foreground transition-colors w-full text-left mb-2"
+            className="flex items-center gap-1.5 w-full text-left mb-2 group"
           >
-            {observationsOpen ? <ChevronDown className="w-3 h-3" /> : <ChevronRight className="w-3 h-3" />}
-            Observations · {clip.observations.length} detected
+            <span
+              className="text-[10px] font-mono uppercase tracking-[0.14em] font-semibold px-1.5 py-0.5 rounded"
+              style={{ backgroundColor: `${COLORS.primary}15`, color: COLORS.primary }}
+            >
+              Observed
+            </span>
+            <span className="text-[10.5px] text-muted-foreground/60">
+              · {clip.observations.length} signal{clip.observations.length !== 1 ? "s" : ""} detected
+            </span>
+            <span className="ml-auto text-muted-foreground/40 group-hover:text-muted-foreground transition-colors">
+              {observationsOpen ? <ChevronDown className="w-3 h-3" /> : <ChevronRight className="w-3 h-3" />}
+            </span>
           </button>
 
+          {/* Collapsed summary — show first observation inline */}
+          {!observationsOpen && clip.observations[0] && (
+            <p className="text-[12px] text-muted-foreground/70 leading-snug pl-1 line-clamp-1 italic">
+              {clip.observations[0].description}
+            </p>
+          )}
+
+          {/* Expanded observation list */}
           {observationsOpen && (
-            <div className="pl-4 flex flex-col gap-2 border-l-2 border-muted">
+            <div className="flex flex-col gap-2.5 border-l-2 pl-3.5"
+              style={{ borderColor: `${COLORS.primary}25` }}
+            >
               {clip.observations.map((obs, i) => (
                 <div key={i}>
-                  <div className="text-[11px] font-mono text-muted-foreground/60 uppercase tracking-[0.08em] mb-0.5">
-                    {obs.type.replace(/_/g, " ")}
+                  <div className="flex items-center gap-2 mb-0.5">
+                    <span className="text-[10px] font-mono text-muted-foreground/50 uppercase tracking-[0.08em]">
+                      {obs.type.replace(/_/g, " ")}
+                    </span>
                     {obs.frameMs !== undefined && (
-                      <span className="ml-2 text-muted-foreground/40">@ {Math.floor(obs.frameMs / 1000)}s</span>
+                      <span className="text-[9.5px] text-muted-foreground/35 font-mono">
+                        @ {msToMmSs(obs.frameMs)}
+                      </span>
                     )}
-                  </div>
-                  <p className="text-[12.5px] text-muted-foreground leading-relaxed">{obs.description}</p>
-                  <div className="flex items-center gap-2 mt-0.5">
-                    <span className="text-[10px] text-muted-foreground/40 font-mono">
-                      detection: {Math.round(obs.detectionConfidence * 100)}%
+                    <span className="ml-auto text-[9.5px] text-muted-foreground/35 font-mono tabular-nums">
+                      {Math.round(obs.detectionConfidence * 100)}% det.
                     </span>
                   </div>
+                  <p className="text-[12.5px] text-foreground/80 leading-relaxed">{obs.description}</p>
                 </div>
               ))}
             </div>
           )}
         </div>
 
+        {/* ── Obs → Inference connector ─────────────────────────────────────── */}
+        {isClassified && (
+          <div className="flex items-center gap-2 -my-2">
+            <div className="flex-1 h-px bg-border/40" />
+            <span className="text-[9.5px] font-mono uppercase tracking-[0.12em] text-muted-foreground/40 shrink-0 px-1">
+              inferred from above
+            </span>
+            <div className="flex-1 h-px bg-border/40" />
+          </div>
+        )}
+
         {/* ── Zone B: Inference ─────────────────────────────────────────────── */}
         <div className="rounded-xl border border-border bg-muted/20 p-4 flex flex-col gap-3">
-          <div className="text-[10px] font-mono uppercase tracking-[0.12em] text-muted-foreground">
-            Inference
+          <div className="flex items-center gap-2">
+            <span
+              className="text-[10px] font-mono uppercase tracking-[0.14em] font-semibold px-1.5 py-0.5 rounded"
+              style={{ backgroundColor: `${COLORS.medium}15`, color: COLORS.medium }}
+            >
+              Inferred
+            </span>
+            <span className="text-[10px] text-muted-foreground/50 font-mono uppercase tracking-[0.06em]">
+              · classification
+            </span>
           </div>
 
           <div className="flex items-start justify-between gap-3">

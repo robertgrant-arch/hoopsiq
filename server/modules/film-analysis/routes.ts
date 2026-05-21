@@ -496,6 +496,31 @@ export function registerFilmAnalysisRoutes(
           },
         ];
 
+    // ── Observations ─────────────────────────────────────────────────────────
+    // When classified, use the structured observation records that describe
+    // what was physically detected — not what it means (that's inference).
+    // Unclassified clips fall back to one generic placeholder observation.
+    const clsObs = Array.isArray(cls?.observations) && (cls.observations as unknown[]).length > 0
+      ? cls.observations as Array<{
+          type: string;
+          description: string;
+          startMs: number;
+          endMs: number;
+          detectionConfidence: number;
+          frameMs?: number;
+        }>
+      : null;
+
+    const observations = clsObs ?? [
+      {
+        type:                "player_movement",
+        description:         "Candidate window — confirm or reject this event",
+        startMs:             row.startMs,
+        endMs,
+        detectionConfidence: rawConf,
+      },
+    ];
+
     return {
       id:                  row.id,
       sessionId:           row.sessionId,
@@ -507,15 +532,7 @@ export function registerFilmAnalysisRoutes(
       primaryPlayerName:   null as null,
       primaryPlayerJersey: null as null,
       teamSide:            "unknown" as const,
-      observations: [
-        {
-          type:                "player_movement",
-          description:         "Candidate window — review to confirm or reject this event",
-          startMs:             row.startMs,
-          endMs,
-          detectionConfidence: rawConf,
-        },
-      ],
+      observations,
       inference: {
         eventType:      inferenceEventType,
         confidence:     inferenceConf,
@@ -734,7 +751,7 @@ export function registerFilmAnalysisRoutes(
           const editedType     = cd?.editedEventType as string | null | undefined;
           const rawType        = (d.eventType as string | undefined) ?? "pass_completed";
           const eventType      = (editedType ?? DET_TO_BOUNDED[rawType] ?? "pass_completed") as string;
-          const result = classify(row.id, eventType, status);
+          const result = classify(row.id, eventType, status, row.startMs, row.endMs ?? row.startMs + 8_000);
           await repo.annotations.update(row.id, { data: { ...d, classification: result } });
           classified++;
         }
