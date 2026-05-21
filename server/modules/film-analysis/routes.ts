@@ -593,6 +593,104 @@ export function registerFilmAnalysisRoutes(
     },
   );
 
+  // ── Teaching point generation helpers ────────────────────────────────────────
+  // Only flagged_for_teaching clips with a recorded teachingPoint contribute.
+  // Derived on-the-fly from annotation rows — no new table required.
+
+  function inferTpCategory(eventType: string): string {
+    if (/shot_made_3|shot_missed_3/.test(eventType))               return "Shooting";
+    if (/shot_made_2|shot_missed_2|and_one|drive/.test(eventType)) return "Finishing";
+    if (/free_throw/.test(eventType))                              return "Shooting";
+    if (/pass|screen|cut/.test(eventType))                         return "Ball Handling";
+    if (/turnover/.test(eventType))                                return "Ball Handling";
+    if (/steal|block|closeout|on_ball|help|contest|box_out/.test(eventType)) return "Defense";
+    if (/transition|fast_break/.test(eventType))                   return "Transition";
+    return "Fundamentals";
+  }
+
+  function buildTpTags(eventType: string, category: string, skill: string): string[] {
+    const tags = new Set<string>([category]);
+    const STOP = new Set(["the","and","for","with","from","under","on","in","of","a","to"]);
+    for (const word of skill.toLowerCase().split(/\W+/)) {
+      if (word.length > 3 && !STOP.has(word)) {
+        tags.add(word.charAt(0).toUpperCase() + word.slice(1));
+        if (tags.size >= 4) break;
+      }
+    }
+    return Array.from(tags);
+  }
+
+  function buildPlayerFacingText(
+    tp: { skill: string; instruction: string; clipUsage: string },
+    timestamp: string,
+    eventType: string,
+  ): string {
+    const action = eventType.replace(/_/g, " ");
+    const cue = tp.instruction.split(/[.!?]/)[0]?.trim() ?? tp.instruction;
+    return tp.clipUsage === "example"
+      ? `At ${timestamp}: Good ${action} — this is the rep to build on. Focus: ${tp.skill}.`
+      : `At ${timestamp}: Review this ${action}. Work on: ${tp.skill}. Cue: ${cue}.`;
+  }
+
+  type RawTp = { skill: string; instruction: string; clipUsage: string };
+
+  function buildGeneratedTeachingPoint(
+    clip: ReturnType<typeof annotationToClip>,
+    tp: RawTp,
+  ) {
+    const eventType = clip.inference.eventType as string;
+    const category  = inferTpCategory(eventType);
+    return {
+      id:               clip.id,
+      clipId:           clip.id,
+      sessionId:        clip.sessionId,
+      timestamp:        clip.timestamp,
+      startMs:          clip.startMs,
+      endMs:            clip.endMs,
+      skill:            tp.skill,
+      instruction:      tp.instruction,
+      clipUsage:        tp.clipUsage,
+      category,
+      tags:             buildTpTags(eventType, category, tp.skill),
+      playerFacingText: buildPlayerFacingText(tp, clip.timestamp, eventType),
+      feedbackStatus:   clip.primaryPlayerId ? "ready" : "needs_player",
+      inferredEventType: eventType,
+      coachNote:        clip.coachDecision?.note ?? undefined,
+      reviewedBy:       clip.coachDecision?.reviewedBy ?? "unknown",
+      reviewedAt:       clip.coachDecision?.reviewedAt ?? new Date().toISOString(),
+    };
+  }
+
+  // ── GET /sessions/:sessionId/teaching-points ──────────────────────────────────
+  router.get(
+    "/sessions/:sessionId/teaching-points",
+    async (req: Request, res: Response, next: NextFunction) => {
+      try {
+        const { orgId, teamId } = await requireOrg(req);
+        const rows = await loadCandidateRows(orgId, teamId, req.params.sessionId);
+        if (!rows) return res.status(404).json({ error: "Session not found" });
+
+        const teachingPoints = rows
+          .map((r) => annotationToClip(r, teamId))
+          .filter((c) => {
+            const cd = c.coachDecision;
+            const tp = cd?.teachingPoint as RawTp | null | undefined;
+            return (
+              cd?.status === "flagged_for_teaching" &&
+              tp &&
+              typeof tp.skill === "string" &&
+              tp.skill.trim().length > 0
+            );
+          })
+          .map((c) => buildGeneratedTeachingPoint(c, c.coachDecision!.teachingPoint as RawTp));
+
+        res.json(teachingPoints);
+      } catch (e) {
+        handleError(e, res, next);
+      }
+    },
+  );
+
   router.get(
     "/sessions/:sessionId/summary",
     async (req: Request, res: Response, next: NextFunction) => {

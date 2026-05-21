@@ -227,6 +227,44 @@ export type TeachingPoint = {
   clipUsage:   "example" | "counter_example";  // positive rep or cautionary example
 };
 
+// ── Generated teaching point ──────────────────────────────────────────────────
+//
+// A richer object derived from a flagged_for_teaching clip.
+// Only generated from coach-reviewed analysis — never from raw spotter output.
+
+/** Whether this teaching point is ready to send to an athlete */
+export type FeedbackStatus = "ready" | "needs_player" | "draft";
+
+export type GeneratedTeachingPoint = {
+  id:        string;   // = clip annotation ID
+  clipId:    string;   // explicit alias for downstream consumers
+  sessionId: string;
+  timestamp: string;   // formatted "2:14" — links back to video position
+  startMs:   number;
+  endMs:     number;
+
+  // Coach-entered (from flagged_for_teaching review form)
+  skill:       string;   // skill or concept this clip illustrates
+  instruction: string;   // coach-facing technical language
+  clipUsage:   "example" | "counter_example";
+
+  // Derived — inferred from the clip's classification and skill text
+  category:         string;    // IDP vocabulary: "Finishing" | "Shooting" | "Defense" | …
+  tags:             string[];  // secondary descriptors (≤4), includes category
+
+  // Simplified for athlete audience — short, templated, never hallucinated prose
+  playerFacingText: string;
+
+  // Feedback workflow state
+  feedbackStatus: FeedbackStatus; // "ready" | "needs_player" | "draft"
+
+  // Context
+  inferredEventType: string;   // effective event type (coach edit wins)
+  coachNote?:        string;   // from coachDecision.note if set
+  reviewedBy:        string;
+  reviewedAt:        string;   // ISO timestamp
+};
+
 export type CoachDecision = {
   status:            CoachReviewStatus;
   editedEventType?:  BoundedEventType;  // Set when status === "edited"

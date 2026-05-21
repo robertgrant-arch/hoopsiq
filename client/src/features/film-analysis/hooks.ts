@@ -159,9 +159,10 @@ export function useCoachReviewClip(sessionId: string) {
     },
 
     onSuccess: () => {
-      // Invalidate summary and approved-clips so counts and the clips tab update
+      // Invalidate clip lists, summary, and teaching points — all derived from annotations
       qc.invalidateQueries({ queryKey: KEYS.summary(sessionId) });
       qc.invalidateQueries({ queryKey: KEYS.approvedClips(sessionId) });
+      qc.invalidateQueries({ queryKey: ["film-teaching-points", sessionId] });
     },
   });
 }
@@ -227,5 +228,27 @@ export function useClassifySession(sessionId: string) {
       qc.invalidateQueries({ queryKey: KEYS.clips(sessionId) });
       qc.invalidateQueries({ queryKey: KEYS.approvedClips(sessionId) });
     },
+  });
+}
+
+// ── Session teaching points ───────────────────────────────────────────────────
+// Fetches generated teaching points for a session.
+// Only flagged_for_teaching clips with recorded teachingPoint contribute.
+// Falls back to [] on error — an empty list is correct when no clips are flagged.
+
+export function useSessionTeachingPoints(sessionId: string) {
+  return useQuery<import("./types").GeneratedTeachingPoint[]>({
+    queryKey: ["film-teaching-points", sessionId],
+    queryFn: async () => {
+      try {
+        const data = await apiGet<import("./types").GeneratedTeachingPoint[]>(
+          `/film-analysis/sessions/${sessionId}/teaching-points`,
+        );
+        return Array.isArray(data) ? data : [];
+      } catch {
+        return [];
+      }
+    },
+    staleTime: 2 * 60 * 1_000, // 2 min — refreshes after review actions
   });
 }

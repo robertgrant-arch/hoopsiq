@@ -34,7 +34,7 @@ import { toast } from "sonner";
 import { ClipActionBar } from "@/components/film/ClipActionBar";
 import { TelestrationCanvas, type SavedTelestration } from "@/components/film/TelestrationCanvas";
 import { apiGet } from "@/lib/api/client";
-import { useAnalysisClips, useApprovedClips, useSessionPlayback, useCoachReviewClip, useUpdateClipBoundaries, useClassifySession } from "@/features/film-analysis";
+import { useAnalysisClips, useApprovedClips, useSessionPlayback, useCoachReviewClip, useUpdateClipBoundaries, useClassifySession, useSessionTeachingPoints } from "@/features/film-analysis";
 import { AnalysisClipCard } from "@/features/film-analysis/components/AnalysisClipCard";
 import type { AnalysisClip, BoundedEventType } from "@/features/film-analysis";
 
@@ -253,6 +253,7 @@ export function FilmSessionDetail() {
   const { mutate: reviewClip, isPending: reviewPending } = useCoachReviewClip(_sessionId);
   const { mutate: updateBoundaries, isPending: boundaryPending } = useUpdateClipBoundaries(_sessionId);
   const { mutate: classifySession, isPending: classifyPending, data: classifyResult } = useClassifySession(_sessionId);
+  const { data: teachingPoints = [] } = useSessionTeachingPoints(_sessionId);
 
   // Playback info — Mux playbackId when the video asset is ready
   const { data: playbackInfo } = useSessionPlayback(_sessionId);
@@ -990,6 +991,83 @@ export function FilmSessionDetail() {
                       Off-ball reads and multi-possession patterns are not classified.
                     </p>
                   </div>
+
+                  {/* ── Teaching Points panel ────────────────────────────────── */}
+                  {teachingPoints.length > 0 && (
+                    <div className="border-t border-border mt-1">
+                      <div className="px-4 pt-3 pb-2 flex items-center gap-2">
+                        <BookOpen className="w-3.5 h-3.5 text-amber-500 shrink-0" />
+                        <span className="text-[12.5px] font-semibold">Teaching Points</span>
+                        <span className="text-[10.5px] font-mono text-muted-foreground/50 ml-1">
+                          {teachingPoints.length} ready to send
+                        </span>
+                      </div>
+                      <div className="px-3 pb-3 flex flex-col gap-2.5">
+                        {teachingPoints.map((tp) => (
+                          <div
+                            key={tp.id}
+                            className="rounded-xl border p-3 flex flex-col gap-2"
+                            style={{ borderColor: "oklch(0.78 0.16 75 / 0.25)", backgroundColor: "oklch(0.78 0.16 75 / 0.05)" }}
+                          >
+                            {/* Header row */}
+                            <div className="flex items-start justify-between gap-2">
+                              <div className="flex items-center gap-2 flex-wrap">
+                                <span className="text-[10px] font-mono text-muted-foreground/50">{tp.timestamp}</span>
+                                <span
+                                  className="text-[9.5px] font-mono uppercase tracking-widest px-1.5 py-0.5 rounded"
+                                  style={{ backgroundColor: "oklch(0.78 0.16 75 / 0.15)", color: "oklch(0.78 0.16 75)" }}
+                                >
+                                  {tp.category}
+                                </span>
+                                <span
+                                  className="text-[9.5px] px-1.5 py-0.5 rounded font-mono"
+                                  style={{
+                                    backgroundColor: tp.clipUsage === "example"
+                                      ? "oklch(0.75 0.12 140 / 0.15)"
+                                      : "oklch(0.65 0.2 25 / 0.12)",
+                                    color: tp.clipUsage === "example"
+                                      ? "oklch(0.75 0.12 140)"
+                                      : "oklch(0.65 0.2 25)",
+                                  }}
+                                >
+                                  {tp.clipUsage === "example" ? "✓ positive rep" : "✗ counter-example"}
+                                </span>
+                              </div>
+                              {/* Feedback status badge */}
+                              <span className="text-[9.5px] font-mono text-muted-foreground/40 shrink-0">
+                                {tp.feedbackStatus === "ready" ? "● ready" : "○ needs player"}
+                              </span>
+                            </div>
+
+                            {/* Tags */}
+                            <div className="flex flex-wrap gap-1">
+                              {tp.tags.slice(1).map((tag) => (
+                                <span key={tag} className="text-[9.5px] bg-muted px-1.5 py-0.5 rounded font-mono text-muted-foreground/60">
+                                  {tag}
+                                </span>
+                              ))}
+                            </div>
+
+                            {/* Skill + coach instruction */}
+                            <div>
+                              <p className="text-[12.5px] font-semibold text-foreground/90 leading-snug">{tp.skill}</p>
+                              <p className="text-[12px] text-muted-foreground leading-relaxed mt-0.5">{tp.instruction}</p>
+                            </div>
+
+                            {/* Divider */}
+                            <div className="border-t border-border/40 pt-2">
+                              <div className="text-[9.5px] font-mono uppercase tracking-[0.1em] text-muted-foreground/40 mb-1">
+                                Player-facing text
+                              </div>
+                              <p className="text-[11.5px] text-muted-foreground/70 italic leading-relaxed">
+                                {tp.playerFacingText}
+                              </p>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
                 </div>
               )}
             </div>
