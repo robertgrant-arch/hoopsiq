@@ -270,7 +270,7 @@ export default function TransactionalEmail({ title, message, actionText, actionU
       <Body style={{ backgroundColor: '#f4f4f5', fontFamily: 'sans-serif' }}>
         <Container style={{ margin: '0 auto', padding: '20px 0 48px', width: '580px' }}>
           <Section style={{ backgroundColor: '#ffffff', padding: '40px', borderRadius: '8px', border: '1px solid #e4e4e7' }}>
-            <Img src="https://hoopsos.com/logo.png" width="40" height="40" alt="HoopsIQ" style={{ marginBottom: '24px' }} />
+            <Img src="https://hoopsiq.com/logo.png" width="40" height="40" alt="HoopsIQ" style={{ marginBottom: '24px' }} />
             <Text style={{ fontSize: '24px', fontWeight: 'bold', color: '#18181b', margin: '0 0 16px', textTransform: 'uppercase' }}>
               {title}
             </Text>

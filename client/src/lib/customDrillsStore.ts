@@ -157,7 +157,7 @@ export const useCustomDrillsStore = create<CustomDrillsState>()(
         }),
     }),
     {
-      name: "hoopsos.customDrills.v1",
+      name: "hoopsiq.customDrills.v1",
       merge: (persistedState, currentState) => {
         const persisted = persistedState as Partial<CustomDrillsState> | undefined;
         const drills = Array.isArray(persisted?.drills)

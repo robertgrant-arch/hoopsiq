@@ -498,7 +498,7 @@ DrillLibraryEntry {
   cues:            string[]       // verbal coaching cues
   setupNotes:      text
   videoUrl:        string | null
-  createdBy:       string         // userId or 'hoopsos_system'
+  createdBy:       string         // userId or 'hoopsiq_system'
   isPublished:     boolean
   createdAt:       timestamp
 }
@@ -526,7 +526,7 @@ LearningPath {
   modules:          ModuleRef[]   // ordered array
   certificationId:  string | null
   isPublished:      boolean
-  createdBy:        string        // 'hoopsos_system' or coachId
+  createdBy:        string        // 'hoopsiq_system' or coachId
 }
 
 // Module

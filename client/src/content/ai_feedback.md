@@ -323,7 +323,7 @@ export async function simulateInference(videoUrl: string, uploadId: string): Pro
     modelVersion: "v1.0.0-mock",
     overallScore: 82,
     observations: mockObservations,
-    rawOutputS3Key: `s3://hoopsos-ai-raw/${uploadId}/pose-data.json`
+    rawOutputS3Key: `s3://hoopsiq-ai-raw/${uploadId}/pose-data.json`
   };
 }
 ```

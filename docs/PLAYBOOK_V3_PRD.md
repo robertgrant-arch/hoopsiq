@@ -82,11 +82,11 @@ If any of those fails, v3 is not done.
 
 ## Appendix A — PR #8 Implementation Prompt (paste into Claude Code locally)
 
-You are working in hoopsos-docs on branch main. Implement PR #8: free-form polyline path drawing for Cut and Dribble tools.
+You are working in hoopsiq on branch main. Implement PR #8: free-form polyline path drawing for Cut and Dribble tools.
 
 Files to modify:
 - client/src/components/playbook/PlayCanvas.tsx (currently 465 lines, mode-based handlers)
-- client/src/lib/playbookStore.ts (the v2 store at /workspaces/hoopsos-docs/client/src/lib/playbookStore.ts)
+- client/src/lib/playbookStore.ts (the v2 store at /workspaces/hoopsiq/client/src/lib/playbookStore.ts)
 - client/src/components/playbook/usePlayback.ts
 - client/src/lib/mock/playbookSchema.ts (extend Cut and Dribble action zod schemas with optional path: { x: number; y: number }[])
 

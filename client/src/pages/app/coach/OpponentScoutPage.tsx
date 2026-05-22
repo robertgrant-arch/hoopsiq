@@ -2198,7 +2198,7 @@ function ShareDialog({
   open, onClose, report, opponentName,
 }: { open: boolean; onClose: () => void; report: ScoutReport; opponentName: string }) {
   const [copied, setCopied] = useState(false);
-  const shareUrl = `https://app.hoopsos.com/scout/${report.id}?token=demo_share_token`;
+  const shareUrl = `https://app.hoopsiq.com/scout/${report.id}?token=demo_share_token`;
 
   function copyLink() {
     navigator.clipboard.writeText(shareUrl).catch(() => {});

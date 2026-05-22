@@ -52,7 +52,7 @@
 - [ ] Save checkpoint
 
 ## Phase 16: Completion roadmap doc
-- [ ] Write `hoopsos_completion_roadmap.md` — production checklist
+- [ ] Write `hoopsiq_completion_roadmap.md` — production checklist
 
 
 ---

@@ -457,7 +457,7 @@ export function TeamCalendarPage() {
   ];
 
   function handleAddToPhone() {
-    void navigator.clipboard.writeText("webcal://hoopsos.app/team/calendar.ics").catch(() => null);
+    void navigator.clipboard.writeText("webcal://hoopsiq.app/team/calendar.ics").catch(() => null);
     toast.success("Calendar link copied — paste into your calendar app.");
   }
 

@@ -242,7 +242,7 @@ function makeExports(player: RecruitingPlayer): RecruitingExport[] {
       clipIds: [`clip-${player.id}-2`, `clip-${player.id}-5`],
       coachNarrative: `${player.name} has shown consistent development in both his technical skills and basketball IQ over the past season. His work ethic is evident in the data — he's improved across six of eight skill categories since our January baseline. On the defensive end, he's already demonstrating college-ready awareness and physicality.`,
       featuredBadgeIds: [`badge-inst-${player.id}-0`, `badge-inst-${player.id}-1`],
-      shareLink: `https://hoopsos.com/r/${player.profileSlug}-apr26`,
+      shareLink: `https://hoopsiq.com/r/${player.profileSlug}-apr26`,
       downloadCount: 7,
       viewCount: 34,
     },

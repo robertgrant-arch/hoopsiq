@@ -7,12 +7,12 @@
  * plain localStorage, no React, no external dependencies.
  *
  * Keys
- *   hoopsos:nav:coach:{handle}:sections   → string[]  ordered section titles
- *   hoopsos:nav:athlete:{handle}:more     → string[]  ordered hrefs (More sheet items only)
+ *   hoopsiq:nav:coach:{handle}:sections   → string[]  ordered section titles
+ *   hoopsiq:nav:athlete:{handle}:more     → string[]  ordered hrefs (More sheet items only)
  */
 
 const key = (role: string, handle: string, kind: string) =>
-  `hoopsos:nav:${role}:${handle}:${kind}`;
+  `hoopsiq:nav:${role}:${handle}:${kind}`;
 
 // ── Coach section order ────────────────────────────────────────────────────
 
@@ -71,7 +71,7 @@ export function writeAthleteMoreOrder(handle: string, order: string[]): void {
 // Stored as a single JSON object: { [sectionTitle]: href[] }
 // One key covers all sections — avoids proliferating N keys for N sections.
 //
-// Key: hoopsos:nav:coach:{handle}:items
+// Key: hoopsiq:nav:coach:{handle}:items
 
 export type CoachItemOrder = Record<string, string[]>;
 

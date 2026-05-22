@@ -38,6 +38,6 @@ export const useDrillTemplateStore = create<DrillTemplateState>()(
         set({ templates: get().templates.filter((t) => t.id !== id) });
       },
     }),
-    { name: "hoopsos.drillTemplates.v1" },
+    { name: "hoopsiq.drillTemplates.v1" },
   ),
 );

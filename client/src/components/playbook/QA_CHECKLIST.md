@@ -91,7 +91,7 @@ For each of `P` (Pass), `D` (Dribble), `C` (Cut), `S` (Screen), `H` (Handoff):
 ## Persistence reload
 - [ ] Make edits, refresh the browser — edits persist.
 - [ ] Open devtools → Application → localStorage → set
-  `hoopsos-playbook` to `garbage` — refresh — editor does not crash and
+  `hoopsiq-playbook` to `garbage` — refresh — editor does not crash and
   loads default plays.
 - [ ] In Safari private mode (or any sandboxed iframe), the editor still
   loads (storage adapter degrades silently).

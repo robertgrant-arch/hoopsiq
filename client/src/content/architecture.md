@@ -288,7 +288,7 @@ The billing engine handles individual subscriptions, team subscriptions, and mar
 ### Folder Tree
 
 ```text
-hoopsos/
+hoopsiq/
 ├── src/
 │   ├── app/                    # Next.js App Router
 │   │   ├── (marketing)/        # Marketing pages (Landing, Pricing)

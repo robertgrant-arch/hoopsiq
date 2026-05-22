@@ -969,7 +969,7 @@ export const recruitingExports: RecruitingExport[] = [
     clipIds: ["fc_001", "fc_002", "fc_003", "fc_004", "fc_005"],
     coachNarrative: "Jordan Mills is one of the most complete shooting guards we have developed in the Barnegat program. His technical shooting form is textbook — consistent release point, proper base, and exceptional off-movement accuracy at 84% conversion. What separates Jordan from other prospects his age is his coachability index of 8.7 and his response to film study. He applies corrections within one or two practice sessions and retains adjustments under game pressure. His defensive effort has improved dramatically this season, and his athleticism gives him the physical profile to guard multiple positions at the next level. Jordan's character is elite — he holds teammates to standards, communicates on the floor, and prepares like a professional. We believe he has the ceiling to compete for meaningful minutes at the D1 level and beyond.",
     featuredBadgeIds: ["badge_elite_shooter", "badge_iron_man", "badge_coachable", "badge_season_champion"],
-    shareLink: "https://hoopsos.app/recruiting/jordan-mills-2027?token=export_abc123",
+    shareLink: "https://hoopsiq.app/recruiting/jordan-mills-2027?token=export_abc123",
     shareLinkExpiresAt: "2026-08-08T10:00:00Z",
     downloadCount: 4,
     viewCount: 9,

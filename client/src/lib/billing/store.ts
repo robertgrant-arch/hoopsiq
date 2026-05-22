@@ -331,6 +331,6 @@ export const useBillingStore = create<BillingState>()(
       setAICredits: (xs) => set({ aiCredits: xs }),
       reset: () => set(initialState()),
     }),
-    { name: "hoopsos.billing.v2" },
+    { name: "hoopsiq.billing.v2" },
   ),
 );

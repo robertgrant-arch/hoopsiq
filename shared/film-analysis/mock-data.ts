@@ -37,7 +37,7 @@ const base = {
 export const mockFilmAsset: FilmAsset = {
   ...base,
   id: 'asset_001',
-  sourceUri: 's3://hoopsos-film/org_demo_001/game_20260502.mp4',
+  sourceUri: 's3://hoopsiq-film/org_demo_001/game_20260502.mp4',
   mimeType: 'video/mp4',
   durationMs: 5_400_000, // 90 min
   sizeBytes: 2_400_000_000,

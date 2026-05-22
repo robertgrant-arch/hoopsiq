@@ -1,7 +1,7 @@
 // Typed fetch wrapper. Reads auth token from Clerk if available,
 // falls back to demo mode when VITE_DEMO_MODE=true or ?demo=true in URL.
 
-// VITE_API_BASE: set to the Render server URL (e.g. https://hoopsos.onrender.com)
+// VITE_API_BASE: set to the Render server URL (e.g. https://hoopsiq.onrender.com)
 // when the frontend (Vercel) and backend (Render) are hosted separately.
 // Defaults to "/api" so relative calls work in the monorepo / local dev.
 const RAW_BASE: string = (import.meta.env.VITE_API_BASE as string | undefined)?.replace(/\/$/, "") ?? "";

@@ -1081,7 +1081,7 @@ export function TeamInvite() {
           </div>
           <div className="flex items-center gap-2">
             <code className="flex-1 h-10 px-3 rounded-md bg-[oklch(0.15_0.005_260)] flex items-center text-[12px] font-mono text-muted-foreground overflow-x-auto">
-              https://hoopsos.com/join/tx-elite-varsity-7f4a2
+              https://hoopsiq.com/join/tx-elite-varsity-7f4a2
             </code>
             <button className="h-10 px-4 rounded-md bg-primary text-primary-foreground text-[12px] font-semibold">
               Copy

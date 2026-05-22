@@ -232,7 +232,7 @@ export default function DevelopmentResumePage() {
                   HoopsIQ Verified
                 </div>
               </div>
-              <p className="text-[11px] text-gray-400 mt-2">hoopsos.app/recruiting/{player.profileSlug}</p>
+              <p className="text-[11px] text-gray-400 mt-2">hoopsiq.app/recruiting/{player.profileSlug}</p>
             </div>
             <div className="text-right shrink-0">
               <div className="text-[12px] text-gray-400 mb-1.5">Last assessed</div>
@@ -468,7 +468,7 @@ export default function DevelopmentResumePage() {
                   Data period: Sep 2024 – {formatShortDate(player.lastAssessedAt)}
                 </p>
                 <p className="text-[11px] text-gray-400 mt-0.5">
-                  Verification URL: hoopsos.app/verify/{player.profileSlug}
+                  Verification URL: hoopsiq.app/verify/{player.profileSlug}
                 </p>
               </div>
               <div

@@ -20,7 +20,7 @@ Everything else in this document is a consequence of that rule.
 ### The target tree
 
 ```
-hoopsos/
+hoopsiq/
 │
 ├── client/src/
 │   ├── features/                    ← ALL product features live here

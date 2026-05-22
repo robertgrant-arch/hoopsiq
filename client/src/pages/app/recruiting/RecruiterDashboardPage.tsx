@@ -686,7 +686,7 @@ type ClassNeeds = {
 function ClassNeedsForm() {
   const [needs, setNeeds] = useState<ClassNeeds>(() => {
     try {
-      const stored = localStorage.getItem("hoopsos_class_needs");
+      const stored = localStorage.getItem("hoopsiq_class_needs");
       return stored ? (JSON.parse(stored) as ClassNeeds) : { positions: [], gradYears: [] };
     } catch {
       return { positions: [], gradYears: [] };
@@ -715,7 +715,7 @@ function ClassNeedsForm() {
   }
 
   function save() {
-    localStorage.setItem("hoopsos_class_needs", JSON.stringify(needs));
+    localStorage.setItem("hoopsiq_class_needs", JSON.stringify(needs));
     setSaved(true);
     toast.success("Class needs saved — search will pre-filter based on your selections.");
   }
@@ -795,7 +795,7 @@ type BoardFilterTab = typeof BOARD_FILTER_TABS[number]["id"];
 export default function RecruiterDashboardPage() {
   const [, navigate] = useLocation();
   const [bannerDismissed, setBannerDismissed] = useState(() =>
-    localStorage.getItem("hoopsos_recruiter_banner_dismissed") === "true"
+    localStorage.getItem("hoopsiq_recruiter_banner_dismissed") === "true"
   );
   const [boardFilter, setBoardFilter] = useState<BoardFilterTab>("all");
   const [boardStatuses, setBoardStatuses] = useState<Record<string, RecruiterBoard["status"]>>(
@@ -804,7 +804,7 @@ export default function RecruiterDashboardPage() {
 
   function dismissBanner() {
     setBannerDismissed(true);
-    localStorage.setItem("hoopsos_recruiter_banner_dismissed", "true");
+    localStorage.setItem("hoopsiq_recruiter_banner_dismissed", "true");
   }
 
   function handleStatusChange(playerId: string, status: RecruiterBoard["status"]) {

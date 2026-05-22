@@ -1,6 +1,6 @@
 # HoopsIQ — Vertical Slice Architecture Audit
 
-> Audited: `robertgrant-arch/hoopsos-docs` · May 2026
+> Audited: `robertgrant-arch/hoopsiq` · May 2026
 
 ---
 
@@ -459,7 +459,7 @@ Do not split this until Fixes 1–4 are complete. The repository is currently th
 Only showing files that move or are created. Files not listed stay where they are.
 
 ```
-hoopsos-docs/
+hoopsiq/
 ├── src/
 │   └── playbook/               ← KEEP AS-IS (canonical V3 domain + tests)
 │       ├── types.ts
