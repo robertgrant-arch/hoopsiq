@@ -12,7 +12,7 @@ export function MarketingFooter() {
             point guards to Division I programs.
           </p>
           <p className="text-[11px] text-muted-foreground mt-6 font-mono uppercase tracking-[0.1em]">
-            © 2026 HoopsOS Inc. · Austin, TX
+            © 2026 HoopsIQ Inc. · Austin, TX
           </p>
         </div>
         <FooterCol

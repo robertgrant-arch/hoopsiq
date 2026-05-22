@@ -318,7 +318,7 @@ function ShareableCard() {
 
       <div>
         <div className="text-[11px] font-mono uppercase tracking-widest mb-1" style={{ color: PRIMARY }}>
-          HoopsOS Program Card
+          HoopsIQ Program Card
         </div>
         <div className="text-[20px] font-black text-[var(--text-primary)]">{PROGRAM_NAME}</div>
         <div className="text-[12px] text-[var(--text-muted)] mt-0.5">Program Development Metrics · Spring 2026</div>
@@ -455,7 +455,7 @@ export default function ProgramReputationPage() {
             </div>
             <div className="text-[13px] text-[var(--text-muted)] max-w-xl mx-auto leading-relaxed">
               Measured across skill assessment scores, coachability index, and attendance trends over four consecutive seasons.
-              Benchmark is the anonymized aggregate of all programs using HoopsOS with similar roster sizes.
+              Benchmark is the anonymized aggregate of all programs using HoopsIQ with similar roster sizes.
             </div>
             <div className="flex items-center justify-center gap-6 pt-2">
               {[
@@ -482,7 +482,7 @@ export default function ProgramReputationPage() {
             <PillarCard
               icon={<TrendingUp className="w-4 h-4" />}
               title="Skill Development Rate"
-              tagline="Average skill score delta per player over the last 12 months. Ball handling, shooting, and defense tracked independently against program averages and the HoopsOS benchmark."
+              tagline="Average skill score delta per player over the last 12 months. Ball handling, shooting, and defense tracked independently against program averages and the HoopsIQ benchmark."
               badge="↑ Above benchmark"
               stats={[
                 { label: "Avg skill delta",        value: "+18pt", color: PRIMARY },
@@ -631,9 +631,9 @@ export default function ProgramReputationPage() {
             <ChevronRight className="w-4 h-4 shrink-0 mt-0.5" style={{ color: MUTED }} />
             <span>
               <strong className="text-[var(--text-primary)]">Methodology:</strong>{" "}
-              Comparisons are based on aggregate anonymized data from programs using HoopsOS with similar roster size,
+              Comparisons are based on aggregate anonymized data from programs using HoopsIQ with similar roster size,
               geographic market, and age-group composition. Individual athlete data is never disclosed in comparative
-              analysis. Skill deltas are calculated from coach-administered assessments using the HoopsOS assessment
+              analysis. Skill deltas are calculated from coach-administered assessments using the HoopsIQ assessment
               rubric. The 34% improvement figure reflects the mean cross-skill improvement index across four consecutive
               seasons, compared against programs in the same cohort. Updated each time a new assessment cycle closes.
             </span>

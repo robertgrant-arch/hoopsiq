@@ -841,7 +841,7 @@ export default function RecruiterDashboardPage() {
     <AppShell>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <PageHeader
-          eyebrow="HoopsOS Recruiting"
+          eyebrow="HoopsIQ Recruiting"
           title="Recruiting Dashboard"
           subtitle="Verified athlete profiles from development-focused programs"
           actions={
@@ -868,7 +868,7 @@ export default function RecruiterDashboardPage() {
           >
             <div className="flex-1 min-w-0">
               <div className="text-[13px] font-bold mb-1" style={{ color: PRIMARY }}>
-                What makes HoopsOS profiles different
+                What makes HoopsIQ profiles different
               </div>
               <p className="text-[13px]" style={{ color: "var(--text-muted)" }}>
                 Every profile is generated from coach-recorded assessment data — not self-reported.

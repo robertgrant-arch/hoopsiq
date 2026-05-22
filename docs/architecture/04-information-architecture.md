@@ -1,4 +1,4 @@
-# HoopsOS — Information Architecture Specification
+# HoopsIQ — Information Architecture Specification
 ## Navigation, Sitemap, Routes, Search, and Cross-Linking Design
 
 > Principal IA Design  
@@ -272,7 +272,7 @@ L2:
   Seats          → coaching staff seats on platform subscription
   Integrations   → connected services (Stripe, Mux, wearables)
   Audit Log      → full action audit trail
-  Billing        → HoopsOS subscription management
+  Billing        → HoopsIQ subscription management
 ```
 
 ---
@@ -534,7 +534,7 @@ Full page catalog with role access, primary action, and slice owner.
 | Parent Billing Portal | `/app/parent/billing` | parent_guardian | Pay invoice | Stripe checkout |
 | Parent Registration | `/app/parent/register` | parent_guardian | Submit registration | |
 | Parent Forms | `/app/parent/forms` | parent_guardian | Sign waivers | |
-| HoopsOS Billing Portal | `/app/settings/billing` | admin | Manage HoopsOS subscription | External Stripe Customer Portal |
+| HoopsIQ Billing Portal | `/app/settings/billing` | admin | Manage HoopsIQ subscription | External Stripe Customer Portal |
 
 ---
 
@@ -1048,7 +1048,7 @@ Full tree. Items marked `[D]` are dashboard entrypoints; `[M]` are modal/drawer;
   /app/admin/settings/seats       Coaching staff seats
   /app/admin/settings/integrations  Connected services
   /app/admin/settings/audit       Audit log
-  /app/admin/settings/billing     HoopsOS subscription
+  /app/admin/settings/billing     HoopsIQ subscription
 ```
 
 ---
@@ -1392,4 +1392,4 @@ This ensures cross-links resolve to the correct role-specific URL even when the 
 
 ---
 
-*End of HoopsOS Information Architecture Specification*
+*End of HoopsIQ Information Architecture Specification*

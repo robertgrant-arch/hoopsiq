@@ -1,5 +1,5 @@
 /**
- * permissions.ts — Role-based permission matrix for HoopsOS staff roles.
+ * permissions.ts — Role-based permission matrix for HoopsIQ staff roles.
  *
  * Design:
  *  - StaffRole is the fine-grained staff identity (separate from the app-auth

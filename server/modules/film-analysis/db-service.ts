@@ -917,7 +917,7 @@ export class DbFilmAnalysisService implements FilmAnalysisService {
     });
 
     if (!asset) {
-      // Asset may not exist if upload was initiated outside HoopsOS — log and
+      // Asset may not exist if upload was initiated outside HoopsIQ — log and
       // return gracefully.
       console.warn("[mux-webhook] No film_asset found for upload", muxUploadId, "/ asset", muxAssetId);
       return;

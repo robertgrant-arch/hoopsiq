@@ -1,5 +1,5 @@
 // ─────────────────────────────────────────────────────────────
-// HoopsOS — Webhook routes
+// HoopsIQ — Webhook routes
 // ─────────────────────────────────────────────────────────────
 //
 // IMPORTANT: This router must be mounted BEFORE express.json() middleware

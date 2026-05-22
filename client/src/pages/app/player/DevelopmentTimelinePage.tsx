@@ -446,7 +446,7 @@ export default function DevelopmentTimelinePage() {
         <PageHeader
           eyebrow="Development Timeline"
           title={arc.playerName}
-          subtitle={`${arc.position} · ${arc.seasons.length} season${arc.seasons.length !== 1 ? "s" : ""} with HoopsOS`}
+          subtitle={`${arc.position} · ${arc.seasons.length} season${arc.seasons.length !== 1 ? "s" : ""} with HoopsIQ`}
           actions={
             <button
               onClick={handleShareTimeline}

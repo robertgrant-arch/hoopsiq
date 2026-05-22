@@ -6,7 +6,7 @@ export const inngest = new Inngest({
 });
 
 // Event type definitions
-export type HoopsOSEvents = {
+export type HoopsIQEvents = {
   "film/asset.ready": {
     data: {
       sessionId: string;

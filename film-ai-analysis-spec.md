@@ -1,6 +1,6 @@
-# HoopsOS Film AI Analysis — Spec, Schema & Manus Prompt
+# HoopsIQ Film AI Analysis — Spec, Schema & Manus Prompt
 
-> Canonical specification for AI-powered film upload, automated stat extraction, and highlight generation within HoopsOS Coach HQ / Film Room.
+> Canonical specification for AI-powered film upload, automated stat extraction, and highlight generation within HoopsIQ Coach HQ / Film Room.
 
 ---
 
@@ -31,7 +31,7 @@ Every production basketball AI system uses a **multi-stage pipeline**, not a sin
 
 Academic validation: Recent research reports player detection precision of ~93% and multi-object tracking accuracy of ~90% using deep learning pipelines on standard broadcast video.
 
-### Product Design Principles for HoopsOS
+### Product Design Principles for HoopsIQ
 
 - **Video is the source of truth** — Stats and highlights link back to exact video moments. Coaches can click any stat to see the footage.
 - **Editable outputs** — AI generates first draft; coach corrects and approves. No black-box publishing.
@@ -44,7 +44,7 @@ Academic validation: Recent research reports player detection precision of ~93% 
 ## 2. Manus Master Build Prompt
 
 ```
-You are building the Film AI Analysis module for HoopsOS, a basketball development platform.
+You are building the Film AI Analysis module for HoopsIQ, a basketball development platform.
 
 Context:
 - Monorepo: client/ (React + Vite + wouter router), server/ (Express/Vercel), api/ (serverless functions), shared/

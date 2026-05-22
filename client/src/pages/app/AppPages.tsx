@@ -2180,7 +2180,7 @@ export function LearnCourseDetail() {
                   <div className="mx-6 mb-6 p-5 rounded-xl border"
                     style={{ background: "oklch(0.72 0.18 290 / 0.07)", borderColor: "oklch(0.72 0.18 290 / 0.3)" }}>
                     <div className="text-[11px] uppercase tracking-[0.1em] font-semibold mb-1" style={{ color: "oklch(0.72 0.18 290)" }}>
-                      Try it in HoopsOS
+                      Try it in HoopsIQ
                     </div>
                     <p className="text-[13px] text-muted-foreground leading-relaxed mb-4">
                       This lesson ends with an action — apply what you just learned directly in your account.
@@ -2188,7 +2188,7 @@ export function LearnCourseDetail() {
                     <Link href={activeLesson.actionHref} asChild>
                       <a className="inline-flex items-center gap-2 px-4 py-2 rounded-lg text-[13px] font-semibold transition-colors"
                         style={{ background: "oklch(0.72 0.18 290)", color: "#fff" }}>
-                        {activeLesson.actionLabel ?? "Open in HoopsOS"}
+                        {activeLesson.actionLabel ?? "Open in HoopsIQ"}
                         <ArrowRight className="w-3.5 h-3.5" />
                       </a>
                     </Link>

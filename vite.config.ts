@@ -209,8 +209,8 @@ const pwaPlugin = VitePWA({
   // Include icon assets in the precache manifest
   includeAssets: ["icons/*.png", "icons/*.svg"],
   manifest: {
-    name: "HoopsOS",
-    short_name: "HoopsOS",
+    name: "HoopsIQ",
+    short_name: "HoopsIQ",
     description: "Elite basketball operations platform for coaches and athletes.",
     theme_color: "#0b0d12",
     background_color: "#0b0d12",

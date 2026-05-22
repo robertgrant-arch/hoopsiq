@@ -1,4 +1,4 @@
-# HoopsOS Playbook Studio v2 — Deep Research Report
+# HoopsIQ Playbook Studio v2 — Deep Research Report
 
 **Source:** Manus deep research task `DrdHGGkMan2BdCx3DJzOfM` (May 1, 2026)
 

@@ -1,5 +1,5 @@
 /**
- * payments.ts — shared types and mock data for the HoopsOS Payments module.
+ * payments.ts — shared types and mock data for the HoopsIQ Payments module.
  * All amounts in cents. Dates ISO-8601 strings.
  */
 
@@ -248,7 +248,7 @@ export const MOCK_FEE_REQUESTS: FeeRequest[] = [
   },
   {
     id: "fr-003",
-    name: "HoopsOS Elite Camp — July",
+    name: "HoopsIQ Elite Camp — July",
     description: "3-day residential skill development camp.",
     type: "camp",
     structure: "installment",
@@ -431,7 +431,7 @@ export const MOCK_PAYMENT_ACCOUNTS: PaymentAccount[] = [
     guardianPhone: "(718) 555-0707",
     guardianEmail: "s.webb@email.com",
     feeRequestId: "fr-003",
-    feeName: "HoopsOS Elite Camp — July",
+    feeName: "HoopsIQ Elite Camp — July",
     feeType: "camp",
     seasonId: "season-summer-2026",
     totalOwedCents: 35000,
@@ -458,7 +458,7 @@ export const MOCK_PAYMENT_ACCOUNTS: PaymentAccount[] = [
     guardianPhone: "(214) 555-0808",
     guardianEmail: "k.johnson@email.com",
     feeRequestId: "fr-003",
-    feeName: "HoopsOS Elite Camp — July",
+    feeName: "HoopsIQ Elite Camp — July",
     feeType: "camp",
     seasonId: "season-summer-2026",
     totalOwedCents: 35000,

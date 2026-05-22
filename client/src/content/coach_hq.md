@@ -1,4 +1,4 @@
-# HoopsOS: Coach HQ Architecture & Scaffolding
+# HoopsIQ: Coach HQ Architecture & Scaffolding
 
 This document defines the complete authenticated Coach HQ experience within the `(coach)` route group. It is designed as a dense, high-performance command center for elite programs, prioritizing data density, bulk actions, and keyboard-friendly workflows over generic, padded SaaS UI.
 

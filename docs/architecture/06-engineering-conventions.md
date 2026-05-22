@@ -1,4 +1,4 @@
-# HoopsOS — Engineering Conventions & Repo Structure
+# HoopsIQ — Engineering Conventions & Repo Structure
 ## Vertical Slice Architecture: The Definitive Guide for the Next Phase
 
 > Opinionated. Enforced. Non-negotiable.  
@@ -1978,5 +1978,5 @@ The escape hatch is in the codebase to be used rarely, not to excuse laziness.
 
 ---
 
-*End of HoopsOS Engineering Conventions & Repo Structure*  
+*End of HoopsIQ Engineering Conventions & Repo Structure*  
 *This document is a living spec. Update it when a pattern changes; delete sections that no longer apply.*

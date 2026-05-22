@@ -806,7 +806,7 @@ function OutcomeCorrelations() {
 
       <div className="text-[13px] text-muted-foreground">
         Proof that program engagement drives results — based on{" "}
-        <strong className="text-foreground">113 players over 3 seasons</strong> of HoopsOS data.
+        <strong className="text-foreground">113 players over 3 seasons</strong> of HoopsIQ data.
       </div>
 
       <div className="space-y-3">
@@ -1063,7 +1063,7 @@ function ProgramHealthTrend() {
           style={{ background: `${SUCCESS}12`, color: SUCCESS, border: `1px solid ${SUCCESS}30` }}
         >
           <Star className="w-3 h-3" />
-          Top quartile vs HoopsOS network
+          Top quartile vs HoopsIQ network
         </div>
       </div>
 

@@ -147,7 +147,7 @@ export default function Home() {
         <div className="grid lg:grid-cols-2 gap-14 items-center">
           <div>
             <div className="text-[11px] uppercase tracking-[0.12em] text-primary font-mono mb-6">
-              Development Philosophy · HoopsOS Partner
+              Development Philosophy · HoopsIQ Partner
             </div>
             <blockquote className="display text-3xl lg:text-[2.1rem] leading-tight mb-8">
               "The best coaches don't just watch film. They close the loop —
@@ -161,7 +161,7 @@ export default function Home() {
               <div>
                 <div className="font-semibold display text-[18px]">Earl Watson</div>
                 <div className="text-[13px] text-muted-foreground leading-relaxed">
-                  13-year NBA veteran · Head Coach, Phoenix Suns · HoopsOS Partner
+                  13-year NBA veteran · Head Coach, Phoenix Suns · HoopsIQ Partner
                 </div>
               </div>
             </div>
@@ -174,7 +174,7 @@ export default function Home() {
               needs to close a loop. Every player needs a real plan — not a
               spreadsheet, not a conversation, a structured record that follows
               them and proves they got better. That conviction is the
-              architecture behind HoopsOS.
+              architecture behind HoopsIQ.
             </p>
           </div>
           <div className="grid grid-cols-2 gap-4">
@@ -182,7 +182,7 @@ export default function Home() {
               { k: "13", v: "NBA seasons", sub: "SuperSonics · Thunder · Blazers · Heat and more" },
               { k: "UCLA", v: "Foundation", sub: "Where basketball IQ and player development became his lens" },
               { k: "Head Coach", v: "Phoenix Suns", sub: "Led a program built on individual development at every roster level" },
-              { k: "The Loop", v: "Film → Plan → Proof", sub: "The coaching methodology behind every HoopsOS workflow" },
+              { k: "The Loop", v: "Film → Plan → Proof", sub: "The coaching methodology behind every HoopsIQ workflow" },
             ].map((c) => (
               <div
                 key={c.k}
@@ -201,7 +201,7 @@ export default function Home() {
       <section className="max-w-[1400px] mx-auto px-5 lg:px-8 mt-32">
         <div className="text-center mb-16">
           <div className="text-[11px] uppercase tracking-[0.12em] text-muted-foreground font-mono mb-3">
-            The standard HoopsOS is built to
+            The standard HoopsIQ is built to
           </div>
           <h2 className="display text-4xl lg:text-5xl">
             Four things elite programs do.
@@ -212,12 +212,12 @@ export default function Home() {
             {
               n: "01",
               title: "Teach the why, not just the what.",
-              body: "Players who understand why they're working on something execute with intention. Drill prescriptions in HoopsOS carry the coach's reasoning — not just the reps.",
+              body: "Players who understand why they're working on something execute with intention. Drill prescriptions in HoopsIQ carry the coach's reasoning — not just the reps.",
             },
             {
               n: "02",
               title: "Every observation creates an obligation.",
-              body: "A coaching note that doesn't connect to a player action is just commentary. Film annotations in HoopsOS generate coaching actions. Actions become assignments. Assignments close.",
+              body: "A coaching note that doesn't connect to a player action is just commentary. Film annotations in HoopsIQ generate coaching actions. Actions become assignments. Assignments close.",
             },
             {
               n: "03",
@@ -227,7 +227,7 @@ export default function Home() {
             {
               n: "04",
               title: "Individual development is a system.",
-              body: "One great practice doesn't develop a player. A system of observation, planning, execution, and re-assessment over a full season does. That's what HoopsOS runs.",
+              body: "One great practice doesn't develop a player. A system of observation, planning, execution, and re-assessment over a full season does. That's what HoopsIQ runs.",
             },
           ].map((p) => (
             <div key={p.n} className="bg-card p-8 lg:p-10">
@@ -255,7 +255,7 @@ export default function Home() {
               <span className="text-primary">THEY DEVELOP PLAYERS.</span>
             </h2>
             <p className="text-[17px] leading-relaxed text-muted-foreground mt-6 max-w-xl">
-              HoopsOS turns coaching observations into individual development
+              HoopsIQ turns coaching observations into individual development
               plans. The film you watch on Monday becomes the drill your player
               runs on Wednesday. That drill becomes the scored data that proves
               they got better. That data follows the player into recruiting

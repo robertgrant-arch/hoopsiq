@@ -1,5 +1,5 @@
 /**
- * AIFilmAnalysisHub — AI-powered film review and insight engine for HoopsOS coaches.
+ * AIFilmAnalysisHub — AI-powered film review and insight engine for HoopsIQ coaches.
  *
  * Sections:
  *   1. AI Processing Queue strip — live status counts + filter tabs

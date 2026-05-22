@@ -1,4 +1,4 @@
-# HoopsOS — Product & Engineering Roadmap
+# HoopsIQ — Product & Engineering Roadmap
 ## Vertical Slice Delivery Plan for a Category-Defining V1
 
 > Written for a startup team that already has a refactored codebase, strong backend scaffolding,  
@@ -125,7 +125,7 @@ It requires: film player, annotation panel, ClipActionBar with 2 action types, p
 
 ### Phase 1 — P0: "Programs Can Run" (Weeks 4–14)
 
-**Goal**: A paying basketball program can run their entire season — roster, schedule, billing, daily check-in, and basic film — in HoopsOS. No other tool required for operations.
+**Goal**: A paying basketball program can run their entire season — roster, schedule, billing, daily check-in, and basic film — in HoopsIQ. No other tool required for operations.
 
 **What this phase proves**: The platform is usable as a primary tool, not a companion app. Admin signs up, sets up the season, imports the roster, sends invoices, and coaches start submitting check-ins.
 
@@ -178,7 +178,7 @@ It requires: film player, annotation panel, ClipActionBar with 2 action types, p
 
 ### Phase 2 — P1: "The Loop Is Alive" (Weeks 15–28)
 
-**Goal**: The film → coaching action → practice plan → player development loop is live with real data. Coaches can see measurable evidence that using HoopsOS makes them better coaches.
+**Goal**: The film → coaching action → practice plan → player development loop is live with real data. Coaches can see measurable evidence that using HoopsIQ makes them better coaches.
 
 **What this phase proves**: The platform is demonstrably better than the combination of tools it replaces. Coaches who use the full loop show higher player development data quality than those who don't. The product earns word-of-mouth.
 
@@ -248,7 +248,7 @@ It requires: film player, annotation panel, ClipActionBar with 2 action types, p
 
 **Goal**: Features that create switching costs, justify price increases, and make programs reluctant to leave. Three seasons of longitudinal data becomes the primary retention mechanism.
 
-**What this phase proves**: HoopsOS is not replaceable. Programs that have 2+ seasons of assessment data, certified coaching staff, parent-transparent development records, and an established recruiting dossier will not migrate to a competitor. The cost of leaving is too high.
+**What this phase proves**: HoopsIQ is not replaceable. Programs that have 2+ seasons of assessment data, certified coaching staff, parent-transparent development records, and an established recruiting dossier will not migrate to a competitor. The cost of leaving is too high.
 
 #### Slice delivery in Phase 3
 
@@ -320,7 +320,7 @@ It requires: film player, annotation panel, ClipActionBar with 2 action types, p
 | Release | Label | Proof point | Measured by |
 |---|---|---|---|
 | Phase 0 | Infrastructure | "We can ship safely" | Deploy time < 10 min; no cross-org data leaks in security test |
-| Phase 1 | Operations | "A program can run their season in HoopsOS without any other tool" | Admin completes season setup + first billing in < 60 min; check-in completion rate > 0% within 48 hours of first org onboarding |
+| Phase 1 | Operations | "A program can run their season in HoopsIQ without any other tool" | Admin completes season setup + first billing in < 60 min; check-in completion rate > 0% within 48 hours of first org onboarding |
 | Phase 2 early | Film loop | "The film → action → practice plan connection works" | Coaching action created from film within 48 hours of film upload for 80% of active programs |
 | Phase 2 late | Development | "Coaches are building IDPs from real data and players are engaging with them" | 60% of active players have an IDP with at least one focus area; 40% of IDPs have an open film assignment |
 | Phase 3 early | Analytics | "Directors can see program health without calling anyone" | Director opens Manager Labs at least once per week in the first month after launch |
@@ -583,12 +583,12 @@ Any engineer who raises one of these features before Phase 3 is in scope should 
 | **Cross-org benchmarks** | Requires scale (50+ programs) to produce meaningful anonymized norms | Post-Series A, when program count justifies |
 | **Predictive churn model** | Requires historical data across multiple seasons; first-season programs have no historical signal | Post-Series A, after 3+ cohorts of programs complete a season |
 | **Recruiting portal (external recruiter access)** | Builds significant complexity (separate auth context, privacy controls, recruiter verification); requires enough player dossiers to be useful | Phase 3, only if 5+ programs explicitly request it and are willing to pay for it |
-| **Custom content marketplace** | Turning HoopsOS into a content company changes the business model; the platform's value is the connected workflow, not the content | Never in V1; separate business model discussion |
+| **Custom content marketplace** | Turning HoopsIQ into a content company changes the business model; the platform's value is the connected workflow, not the content | Never in V1; separate business model discussion |
 | **Mobile native app (iOS/Android via Capacitor)** | The codebase supports Capacitor (haptic feedback already referenced) but the web PWA is sufficient for V1 | Phase 3, after web experience is validated |
 | **Public API for third-party integrations** | Premature; adds significant security surface and documentation burden | Post-Series A, driven by enterprise customer requirements |
 | **Video conferencing** | Zoom exists; don't build what exists | Never |
 | **Live game scoring** | A completely different product category (scorekeeping app); would fragment the product identity | Never in V1; consider as a separate product |
-| **Parent community / social features** | HoopsOS is a coaching intelligence tool, not a social network; community features dilute the identity | Never in V1 |
+| **Parent community / social features** | HoopsIQ is a coaching intelligence tool, not a social network; community features dilute the identity | Never in V1 |
 | **Strength and conditioning program design** | Different expertise domain; the WOD planner is sufficient for grassroots programs | Phase 3, only if strength coaches become a primary user persona |
 | **Tournament bracket management** | TeamSnap does this; it is administrative overhead with no coaching intelligence value | Never a priority; link to Challonge if needed |
 | **Email campaign builder** | Admin/Billing already has invoice + reminder emails; a full campaign builder is marketing software | Never; use a dedicated email tool |
@@ -600,7 +600,7 @@ Any engineer who raises one of these features before Phase 3 is in scope should 
 ## 11. Why Each of the Six Slices Should (or Should Not) Be in V1
 
 ### Dashboard — In V1 (P0, simplified)
-**Yes, because**: It is the daily entry point. Without a real dashboard, users navigate menus to find their work. The coach dashboard (real readiness + real actions) is the proof-of-concept for the entire platform — it shows that HoopsOS knows what's happening today.
+**Yes, because**: It is the daily entry point. Without a real dashboard, users navigate menus to find their work. The coach dashboard (real readiness + real actions) is the proof-of-concept for the entire platform — it shows that HoopsIQ knows what's happening today.
 
 **But**: Only the coach and player variants ship in Phase 1. The parent dashboard ships in Phase 3 (requires full parent portal). The director dashboard ships in Phase 3 (requires Manager Labs data). Shipping a dashboard with four roles on mock data is worse than shipping two roles with real data.
 
@@ -609,7 +609,7 @@ Any engineer who raises one of these features before Phase 3 is in scope should 
 ---
 
 ### Coaching — In V1 (P1, Film + Actions + Practice only)
-**Yes, because**: This is the differentiated feature. No grassroots basketball product connects film to coaching decisions to practice planning. Coaching is the category-defining capability. If it doesn't ship in V1, HoopsOS is not category-defining — it is a better TeamSnap.
+**Yes, because**: This is the differentiated feature. No grassroots basketball product connects film to coaching decisions to practice planning. Coaching is the category-defining capability. If it doesn't ship in V1, HoopsIQ is not category-defining — it is a better TeamSnap.
 
 **But**: Ship in layers. Phase 1 ships Readiness (which is part of the Coaching slice conceptually). Phase 2 ships Film + Actions + Practice. Playbook V3 is Phase 3. The coaching loop is the priority, not the animated canvas.
 
@@ -647,7 +647,7 @@ Any engineer who raises one of these features before Phase 3 is in scope should 
 ### Admin/Billing — In V1 (P0, core operations only)
 **Yes, because**: Without Admin/Billing, there is no roster (everything breaks). Without billing, there is no revenue. Without season management, there is no program context. Admin/Billing is not a differentiator — it is infrastructure. But it is required infrastructure that must ship before any other slice.
 
-**But**: Scope tightly for Phase 1. Roster, events, basic invoicing, Stripe card payment. Payment plans, re-enrollment, waivers, forms manager, and document library are Phase 3. The goal in Phase 1 is: admin can get a program into HoopsOS and bill the families.
+**But**: Scope tightly for Phase 1. Roster, events, basic invoicing, Stripe card payment. Payment plans, re-enrollment, waivers, forms manager, and document library are Phase 3. The goal in Phase 1 is: admin can get a program into HoopsIQ and bill the families.
 
 **The one thing that must not ship mocked**: Stripe payment intent creation and webhook handling. If a parent pays and the invoice doesn't update, you have a billing dispute on your hands in week two of the product.
 
@@ -671,4 +671,4 @@ The product that ships at Week 28 is: teams can run their season, coaches review
 
 ---
 
-*End of HoopsOS Product & Engineering Roadmap*
+*End of HoopsIQ Product & Engineering Roadmap*

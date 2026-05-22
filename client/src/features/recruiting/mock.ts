@@ -1,5 +1,5 @@
 /**
- * Recruiting mock data for HoopsOS.
+ * Recruiting mock data for HoopsIQ.
  *
  * Covers the full recruiting layer: player profiles, badges, access requests,
  * film clips, coach narratives, privacy settings, and recruiter profiles.
@@ -772,7 +772,7 @@ export const accessRequests: AccessRequest[] = [
     requesterSchoolTier: "D1",
     status: "pending",
     requestedAt: "2026-05-10T14:22:00Z",
-    requestMessage: "Hi Jordan — we've been following your development through the HoopsOS platform. Our staff is very interested in your shooting profile and overall trajectory. We'd love access to your full profile including film to better evaluate your fit for our program. We recruit 2027 SGs and your numbers are compelling.",
+    requestMessage: "Hi Jordan — we've been following your development through the HoopsIQ platform. Our staff is very interested in your shooting profile and overall trajectory. We'd love access to your full profile including film to better evaluate your fit for our program. We recruit 2027 SGs and your numbers are compelling.",
     accessLevel: "includes_film",
     viewCount: 0,
   },

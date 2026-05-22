@@ -172,7 +172,7 @@ export default function DevelopmentResumePage() {
     <AppShell>
       <div className="max-w-5xl mx-auto px-4 sm:px-6 py-6">
         <PageHeader
-          eyebrow="Verified by HoopsOS"
+          eyebrow="Verified by HoopsIQ"
           title="Development Resume"
           subtitle="Your verified development record — assessments, film, badges, and coach observations"
           actions={
@@ -219,7 +219,7 @@ export default function DevelopmentResumePage() {
                 </span>
                 <span className="text-[12px] text-gray-500">{player.programName} · {player.teamTier}</span>
               </div>
-              {/* HoopsOS Verified badge */}
+              {/* HoopsIQ Verified badge */}
               <div className="flex items-center gap-1.5 mt-2">
                 <div
                   className="flex items-center gap-1.5 px-3 py-1 rounded-full text-[12px] font-semibold"
@@ -229,7 +229,7 @@ export default function DevelopmentResumePage() {
                     <path d="M6 1L2 3v3.5c0 2.8 1.9 5 4 5.5 2.1-.5 4-2.7 4-5.5V3L6 1z" fill="oklch(0.75 0.12 140)" opacity="0.2" />
                     <path d="M4 6l1.5 1.5 3-3" stroke="oklch(0.75 0.12 140)" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round" />
                   </svg>
-                  HoopsOS Verified
+                  HoopsIQ Verified
                 </div>
               </div>
               <p className="text-[11px] text-gray-400 mt-2">hoopsos.app/recruiting/{player.profileSlug}</p>
@@ -254,7 +254,7 @@ export default function DevelopmentResumePage() {
           {/* ── 2. Skills Profile ─────────────────────────────────────────── */}
           <ResumeSection title="Skills Profile">
             <p className="text-[11px] text-gray-400 mb-4">
-              HoopsOS 8-category structured assessment · Last updated {formatDate(player.lastAssessedAt)}
+              HoopsIQ 8-category structured assessment · Last updated {formatDate(player.lastAssessedAt)}
             </p>
             <div className="space-y-3">
               {SKILL_CATEGORIES.map((cat) => {
@@ -462,7 +462,7 @@ export default function DevelopmentResumePage() {
             <div className="flex items-start justify-between gap-4 flex-wrap">
               <div>
                 <p className="text-[11px] text-gray-400">
-                  Verified by <strong className="text-gray-600">HoopsOS</strong> on behalf of {player.programName}
+                  Verified by <strong className="text-gray-600">HoopsIQ</strong> on behalf of {player.programName}
                 </p>
                 <p className="text-[11px] text-gray-400 mt-0.5">
                   Data period: Sep 2024 – {formatShortDate(player.lastAssessedAt)}

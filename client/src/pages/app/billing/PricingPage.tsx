@@ -96,7 +96,7 @@ export function AppPricingPage() {
   return (
     <AppShell>
       <PageHeader
-        eyebrow="HoopsOS · Billing"
+        eyebrow="HoopsIQ · Billing"
         title="Pricing"
         subtitle="Stripe-hosted Checkout. Tax & 3DS are handled in the Stripe layer; this view shows the demo flow end-to-end."
       />

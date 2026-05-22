@@ -373,7 +373,7 @@ function ActivityCard({ entry }: { entry: RecruiterActivity }) {
         >
           <p style={{ margin: 0, fontSize: 12, fontWeight: 700, color: "var(--text-primary)" }}>{entry.program}</p>
           <p style={{ margin: "2px 0 0", fontSize: 11, color: "var(--text-muted)" }}>{entry.division} · {entry.location}</p>
-          <p style={{ margin: "4px 0 0", fontSize: 11, color: "var(--text-muted)" }}>Verified HoopsOS recruiter agreement</p>
+          <p style={{ margin: "4px 0 0", fontSize: 11, color: "var(--text-muted)" }}>Verified HoopsIQ recruiter agreement</p>
         </div>
       )}
 
@@ -626,7 +626,7 @@ export default function RecruiterViewActivityPage() {
           }}>
             <span style={{ fontSize: 16 }}>🔒</span>
             <span>
-              You control who can see Marcus's data. All viewers have signed HoopsOS's recruiter agreement and are verified college programs.{" "}
+              You control who can see Marcus's data. All viewers have signed HoopsIQ's recruiter agreement and are verified college programs.{" "}
               <button
                 onClick={() => toast.info("Opening privacy settings")}
                 style={{ color: PRIMARY, background: "none", border: "none", cursor: "pointer", fontSize: 13, fontWeight: 600, padding: 0 }}

@@ -1,7 +1,7 @@
 /**
  * permissions.test.ts
  *
- * Tests for the HoopsOS role-based permission matrix.
+ * Tests for the HoopsIQ role-based permission matrix.
  *
  * Acceptance criteria verified:
  *  ✓ AC1: can("video_coordinator", "view_injury_notes") === false

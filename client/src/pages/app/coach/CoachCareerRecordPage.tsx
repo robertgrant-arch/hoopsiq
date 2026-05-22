@@ -110,7 +110,7 @@ const SIGNATURE_AREAS = [
   {
     skill: "Defensive Stance",
     percentile: 91,
-    note: "Players improve lateral quickness and help-defense positioning at a rate in the top 10% of all HoopsOS coaches.",
+    note: "Players improve lateral quickness and help-defense positioning at a rate in the top 10% of all HoopsIQ coaches.",
   },
   {
     skill: "Coachability",
@@ -134,14 +134,14 @@ const PLAYER_EVIDENCE: PlayerEvidence[] = [
 ];
 
 const EDUCATION: EducationModule[] = [
-  { id: 1, platform: "HoopsOS Academy",     topic: "Assessment Science & VDV Methodology",     date: "Jan 2022", certification: "Certified Assessor" },
-  { id: 2, platform: "HoopsOS Academy",     topic: "Writing High-Quality Observations",         date: "Mar 2022", certification: null },
+  { id: 1, platform: "HoopsIQ Academy",     topic: "Assessment Science & VDV Methodology",     date: "Jan 2022", certification: "Certified Assessor" },
+  { id: 2, platform: "HoopsIQ Academy",     topic: "Writing High-Quality Observations",         date: "Mar 2022", certification: null },
   { id: 3, platform: "USA Basketball",      topic: "Player Development Fundamentals",           date: "Jun 2022", certification: "Youth Development License" },
-  { id: 4, platform: "HoopsOS Academy",     topic: "IDP Goal Setting & Tracking",               date: "Sep 2023", certification: null },
+  { id: 4, platform: "HoopsIQ Academy",     topic: "IDP Goal Setting & Tracking",               date: "Sep 2023", certification: null },
   { id: 5, platform: "NCAA Eligibility Ctr", topic: "Recruiting Process & Compliance Overview", date: "Jan 2023", certification: null },
-  { id: 6, platform: "HoopsOS Academy",     topic: "Film Corroboration Best Practices",         date: "Mar 2024", certification: "Film-Linked Coach" },
+  { id: 6, platform: "HoopsIQ Academy",     topic: "Film Corroboration Best Practices",         date: "Mar 2024", certification: "Film-Linked Coach" },
   { id: 7, platform: "USA Basketball",      topic: "Advanced Defensive Systems",                date: "Jun 2024", certification: null },
-  { id: 8, platform: "HoopsOS Academy",     topic: "Peer Benchmarking & Coaching Analytics",    date: "Jan 2025", certification: null },
+  { id: 8, platform: "HoopsIQ Academy",     topic: "Peer Benchmarking & Coaching Analytics",    date: "Jan 2025", certification: null },
 ];
 
 const OBS_QUALITY_TREND = [
@@ -464,7 +464,7 @@ export default function CoachCareerRecordPage() {
                   <svg width={14} height={14} viewBox="0 0 14 14" fill="none">
                     <path d="M7 1l1.5 3 3.5.5-2.5 2.5.6 3.5L7 9l-3.1 1.5.6-3.5L2 4.5 5.5 4z" fill={SUCCESS} />
                   </svg>
-                  HoopsOS Verified Coach
+                  HoopsIQ Verified Coach
                 </button>
                 {showTooltip && (
                   <div
@@ -484,7 +484,7 @@ export default function CoachCareerRecordPage() {
                       boxShadow: "0 8px 24px rgba(0,0,0,0.15)",
                     }}
                   >
-                    This record is based on structured assessments, observed over 4 seasons of data collected through the HoopsOS platform.
+                    This record is based on structured assessments, observed over 4 seasons of data collected through the HoopsIQ platform.
                   </div>
                 )}
               </div>

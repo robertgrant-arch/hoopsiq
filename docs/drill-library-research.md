@@ -1,4 +1,4 @@
-# HoopsOS Drill Library Research Notes
+# HoopsIQ Drill Library Research Notes
 
 Date: 2026-05-05
 

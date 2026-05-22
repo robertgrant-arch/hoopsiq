@@ -844,7 +844,7 @@ export default function FilmCorroborationEntryPage() {
                   ),
                   step: "3",
                   label: "Access Requested",
-                  desc: "Recruiter contacts coach through HoopsOS to request official access",
+                  desc: "Recruiter contacts coach through HoopsIQ to request official access",
                 },
               ].map((item) => (
                 <div

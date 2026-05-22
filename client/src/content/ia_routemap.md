@@ -1,9 +1,9 @@
-# HoopsOS: Information Architecture & Route Map
+# HoopsIQ: Information Architecture & Route Map
 
 ## 1. Product Sitemap
 
 ```text
-HoopsOS
+HoopsIQ
 ├── Public / Marketing
 │   ├── Home
 │   ├── Pricing & Entitlements
@@ -109,7 +109,7 @@ src/app/
 ## 3. Purpose Statements
 
 ### Marketing & Auth
-*   `/(marketing)/page.tsx`: Sells the unified HoopsOS vision to all target personas.
+*   `/(marketing)/page.tsx`: Sells the unified HoopsIQ vision to all target personas.
 *   `/(marketing)/pricing/page.tsx`: Details subscription tiers and highlights the 50% athlete discount entitlement.
 *   `/(marketing)/experts/page.tsx`: Public directory showcasing premium experts available for booking.
 *   `/(auth)/sign-in/page.tsx`: Entry point for returning users.

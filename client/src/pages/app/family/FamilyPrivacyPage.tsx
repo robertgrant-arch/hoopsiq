@@ -348,7 +348,7 @@ export default function FamilyPrivacyPage() {
               You own your child's data.
             </div>
             <p className="text-[13px] leading-relaxed text-[var(--text-muted)]">
-              HoopsOS never sells player information. Every profile view is
+              HoopsIQ never sells player information. Every profile view is
               logged and visible to you. You can change these settings anytime,
               and any access you've granted can be revoked immediately.
             </p>

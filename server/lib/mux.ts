@@ -1,5 +1,5 @@
 // ─────────────────────────────────────────────────────────────
-// HoopsOS — Mux client singleton + helpers
+// HoopsIQ — Mux client singleton + helpers
 // ─────────────────────────────────────────────────────────────
 //
 // Lazy-initialised so the server boots in dev without Mux credentials;

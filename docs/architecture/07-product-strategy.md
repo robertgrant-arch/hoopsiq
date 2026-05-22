@@ -1,4 +1,4 @@
-# HoopsOS — Product Strategy Evaluation
+# HoopsIQ — Product Strategy Evaluation
 ## Sharp, Skeptical, Practical
 
 > This is not a cheerleading document.  
@@ -254,15 +254,15 @@ Be honest about what this platform should not compete on.
 
 ### Certifications and formal learning paths
 
-**Why they're low-ROI in V1**: Certifications are only valuable if the market recognizes them. In basketball coaching, certifications from NABC or state associations are recognized. A HoopsOS certification is not recognized by anyone yet. Building a certification system before you have the brand recognition to make the certificate meaningful is building a credential nobody wants.
+**Why they're low-ROI in V1**: Certifications are only valuable if the market recognizes them. In basketball coaching, certifications from NABC or state associations are recognized. A HoopsIQ certification is not recognized by anyone yet. Building a certification system before you have the brand recognition to make the certificate meaningful is building a credential nobody wants.
 
-**What to do**: Drill library and film assignments are the Academy features that create value immediately. Learning paths and certifications are Phase 3 — after two seasons of programs proving the development model works, the "HoopsOS Certified Coach" credential becomes something worth pursuing.
+**What to do**: Drill library and film assignments are the Academy features that create value immediately. Learning paths and certifications are Phase 3 — after two seasons of programs proving the development model works, the "HoopsIQ Certified Coach" credential becomes something worth pursuing.
 
 ---
 
 ### Wearable integrations
 
-**Why they're premature**: Most grassroots basketball programs don't have wearable devices. The programs that do (elite AAU, D1 prep programs) use Catapult or Polar with dedicated athletic trainers — integrating with HoopsOS is a nice-to-have, not a buying criteria. The integration is also technically complex (OAuth with device manufacturers, data normalization, load management algorithms) and distracts from the core coaching loop.
+**Why they're premature**: Most grassroots basketball programs don't have wearable devices. The programs that do (elite AAU, D1 prep programs) use Catapult or Polar with dedicated athletic trainers — integrating with HoopsIQ is a nice-to-have, not a buying criteria. The integration is also technically complex (OAuth with device manufacturers, data normalization, load management algorithms) and distracts from the core coaching loop.
 
 **What to do**: Build the data model for wearable signals (it exists in the schema). Don't build the actual integrations until three or more programs explicitly pay more for it.
 
@@ -361,7 +361,7 @@ Each iteration of this loop deposits data into the system that makes the next it
 
 **Cost 2 — The coaching methodology record**. The director can see how many coaching actions Coach Martinez has created, resolved, and linked to IDP improvements. This data starts to mean something after 90 days. After two seasons, it is a longitudinal record of coaching activity that informs hiring, assignment, and development decisions. No other tool produces this record.
 
-**Cost 3 — Parent relationship infrastructure**. Once parents are receiving weekly development digests and paying invoices through the platform, their primary relationship with the program runs through HoopsOS. Migrating to a different platform means telling parents "please download a new app and re-enter your payment information." Programs are unwilling to do this mid-season and reluctant to do it at any time when parents are happy.
+**Cost 3 — Parent relationship infrastructure**. Once parents are receiving weekly development digests and paying invoices through the platform, their primary relationship with the program runs through HoopsIQ. Migrating to a different platform means telling parents "please download a new app and re-enter your payment information." Programs are unwilling to do this mid-season and reluctant to do it at any time when parents are happy.
 
 **Cost 4 — The program's own operational memory**. Two seasons of event history, billing records, registration forms, signed waivers, and attendance data. Migrating this is possible but painful. It is not the primary switching cost — it is the friction cost that compounds the others.
 
@@ -385,7 +385,7 @@ Hudl has more money and more film infrastructure. But they would have to rebuild
 
 TeamSnap has more subscribers but zero coaching intelligence investment. They would have to hire a completely different product team and cannibalize their current "scheduling and billing" identity to enter this market.
 
-The well-funded company most likely to compete is Hudl. The correct defensive move is to own the development record before they decide to build one. The development record requires two seasons of real data. The competitive window is approximately 18 months from now — after that, any well-funded competitor who decides to build this loop will take two years to get real longitudinal data, by which time HoopsOS will have three seasons of development records and relationships with programs that are not willing to start over.
+The well-funded company most likely to compete is Hudl. The correct defensive move is to own the development record before they decide to build one. The development record requires two seasons of real data. The competitive window is approximately 18 months from now — after that, any well-funded competitor who decides to build this loop will take two years to get real longitudinal data, by which time HoopsIQ will have three seasons of development records and relationships with programs that are not willing to start over.
 
 ### The honest risk to the defensibility argument
 
@@ -416,4 +416,4 @@ Get 10 programs generating real coaching action data within the next 90 days. Th
 
 ---
 
-*End of HoopsOS Product Strategy Evaluation*
+*End of HoopsIQ Product Strategy Evaluation*

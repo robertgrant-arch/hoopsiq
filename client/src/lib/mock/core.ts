@@ -1,5 +1,5 @@
 /* ==========================================================================
-   HoopsOS Mock Data — powers every surface of the demo product.
+   HoopsIQ Mock Data — powers every surface of the demo product.
    Everything here is deterministic and safe to render on the client.
    ========================================================================== */
 

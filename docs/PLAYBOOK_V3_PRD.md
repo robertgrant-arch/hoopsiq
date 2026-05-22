@@ -1,7 +1,7 @@
 # Playbook Studio v3 PRD — "Beat HoopsGeek"
 
 ## Mission
-Make HoopsOS Playbook Studio the unambiguous best-in-class basketball play diagramming + animation product for coaches at the youth, HS, college, and pro levels. Significantly better than HoopsGeek (https://hoopsgeek.com), FastDraw, FastModel, and CoachTube Whiteboard.
+Make HoopsIQ Playbook Studio the unambiguous best-in-class basketball play diagramming + animation product for coaches at the youth, HS, college, and pro levels. Significantly better than HoopsGeek (https://hoopsgeek.com), FastDraw, FastModel, and CoachTube Whiteboard.
 
 ## Verified state today (v2.x, post PR #6)
 WORKS: v2 schema/store/persistence; toolbar with V/O/X/B/K/P/D/C/S/H shortcuts; Pass arrow (player-to-player); Cut player-to-player; Phases (Entry/Read 1/...); Phase timeline strip with reorder; Save version; Play metadata panel (name, type, half/full court, version, history); Selected-action panel + delete; Tips panel.

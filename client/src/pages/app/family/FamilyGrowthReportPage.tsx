@@ -847,7 +847,7 @@ export default function FamilyGrowthReportPage() {
           >
             <p className="text-[14px] leading-[1.75] text-[var(--text-primary)]">
               Q3 2026 kicks off June 1st with a full skills reassessment — this
-              will be Jordan's 15th assessment on HoopsOS, giving us the
+              will be Jordan's 15th assessment on HoopsIQ, giving us the
               clearest view yet of long-term trajectory. Coach Marcus has
               planned a heavy focus on mid-range shooting and transition
               defense, with the AAU tournament circuit in July providing

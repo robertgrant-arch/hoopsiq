@@ -1,5 +1,5 @@
 // ─────────────────────────────────────────────────────────────
-// HoopsOS — Film AI Analysis: Mock Data for UI Development
+// HoopsIQ — Film AI Analysis: Mock Data for UI Development
 // ─────────────────────────────────────────────────────────────
 
 import type {
@@ -137,7 +137,7 @@ export const mockTeamStats: TeamStatSummary = {
   ...base,
   id: 'tss_001',
   sessionId: 'session_001',
-  teamName: 'HoopsOS Varsity',
+  teamName: 'HoopsIQ Varsity',
   pts: 74,
   ast: 22,
   reb: 35,

@@ -2,7 +2,7 @@
  * StaffRolesPage — /app/coach/staff-roles
  *
  * Staff management screen with:
- *  - Full staff roster with fine-grained HoopsOS staff roles
+ *  - Full staff roster with fine-grained HoopsIQ staff roles
  *  - Inline role editing (head_coach / admin only — enforced by PermissionGate)
  *  - Invite new staff member flow
  *  - Permission matrix viewer (what each role can do)

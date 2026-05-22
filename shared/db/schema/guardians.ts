@@ -14,7 +14,7 @@ export const guardianRelationshipEnum = pgEnum("guardian_relationship", [
  * Supersedes the flat parentGuardianName/Email/Phone fields on `players`,
  * which are kept for backward compatibility and populated from the primary record.
  *
- * SECURITY: guardianUserId is the Clerk user ID for the guardian's HoopsOS
+ * SECURITY: guardianUserId is the Clerk user ID for the guardian's HoopsIQ
  * account.  Every /api/parent/* endpoint validates that the authenticated
  * user's Clerk userId appears in this table for the requested playerId before
  * returning any player data.  Without this check, any authenticated user could
@@ -24,7 +24,7 @@ export const playerGuardians = pgTable("player_guardians", {
   id:             text("id").primaryKey().$defaultFn(() => nanoid()),
   orgId:          text("org_id").notNull(),
   playerId:       text("player_id").notNull(),
-  // Clerk user ID of the guardian's HoopsOS account.  Null until the guardian
+  // Clerk user ID of the guardian's HoopsIQ account.  Null until the guardian
   // has been invited and claimed their account.
   guardianUserId: text("guardian_user_id"),
   name:           text("name").notNull(),

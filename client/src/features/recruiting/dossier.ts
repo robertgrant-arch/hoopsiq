@@ -1,7 +1,7 @@
 /**
  * Recruiting & Showcase Dossier — mock data.
  *
- * Turns verified HoopsOS activity (film clips, assessment milestones,
+ * Turns verified HoopsIQ activity (film clips, assessment milestones,
  * practice attendance, IDP progress) into shareable recruiting profiles.
  *
  * Acceptance criteria baked in:
@@ -11,7 +11,7 @@
  *
  * Key design decisions:
  *  - Each DossierSection carries its own visibility so the coach can be granular
- *  - verified: true flags data pulled from real HoopsOS activity (not self-reported)
+ *  - verified: true flags data pulled from real HoopsIQ activity (not self-reported)
  *  - reviewState gates publishing: draft → pending_review → approved → published
  *  - VIEW_EVENTS is module-level mutable so page-load mock appends work at runtime
  */
@@ -74,7 +74,7 @@ export const VISIBILITY_DESCRIPTION: Record<SectionVisibility, string> = {
 export interface DossierSectionMeta {
   key: DossierSectionKey;
   visibility: SectionVisibility;
-  /** True when data is sourced from verified HoopsOS activity */
+  /** True when data is sourced from verified HoopsIQ activity */
   verified: boolean;
   /** Locked sections can't be edited by the player (coach-only) */
   coachOnly: boolean;
@@ -366,7 +366,7 @@ export const DOSSIERS: PlayerDossier[] = [
     bio: {
       headline: "High-IQ point guard with elite court vision and proven development trajectory",
       summary:
-        "Jalen is a 2027 point guard from Barnegat, NJ who combines natural playmaking instincts with a relentless improvement mindset. He's completed three consecutive assessment cycles with positive skill deltas, earned a coach-verified VDV badge, and logs the highest court vision score in his program. His development work is tracked and verifiable through HoopsOS.",
+        "Jalen is a 2027 point guard from Barnegat, NJ who combines natural playmaking instincts with a relentless improvement mindset. He's completed three consecutive assessment cycles with positive skill deltas, earned a coach-verified VDV badge, and logs the highest court vision score in his program. His development work is tracked and verifiable through HoopsIQ.",
       pronouns: "he/him",
       hometown: "Barnegat",
       state: "NJ",
@@ -464,14 +464,14 @@ export const DOSSIERS: PlayerDossier[] = [
 
     /* ── Stats ──────────────────────────────────────────────────────────── */
     stats: [
-      { label: "PPG",    value: "14.2", period: "2025–26 Season", source: "HoopsOS",      verified: true  },
-      { label: "APG",    value: "7.1",  period: "2025–26 Season", source: "HoopsOS",      verified: true  },
-      { label: "RPG",    value: "3.8",  period: "2025–26 Season", source: "HoopsOS",      verified: true  },
-      { label: "SPG",    value: "2.1",  period: "2025–26 Season", source: "HoopsOS",      verified: true  },
-      { label: "FG%",    value: "44%",  period: "2025–26 Season", source: "HoopsOS",      verified: true  },
-      { label: "3P%",    value: "36%",  period: "2025–26 Season", source: "HoopsOS",      verified: true  },
-      { label: "Court Vision Score", value: "9.2 / 10", period: "Latest assessment",   source: "HoopsOS Assessment", verified: true  },
-      { label: "Ball Handling Score", value: "8.6 / 10", period: "Latest assessment",  source: "HoopsOS Assessment", verified: true  },
+      { label: "PPG",    value: "14.2", period: "2025–26 Season", source: "HoopsIQ",      verified: true  },
+      { label: "APG",    value: "7.1",  period: "2025–26 Season", source: "HoopsIQ",      verified: true  },
+      { label: "RPG",    value: "3.8",  period: "2025–26 Season", source: "HoopsIQ",      verified: true  },
+      { label: "SPG",    value: "2.1",  period: "2025–26 Season", source: "HoopsIQ",      verified: true  },
+      { label: "FG%",    value: "44%",  period: "2025–26 Season", source: "HoopsIQ",      verified: true  },
+      { label: "3P%",    value: "36%",  period: "2025–26 Season", source: "HoopsIQ",      verified: true  },
+      { label: "Court Vision Score", value: "9.2 / 10", period: "Latest assessment",   source: "HoopsIQ Assessment", verified: true  },
+      { label: "Ball Handling Score", value: "8.6 / 10", period: "Latest assessment",  source: "HoopsIQ Assessment", verified: true  },
     ],
 
     /* ── Coach summary (on_request) ─────────────────────────────────────── */
@@ -566,9 +566,9 @@ export const DOSSIERS: PlayerDossier[] = [
     ],
     clips: [],
     stats: [
-      { label: "PPG",  value: "11.8", period: "2025–26 Season", source: "HoopsOS", verified: true },
-      { label: "RPG",  value: "5.2",  period: "2025–26 Season", source: "HoopsOS", verified: true },
-      { label: "FG%",  value: "41%",  period: "2025–26 Season", source: "HoopsOS", verified: true },
+      { label: "PPG",  value: "11.8", period: "2025–26 Season", source: "HoopsIQ", verified: true },
+      { label: "RPG",  value: "5.2",  period: "2025–26 Season", source: "HoopsIQ", verified: true },
+      { label: "FG%",  value: "41%",  period: "2025–26 Season", source: "HoopsIQ", verified: true },
     ],
     coachSummary: "",
     milestones: [],

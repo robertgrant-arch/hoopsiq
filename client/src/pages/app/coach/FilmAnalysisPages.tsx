@@ -1,7 +1,7 @@
 /**
  * FilmAnalysisPages.tsx
  *
- * Coach-facing Film AI Analysis frontend module for HoopsOS.
+ * Coach-facing Film AI Analysis frontend module for HoopsIQ.
  * Layered into the existing Coach HQ pages folder.
  *
  * Uses wouter (the router used by the rest of this app) — see App.tsx.

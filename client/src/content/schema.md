@@ -1,6 +1,6 @@
-# HoopsOS: Production-Grade Prisma Schema & Data Architecture
+# HoopsIQ: Production-Grade Prisma Schema & Data Architecture
 
-This document serves as the canonical data architecture for HoopsOS, translating the modular monolith architecture and route map into a comprehensive, production-ready `schema.prisma`. It covers identity, multi-tenancy (orgs/teams), complex billing entitlements (the 50%-off athlete engine), content/gamification, video/AI, and auditing.
+This document serves as the canonical data architecture for HoopsIQ, translating the modular monolith architecture and route map into a comprehensive, production-ready `schema.prisma`. It covers identity, multi-tenancy (orgs/teams), complex billing entitlements (the 50%-off athlete engine), content/gamification, video/AI, and auditing.
 
 ## 1. Complete `schema.prisma`
 
@@ -987,7 +987,7 @@ model ModerationAction {
 *   **Audit Safety**: `onDelete: SetNull` is used on `AuditLog.userId`. If a user is deleted, their audit trail remains intact for compliance, but the `userId` reference is nullified.
 
 ### Soft-Delete Strategy
-Instead of immediately hard-deleting users, HoopsOS employs a soft-delete strategy via the `status` and `deletedAt` fields on the `User` model.
+Instead of immediately hard-deleting users, HoopsIQ employs a soft-delete strategy via the `status` and `deletedAt` fields on the `User` model.
 *   **Implementation**: When a user "deletes" their account, `status` becomes `DELETED` and `deletedAt` is set to `now()`.
 *   **Middleware**: Prisma middleware (or Prisma Client Extensions) should be configured to automatically filter out records where `deletedAt != null` on all `findMany` and `findUnique` queries, unless explicitly requested by an admin.
 *   **Data Retention**: A background cron job permanently purges soft-deleted users and their cascaded data after 30 days.
@@ -1124,7 +1124,7 @@ The seed script should generate a realistic, interconnected environment:
 
 ## 6. Scaling & Partitioning Concerns
 
-As HoopsOS grows, certain tables will become massive and require strategic handling:
+As HoopsIQ grows, certain tables will become massive and require strategic handling:
 
 1.  **`DomainEvent` & `AuditLog`**: These append-only tables will grow infinitely.
     *   *Strategy*: Implement table partitioning in PostgreSQL by date (e.g., monthly partitions). Archive partitions older than 6 months to cold storage (S3/Snowflake) and drop them from the primary DB.

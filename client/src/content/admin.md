@@ -1,6 +1,6 @@
-# HoopsOS: Internal Admin & Back-Office System
+# HoopsIQ: Internal Admin & Back-Office System
 
-This document details the `(admin)` route group, the central command center for HoopsOS staff. It provides the tooling necessary to support users, moderate content, manage the Expert Marketplace, and oversee platform health, all while maintaining strict auditability.
+This document details the `(admin)` route group, the central command center for HoopsIQ staff. It provides the tooling necessary to support users, moderate content, manage the Expert Marketplace, and oversee platform health, all while maintaining strict auditability.
 
 ## 1. Admin IA & Route Map
 
@@ -49,11 +49,11 @@ The admin system relies heavily on the foundational schema (Prompt 3), specifica
 
 ## 5. Impersonation UX & Security
 
-Impersonation is a high-risk capability necessary for troubleshooting complex user states (e.g., "Why can't I see my team's film?"). HoopsOS implements it with extreme visibility.
+Impersonation is a high-risk capability necessary for troubleshooting complex user states (e.g., "Why can't I see my team's film?"). HoopsIQ implements it with extreme visibility.
 
 *   **The Entry Point:** From `/(admin)/users/[id]`, the admin clicks "Impersonate User." A modal demands a reason (e.g., "Zendesk Ticket #1234").
 *   **The Token:** The system generates a Clerk impersonation token with a strict 1-hour expiration. The `AuditLog` records `IMPERSONATION_START` with the provided reason.
-*   **The Red Banner:** While impersonating, the entire HoopsOS application (Player App, Coach HQ) renders a persistent, un-dismissible red banner at the top of the viewport: "⚠️ You are impersonating [User Name]. All actions are logged. Time remaining: 59:59."
+*   **The Red Banner:** While impersonating, the entire HoopsIQ application (Player App, Coach HQ) renders a persistent, un-dismissible red banner at the top of the viewport: "⚠️ You are impersonating [User Name]. All actions are logged. Time remaining: 59:59."
 *   **Force-End:** The banner contains a prominent "End Impersonation" button. Clicking it, or allowing the timer to expire, immediately revokes the token, redirects the admin back to `/(admin)/users/[id]`, and logs `IMPERSONATION_END`.
 
 ## 6. Refund & Chargeback Workflow

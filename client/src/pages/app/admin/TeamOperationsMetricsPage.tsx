@@ -78,18 +78,18 @@ const FORMS: Form[] = [
 type TeamAttendance = {
   name: string;
   pct: number;
-  inHoopsOS: boolean;
+  inHoopsIQ: boolean;
 };
 
 const TEAM_ATTENDANCE: TeamAttendance[] = [
-  { name: "17U Premier",  pct: 100, inHoopsOS: true  },
-  { name: "16U Premier",  pct: 94,  inHoopsOS: true  },
-  { name: "16U Gold",     pct: 82,  inHoopsOS: true  },
-  { name: "15U Premier",  pct: 78,  inHoopsOS: true  },
-  { name: "14U Select",   pct: 61,  inHoopsOS: true  },
-  { name: "13U Select",   pct: 44,  inHoopsOS: false },
-  { name: "12U Dev",      pct: 31,  inHoopsOS: false },
-  { name: "11U Intro",    pct: 12,  inHoopsOS: false },
+  { name: "17U Premier",  pct: 100, inHoopsIQ: true  },
+  { name: "16U Premier",  pct: 94,  inHoopsIQ: true  },
+  { name: "16U Gold",     pct: 82,  inHoopsIQ: true  },
+  { name: "15U Premier",  pct: 78,  inHoopsIQ: true  },
+  { name: "14U Select",   pct: 61,  inHoopsIQ: true  },
+  { name: "13U Select",   pct: 44,  inHoopsIQ: false },
+  { name: "12U Dev",      pct: 31,  inHoopsIQ: false },
+  { name: "11U Intro",    pct: 12,  inHoopsIQ: false },
 ];
 
 type CalendarSync = { team: string; pct: number };
@@ -348,7 +348,7 @@ export default function TeamOperationsMetricsPage() {
         <PageHeader
           eyebrow="Operations"
           title="Team Operations Metrics"
-          subtitle="Platform efficiency — is HoopsOS reducing your administrative overhead?"
+          subtitle="Platform efficiency — is HoopsIQ reducing your administrative overhead?"
         />
 
         {/* ── Section 1: Efficiency Score Cards ────────────────────────────── */}
@@ -521,7 +521,7 @@ export default function TeamOperationsMetricsPage() {
             Attendance Tracking Adoption
           </h2>
           <p className="text-[13px] text-muted-foreground mb-5">
-            Are coaches using HoopsOS as the attendance system of record?
+            Are coaches using HoopsIQ as the attendance system of record?
           </p>
 
           <div className="rounded-2xl border border-border bg-card p-6 space-y-5">
@@ -532,7 +532,7 @@ export default function TeamOperationsMetricsPage() {
                   74%
                 </div>
                 <div className="text-[13px] font-semibold mt-1">
-                  of practices/events have attendance recorded in HoopsOS
+                  of practices/events have attendance recorded in HoopsIQ
                 </div>
                 <div className="text-[12px] text-muted-foreground mt-0.5">Target: 80%</div>
               </div>
@@ -567,7 +567,7 @@ export default function TeamOperationsMetricsPage() {
               </div>
               <div className="space-y-2.5">
                 {TEAM_ATTENDANCE.map((t) => {
-                  const col = t.inHoopsOS ? (t.pct >= 80 ? SUCCESS : WARNING) : DANGER;
+                  const col = t.inHoopsIQ ? (t.pct >= 80 ? SUCCESS : WARNING) : DANGER;
                   return (
                     <div key={t.name} className="flex items-center gap-3">
                       <span className="text-[12px] w-28 shrink-0 text-muted-foreground">{t.name}</span>
@@ -580,7 +580,7 @@ export default function TeamOperationsMetricsPage() {
                       <span className="font-mono text-[12px] w-10 shrink-0" style={{ color: col }}>
                         {t.pct}%
                       </span>
-                      {!t.inHoopsOS && (
+                      {!t.inHoopsIQ && (
                         <span className="text-[10px] text-muted-foreground italic">tracking elsewhere</span>
                       )}
                     </div>
@@ -777,7 +777,7 @@ export default function TeamOperationsMetricsPage() {
         {/* ── Section 7: Administrative Load Estimation ─────────────────────── */}
         <section aria-labelledby="admin-load-heading">
           <h2 id="admin-load-heading" className="text-[15px] font-semibold mb-2">
-            What HoopsOS Replaced
+            What HoopsIQ Replaced
           </h2>
           <p className="text-[13px] text-muted-foreground mb-5">
             Estimated administrative overhead eliminated. Based on program size and activity.

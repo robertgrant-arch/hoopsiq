@@ -13,7 +13,7 @@ export const attendanceNotifyFn = inngest.createFunction(
         if (player.parentPhone) {
           await sendSms(
             player.parentPhone,
-            `HoopsOS: ${player.playerName} was marked absent for ${eventTitle} on ${eventDate}. Questions? Reply to contact your coach.`
+            `HoopsIQ: ${player.playerName} was marked absent for ${eventTitle} on ${eventDate}. Questions? Reply to contact your coach.`
           );
           sent.push(player.playerId);
         }

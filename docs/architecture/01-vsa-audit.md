@@ -1,4 +1,4 @@
-# HoopsOS — Vertical Slice Architecture Audit
+# HoopsIQ — Vertical Slice Architecture Audit
 
 > Audited: `robertgrant-arch/hoopsos-docs` · May 2026
 

@@ -39,7 +39,7 @@ export default function DocsTopBar({ currentSlug }: { currentSlug?: string }) {
                 <LogoMark />
                 <div className="leading-none">
                   <div className="display text-[17px] tracking-[0.02em] text-foreground">
-                    HoopsOS
+                    HoopsIQ
                   </div>
                   <div className="text-[10.5px] uppercase tracking-[0.18em] text-muted-foreground/80 mt-0.5">
                     Architecture Docs

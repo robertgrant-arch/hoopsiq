@@ -1,13 +1,13 @@
-# HoopsOS: Authentication, Authorization, and RBAC Deep-Dive
+# HoopsIQ: Authentication, Authorization, and RBAC Deep-Dive
 
-This document details the complete authentication, authorization, and Role-Based Access Control (RBAC) model for HoopsOS. It builds upon the canonical `schema.prisma` and Information Architecture, ensuring secure multi-tenancy, parent-child data privacy, and robust expert marketplace operations.
+This document details the complete authentication, authorization, and Role-Based Access Control (RBAC) model for HoopsIQ. It builds upon the canonical `schema.prisma` and Information Architecture, ensuring secure multi-tenancy, parent-child data privacy, and robust expert marketplace operations.
 
 ## 1. Authentication Strategy
 
-For HoopsOS, **Clerk** is the recommended authentication provider over Auth.js. 
+For HoopsIQ, **Clerk** is the recommended authentication provider over Auth.js. 
 
 **Rationale for Clerk:**
-*   **B2B/B2C Hybrid Support:** Clerk natively handles complex multi-tenant organization models (Organizations, Memberships, Roles) out of the box, which perfectly aligns with HoopsOS's Org → Team structure.
+*   **B2B/B2C Hybrid Support:** Clerk natively handles complex multi-tenant organization models (Organizations, Memberships, Roles) out of the box, which perfectly aligns with HoopsIQ's Org → Team structure.
 *   **Custom JWT Claims:** Clerk allows seamless injection of custom claims (e.g., `userId`, `roles`, `entitlements`) directly into the session JWT, reducing database round-trips for middleware authorization.
 *   **Drop-in UI & Security:** Clerk provides production-ready components for MFA, session management, and impersonation, accelerating time-to-market.
 
@@ -28,7 +28,7 @@ For HoopsOS, **Clerk** is the recommended authentication provider over Auth.js.
 
 ## 2. Permission Naming Strategy
 
-Permissions in HoopsOS follow a strict `verb.resource.scope` convention. This ensures clarity when evaluating policies at the data layer.
+Permissions in HoopsIQ follow a strict `verb.resource.scope` convention. This ensures clarity when evaluating policies at the data layer.
 
 *   **Verb:** `create`, `read`, `update`, `delete`, `assign`, `review`, `telestrate`, `publish`, `watch`, `grade`, `invite`, `remove`, `refund`, `impersonate`.
 *   **Resource:** The domain entity (e.g., `workout`, `film`, `video`, `payout`, `user`, `roster`).
@@ -72,7 +72,7 @@ The matrix below maps global and team-level roles to specific permissions across
 
 ## 4. Parent-Child Account Linking & COPPA
 
-To comply with COPPA (Children's Online Privacy Protection Act) and protect youth PII, HoopsOS implements a strict parent-child linking model.
+To comply with COPPA (Children's Online Privacy Protection Act) and protect youth PII, HoopsIQ implements a strict parent-child linking model.
 
 **The Linking Flow:**
 1.  **Parent Initiation:** A parent creates a `ParentProfile` and initiates a link via `/(onboarding)/parent/link`. They enter their child's email or a unique invite code provided by the child's coach.
@@ -104,7 +104,7 @@ The invitation flow bridges the gap between unaffiliated users and team rosters,
 
 ## 6. Expert Verification Workflow
 
-To maintain the premium quality of the HoopsOS marketplace, experts undergo a rigorous verification process before they can monetize.
+To maintain the premium quality of the HoopsIQ marketplace, experts undergo a rigorous verification process before they can monetize.
 
 **Workflow Steps:**
 1.  **Application:** A user signs up as an `EXPERT` and completes their `ExpertProfile` (bio, credentials, social links). Their profile is marked `isPublic: false` by default.
@@ -129,7 +129,7 @@ Determining "who owns what" is crucial for data privacy and multi-tenancy bounda
 
 ## 8. Server-Side Authorization Approach
 
-HoopsOS employs a "Defense in Depth" strategy. UI hiding is never the sole security gate.
+HoopsIQ employs a "Defense in Depth" strategy. UI hiding is never the sole security gate.
 
 1.  **Next.js Middleware (Route Protection):** The first line of defense. The middleware intercepts all requests, parses the Clerk JWT, and enforces broad route-group access.
     *   *Example:* If a user without the `EXPERT` global role attempts to access `/(marketplace)/*`, the middleware redirects them to the dashboard.

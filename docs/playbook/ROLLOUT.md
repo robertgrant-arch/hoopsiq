@@ -1,4 +1,4 @@
-# HoopsOS Playbook Studio v2 — Rollout Plan
+# HoopsIQ Playbook Studio v2 — Rollout Plan
 
 **Source:** Manus task `DrdHGGkMan2BdCx3DJzOfM`
 

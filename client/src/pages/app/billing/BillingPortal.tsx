@@ -106,7 +106,7 @@ export function BillingPortal() {
   return (
     <AppShell>
       <PageHeader
-        eyebrow="HoopsOS · Billing"
+        eyebrow="HoopsIQ · Billing"
         title="Billing & Subscriptions"
         subtitle="Active plan, invoices, and account state. Same surface as Stripe's Customer Portal — wired to the demo entitlement engine."
         actions={
@@ -169,7 +169,7 @@ export function BillingPortal() {
                 No active subscription
               </h3>
               <p className="text-[13px] text-muted-foreground mb-4">
-                Pick a plan to unlock the full HoopsOS experience.
+                Pick a plan to unlock the full HoopsIQ experience.
               </p>
               <Link href="/app/billing/pricing">
                 <Button>See plans</Button>

@@ -36,7 +36,7 @@ export default function DocsHome() {
             </h1>
 
             <p className="text-[17px] leading-relaxed text-muted-foreground max-w-[620px] mb-10">
-              HoopsOS is a production-grade architecture reference for a modular
+              HoopsIQ is a production-grade architecture reference for a modular
               basketball platform — Player App, Coach HQ, Team Management,
               Expert Marketplace, AI Feedback, Film Room, Playbook Studio, Live
               Classes, and a Stripe-backed billing engine. These are the 17
