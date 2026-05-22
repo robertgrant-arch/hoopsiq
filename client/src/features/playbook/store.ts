@@ -44,7 +44,7 @@ import {
 } from "./schema";
 import { actionFromPath } from "./actions";
 
-const PERSIST_KEY = "hoopsos-playbook";
+const PERSIST_KEY = "hoopsiq-playbook";
 const PERSIST_VERSION = 2;
 const UNDO_CAP = 50;
 

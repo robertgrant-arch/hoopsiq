@@ -64,7 +64,7 @@ export function registerMessagingRoutes(router: Router) {
         try {
           await sendSms(
             req.body.recipientPhone,
-            `HoopsOS message from your coach: ${req.body.body.substring(0, 140)}`
+            `HoopsIQ message from your coach: ${req.body.body.substring(0, 140)}`
           );
         } catch (smsErr) {
           console.warn("SMS notification failed:", smsErr);
@@ -189,7 +189,7 @@ export function registerMessagingRoutes(router: Router) {
       const smsTargets = audience.guardians.filter((g) => g.phone);
       if (smsTargets.length > 0) {
         const preview = body.substring(0, 140);
-        const smsBody = `HoopsOS message from your coach: ${preview}`;
+        const smsBody = `HoopsIQ message from your coach: ${preview}`;
         try {
           const { sendBroadcastSms } = await import("../../lib/twilio");
           await sendBroadcastSms(smsTargets.map((g) => g.phone!), smsBody);

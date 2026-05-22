@@ -1,4 +1,4 @@
-# HoopsOS Product Build — TODO
+# HoopsIQ Product Build — TODO
 
 ## Phase 1: Mock data layer
 - [ ] Write `lib/mock/roles.ts` — 6 demo users (athlete/coach/teamAdmin/expert/parent/superAdmin)
@@ -52,7 +52,7 @@
 - [ ] Save checkpoint
 
 ## Phase 16: Completion roadmap doc
-- [ ] Write `hoopsos_completion_roadmap.md` — production checklist
+- [ ] Write `hoopsiq_completion_roadmap.md` — production checklist
 
 
 ---

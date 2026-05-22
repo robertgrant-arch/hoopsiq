@@ -1,6 +1,6 @@
-# HoopsOS: Team Management & Entitlement Engine
+# HoopsIQ: Team Management & Entitlement Engine
 
-This document details the `(team)` route group and the core B2B2C growth loop of HoopsOS: the **50%-off athlete discount engine**. It covers the organizational hierarchy, the complete invitation workflow, entitlement edge cases, and Stripe integration.
+This document details the `(team)` route group and the core B2B2C growth loop of HoopsIQ: the **50%-off athlete discount engine**. It covers the organizational hierarchy, the complete invitation workflow, entitlement edge cases, and Stripe integration.
 
 ## 1. Domain & Entitlement Model Walkthrough
 
@@ -22,9 +22,9 @@ The flow of team creation and roster building follows a strict top-down hierarch
 
 ## 3. Invite Flow UX
 
-The invitation flow is the critical conversion moment where an athlete enters the HoopsOS ecosystem.
+The invitation flow is the critical conversion moment where an athlete enters the HoopsIQ ecosystem.
 
-*   **Delivery:** Email with a clear, branded call-to-action ("Coach Smith invited you to join Texas Elite 16U on HoopsOS"). Includes a secure magic link (`/team/accept/[token]`).
+*   **Delivery:** Email with a clear, branded call-to-action ("Coach Smith invited you to join Texas Elite 16U on HoopsIQ"). Includes a secure magic link (`/team/accept/[token]`).
 *   **Deep-Link Landing (`/team/accept/[token]`):**
     *   *Unauthenticated:* Prompts Clerk Sign-Up/Sign-In. The token is stored in a secure cookie to survive the auth redirect.
     *   *Authenticated:* Shows a confirmation dialog: "Accept invitation to join Texas Elite 16U as an Athlete?"
@@ -54,7 +54,7 @@ The `EntitlementService` must gracefully handle complex real-world scenarios to 
     *   *Trigger:* Coach clicks "Remove from Roster".
     *   *Action:* The specific athlete's `DiscountGrant` is revoked. The Stripe Coupon is removed from their subscription immediately. Their current billing cycle remains unchanged, but the *next* renewal will be at full price.
 *   **Athlete on Multiple Rosters:**
-    *   *Scenario:* An athlete plays for both a High School team and an AAU team, both using HoopsOS.
+    *   *Scenario:* An athlete plays for both a High School team and an AAU team, both using HoopsIQ.
     *   *Action:* The athlete receives two distinct `DiscountGrant` records. The `EntitlementService` ensures only **one** 50% Stripe Coupon is applied to their checkout. If one team cancels, the system falls back to the second active grant, ensuring the athlete retains the discount.
 *   **Transfer Between Orgs:**
     *   *Action:* Handled as a "Remove" from Org A (revoking Grant A) and an "Accept Invite" to Org B (provisioning Grant B).

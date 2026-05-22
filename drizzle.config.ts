@@ -1,5 +1,5 @@
 // drizzle.config.ts
-// Drizzle-kit config for HoopsOS film-analysis schema.
+// Drizzle-kit config for HoopsIQ film-analysis schema.
 //
 // Used by:
 //   pnpm db:generate   -> generate SQL migration files into shared/db/migrations

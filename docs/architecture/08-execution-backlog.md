@@ -1,4 +1,4 @@
-# HoopsOS — Execution Backlog
+# HoopsIQ — Execution Backlog
 ## Six Vertical Slices · Directly Executable · Aligned to Roadmap Phases
 
 > Format: One section per slice → Release goal → Epic/task tables → Implementation order → DoD  
@@ -30,7 +30,7 @@ These must be extracted before any slice work begins. No exceptions.
 ## SLICE 1: Admin/Billing
 
 ### Release Goal
-The operational backbone that makes every other slice possible. A program director can create a season, import a roster, and collect payment from families — all without leaving HoopsOS. Everything else depends on having real player IDs in the database.
+The operational backbone that makes every other slice possible. A program director can create a season, import a roster, and collect payment from families — all without leaving HoopsIQ. Everything else depends on having real player IDs in the database.
 
 **Feature flag**: `FLAG_ADMIN_BILLING` (always on; this is the foundation)  
 **Phase**: P0 — Weeks 4–10
@@ -767,5 +767,5 @@ Foundation (PRIM-001..009)
 
 ---
 
-*End of HoopsOS Execution Backlog*  
+*End of HoopsIQ Execution Backlog*  
 *212 tasks across 6 slices · Directly executable in Linear or Jira*

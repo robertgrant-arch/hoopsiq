@@ -1,5 +1,5 @@
 /**
- * PaymentsDashboardPage — HoopsOS Payments Operations Dashboard
+ * PaymentsDashboardPage — HoopsIQ Payments Operations Dashboard
  * Route: /app/payments
  *
  * Operational model: actionable queues, not passive dashboards.

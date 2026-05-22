@@ -1,10 +1,10 @@
-# HoopsOS: Notifications & Engagement System
+# HoopsIQ: Notifications & Engagement System
 
-This document details the centralized notification and engagement engine for HoopsOS. It governs how the system communicates with athletes, coaches, and parents across in-app, email, and push channels, balancing retention-driving nudges with respect for user attention.
+This document details the centralized notification and engagement engine for HoopsIQ. It governs how the system communicates with athletes, coaches, and parents across in-app, email, and push channels, balancing retention-driving nudges with respect for user attention.
 
 ## 1. Notification Taxonomy & Channel Matrix
 
-Not all notifications are created equal. HoopsOS categorizes alerts into three tiers, dictating their default delivery channels.
+Not all notifications are created equal. HoopsIQ categorizes alerts into three tiers, dictating their default delivery channels.
 
 *   **Transactional (High Priority):** Time-sensitive or critical account events.
     *   *Examples:* Payment failed, Booking confirmed/canceled, Live event starting in 15m, Discount entitlement revoked.
@@ -26,7 +26,7 @@ The in-app Notification Center (the "bell" icon) serves as the primary chronolog
 
 ## 3. Delivery Channel Model & Provider Strategy
 
-HoopsOS uses a multi-channel delivery architecture, orchestrated by a central background worker (e.g., Inngest or a custom Node/Redis queue) to ensure reliability and prevent blocking the main web threads.
+HoopsIQ uses a multi-channel delivery architecture, orchestrated by a central background worker (e.g., Inngest or a custom Node/Redis queue) to ensure reliability and prevent blocking the main web threads.
 
 *   **In-App:** Powered by the database (`Notification` table). Real-time updates can be pushed to the client via Server-Sent Events (SSE) or optimistic polling (SWR/React Query).
 *   **Email:** **Resend** is the recommended provider. It offers a modern React-based templating engine (`@react-email/components`), excellent deliverability, and native Next.js integration. It is superior to legacy providers like SendGrid for modern stack architectures.
@@ -43,7 +43,7 @@ A granular preference model prevents notification fatigue and ensures compliance
 
 ## 5. Trigger & Event Mapping (The Outbox Pattern)
 
-HoopsOS relies on the `DomainEvent` table (the Outbox Pattern) to trigger notifications reliably, decoupling the core transaction from the delivery mechanism.
+HoopsIQ relies on the `DomainEvent` table (the Outbox Pattern) to trigger notifications reliably, decoupling the core transaction from the delivery mechanism.
 
 | Trigger Event | DomainEvent Type | Target Audience | Default Channels | Deep-Link Destination |
 | :--- | :--- | :--- | :--- | :--- |
@@ -270,7 +270,7 @@ export default function TransactionalEmail({ title, message, actionText, actionU
       <Body style={{ backgroundColor: '#f4f4f5', fontFamily: 'sans-serif' }}>
         <Container style={{ margin: '0 auto', padding: '20px 0 48px', width: '580px' }}>
           <Section style={{ backgroundColor: '#ffffff', padding: '40px', borderRadius: '8px', border: '1px solid #e4e4e7' }}>
-            <Img src="https://hoopsos.com/logo.png" width="40" height="40" alt="HoopsOS" style={{ marginBottom: '24px' }} />
+            <Img src="https://hoopsiq.com/logo.png" width="40" height="40" alt="HoopsIQ" style={{ marginBottom: '24px' }} />
             <Text style={{ fontSize: '24px', fontWeight: 'bold', color: '#18181b', margin: '0 0 16px', textTransform: 'uppercase' }}>
               {title}
             </Text>
@@ -284,7 +284,7 @@ export default function TransactionalEmail({ title, message, actionText, actionU
             )}
           </Section>
           <Text style={{ textAlign: 'center', fontSize: '12px', color: '#a1a1aa', marginTop: '24px' }}>
-            You are receiving this email because it contains critical information about your HoopsOS account.
+            You are receiving this email because it contains critical information about your HoopsIQ account.
           </Text>
         </Container>
       </Body>

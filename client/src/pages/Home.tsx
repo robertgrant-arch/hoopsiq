@@ -47,7 +47,7 @@ export default function Home() {
               </h1>
 
               <p className="mt-7 text-[17.5px] text-muted-foreground leading-relaxed max-w-[680px]">
-                HoopsOS is a production-grade architecture reference for a modular
+                HoopsIQ is a production-grade architecture reference for a modular
                 basketball platform — Player App, Coach HQ, Team Management, Expert
                 Marketplace, AI Feedback, Film Room, Playbook Studio, Live Classes, and
                 a Stripe-backed billing engine. These are the {total} canonical specs
@@ -145,7 +145,7 @@ export default function Home() {
           <footer className="border-t border-border mt-12">
             <div className="max-w-[1100px] mx-auto px-6 lg:px-12 py-10 flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
               <div className="text-[12.5px] text-muted-foreground leading-relaxed">
-                <div className="display text-[15px] text-foreground mb-1">HoopsOS</div>
+                <div className="display text-[15px] text-foreground mb-1">HoopsIQ</div>
                 Canonical architecture and engineering documentation.
                 <br />
                 Built as the source of truth for every module, prompt, and surface.

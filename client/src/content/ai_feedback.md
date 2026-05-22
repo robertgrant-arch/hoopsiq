@@ -1,6 +1,6 @@
-# HoopsOS: AI Feedback Architecture & Scaffolding
+# HoopsIQ: AI Feedback Architecture & Scaffolding
 
-This document details the architecture for the HoopsOS AI feedback feature. It defines the async processing pipeline, the human-in-the-loop (HITL) escalation model, safe product copy, and the youth privacy guardrails necessary for processing athlete video.
+This document details the architecture for the HoopsIQ AI feedback feature. It defines the async processing pipeline, the human-in-the-loop (HITL) escalation model, safe product copy, and the youth privacy guardrails necessary for processing athlete video.
 
 ## 1. AI Workflow Architecture
 
@@ -323,7 +323,7 @@ export async function simulateInference(videoUrl: string, uploadId: string): Pro
     modelVersion: "v1.0.0-mock",
     overallScore: 82,
     observations: mockObservations,
-    rawOutputS3Key: `s3://hoopsos-ai-raw/${uploadId}/pose-data.json`
+    rawOutputS3Key: `s3://hoopsiq-ai-raw/${uploadId}/pose-data.json`
   };
 }
 ```

@@ -1,4 +1,4 @@
-# HoopsOS — Principal Product Architecture Plan
+# HoopsIQ — Principal Product Architecture Plan
 
 > Authored from the perspective of a Principal Product Architect + Staff Application Architect  
 > Based on full codebase audit and post-VSA-refactor state  
@@ -26,7 +26,7 @@
 
 ### The Category to Own: **Coaching Intelligence Platform**
 
-HoopsOS should not position itself as a club management tool, an LMS, or a video platform. It should own a new category: **the operating system for serious basketball programs** — where coaching workflow, player development, team readiness, and program intelligence are unified in one product that every stakeholder touches daily.
+HoopsIQ should not position itself as a club management tool, an LMS, or a video platform. It should own a new category: **the operating system for serious basketball programs** — where coaching workflow, player development, team readiness, and program intelligence are unified in one product that every stakeholder touches daily.
 
 ### Why this category is wide open
 
@@ -44,7 +44,7 @@ None of these products connect **what happened in film** to **what gets planned 
 
 ### The positioning statement
 
-> HoopsOS is the coaching intelligence platform that turns every film session, practice rep, and development conversation into compounding athlete growth — with the operations layer to run the whole program from a single product.
+> HoopsIQ is the coaching intelligence platform that turns every film session, practice rep, and development conversation into compounding athlete growth — with the operations layer to run the whole program from a single product.
 
 ### Market tier targets (in order)
 
@@ -558,7 +558,7 @@ Priority logic:
 
 Roster → Events → Readiness → Messaging → Billing → Practice Planning → Film (basic) → Club Ops → Admin (roles/permissions)
 
-This is the complete minimum that makes HoopsOS useful to a paying program on day one. Everything else is sequenced from here.
+This is the complete minimum that makes HoopsIQ useful to a paying program on day one. Everything else is sequenced from here.
 
 ---
 
@@ -731,7 +731,7 @@ Director Home (Program Health Dashboard)
 
 **Top jobs to be done:**
 
-| Job | Current workaround | How HoopsOS solves it |
+| Job | Current workaround | How HoopsIQ solves it |
 |---|---|---|
 | Know who's available and healthy before practice | Group text, manual roster check | Readiness dashboard with READY/FLAGGED status |
 | Turn film observations into player action | Paper notes, voice memos, forgotten | Clip → Coaching Action in one flow |
@@ -751,7 +751,7 @@ Director Home (Program Health Dashboard)
 
 **Top jobs to be done:**
 
-| Job | Current workaround | How HoopsOS solves it |
+| Job | Current workaround | How HoopsIQ solves it |
 |---|---|---|
 | Break down film efficiently before the next day's practice | Hudl with no downstream workflow | Annotation + clip + action creation in one session |
 | Surface key clips for the head coach's review | Shared Google Drive or Hudl playlist | Film queue with coach-facing review status |
@@ -767,7 +767,7 @@ Director Home (Program Health Dashboard)
 
 **Top jobs to be done:**
 
-| Job | Current workaround | How HoopsOS solves it |
+| Job | Current workaround | How HoopsIQ solves it |
 |---|---|---|
 | See program health without asking every coach | Spreadsheets, coach check-ins | Program Health Dashboard |
 | Know which players are at risk of not returning | Nothing | Retention Leaders + churn risk signals |
@@ -787,7 +787,7 @@ Director Home (Program Health Dashboard)
 
 **Top jobs to be done:**
 
-| Job | Current workaround | How HoopsOS solves it |
+| Job | Current workaround | How HoopsIQ solves it |
 |---|---|---|
 | Know what I'm working on and why | Coach conversation, forgotten | My IDP with focus areas and milestones |
 | See my improvement over time | Nothing | Skill velocity, development timeline |
@@ -804,7 +804,7 @@ Director Home (Program Health Dashboard)
 
 **Top jobs to be done:**
 
-| Job | Current workaround | How HoopsOS solves it |
+| Job | Current workaround | How HoopsIQ solves it |
 |---|---|---|
 | Know my child is developing, not just playing | Coach conversation 2x per year | Development digest, IDP visibility |
 | Know the schedule and not miss events | Group texts, TeamSnap | Family calendar, push notifications |
@@ -821,7 +821,7 @@ Director Home (Program Health Dashboard)
 
 **Top jobs to be done:**
 
-| Job | Current workaround | How HoopsOS solves it |
+| Job | Current workaround | How HoopsIQ solves it |
 |---|---|---|
 | Find players by position, year, and geography | NCSA, Hudl recruiting, manual contact | Player search with filtered results |
 | Evaluate a player quickly from verified data | Random highlight videos | Coach-curated dossier with assessments and film |
@@ -835,7 +835,7 @@ Director Home (Program Health Dashboard)
 
 ### vs. Traditional LMS (Canvas, Blackboard, Google Classroom, Thinkific)
 
-| Dimension | LMS | HoopsOS |
+| Dimension | LMS | HoopsIQ |
 |---|---|---|
 | Content model | Course/module tree | Development plan tied to coaching observations |
 | Trigger for learning | Scheduled enrollment | Coaching action after film review |
@@ -852,7 +852,7 @@ Director Home (Program Health Dashboard)
 
 ### vs. Team Management Platforms (TeamSnap, SportsEngine, Stack Sports)
 
-| Dimension | Team Management | HoopsOS |
+| Dimension | Team Management | HoopsIQ |
 |---|---|---|
 | Primary workflow | Scheduling + billing | Film review + development planning |
 | Player data | Name, contact, emergency info | IDP, assessments, readiness, film, actions |
@@ -862,13 +862,13 @@ Director Home (Program Health Dashboard)
 | Film | None | Core feature |
 | Recruiting | None | Dossier, recruiter portal, exposure analytics |
 
-**Bottom line**: Team management platforms are administrative tools. HoopsOS is a coaching and development tool with the administration built in.
+**Bottom line**: Team management platforms are administrative tools. HoopsIQ is a coaching and development tool with the administration built in.
 
 ---
 
 ### vs. Video / Film Platforms (Hudl, Synergy, Coach's Eye)
 
-| Dimension | Film Platform | HoopsOS |
+| Dimension | Film Platform | HoopsIQ |
 |---|---|---|
 | Film → development link | None | Clip → Coaching Action → IDP focus area |
 | Film → practice link | None | Film observations surface in practice planner |
@@ -878,7 +878,7 @@ Director Home (Program Health Dashboard)
 | Recruiting | Highlights only | Full dossier with assessments, development data, film |
 | Coach education | None | Embedded learning paths tied to coaching context |
 
-**Bottom line**: Film platforms treat video as the endpoint. HoopsOS treats film as the starting point of a development loop.
+**Bottom line**: Film platforms treat video as the endpoint. HoopsIQ treats film as the starting point of a development loop.
 
 ---
 
@@ -1072,7 +1072,7 @@ Any shim still alive after 60 days with zero non-deprecated consumers is a bug, 
 
 ### Phase 1 — Foundation (Months 1–3)
 
-**Goal**: A paying program can run their entire season on HoopsOS.
+**Goal**: A paying program can run their entire season on HoopsIQ.
 
 | Work stream | Deliverables |
 |---|---|
@@ -1092,7 +1092,7 @@ Any shim still alive after 60 days with zero non-deprecated consumers is a bug, 
 
 ### Phase 2 — Intelligence Layer (Months 4–6)
 
-**Goal**: HoopsOS is clearly better than the combination of tools it replaces.
+**Goal**: HoopsIQ is clearly better than the combination of tools it replaces.
 
 | Work stream | Deliverables |
 |---|---|
@@ -1124,7 +1124,7 @@ Any shim still alive after 60 days with zero non-deprecated consumers is a bug, 
 | **Marketing site** | Audience-specific landing pages, demo flow |
 | **API / integrations** | Public API for third-party integrations |
 
-**Exit criteria for Phase 3**: At least one program has had a player receive a college scholarship and attributes HoopsOS dossier data to the conversation. At least one program cites HoopsOS analytics in a staff evaluation.
+**Exit criteria for Phase 3**: At least one program has had a player receive a college scholarship and attributes HoopsIQ dossier data to the conversation. At least one program cites HoopsIQ analytics in a staff evaluation.
 
 ---
 
@@ -1220,7 +1220,7 @@ These are ranked by: daily active use impact × competitive differentiation × i
 
 ### SPEC 4 — Practice Planning *(highest daily frequency)*
 
-**Why**: Coaches plan practice every day of the season. If this feature is excellent, HoopsOS is opened every single day. If it's mediocre, coaches plan elsewhere and only visit the app for administrative tasks.
+**Why**: Coaches plan practice every day of the season. If this feature is excellent, HoopsIQ is opened every single day. If it's mediocre, coaches plan elsewhere and only visit the app for administrative tasks.
 
 **Spec scope**:
 - Plan builder: block-based structure — warm-up, segments, cool-down. Each block has: name, duration, type (drill/scrimmage/film/walkthrough/conditioning), notes, player groups
@@ -1294,6 +1294,6 @@ These are ranked by: daily active use impact × competitive differentiation × i
 
 ---
 
-*End of HoopsOS Product Architecture Plan*  
+*End of HoopsIQ Product Architecture Plan*  
 *Principal Product Architect + Staff Application Architect perspective*  
 *May 2026*

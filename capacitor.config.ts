@@ -1,8 +1,8 @@
 import type { CapacitorConfig } from "@capacitor/cli";
 
 const config: CapacitorConfig = {
-  appId: "com.hoopsos.app",
-  appName: "HoopsOS",
+  appId: "com.hoopsiq.app",
+  appName: "HoopsIQ",
   webDir: "dist/public",
 
   server: {

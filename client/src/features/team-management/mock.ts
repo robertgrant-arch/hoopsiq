@@ -1,5 +1,5 @@
 /* ==========================================================================
-   HoopsOS Mock Data — Team Management
+   HoopsIQ Mock Data — Team Management
    Roster players, staff, documents, sub-groups with full household data.
    ========================================================================== */
 

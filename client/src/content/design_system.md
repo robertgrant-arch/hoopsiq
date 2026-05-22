@@ -1,6 +1,6 @@
-# HoopsOS: Design System & Component Library
+# HoopsIQ: Design System & Component Library
 
-This document defines the complete design system for HoopsOS, translating the "MasterClass x Peloton x Elite Sports OS" vision into a rigorous, scalable front-end architecture. It covers brand energy, token systems, component patterns, and provides the foundational `tailwind.config.ts` and `globals.css` code.
+This document defines the complete design system for HoopsIQ, translating the "MasterClass x Peloton x Elite Sports OS" vision into a rigorous, scalable front-end architecture. It covers brand energy, token systems, component patterns, and provides the foundational `tailwind.config.ts` and `globals.css` code.
 
 ## 1. Brand Energy & Direction
 
@@ -52,7 +52,7 @@ Typography creates the immediate visual distinction between "SaaS" and "Sports P
 
 ## 5. Elevation & Depth System
 
-HoopsOS avoids flat, lifeless UI but also rejects cheesy 2010s gradients.
+HoopsIQ avoids flat, lifeless UI but also rejects cheesy 2010s gradients.
 *   **Depth via Contrast:** In dark mode, depth is achieved by layering grays (e.g., `bg-zinc-950` base, `bg-zinc-900` card, `bg-zinc-800` hover).
 *   **Spotlight Effect:** Premium cards (e.g., Expert profiles) use a subtle radial gradient mask on hover to simulate a stadium spotlight tracking the cursor.
 *   **Glass Overlays:** Critical for the Film Room. UI controls must float above the video without obscuring the action, using `blur-glass` and `bg-black/40`.
@@ -111,7 +111,7 @@ The layout rhythm and data density change based on the user's role and intent.
 
 ## 9. Media Player Patterns
 
-The media player is the core of the HoopsOS experience, powered by Mux.
+The media player is the core of the HoopsIQ experience, powered by Mux.
 
 *   **Drill Demo:** A minimalist player embedded within the WOD flow. It loops automatically, has no timeline scrubber (to keep focus on execution), and features a large, central play/pause overlay.
 *   **Live Class:** A full-bleed player. The UI chrome (chat, expert stats) floats above the video using `blur-glass`. Speed control is disabled.
@@ -119,7 +119,7 @@ The media player is the core of the HoopsOS experience, powered by Mux.
 
 ## 10. Progress Visualization Styles
 
-HoopsOS uses distinct visual metaphors for different types of progression.
+HoopsIQ uses distinct visual metaphors for different types of progression.
 
 *   **Rings:** Used for daily, short-term goals (e.g., completing today's 30-minute program). They reset daily.
 *   **Bars:** Used for linear, cumulative progression (e.g., XP toward the next Level).
@@ -128,7 +128,7 @@ HoopsOS uses distinct visual metaphors for different types of progression.
 
 ## 11. Gamification Principles
 
-Gamification in HoopsOS must feel elite and motivating, avoiding the childish tropes of generic educational apps.
+Gamification in HoopsIQ must feel elite and motivating, avoiding the childish tropes of generic educational apps.
 
 *   **Tier-Badge System:** Badges are metallic, angular, and authoritative (Bronze, Silver, Gold, Obsidian). They resemble professional sports hardware, not cartoon stickers.
 *   **Milestone Drawer:** When a minor milestone is hit (e.g., 500 shots made), a sleek `Sheet` slides in from the bottom right, acknowledging the effort without interrupting the workout flow.

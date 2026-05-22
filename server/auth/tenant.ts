@@ -5,7 +5,7 @@
  * `requireOrg`. We read Clerk session claims via `auth(req)` (this module's
  * thin wrapper around `getAuth`, the Express equivalent of Next.js `auth()`).
  *
- * `orgId` returned here is always the HoopsOS Postgres `orgs.id` (UUID).
+ * `orgId` returned here is always the HoopsIQ Postgres `orgs.id` (UUID).
  * Map Clerk organization IDs by setting `orgs.payload.clerkOrgId` or by using
  * a Clerk org id that is itself a UUID matching `orgs.id`.
  */
@@ -138,7 +138,7 @@ export type RequireOrgResult = {
 };
 
 /**
- * Resolves the active Clerk user, HoopsOS org UUID, and org_members.role.
+ * Resolves the active Clerk user, HoopsIQ org UUID, and org_members.role.
  * @throws HttpError 401 when there is no signed-in user
  * @throws HttpError 403 when there is no Clerk org context or no DB org / membership
  */

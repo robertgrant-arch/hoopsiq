@@ -45,7 +45,7 @@ type Credential = {
 const CREDENTIALS: Credential[] = [
   {
     id: "foundation",
-    title: "HoopsOS Foundation Certificate",
+    title: "HoopsIQ Foundation Certificate",
     shortTitle: "Foundation",
     level: 1,
     status: "in-progress",
@@ -119,16 +119,16 @@ const CREDENTIALS: Credential[] = [
       },
     ],
     unlocks: [
-      "HoopsOS Foundation credential badge on your coach profile",
+      "HoopsIQ Foundation credential badge on your coach profile",
       "Access to Level 2 curriculum and advanced modules",
       "Community plan sharing — publish practice plans to the coach network",
-      "Referral eligibility — earn credits for coaches you bring to HoopsOS",
+      "Referral eligibility — earn credits for coaches you bring to HoopsIQ",
       "Priority listing in program search results",
     ],
   },
   {
     id: "development",
-    title: "HoopsOS Development Certificate",
+    title: "HoopsIQ Development Certificate",
     shortTitle: "Development",
     level: 2,
     status: "locked",
@@ -164,7 +164,7 @@ const CREDENTIALS: Credential[] = [
       {
         id: "dev_parent_engagement",
         label: "Achieve 90%+ parent satisfaction score",
-        description: "Via HoopsOS end-of-season parent survey across a full season.",
+        description: "Via HoopsIQ end-of-season parent survey across a full season.",
         met: false,
         currentValue: "Locked",
       },
@@ -208,14 +208,14 @@ const CREDENTIALS: Credential[] = [
       "Development credential badge — displayed prominently in coach search",
       "Access to Expert marketplace listing — charge for 1-on-1 coaching sessions",
       "Unlock advanced AI film analysis features",
-      "Co-author and publish playbooks to the HoopsOS community library",
+      "Co-author and publish playbooks to the HoopsIQ community library",
       "Early access to new platform features",
-      "Invitation to HoopsOS Coach Advisory roundtables",
+      "Invitation to HoopsIQ Coach Advisory roundtables",
     ],
   },
   {
     id: "elite",
-    title: "HoopsOS Elite Certificate",
+    title: "HoopsIQ Elite Certificate",
     shortTitle: "Elite",
     level: 3,
     status: "locked",
@@ -231,7 +231,7 @@ const CREDENTIALS: Credential[] = [
       {
         id: "elite_program",
         label: "Build a program culture system",
-        description: "Document your team values framework, onboarding process, and cultural rituals — reviewed by a HoopsOS Master Coach.",
+        description: "Document your team values framework, onboarding process, and cultural rituals — reviewed by a HoopsIQ Master Coach.",
         met: false,
         currentValue: "Locked",
       },
@@ -245,23 +245,23 @@ const CREDENTIALS: Credential[] = [
       {
         id: "elite_publish",
         label: "Publish 3 peer-reviewed coaching resources",
-        description: "Practice plans, playbooks, or methodology documents that have been peer-reviewed and featured in the HoopsOS community.",
+        description: "Practice plans, playbooks, or methodology documents that have been peer-reviewed and featured in the HoopsIQ community.",
         met: false,
         currentValue: "Locked",
       },
       {
         id: "elite_interview",
         label: "Complete Master Coach review interview",
-        description: "A structured conversation with a HoopsOS Master Coach assessing your philosophy, outcomes, and program systems.",
+        description: "A structured conversation with a HoopsIQ Master Coach assessing your philosophy, outcomes, and program systems.",
         met: false,
         currentValue: "Locked",
       },
     ],
     unlocks: [
-      "Elite credential badge — rarest designation in the HoopsOS network",
+      "Elite credential badge — rarest designation in the HoopsIQ network",
       "Master Coach listing with full program showcase page",
       "Revenue share on curriculum you contribute to the platform",
-      "Invitation to HoopsOS Coach Summit (annual, all expenses paid)",
+      "Invitation to HoopsIQ Coach Summit (annual, all expenses paid)",
       "Dedicated profile feature to programs seeking elite coaches",
     ],
   },
@@ -461,7 +461,7 @@ function NetworkBadgeSection() {
         </div>
         <div>
           <div className="text-[13px] font-bold">Coach Name</div>
-          <div className="text-[11px] text-muted-foreground mt-0.5">HoopsOS Foundation · In Progress</div>
+          <div className="text-[11px] text-muted-foreground mt-0.5">HoopsIQ Foundation · In Progress</div>
           <div
             className="text-[10px] font-semibold uppercase tracking-widest mt-1"
             style={{ color: "oklch(0.72 0.18 290)" }}
@@ -496,7 +496,7 @@ function NetworkBadgeSection() {
           style={{ color: "oklch(0.75 0.12 140)" }}
         />
         <p className="text-[13px]" style={{ color: "oklch(0.75 0.12 140)" }}>
-          <strong>Coaches with Foundation credentials are 2.4× more likely</strong> to be hired by programs that find them through HoopsOS.
+          <strong>Coaches with Foundation credentials are 2.4× more likely</strong> to be hired by programs that find them through HoopsIQ.
         </p>
       </div>
     </div>

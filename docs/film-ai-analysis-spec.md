@@ -1,7 +1,7 @@
 # Film AI Analysis — Canonical Specification
 
 **Status:** Draft v1.0
-**Owner:** HoopsOS Architecture
+**Owner:** HoopsIQ Architecture
 **Module:** Film Room → Film AI Analysis
 **Last updated:** 2026-05-03
 
@@ -14,7 +14,7 @@
 - Provide a coach review/correction loop with confidence badges and audit history.
 - Make every stat and highlight deep-link back to the exact source moment in the film timeline.
 - Stay provider-agnostic: support multiple/future CV vendors or internal models behind a stable adapter interface.
-- Feel native to HoopsOS — reuse Coach HQ / Film Room IA, design system, RBAC, and schema patterns.
+- Feel native to HoopsIQ — reuse Coach HQ / Film Room IA, design system, RBAC, and schema patterns.
 
 ### Non-Goals
 - Performing computer vision in the browser.
@@ -88,7 +88,7 @@ interface CVProviderAdapter {
   cancel(handle: ProviderJobHandle): Promise<void>;
 }
 ```
-Normalizers convert `RawAnalysisPayload` → HoopsOS canonical events/stats. Provider identity is stored on `AnalysisJob.providerId` + `modelVersion` for reproducibility.
+Normalizers convert `RawAnalysisPayload` → HoopsIQ canonical events/stats. Provider identity is stored on `AnalysisJob.providerId` + `modelVersion` for reproducibility.
 
 ### Storage
 - Object storage (S3-compatible) for `FilmAsset.sourceUri` and derived clip artifacts.
@@ -203,7 +203,7 @@ State machine for `AnalysisJob.status`: `queued → running → (partial | succe
 | Staff/Analyst | N | Y | N | N | N |
 | Player | N | N | N | view approved only | N |
 
-Reuses HoopsOS RBAC matrix; new permissions: `film.analysis.upload`, `film.analysis.review`, `film.analysis.approve`, `film.analysis.export`, `film.analysis.admin`.
+Reuses HoopsIQ RBAC matrix; new permissions: `film.analysis.upload`, `film.analysis.review`, `film.analysis.approve`, `film.analysis.export`, `film.analysis.admin`.
 
 ---
 

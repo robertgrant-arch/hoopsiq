@@ -10,7 +10,7 @@
  *  ✓ AC3: recordViewEvent() called on mount — view logged to VIEW_EVENTS
  *
  * Layout:
- *   1. Minimal top nav (logo + "built with HoopsOS")
+ *   1. Minimal top nav (logo + "built with HoopsIQ")
  *   2. Player hero + identity
  *   3. Verified data strip
  *   4. Sections (only visibility="public" rendered)
@@ -106,7 +106,7 @@ function Section({
             style={{ background: `${PRIMARY}20`, color: PRIMARY }}
           >
             <ShieldCheck className="w-3 h-3" />
-            HoopsOS verified
+            HoopsIQ verified
           </span>
         )}
       </div>
@@ -382,7 +382,7 @@ function NotFoundDossier(): React.ReactElement {
         This recruiting profile doesn't exist or may have been unpublished.
       </p>
       <Link href="/" asChild>
-        <a className="text-[13px] font-semibold" style={{ color: PRIMARY }}>← Back to HoopsOS</a>
+        <a className="text-[13px] font-semibold" style={{ color: PRIMARY }}>← Back to HoopsIQ</a>
       </Link>
     </div>
   );
@@ -437,7 +437,7 @@ export default function PublicDossierPage(): React.ReactElement {
           >
             <span className="text-[11px] font-black text-white">H</span>
           </div>
-          <span className="text-[13px] font-bold" style={{ color: TEXT_HEAD }}>HoopsOS</span>
+          <span className="text-[13px] font-bold" style={{ color: TEXT_HEAD }}>HoopsIQ</span>
         </div>
         <div className="flex items-center gap-3">
           <span className="hidden sm:block text-[11.5px]" style={{ color: MUTED }}>
@@ -497,14 +497,14 @@ export default function PublicDossierPage(): React.ReactElement {
                       </span>
                     </div>
                   </div>
-                  {/* HoopsOS verified badge */}
+                  {/* HoopsIQ verified badge */}
                   <div
                     className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl shrink-0"
                     style={{ background: `${PRIMARY}15`, border: `1px solid ${PRIMARY}30` }}
                   >
                     <ShieldCheck className="w-4 h-4" style={{ color: PRIMARY }} />
                     <span className="text-[11.5px] font-bold" style={{ color: PRIMARY }}>
-                      HoopsOS Verified
+                      HoopsIQ Verified
                     </span>
                   </div>
                 </div>
@@ -685,7 +685,7 @@ export default function PublicDossierPage(): React.ReactElement {
             >
               <ShieldCheck className="w-4 h-4 shrink-0" style={{ color: PRIMARY }} />
               <p className="text-[12.5px]" style={{ color: TEXT_BODY }}>
-                All milestones are verified by coaches through the HoopsOS platform. Improvement data is sourced from tracked practice sessions, film review, and coach assessments.
+                All milestones are verified by coaches through the HoopsIQ platform. Improvement data is sourced from tracked practice sessions, film review, and coach assessments.
               </p>
             </div>
           </Section>
@@ -747,12 +747,12 @@ export default function PublicDossierPage(): React.ReactElement {
                 <span className="text-[10px] font-black text-white">H</span>
               </div>
               <span className="text-[12px] font-semibold" style={{ color: "oklch(0.70 0.01 260)" }}>
-                HoopsOS — Built on verified development data
+                HoopsIQ — Built on verified development data
               </span>
             </div>
             <div className="flex items-center gap-1.5 text-[11.5px]" style={{ color: MUTED }}>
               <ShieldCheck className="w-3.5 h-3.5" style={{ color: PRIMARY }} />
-              All verified data sourced from HoopsOS platform activity
+              All verified data sourced from HoopsIQ platform activity
             </div>
           </div>
           <p className="mt-3 text-[11px]" style={{ color: "oklch(0.40 0.01 260)" }}>

@@ -50,7 +50,7 @@ const MILESTONES: Milestone[] = [
     title: "Consistency Award",
     criteria: "Zero assessment gaps for 90 consecutive days — every scheduled cycle completed on time",
     dateEarned: "March 21, 2026",
-    verifiedBy: "HoopsOS Platform",
+    verifiedBy: "HoopsIQ Platform",
     color: SUCCESS,
   },
   {
@@ -84,9 +84,9 @@ const MILESTONES: Milestone[] = [
     id: 6,
     type: "RECRUITING MILESTONE",
     title: "First Recruiter View",
-    criteria: "A verified college program viewed your HoopsOS profile for the first time",
+    criteria: "A verified college program viewed your HoopsIQ profile for the first time",
     dateEarned: "January 12, 2026",
-    verifiedBy: "HoopsOS Platform",
+    verifiedBy: "HoopsIQ Platform",
     color: PRIMARY,
   },
   {
@@ -102,9 +102,9 @@ const MILESTONES: Milestone[] = [
     id: 8,
     type: "DEVELOPMENT MILESTONE",
     title: "Season Starter",
-    criteria: "Successfully completed your first full verified assessment season on HoopsOS",
+    criteria: "Successfully completed your first full verified assessment season on HoopsIQ",
     dateEarned: "December 1, 2025",
-    verifiedBy: "HoopsOS Platform",
+    verifiedBy: "HoopsIQ Platform",
     color: MUTED,
   },
 ];

@@ -1,4 +1,4 @@
-# HoopsOS: Live Classes Architecture & Scaffolding
+# HoopsIQ: Live Classes Architecture & Scaffolding
 
 This document details the `(live)` route group, providing a Peloton-meets-MasterClass live event experience. It covers discovery, registration, the real-time broadcast room, and the on-demand replay architecture.
 
@@ -61,7 +61,7 @@ The `/[eventId]/replay` surface transforms the ephemeral live event into a perma
 
 ## 7. LiveKit Integration Architecture
 
-HoopsOS uses LiveKit (or Daily.co) for sub-50ms latency broadcasting, essential for interactive sports instruction.
+HoopsIQ uses LiveKit (or Daily.co) for sub-50ms latency broadcasting, essential for interactive sports instruction.
 
 1.  **Token Issuance:** When an athlete hits `/[eventId]/room`, a Server Action verifies their `Registration` and generates a LiveKit JWT token scoped specifically to that room.
 2.  **Room Lifecycle:** The room is created dynamically when the host joins. Attendees are placed in a "Waiting Room" state until the host explicitly clicks "Start Broadcast" (which transitions the `LiveEvent` status to `LIVE`).
@@ -70,7 +70,7 @@ HoopsOS uses LiveKit (or Daily.co) for sub-50ms latency broadcasting, essential 
 
 ## 8. Accessibility & Reduced-Motion
 
-A live room can be overwhelming. HoopsOS adheres to strict accessibility standards.
+A live room can be overwhelming. HoopsIQ adheres to strict accessibility standards.
 
 *   **Reduced-Motion:** If the user's OS has `prefers-reduced-motion` enabled, the `ReactionRail` emojis do not float up the screen; they simply increment a static counter. Chat auto-scrolling is smoothed, and flashing UI elements are disabled.
 *   **Screen Readers:** The `ChatPanel` uses `aria-live="polite"` to announce new messages without interrupting the host's audio. The `QAQueue` uses explicit focus management when a question is pinned.
@@ -317,7 +317,7 @@ export default function LiveRoomPage() {
         token={token}
         serverUrl={process.env.NEXT_PUBLIC_LIVEKIT_URL}
         data-lk-theme="default"
-        className="h-full w-full custom-livekit-theme" // We override styles in globals.css to match HoopsOS branding
+        className="h-full w-full custom-livekit-theme" // We override styles in globals.css to match HoopsIQ branding
       >
         {/* 
           VideoConference provides the core layout.

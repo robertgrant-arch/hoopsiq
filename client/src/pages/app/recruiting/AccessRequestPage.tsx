@@ -611,7 +611,7 @@ export default function AccessRequestPage() {
                   Find more athletes to evaluate →
                 </div>
                 <div className="text-[11px] mt-0.5" style={{ color: MUTED }}>
-                  Browse all HoopsOS-verified profiles and submit access requests
+                  Browse all HoopsIQ-verified profiles and submit access requests
                 </div>
               </div>
               <ChevronRight className="w-5 h-5 shrink-0" style={{ color: MUTED }} />
@@ -719,7 +719,7 @@ export default function AccessRequestPage() {
             <p className="text-[11px] leading-relaxed" style={{ color: MUTED }}>
               <span className="font-semibold" style={{ color: "var(--text-primary)" }}>Privacy notice: </span>
               Access is granted by athlete families on a per-request basis. All profile views are logged
-              and visible to the player's family and program director. HoopsOS does not sell player data.
+              and visible to the player's family and program director. HoopsIQ does not sell player data.
               Requests that are withdrawn, denied, or expired do not retain view history.
             </p>
           </div>

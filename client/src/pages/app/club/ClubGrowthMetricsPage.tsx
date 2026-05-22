@@ -716,7 +716,7 @@ export default function ClubGrowthMetricsPage() {
           <div className="mb-5">
             <h2 className="text-lg font-semibold text-[var(--text-primary)]">Program Reputation vs. Peers</h2>
             <p className="text-[13px] text-[var(--text-muted)] mt-1">
-              How Elevation Basketball compares to similar programs on HoopsOS (anonymized). Eight dimensions of program quality.
+              How Elevation Basketball compares to similar programs on HoopsIQ (anonymized). Eight dimensions of program quality.
             </p>
           </div>
 

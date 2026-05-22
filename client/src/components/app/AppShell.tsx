@@ -1,5 +1,5 @@
 /**
- * AppShell — responsive app container for HoopsOS.
+ * AppShell — responsive app container for HoopsIQ.
  *
  * COACH role:
  *   Mobile:
@@ -254,7 +254,7 @@ const COACH_SECTION_LABELS: Array<{ match: (l: string) => boolean; label: string
 ];
 
 function getCoachSectionLabel(loc: string) {
-  return COACH_SECTION_LABELS.find((s) => s.match(loc))?.label ?? "HoopsOS";
+  return COACH_SECTION_LABELS.find((s) => s.match(loc))?.label ?? "HoopsIQ";
 }
 
 const COACH_SIDEBAR_SECTIONS: SidebarSection[] = [

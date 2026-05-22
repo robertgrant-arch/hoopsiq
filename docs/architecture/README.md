@@ -1,4 +1,4 @@
-# HoopsOS — Architecture & Product Documentation
+# HoopsIQ — Architecture & Product Documentation
 
 This directory contains the full architecture and product planning sequence produced in May 2026.
 Documents are ordered — each builds on the previous.

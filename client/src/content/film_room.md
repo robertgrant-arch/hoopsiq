@@ -1,4 +1,4 @@
-# HoopsOS: Film Room Architecture & Scaffolding
+# HoopsIQ: Film Room Architecture & Scaffolding
 
 This document details the `(film)` route group, the collaborative video analysis engine for teams. It covers the coach's workflow for clipping and assigning film, the player's inbox experience, granular watch-tracking, and comprehension quizzes.
 
@@ -67,7 +67,7 @@ The `/(film)/player/inbox` is designed for low cognitive load. It surfaces only 
 
 ## 7. Mux Signed URLs & Privacy Scopes
 
-Game film is highly sensitive proprietary data. HoopsOS strictly controls access using Mux Signed URLs.
+Game film is highly sensitive proprietary data. HoopsIQ strictly controls access using Mux Signed URLs.
 
 1.  **Private Assets:** When a coach uploads a full game to Mux, the asset is created with `playback_policy: ["signed"]`. The public Mux URL will return a 403 Forbidden.
 2.  **Per-Clip Scope:** When an athlete requests a clip, the Next.js server verifies their `FilmAssignment` via Prisma.

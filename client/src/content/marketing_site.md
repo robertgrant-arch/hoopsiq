@@ -1,12 +1,12 @@
-# HoopsOS: Marketing Site Architecture & Scaffolding
+# HoopsIQ: Marketing Site Architecture & Scaffolding
 
-This document outlines the public marketing presence for HoopsOS. It translates the premium, cinematic brand energy into a high-converting web surface, differentiating the value proposition for athletes, coaches, teams, and experts.
+This document outlines the public marketing presence for HoopsIQ. It translates the premium, cinematic brand energy into a high-converting web surface, differentiating the value proposition for athletes, coaches, teams, and experts.
 
 ## 1. Messaging Architecture
 
 ### Value Proposition
 **The unified basketball development operating system.**
-HoopsOS replaces the fragmented mess of YouTube drills, text message assignments, and scattered film links with a single, elite platform. It is MasterClass-quality instruction meets Peloton-level momentum, built on a professional coaching foundation.
+HoopsIQ replaces the fragmented mess of YouTube drills, text message assignments, and scattered film links with a single, elite platform. It is MasterClass-quality instruction meets Peloton-level momentum, built on a professional coaching foundation.
 
 ### Audience-Specific Hooks
 *   **Athletes:** "Stop guessing. Execute daily WODs, get AI feedback on your mechanics, and train with the world's best."
@@ -40,7 +40,7 @@ HoopsOS replaces the fragmented mess of YouTube drills, text message assignments
     *   *Daily WODs:* "Wake up. Open the app. Execute the day's program."
     *   *AI Mechanics:* "Upload your film. Get instant, objective feedback on your form."
     *   *Gamification:* "Build your streak. Earn XP. Unlock elite skill tracks."
-*   **Price Anchor:** "Player Core: $19.99/mo. *Play for a HoopsOS Team? Get 50% off for life.*"
+*   **Price Anchor:** "Player Core: $19.99/mo. *Play for a HoopsIQ Team? Get 50% off for life.*"
 
 ### `/coaches`
 *   **Hero:** "The Command Center for Elite Programs."
@@ -111,7 +111,7 @@ export default function MarketingLayout({ children }: { children: ReactNode }) {
         <div className="container flex h-16 items-center justify-between">
           <Link href="/" className="flex items-center gap-2 transition-opacity hover:opacity-80">
             <HoopsLogo className="h-8 w-8 text-primary" />
-            <span className="font-heading text-xl tracking-tight uppercase">HoopsOS</span>
+            <span className="font-heading text-xl tracking-tight uppercase">HoopsIQ</span>
           </Link>
           
           <nav className="hidden md:flex items-center gap-8 text-sm font-medium text-muted-foreground">
@@ -180,7 +180,7 @@ import { AudiencePivot } from "@/components/marketing/audience-pivot";
 import { FeatureSplit } from "@/components/marketing/feature-split";
 
 export const metadata: Metadata = {
-  title: "HoopsOS | The Unified Basketball Development OS",
+  title: "HoopsIQ | The Unified Basketball Development OS",
   description: "Elite instruction. AI-powered mechanics. Professional film tools. One platform to build your game or run your program.",
 };
 
@@ -234,13 +234,13 @@ export default function HomePage() {
 
 ## 6. SEO & Metadata Strategy
 
-HoopsOS utilizes Next.js App Router's native Metadata API to ensure high visibility and rich social sharing cards.
+HoopsIQ utilizes Next.js App Router's native Metadata API to ensure high visibility and rich social sharing cards.
 
 ### Metadata Patterns
-*   **Title Template:** `%s | HoopsOS`
+*   **Title Template:** `%s | HoopsIQ`
 *   **OG Image Pattern:** Dynamic Open Graph images generated via `@vercel/og`.
-    *   *Default:* The HoopsOS logo centered on a dark hardwood texture.
-    *   *Expert Profile:* The expert's avatar on the left, their name and "HoopsOS Expert" on the right.
+    *   *Default:* The HoopsIQ logo centered on a dark hardwood texture.
+    *   *Expert Profile:* The expert's avatar on the left, their name and "HoopsIQ Expert" on the right.
     *   *Live Class:* The class title, date, and instructor avatar.
 
 ### JSON-LD Structured Data
@@ -310,7 +310,7 @@ Given the target demographic (youth athletes and institutional schools), the leg
 
 ### Youth Privacy (COPPA) Surface
 *   **Location:** `/legal/youth` (linked prominently in the footer and during athlete sign-up).
-*   **Content:** Plain-English explanation of how HoopsOS handles data for users under 13.
+*   **Content:** Plain-English explanation of how HoopsIQ handles data for users under 13.
 *   **Key Trust Points:**
     *   "We never sell athlete data."
     *   "Direct messaging between adults and minors is disabled; parents are always in the loop."

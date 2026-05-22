@@ -372,7 +372,7 @@ export default function SkillVelocityPage() {
                 71st
               </div>
               <div style={{ fontSize: 14, fontWeight: 700, color: "var(--text-primary)" }}>Versus all 16U players</div>
-              <div style={{ fontSize: 12, color: "var(--text-muted)" }}>Growing faster than 71% of players on HoopsOS</div>
+              <div style={{ fontSize: 12, color: "var(--text-muted)" }}>Growing faster than 71% of players on HoopsIQ</div>
             </div>
 
             {/* VDV Cycles */}
@@ -501,7 +501,7 @@ export default function SkillVelocityPage() {
               Growth Rate vs. Your Cohort
             </h2>
             <p style={{ fontSize: 15, color: "var(--text-muted)", margin: 0 }}>
-              Where your improvement rate falls among all 16U players on HoopsOS this season.
+              Where your improvement rate falls among all 16U players on HoopsIQ this season.
             </p>
           </div>
 
@@ -523,7 +523,7 @@ export default function SkillVelocityPage() {
               color: "var(--text-primary)",
               lineHeight: 1.6,
             }}>
-              You're growing faster than <strong style={{ color: PRIMARY }}>71% of 16U players</strong> on HoopsOS this season. That puts you in the top quartile of player development trajectories at your level.
+              You're growing faster than <strong style={{ color: PRIMARY }}>71% of 16U players</strong> on HoopsIQ this season. That puts you in the top quartile of player development trajectories at your level.
             </div>
           </div>
         </section>

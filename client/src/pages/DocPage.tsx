@@ -99,7 +99,7 @@ export default function DocPage() {
             {/* Breadcrumb */}
             <div className="flex items-center gap-2 text-[12.5px] text-muted-foreground mb-6">
               <Link href="/" asChild>
-                <a className="hover:text-foreground transition-colors">HoopsOS</a>
+                <a className="hover:text-foreground transition-colors">HoopsIQ</a>
               </Link>
               <ChevronRight className="w-3.5 h-3.5 opacity-60" />
               <span>{chapter?.label}</span>

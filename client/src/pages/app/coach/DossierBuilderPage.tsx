@@ -3,7 +3,7 @@
  *
  * Coach-side dossier editor with:
  *  - Per-section visibility controls (public / private / on_request)
- *  - Coach verification badges for HoopsOS-sourced data
+ *  - Coach verification badges for HoopsIQ-sourced data
  *  - Preview mode showing the public view
  *  - Share link generation (public + private)
  *  - PDF export placeholder
@@ -107,7 +107,7 @@ function VerifiedBadge(): React.ReactElement {
       style={{ background: `${PRIMARY}20`, color: PRIMARY }}
     >
       <ShieldCheck className="w-3 h-3" />
-      HoopsOS verified
+      HoopsIQ verified
     </span>
   );
 }

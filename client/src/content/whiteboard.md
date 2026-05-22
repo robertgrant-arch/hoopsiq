@@ -1,4 +1,4 @@
-# HoopsOS: Whiteboard & Playbook Studio
+# HoopsIQ: Whiteboard & Playbook Studio
 
 This document defines the `(whiteboard)` route group, an advanced tactical authoring and learning environment. It allows coaches to design multi-phase plays, present them with voiceover, and test athlete comprehension through interactive quizzes.
 
@@ -13,7 +13,7 @@ Building a high-performance, multi-frame playbook editor requires choosing the r
 
 ## 2. State Model (Zustand)
 
-A playbook is a complex document. We use `zustand` for state management to avoid React Context re-render cascades during high-frequency drag events. We use a **CRDT-free optimistic save** model because playbook authoring in HoopsOS is single-player (the coach authors, the players consume).
+A playbook is a complex document. We use `zustand` for state management to avoid React Context re-render cascades during high-frequency drag events. We use a **CRDT-free optimistic save** model because playbook authoring in HoopsIQ is single-player (the coach authors, the players consume).
 
 **Play Document Schema (`PlayJSON`)**
 ```typescript

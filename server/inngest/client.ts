@@ -1,12 +1,12 @@
 import { Inngest } from "inngest";
 
 export const inngest = new Inngest({
-  id: "hoopsos",
+  id: "hoopsiq",
   eventKey: process.env.INNGEST_EVENT_KEY,
 });
 
 // Event type definitions
-export type HoopsOSEvents = {
+export type HoopsIQEvents = {
   "film/asset.ready": {
     data: {
       sessionId: string;

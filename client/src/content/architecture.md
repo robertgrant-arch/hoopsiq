@@ -1,8 +1,8 @@
-# HoopsOS: Premium Basketball Development Platform Architecture
+# HoopsIQ: Premium Basketball Development Platform Architecture
 
 ## 1. High-Level App Architecture
 
-HoopsOS is designed as a **Modular Monolith** using the Next.js App Router. This approach balances deployment simplicity with domain isolation, allowing the platform to scale gracefully before microservices are strictly necessary.
+HoopsIQ is designed as a **Modular Monolith** using the Next.js App Router. This approach balances deployment simplicity with domain isolation, allowing the platform to scale gracefully before microservices are strictly necessary.
 
 ### Core Architecture Components
 *   **Frontend & API Gateway**: Next.js App Router (React Server Components, Server Actions, API Routes).
@@ -288,7 +288,7 @@ The billing engine handles individual subscriptions, team subscriptions, and mar
 ### Folder Tree
 
 ```text
-hoopsos/
+hoopsiq/
 ├── src/
 │   ├── app/                    # Next.js App Router
 │   │   ├── (marketing)/        # Marketing pages (Landing, Pricing)
@@ -347,7 +347,7 @@ const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
 const oswald = Oswald({ subsets: ["latin"], variable: "--font-oswald" });
 
 export const metadata: Metadata = {
-  title: "HoopsOS | Premium Basketball Development",
+  title: "HoopsIQ | Premium Basketball Development",
   description: "The unified basketball development operating system.",
 };
 

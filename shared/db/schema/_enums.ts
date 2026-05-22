@@ -1,5 +1,5 @@
 // shared/db/schema/_enums.ts
-// Centralized pg enums for HoopsOS film analysis + core domain.
+// Centralized pg enums for HoopsIQ film analysis + core domain.
 // Keep all enum literals lower_snake_case so they line up with API contracts.
 
 import { pgEnum } from "drizzle-orm/pg-core";

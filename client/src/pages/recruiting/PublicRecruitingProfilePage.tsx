@@ -94,7 +94,7 @@ const PROFILES: Record<string, PublicProfile> = {
       { name: "Clutch Performer", id: "badge-clutch" },
     ],
     programDescription:
-      "Development-focused program on HoopsOS. Advanced team tier.",
+      "Development-focused program on HoopsIQ. Advanced team tier.",
   },
 };
 
@@ -507,7 +507,7 @@ export default function PublicRecruitingProfilePage() {
                 strokeLinejoin="round"
               />
             </svg>
-            HoopsOS
+            HoopsIQ
           </div>
 
           <Link href="/sign-in" asChild>
@@ -554,7 +554,7 @@ export default function PublicRecruitingProfilePage() {
                   strokeLinejoin="round"
                 />
               </svg>
-              HoopsOS Verified
+              HoopsIQ Verified
             </div>
           </div>
 
@@ -1211,7 +1211,7 @@ export default function PublicRecruitingProfilePage() {
             className="text-[12px]"
             style={{ color: "oklch(0.42 0.01 260)" }}
           >
-            Profile verified by HoopsOS · Data sourced from{" "}
+            Profile verified by HoopsIQ · Data sourced from{" "}
             {profile.programName}'s coaching staff · Last updated{" "}
             {profile.lastUpdated}
           </p>
@@ -1220,7 +1220,7 @@ export default function PublicRecruitingProfilePage() {
             style={{ color: "oklch(0.35 0.01 260)" }}
           >
             <span style={{ color: "oklch(0.55 0.02 260)", fontWeight: 600 }}>
-              HoopsOS
+              HoopsIQ
             </span>{" "}
             — Basketball Operations Platform ·{" "}
             <Link href="/privacy" asChild>

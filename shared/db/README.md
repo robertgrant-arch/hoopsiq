@@ -1,6 +1,6 @@
 # shared/db
 
-Drizzle ORM schema and Neon Postgres client for HoopsOS.
+Drizzle ORM schema and Neon Postgres client for HoopsIQ.
 
 ## Layout
 

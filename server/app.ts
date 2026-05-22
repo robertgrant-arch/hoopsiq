@@ -37,7 +37,7 @@ export function createApp() {
 
   // ── CORS ───────────────────────────────────────────────────────────────────
   // Allow requests from the Vercel frontend and localhost dev servers.
-  // APP_BASE_URL should be set to https://hoopsos-docs.vercel.app on Render.
+  // APP_BASE_URL should be set to https://hoopsiq.vercel.app on Render.
   const allowedOrigins: (string | RegExp)[] = [
     /^http:\/\/localhost:\d+$/,
     /^http:\/\/127\.0\.0\.1:\d+$/,

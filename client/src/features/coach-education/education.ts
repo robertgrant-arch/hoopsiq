@@ -2,7 +2,7 @@
  * Coaching Education mock data.
  *
  * Structured learning tracks for coaches. Each course has lessons that end
- * with a "Try it now" action that links to a real HoopsOS tool.
+ * with a "Try it now" action that links to a real HoopsIQ tool.
  * Used by: CoachLearnPage (/app/learn), CoursePage (/app/learn/courses/:id).
  */
 
@@ -144,7 +144,7 @@ export const courses: Course[] = [
         body: [
           { type: "p", content: "The IDP is only useful if it's alive — meaning the drills in the daily WOD and the observations from film are directly connected to the goals in the plan. If a coach writes a WOD that doesn't address any of the player's 3 focus areas, that WOD is either misassigned or the focus areas are wrong." },
           { type: "h2", content: "How to tag WOD blocks to IDP goals" },
-          { type: "p", content: "In HoopsOS, every WOD block should trace back to a focus area on the player's IDP. When you build a WOD, ask: which of this player's goals does this block address? If you can't answer, it's either a warm-up/conditioning block (which is fine) or it shouldn't be in this player's plan." },
+          { type: "p", content: "In HoopsIQ, every WOD block should trace back to a focus area on the player's IDP. When you build a WOD, ask: which of this player's goals does this block address? If you can't answer, it's either a warm-up/conditioning block (which is fine) or it shouldn't be in this player's plan." },
           { type: "h2", content: "Using film observations as IDP evidence" },
           { type: "p", content: "When you verify an AI observation or write a coaching action, you're generating evidence about a player's current level. This evidence should feed back into the IDP. If a film session reveals that the player's left-hand finishing is breaking down under contact — and that's a Level 3 goal — you have a data point that tells you whether to adjust the milestone or add more contact-specific reps." },
           { type: "callout", content: "After building a WOD this week, check each block against the player's IDP focus areas. Can you draw a line from every drill block to a specific goal? If not, adjust the WOD or update the plan.", variant: "tip" },
@@ -285,7 +285,7 @@ export const courses: Course[] = [
     id: "course_ai_film",
     slug: "understanding-ai-film-analysis",
     title: "Using AI Film Analysis as a Coaching Tool",
-    subtitle: "How to get the most out of HoopsOS AI observations — and how to know when to override them.",
+    subtitle: "How to get the most out of HoopsIQ AI observations — and how to know when to override them.",
     category: "film_and_analysis",
     level: "foundation",
     durationMin: 28,
@@ -302,7 +302,7 @@ export const courses: Course[] = [
         title: "What the AI sees and what it can't see",
         durationMin: 7,
         body: [
-          { type: "p", content: "HoopsOS's AI analyzes player clips and identifies technical observations — things like elbow alignment, footwork patterns, release timing, and head position. It works from video, which means it can only see what the camera angle captures. It cannot see game context, feel what the player was thinking, or account for what the coach told them before the clip." },
+          { type: "p", content: "HoopsIQ's AI analyzes player clips and identifies technical observations — things like elbow alignment, footwork patterns, release timing, and head position. It works from video, which means it can only see what the camera angle captures. It cannot see game context, feel what the player was thinking, or account for what the coach told them before the clip." },
           { type: "h2", content: "What AI is good at" },
           { type: "bullets", content: [
             "Spotting consistent mechanical patterns across multiple clips (e.g., always short-arming under contact)",
@@ -330,7 +330,7 @@ export const courses: Course[] = [
         title: "Reading confidence scores and knowing when to verify",
         durationMin: 7,
         body: [
-          { type: "p", content: "Every AI observation in HoopsOS comes with a confidence score. This score reflects how certain the model is that the observation is accurate. High confidence (above 80%) means the AI has seen clear, unambiguous evidence in the clip. Low confidence (below 50%) means the evidence was partial, the camera angle was poor, or the observation is inherently subjective." },
+          { type: "p", content: "Every AI observation in HoopsIQ comes with a confidence score. This score reflects how certain the model is that the observation is accurate. High confidence (above 80%) means the AI has seen clear, unambiguous evidence in the clip. Low confidence (below 50%) means the evidence was partial, the camera angle was poor, or the observation is inherently subjective." },
           { type: "h2", content: "How to use confidence scores in your review workflow" },
           { type: "bullets", content: [
             "High confidence + aligns with your observation → verify and create a coaching action",
@@ -655,11 +655,11 @@ export const courses: Course[] = [
       },
       {
         id: "prog_l4", courseId: "course_program", order: 4,
-        title: "Using HoopsOS as your program's development record",
+        title: "Using HoopsIQ as your program's development record",
         durationMin: 9,
         body: [
           { type: "p", content: "A development-first program needs a development record — a system that captures what players did, what they improved, what they struggled with, and how the coaching responded. Without a record, development is a feeling. With a record, it's evidence." },
-          { type: "h2", content: "What your HoopsOS record contains" },
+          { type: "h2", content: "What your HoopsIQ record contains" },
           { type: "bullets", content: [
             "Every WOD built and completed — dated, player-specific",
             "Every film observation — timestamped, AI-generated and coach-verified",

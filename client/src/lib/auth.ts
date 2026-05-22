@@ -9,8 +9,8 @@ export { ROLE_META };
 // Helpers shared by both paths
 // ---------------------------------------------------------------------------
 
-const STORAGE_KEY = "hoopsos.demoUserId";
-const ROLE_KEY = "hoopsos_role";
+const STORAGE_KEY = "hoopsiq.demoUserId";
+const ROLE_KEY = "hoopsiq_role";
 
 function readStoredUserId(): string | null {
   if (typeof window === "undefined") return null;
@@ -21,7 +21,7 @@ function writeStoredUserId(id: string | null) {
   if (typeof window === "undefined") return;
   if (id) window.localStorage.setItem(STORAGE_KEY, id);
   else window.localStorage.removeItem(STORAGE_KEY);
-  window.dispatchEvent(new CustomEvent("hoopsos-user-changed"));
+  window.dispatchEvent(new CustomEvent("hoopsiq-user-changed"));
 }
 
 function isDemoMode(): boolean {
@@ -98,10 +98,10 @@ function useDemoAuth(): {
 
   useEffect(() => {
     const handler = () => setUserId(readStoredUserId());
-    window.addEventListener("hoopsos-user-changed", handler);
+    window.addEventListener("hoopsiq-user-changed", handler);
     window.addEventListener("storage", handler);
     return () => {
-      window.removeEventListener("hoopsos-user-changed", handler);
+      window.removeEventListener("hoopsiq-user-changed", handler);
       window.removeEventListener("storage", handler);
     };
   }, []);

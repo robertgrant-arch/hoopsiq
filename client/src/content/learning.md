@@ -1,4 +1,4 @@
-# HoopsOS: Coach Education & Learning System
+# HoopsIQ: Coach Education & Learning System
 
 This document details the `(learn)` route group, a premium video-on-demand educational platform. It serves both coaches (tactics, culture, program building) and athletes (skill development, film study). It operates as a hybrid model: some content is included with the core subscription, while premium masterclasses are sold a la carte or in bundles.
 
@@ -29,7 +29,7 @@ Building on the canonical schema (Prompt 3), the Learning system utilizes the fo
 
 The `/(learn)/courses/[courseId]/lessons/[lessonId]` route is the core consumption surface, designed to keep the user engaged without distractions.
 
-*   **Cinematic Player:** The Mux video player dominates the top of the screen (or the left 70% on large desktop displays). It uses a custom theme matching the HoopsOS brand (Amber accents, dark controls).
+*   **Cinematic Player:** The Mux video player dominates the top of the screen (or the left 70% on large desktop displays). It uses a custom theme matching the HoopsIQ brand (Amber accents, dark controls).
 *   **Curriculum Sidebar:** A scrollable list of modules and lessons docks to the right (desktop) or below the video (mobile). Completed lessons show a green checkmark; the active lesson is highlighted in Indigo.
 *   **Notes & Resources Tab:** Below the video, a tabbed interface contains the instructor's written summary (`contentHtml`) and downloadable assets (PDFs, play diagrams, practice plans).
 *   **"Mark Complete" & Auto-Advance:** When the video ends, the `LessonProgress` is automatically marked `isCompleted: true`. A 5-second countdown appears over the video before auto-advancing to the next lesson. The user can also manually click "Mark Complete" if they've finished reading a text-only lesson.
@@ -52,7 +52,7 @@ The monetization engine for the learning module is built on the canonical `Entit
 
 ## 6. Premium Paywall Interstitial Patterns
 
-HoopsOS uses a "freemium tease" strategy to drive course sales, leveraging the `isFreePreview` flag on lessons.
+HoopsIQ uses a "freemium tease" strategy to drive course sales, leveraging the `isFreePreview` flag on lessons.
 
 1.  **The Tease:** The first lesson of a premium course is always `isFreePreview: true`. Any user, even those without an account, can watch this lesson.
 2.  **The Gate:** When the free preview ends, or if the user clicks a locked lesson in the curriculum sidebar, the video player is replaced by a cinematic paywall interstitial.

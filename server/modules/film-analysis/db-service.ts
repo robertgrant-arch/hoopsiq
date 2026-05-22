@@ -104,7 +104,7 @@ function syntheticQueuedJob(
     version: 1,
     deletedAt: null,
     sessionId: session.id,
-    providerId: "hoopsos-db",
+    providerId: "hoopsiq-db",
     modelVersion: "pr2",
     status: AnalysisJobStatus.Queued,
     stage: AnalysisStage.Ingest,
@@ -142,7 +142,7 @@ function mapDbJobToApi(
     version: 1,
     deletedAt: row.deletedAt?.toISOString() ?? null,
     sessionId: row.sessionId,
-    providerId: (payload.providerId as string) ?? "hoopsos-db",
+    providerId: (payload.providerId as string) ?? "hoopsiq-db",
     modelVersion: (payload.modelVersion as string) ?? "pr2",
     status: mapJobStatus(row.status),
     stage,
@@ -429,7 +429,7 @@ export class DbFilmAnalysisService implements FilmAnalysisService {
         createdByUserId: userId,
         stage: AnalysisStage.Ingest,
         progressPct: 0,
-        providerId: "hoopsos-ingest",
+        providerId: "hoopsiq-ingest",
         modelVersion: "pr2",
       },
     });
@@ -917,7 +917,7 @@ export class DbFilmAnalysisService implements FilmAnalysisService {
     });
 
     if (!asset) {
-      // Asset may not exist if upload was initiated outside HoopsOS — log and
+      // Asset may not exist if upload was initiated outside HoopsIQ — log and
       // return gracefully.
       console.warn("[mux-webhook] No film_asset found for upload", muxUploadId, "/ asset", muxAssetId);
       return;
@@ -962,7 +962,7 @@ export class DbFilmAnalysisService implements FilmAnalysisService {
     if (process.env.INNGEST_EVENT_KEY) {
       try {
         const { Inngest } = await import("inngest");
-        const inngest = new Inngest({ id: "hoopsos" });
+        const inngest = new Inngest({ id: "hoopsiq" });
         await inngest.send({
           name: "film/asset.ready",
           data: {

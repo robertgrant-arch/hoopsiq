@@ -1,6 +1,6 @@
-# HoopsOS: Expert Marketplace Architecture & Scaffolding
+# HoopsIQ: Expert Marketplace Architecture & Scaffolding
 
-This document details the Expert Marketplace, the premium monetization engine of HoopsOS. It connects athletes seeking elite instruction with verified coaches, trainers, and former pros offering async reviews, live consults, and premium courses.
+This document details the Expert Marketplace, the premium monetization engine of HoopsIQ. It connects athletes seeking elite instruction with verified coaches, trainers, and former pros offering async reviews, live consults, and premium courses.
 
 ## 1. Marketplace Information Architecture
 
@@ -46,7 +46,7 @@ When a user clicks an offer from the profile, they land on `/(marketplace)/offer
 *   **The Deliverables:** Clear bullet points (e.g., "1x Telestrated Video", "1x Custom WOD Assignment", "Direct Message Access for 7 Days").
 *   **Pricing:** Explicitly shows the dual-pricing model.
     *   *Public Price:* $150.00
-    *   *Member Price (HoopsOS Player Core):* $120.00 (Creates a powerful upsell loop for the core subscription).
+    *   *Member Price (HoopsIQ Player Core):* $120.00 (Creates a powerful upsell loop for the core subscription).
 *   **Reviews:** Filtered specifically to reviews left for *this* specific offer.
 
 ## 5. Marketplace Search & Discovery
@@ -59,12 +59,12 @@ The `/(marketplace)` home page is optimized for browsing.
 
 ## 6. Booking & Checkout Flow (Stripe Connect)
 
-The monetization engine relies on Stripe Connect (Destination Charges) to automatically split the transaction between HoopsOS (platform fee) and the Expert (payout).
+The monetization engine relies on Stripe Connect (Destination Charges) to automatically split the transaction between HoopsIQ (platform fee) and the Expert (payout).
 
 1.  **Initiation:** Buyer clicks "Book Async Review" on the Offer Detail page.
 2.  **Auth Gate:** If unauthenticated, they are prompted to sign up or sign in via Clerk.
 3.  **Price Resolution:** The `CheckoutService` checks if the buyer has an active `Player Core` subscription. If yes, the `memberPrice` is applied. If no, the `publicPrice` is used.
-4.  **Checkout Session Creation:** The server creates a Stripe Checkout Session. Crucially, the `transfer_data.destination` parameter is set to the expert's `StripeConnectAccountId`, and the platform fee (e.g., 20%) is calculated and retained by HoopsOS.
+4.  **Checkout Session Creation:** The server creates a Stripe Checkout Session. Crucially, the `transfer_data.destination` parameter is set to the expert's `StripeConnectAccountId`, and the platform fee (e.g., 20%) is calculated and retained by HoopsIQ.
 5.  **Success Webhook:** Upon successful payment (`checkout.session.completed`), a webhook fires. The system creates a `Booking` record (`status: PENDING_FULFILLMENT`), associates the `PaymentIntentId`, and creates a `PayoutRecord` for the expert's ledger.
 6.  **Fulfillment Routing:** The buyer is redirected to `/(marketplace)/bookings/[bookingId]`. If it's an Async Review, they are immediately prompted to upload their film. If it's a 1:1, they see the Zoom link and calendar invite options.
 
@@ -88,7 +88,7 @@ Social proof is the primary driver of conversion in the marketplace.
 
 ## 9. Moderation & Reputation Model
 
-HoopsOS must protect its athletes and its brand reputation from bad actors on the supply side.
+HoopsIQ must protect its athletes and its brand reputation from bad actors on the supply side.
 
 *   **Flagging:** Buyers can flag an expert's review or conduct (e.g., "Inappropriate language," "Did not fulfill service").
 *   **Warning System:** Admins can issue formal warnings to experts, which are logged in the `AuditLog` but not visible publicly.

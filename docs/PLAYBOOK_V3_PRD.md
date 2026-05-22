@@ -1,7 +1,7 @@
 # Playbook Studio v3 PRD — "Beat HoopsGeek"
 
 ## Mission
-Make HoopsOS Playbook Studio the unambiguous best-in-class basketball play diagramming + animation product for coaches at the youth, HS, college, and pro levels. Significantly better than HoopsGeek (https://hoopsgeek.com), FastDraw, FastModel, and CoachTube Whiteboard.
+Make HoopsIQ Playbook Studio the unambiguous best-in-class basketball play diagramming + animation product for coaches at the youth, HS, college, and pro levels. Significantly better than HoopsGeek (https://hoopsgeek.com), FastDraw, FastModel, and CoachTube Whiteboard.
 
 ## Verified state today (v2.x, post PR #6)
 WORKS: v2 schema/store/persistence; toolbar with V/O/X/B/K/P/D/C/S/H shortcuts; Pass arrow (player-to-player); Cut player-to-player; Phases (Entry/Read 1/...); Phase timeline strip with reorder; Save version; Play metadata panel (name, type, half/full court, version, history); Selected-action panel + delete; Tips panel.
@@ -82,11 +82,11 @@ If any of those fails, v3 is not done.
 
 ## Appendix A — PR #8 Implementation Prompt (paste into Claude Code locally)
 
-You are working in hoopsos-docs on branch main. Implement PR #8: free-form polyline path drawing for Cut and Dribble tools.
+You are working in hoopsiq on branch main. Implement PR #8: free-form polyline path drawing for Cut and Dribble tools.
 
 Files to modify:
 - client/src/components/playbook/PlayCanvas.tsx (currently 465 lines, mode-based handlers)
-- client/src/lib/playbookStore.ts (the v2 store at /workspaces/hoopsos-docs/client/src/lib/playbookStore.ts)
+- client/src/lib/playbookStore.ts (the v2 store at /workspaces/hoopsiq/client/src/lib/playbookStore.ts)
 - client/src/components/playbook/usePlayback.ts
 - client/src/lib/mock/playbookSchema.ts (extend Cut and Dribble action zod schemas with optional path: { x: number; y: number }[])
 

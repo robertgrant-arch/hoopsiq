@@ -995,7 +995,7 @@ export default function RecruiterPlayerViewPage() {
                   <div className="flex items-center gap-1.5 text-[10px] font-semibold uppercase tracking-wide"
                     style={{ color: MUTED }}>
                     <CheckCircle2 className="w-3.5 h-3.5" style={{ color: SUCCESS }} />
-                    HoopsOS Verified
+                    HoopsIQ Verified
                   </div>
                 </div>
               </div>

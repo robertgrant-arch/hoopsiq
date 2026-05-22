@@ -686,7 +686,7 @@ type ClassNeeds = {
 function ClassNeedsForm() {
   const [needs, setNeeds] = useState<ClassNeeds>(() => {
     try {
-      const stored = localStorage.getItem("hoopsos_class_needs");
+      const stored = localStorage.getItem("hoopsiq_class_needs");
       return stored ? (JSON.parse(stored) as ClassNeeds) : { positions: [], gradYears: [] };
     } catch {
       return { positions: [], gradYears: [] };
@@ -715,7 +715,7 @@ function ClassNeedsForm() {
   }
 
   function save() {
-    localStorage.setItem("hoopsos_class_needs", JSON.stringify(needs));
+    localStorage.setItem("hoopsiq_class_needs", JSON.stringify(needs));
     setSaved(true);
     toast.success("Class needs saved — search will pre-filter based on your selections.");
   }
@@ -795,7 +795,7 @@ type BoardFilterTab = typeof BOARD_FILTER_TABS[number]["id"];
 export default function RecruiterDashboardPage() {
   const [, navigate] = useLocation();
   const [bannerDismissed, setBannerDismissed] = useState(() =>
-    localStorage.getItem("hoopsos_recruiter_banner_dismissed") === "true"
+    localStorage.getItem("hoopsiq_recruiter_banner_dismissed") === "true"
   );
   const [boardFilter, setBoardFilter] = useState<BoardFilterTab>("all");
   const [boardStatuses, setBoardStatuses] = useState<Record<string, RecruiterBoard["status"]>>(
@@ -804,7 +804,7 @@ export default function RecruiterDashboardPage() {
 
   function dismissBanner() {
     setBannerDismissed(true);
-    localStorage.setItem("hoopsos_recruiter_banner_dismissed", "true");
+    localStorage.setItem("hoopsiq_recruiter_banner_dismissed", "true");
   }
 
   function handleStatusChange(playerId: string, status: RecruiterBoard["status"]) {
@@ -841,7 +841,7 @@ export default function RecruiterDashboardPage() {
     <AppShell>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <PageHeader
-          eyebrow="HoopsOS Recruiting"
+          eyebrow="HoopsIQ Recruiting"
           title="Recruiting Dashboard"
           subtitle="Verified athlete profiles from development-focused programs"
           actions={
@@ -868,7 +868,7 @@ export default function RecruiterDashboardPage() {
           >
             <div className="flex-1 min-w-0">
               <div className="text-[13px] font-bold mb-1" style={{ color: PRIMARY }}>
-                What makes HoopsOS profiles different
+                What makes HoopsIQ profiles different
               </div>
               <p className="text-[13px]" style={{ color: "var(--text-muted)" }}>
                 Every profile is generated from coach-recorded assessment data — not self-reported.

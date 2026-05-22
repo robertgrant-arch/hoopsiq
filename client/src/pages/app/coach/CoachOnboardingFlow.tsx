@@ -3,7 +3,7 @@
  * Route: /app/coach/onboarding
  *
  * Steps:
- *   1. Welcome       — what HoopsOS does for coaches
+ *   1. Welcome       — what HoopsIQ does for coaches
  *   2. Profile       — name, title, coaching philosophy
  *   3. First Players — quick add up to 5 players (name + position)
  *   4. First Assess  — run a quick 3-skill assessment on player 1
@@ -206,7 +206,7 @@ function StepWelcome({ onNext }: { onNext: () => void }) {
           Welcome, Coach.
         </h1>
         <p className="mt-2 text-base max-w-sm" style={{ color: "var(--text-muted)" }}>
-          HoopsOS turns your coaching observations into verified player development records — trusted by recruiters.
+          HoopsIQ turns your coaching observations into verified player development records — trusted by recruiters.
         </p>
       </div>
 
@@ -269,7 +269,7 @@ function StepProfile({ data, onChange, onNext, onBack }: {
         </div>
         <h2 className="text-2xl font-bold" style={{ color: "var(--text-primary)" }}>Your Coaching Profile</h2>
         <p className="text-sm mt-1" style={{ color: "var(--text-muted)" }}>
-          This is your public professional identity on HoopsOS.
+          This is your public professional identity on HoopsIQ.
         </p>
       </div>
 
@@ -661,7 +661,7 @@ export default function CoachOnboardingFlow() {
   ]);
 
   function finish() {
-    toast.success("Welcome to HoopsOS! Let's start developing players.");
+    toast.success("Welcome to HoopsIQ! Let's start developing players.");
     navigate("/app/coach");
   }
 
@@ -675,7 +675,7 @@ export default function CoachOnboardingFlow() {
       {/* Top bar */}
       <div className="flex items-center justify-between px-4 pt-12 pb-4">
         <div className="text-sm font-semibold" style={{ color: "oklch(0.75 0.12 140)" }}>
-          HoopsOS
+          HoopsIQ
         </div>
         {step < 5 && (
           <button onClick={finish} className="text-sm" style={{ color: "var(--text-muted)" }}>

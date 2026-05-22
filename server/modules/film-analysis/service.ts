@@ -1,5 +1,5 @@
 // ─────────────────────────────────────────────────────────────
-// HoopsOS — Film AI Analysis: Service Interface + DB implementation
+// HoopsIQ — Film AI Analysis: Service Interface + DB implementation
 // ─────────────────────────────────────────────────────────────
 
 import type {

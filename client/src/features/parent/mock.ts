@@ -329,8 +329,8 @@ export const mockAnnouncements: Announcement[] = [
   },
   {
     id: "ann_4",
-    title: "Welcome to HoopsOS Family Portal",
-    body: "We're rolling out the new HoopsOS Family Portal this week. You can now track Jalen's schedule, sign forms, view billing, and get real-time updates from the coaching staff — all in one place.",
+    title: "Welcome to HoopsIQ Family Portal",
+    body: "We're rolling out the new HoopsIQ Family Portal this week. You can now track Jalen's schedule, sign forms, view billing, and get real-time updates from the coaching staff — all in one place.",
     author: "Diana Okafor",
     authorRole: "Program Director",
     postedAt: "2026-05-01T08:00:00Z",

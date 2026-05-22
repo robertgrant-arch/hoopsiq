@@ -82,7 +82,7 @@ export const demoUsers: DemoUser[] = [
     name: "Alex Rivera",
     handle: "@staff_rivera",
     avatar: "AR",
-    title: "HoopsOS Trust & Safety",
+    title: "HoopsIQ Trust & Safety",
   },
 ];
 

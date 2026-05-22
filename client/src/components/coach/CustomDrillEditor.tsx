@@ -68,7 +68,7 @@ const SURFACES: DrillSurface[] = [
 const VISIBILITIES: { value: DrillVisibility; label: string; hint: string }[] = [
   { value: "private", label: "Private", hint: "Only you can see this drill" },
   { value: "org", label: "Org", hint: "Shared with every coach in your org" },
-  { value: "public", label: "Public", hint: "Visible to all HoopsOS coaches" },
+  { value: "public", label: "Public", hint: "Visible to all HoopsIQ coaches" },
 ];
 
 /* -------------------------------------------------------------------------- */

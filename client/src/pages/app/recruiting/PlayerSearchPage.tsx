@@ -932,7 +932,7 @@ export default function PlayerSearchPage() {
         <PageHeader
           eyebrow="Recruiting"
           title="Player Search"
-          subtitle="Browse HoopsOS-verified athlete profiles"
+          subtitle="Browse HoopsIQ-verified athlete profiles"
         />
 
         <div className="flex gap-6">

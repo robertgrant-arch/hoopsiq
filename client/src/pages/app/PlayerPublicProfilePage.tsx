@@ -324,7 +324,7 @@ export default function PlayerPublicProfilePage() {
               }}
             >
               <Shield className="w-3.5 h-3.5 shrink-0" />
-              Verified Development Record · HoopsOS
+              Verified Development Record · HoopsIQ
             </div>
           </div>
         </div>
@@ -333,7 +333,7 @@ export default function PlayerPublicProfilePage() {
         <div>
           <SectionHeading
             title="Development Overview"
-            sub="Tracked and coach-verified through HoopsOS"
+            sub="Tracked and coach-verified through HoopsIQ"
           />
           <div className="flex flex-wrap gap-3">
             {DEV_STATS.map((s) => (
@@ -529,7 +529,7 @@ export default function PlayerPublicProfilePage() {
             Interested in {PLAYER.name}?
           </h3>
           <p className="text-[13px] text-muted-foreground mb-4 max-w-sm mx-auto">
-            Contact {PLAYER.program} through HoopsOS to learn more about Andrew's development record.
+            Contact {PLAYER.program} through HoopsIQ to learn more about Andrew's development record.
           </p>
           <Link href="/sign-up">
             <a>
@@ -544,7 +544,7 @@ export default function PlayerPublicProfilePage() {
             </a>
           </Link>
           <p className="text-[11px] text-muted-foreground/60 mt-4">
-            Powered by HoopsOS — Verified player development records
+            Powered by HoopsIQ — Verified player development records
           </p>
         </div>
       </div>

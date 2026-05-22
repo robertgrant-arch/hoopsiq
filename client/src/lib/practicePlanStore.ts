@@ -191,7 +191,7 @@ export const usePracticePlans = create<State>()(
       },
     }),
     {
-      name: "hoopsos-practice-plans",
+      name: "hoopsiq-practice-plans",
       version: 1,
     }
   )

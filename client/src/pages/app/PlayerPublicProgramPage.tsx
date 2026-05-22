@@ -323,7 +323,7 @@ function StaffCard({ member }: { member: StaffMember }) {
               style={{ background: `${cred.color}14`, color: cred.color }}
             >
               <Award className="w-2.5 h-2.5" />
-              HoopsOS {cred.label}
+              HoopsIQ {cred.label}
             </div>
           )}
         </div>
@@ -400,7 +400,7 @@ export default function PlayerPublicProgramPage() {
             style={{ background: `${PRIMARY}14`, color: PRIMARY }}
           >
             <Shield className="w-3 h-3" />
-            HoopsOS Verified Program
+            HoopsIQ Verified Program
           </div>
 
           <div className="space-y-3">
@@ -490,7 +490,7 @@ export default function PlayerPublicProgramPage() {
             </div>
             <h2 className="text-[28px] font-bold text-foreground">Coaches & Program Team</h2>
             <p className="text-[13px] text-muted-foreground max-w-xl mx-auto">
-              All coaches are background-checked, certified, and trained in our development methodology. HoopsOS credentials reflect additional platform certifications.
+              All coaches are background-checked, certified, and trained in our development methodology. HoopsIQ credentials reflect additional platform certifications.
             </p>
           </div>
 
@@ -664,7 +664,7 @@ export default function PlayerPublicProgramPage() {
         <div className="max-w-5xl mx-auto px-4 py-6 flex flex-col sm:flex-row items-center justify-between gap-3">
           <Logo size={20} />
           <p className="text-[12px] text-muted-foreground text-center">
-            {PROGRAM.name} · {PROGRAM.location} · Powered by HoopsOS
+            {PROGRAM.name} · {PROGRAM.location} · Powered by HoopsIQ
           </p>
           <Link href="/sign-in" asChild>
             <a className="text-[12px] text-muted-foreground hover:text-foreground transition-colors">

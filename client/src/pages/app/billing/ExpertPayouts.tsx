@@ -219,7 +219,7 @@ export function ExpertPayouts() {
       {/* Fee disclosure */}
       <div className="rounded-xl border border-border bg-muted/20 p-4 text-[12.5px] text-muted-foreground">
         <strong className="text-foreground">How payouts work:</strong> Buyers
-        check out via Stripe directly; HoopsOS receives the platform fee, and
+        check out via Stripe directly; HoopsIQ receives the platform fee, and
         Stripe Connect routes the rest into your Express account. Funds settle
         in 2 business days; bank transfers post every Friday by default.
       </div>

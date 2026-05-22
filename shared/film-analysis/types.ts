@@ -1,5 +1,5 @@
 // ─────────────────────────────────────────────────────────────
-// HoopsOS — Film AI Analysis: Shared Types & Interfaces
+// HoopsIQ — Film AI Analysis: Shared Types & Interfaces
 // ─────────────────────────────────────────────────────────────
 
 // ── Enums ────────────────────────────────────────────────────

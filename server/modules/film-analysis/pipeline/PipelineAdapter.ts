@@ -2,7 +2,7 @@
 // server/modules/film-analysis/pipeline/PipelineAdapter.ts
 // Provider-agnostic interface for video analysis pipelines.
 //
-// HoopsOS does NOT perform computer vision in-process. Each provider (mock,
+// HoopsIQ does NOT perform computer vision in-process. Each provider (mock,
 // internal model, AWS Rekognition Video, Hudl, third-party CV vendor) is
 // implemented as an adapter that conforms to this interface.
 //

@@ -17,7 +17,7 @@ import type {
 import { resolvePlay } from "@playbook/resolver";
 import { v3Seeds } from "./seeds";
 
-const PERSIST_KEY = "hoopsos-playbook-v3";
+const PERSIST_KEY = "hoopsiq-playbook-v3";
 const PERSIST_VERSION = 1;
 
 export type ToolMode =

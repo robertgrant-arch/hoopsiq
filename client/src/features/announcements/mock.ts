@@ -81,7 +81,7 @@ export const announcements: Announcement[] = [
     authorName: "Coach Marcus",
     authorRole: "coach",
     title: "Spring season balance due — June 1st",
-    body: "Families with outstanding balances will receive a separate email from our admin team. If you enrolled on a payment plan, your next installment processes automatically on June 1st. Reach out to admin@barnegat.hoopsos.io with any billing questions — do not DM coaches about payments.",
+    body: "Families with outstanding balances will receive a separate email from our admin team. If you enrolled on a payment plan, your next installment processes automatically on June 1st. Reach out to admin@barnegat.hoopsiq.io with any billing questions — do not DM coaches about payments.",
     audience: "parents",
     priority: "normal",
     pinned: false,

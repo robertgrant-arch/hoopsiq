@@ -87,7 +87,7 @@ export function PlayersPage() {
       eyebrow="For Players"
       title="YOUR DEVELOPMENT PLAN."
       titleAccent="IN MOTION."
-      lede="Your coach sees the film. They write the plan. You execute the drills. You both watch the skill scores move. HoopsOS is where individual development actually happens — not just gets scheduled."
+      lede="Your coach sees the film. They write the plan. You execute the drills. You both watch the skill scores move. HoopsIQ is where individual development actually happens — not just gets scheduled."
       primaryCta="Open Player Demo"
       primaryHref="/sign-in"
       secondaryCta="See How the IDP Works"
@@ -167,7 +167,7 @@ export function PlayersPage() {
               For team athletes
             </div>
             <h3 className="display text-2xl lg:text-3xl mb-3">
-              On a team using HoopsOS? Your membership is <span className="text-primary">50% off</span>.
+              On a team using HoopsIQ? Your membership is <span className="text-primary">50% off</span>.
             </h3>
             <p className="text-[14.5px] text-muted-foreground">
               Athletes on the active roster of any team with an eligible Team Pro
@@ -271,7 +271,7 @@ export function CoachesPage() {
         <div className="grid lg:grid-cols-2 gap-14 items-start">
           <div>
             <div className="text-[11px] uppercase tracking-[0.12em] text-primary font-mono mb-5">
-              The Development Standard · Earl Watson, HoopsOS Partner
+              The Development Standard · Earl Watson, HoopsIQ Partner
             </div>
             <h2 className="display text-3xl lg:text-[2.2rem] leading-tight mb-6">
               Observation is the beginning.<br />Not the end.
@@ -284,7 +284,7 @@ export function CoachesPage() {
               written down. Nothing is tracked. Nothing is re-assessed.
             </p>
             <p className="text-[15px] text-muted-foreground leading-relaxed mb-8">
-              HoopsOS is built to make that impossible. Every observation you
+              HoopsIQ is built to make that impossible. Every observation you
               make creates a record. Every coaching action generates an
               assignment. Every assignment connects to a focus area. Every
               focus area has a score that moves — or doesn't — and you'll know
@@ -297,7 +297,7 @@ export function CoachesPage() {
                 on it, and we can prove it changed.'"
               </p>
               <cite className="text-[12px] text-muted-foreground not-italic font-mono uppercase tracking-[0.1em]">
-                Earl Watson · HoopsOS Partner
+                Earl Watson · HoopsIQ Partner
               </cite>
             </blockquote>
           </div>
@@ -332,9 +332,9 @@ export function CoachesPage() {
           </div>
           <div className="grid md:grid-cols-3 gap-8">
             {[
-              { title: "They teach the why.", body: "The drill prescription includes the reason. A player who understands why they're working on something executes with intention. HoopsOS carries your reasoning from film annotation through to the assignment." },
-              { title: "They hold themselves accountable.", body: "Good coaches track their own coaching — not just player output. How many observations became actions this month? How many actions were followed up? HoopsOS makes that visible." },
-              { title: "They build individual plans.", body: "The best programs have an IDP for every player — not just the stars. HoopsOS makes program-wide individual development feasible for coaching staffs of any size." },
+              { title: "They teach the why.", body: "The drill prescription includes the reason. A player who understands why they're working on something executes with intention. HoopsIQ carries your reasoning from film annotation through to the assignment." },
+              { title: "They hold themselves accountable.", body: "Good coaches track their own coaching — not just player output. How many observations became actions this month? How many actions were followed up? HoopsIQ makes that visible." },
+              { title: "They build individual plans.", body: "The best programs have an IDP for every player — not just the stars. HoopsIQ makes program-wide individual development feasible for coaching staffs of any size." },
             ].map((item) => (
               <div key={item.title}>
                 <div className="display text-[19px] leading-tight mb-3">{item.title}</div>
@@ -380,7 +380,7 @@ export function TeamsPage() {
               extra attention.
             </p>
             <p className="text-[15px] text-muted-foreground leading-relaxed">
-              HoopsOS is that system. Every player gets an IDP. Every coach
+              HoopsIQ is that system. Every player gets an IDP. Every coach
               observation creates a record. Every program has a development
               standard that applies at scale — not just for the stars.
             </p>
@@ -403,7 +403,7 @@ export function TeamsPage() {
             ))}
             <div className="pt-2 mt-auto border-t border-border">
               <div className="text-[11px] text-muted-foreground font-mono uppercase tracking-[0.1em]">
-                Earl Watson · HoopsOS Partner
+                Earl Watson · HoopsIQ Partner
               </div>
             </div>
           </div>

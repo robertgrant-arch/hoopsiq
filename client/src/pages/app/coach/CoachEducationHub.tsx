@@ -1,7 +1,7 @@
 /**
  * CoachEducationHub — /app/coach/education
  *
- * The education landing page for HoopsOS coaches. Designed as a development
+ * The education landing page for HoopsIQ coaches. Designed as a development
  * partner, not a course catalog. Shows progress, priorities, and next actions
  * in a warm, professional two-column layout.
  */
@@ -657,7 +657,7 @@ function CertificateSidebar() {
       <div className="flex items-center gap-2 mb-2">
         <Award className="size-4 text-[oklch(0.78_0.16_75)]" />
         <h3 className="text-[14px] font-semibold leading-tight">
-          HoopsOS Foundation Certificate
+          HoopsIQ Foundation Certificate
         </h3>
       </div>
 
@@ -791,7 +791,7 @@ function CommunityStat() {
       </div>
       <div>
         <p className="text-[15px] font-bold">{COMMUNITY_COUNT.toLocaleString()}</p>
-        <p className="text-[12px] text-muted-foreground">HoopsOS coaches learning this week</p>
+        <p className="text-[12px] text-muted-foreground">HoopsIQ coaches learning this week</p>
       </div>
     </div>
   );

@@ -1,10 +1,10 @@
-# HoopsOS: Billing, Packaging & Entitlement Engine
+# HoopsIQ: Billing, Packaging & Entitlement Engine
 
-This document details the complete monetization architecture for HoopsOS, bridging the product tiers (Player Core, Coach Core, Team Pro) with the underlying Stripe infrastructure and the proprietary 50%-off entitlement engine.
+This document details the complete monetization architecture for HoopsIQ, bridging the product tiers (Player Core, Coach Core, Team Pro) with the underlying Stripe infrastructure and the proprietary 50%-off entitlement engine.
 
 ## 1. Pricing Model Architecture
 
-HoopsOS employs a hybrid B2C/B2B pricing model, designed to capture individual athletes while incentivizing organizational adoption.
+HoopsIQ employs a hybrid B2C/B2B pricing model, designed to capture individual athletes while incentivizing organizational adoption.
 
 *   **Player Core (B2C):** $19.99/month. Includes daily WODs, basic AI feedback (10 uploads/mo), and access to INCLUDED-tier courses.
 *   **Coach Core (B2B/Prosumer):** $49.99/month or $499/year (16% discount). Includes Coach HQ, unlimited playbook authoring, and a single team roster (up to 15 players).
@@ -13,9 +13,9 @@ HoopsOS employs a hybrid B2C/B2B pricing model, designed to capture individual a
 
 ## 2. Stripe Product & Price Mapping Strategy
 
-We strictly separate the logical HoopsOS `Plan` from the physical Stripe `Price` ID, mapping them via lookup keys to allow future pricing changes without code deploys.
+We strictly separate the logical HoopsIQ `Plan` from the physical Stripe `Price` ID, mapping them via lookup keys to allow future pricing changes without code deploys.
 
-| HoopsOS Plan | Stripe Product | Stripe Price Type | Stripe Lookup Key |
+| HoopsIQ Plan | Stripe Product | Stripe Price Type | Stripe Lookup Key |
 | :--- | :--- | :--- | :--- |
 | Player Core | `prod_player_core` | Flat rate, Recurring (Month) | `player_core_monthly` |
 | Coach Core | `prod_coach_core` | Flat rate, Recurring (Month) | `coach_core_monthly` |
@@ -39,7 +39,7 @@ The system's source of truth for billing state is the Stripe Webhook handler. We
 
 ## 4. The 50%-Off Entitlement Engine End-to-End
 
-The core growth loop of HoopsOS is the 50% discount for athletes on an active roster. This engine requires precise synchronization between the `TeamMembership` lifecycle and the Stripe `Subscription` state.
+The core growth loop of HoopsIQ is the 50% discount for athletes on an active roster. This engine requires precise synchronization between the `TeamMembership` lifecycle and the Stripe `Subscription` state.
 
 1.  **Trigger (The Grant):** An athlete accepts an invitation to join a team (`TeamMembership` created). The `EntitlementService` verifies the team's parent organization has an active `COACH_CORE` or `TEAM_PRO` subscription. If true, it provisions a `DiscountGrant` record tied to the athlete's `userId`.
 2.  **Redemption (The Checkout):** When the athlete attempts to purchase `Player Core`, the checkout session generator checks for an active `DiscountGrant`. If found, it injects a 50% off recurring Stripe Coupon into the `checkout.session.create` call.
@@ -60,15 +60,15 @@ The B2B `Team Pro` tier uses Stripe's per-seat pricing model.
 
 ## 6. Premium Add-Ons & Monetization Types
 
-HoopsOS monetizes beyond the core subscription via the Expert Marketplace (Prompt 11) and the Learning Module (Prompt 15).
+HoopsIQ monetizes beyond the core subscription via the Expert Marketplace (Prompt 11) and the Learning Module (Prompt 15).
 
 *   **One-Off Purchases:** Expert Async Reviews and Live Classes use standard Stripe Checkout Sessions (`mode: 'payment'`).
-*   **Stripe Connect Destination Charges:** For Expert Marketplace transactions, HoopsOS retains a 20% platform fee (`application_fee_amount`), while the remainder is automatically routed to the expert's connected account (`transfer_data.destination`).
+*   **Stripe Connect Destination Charges:** For Expert Marketplace transactions, HoopsIQ retains a 20% platform fee (`application_fee_amount`), while the remainder is automatically routed to the expert's connected account (`transfer_data.destination`).
 *   **Gift Codes:** Team admins can purchase blocks of premium courses (e.g., 20 seats of "Advanced Pick & Roll"). The system generates 20 single-use alphanumeric codes stored in a `GiftCode` table, redeemable by athletes at checkout.
 
 ## 7. Tax, SCA, and PCI Compliance
 
-HoopsOS strictly minimizes PCI scope by relying entirely on Stripe-hosted surfaces.
+HoopsIQ strictly minimizes PCI scope by relying entirely on Stripe-hosted surfaces.
 
 *   **PCI Scope:** The application never touches raw credit card data. All payment collection occurs via Stripe Checkout or the Stripe Customer Portal.
 *   **Tax Calculation:** Stripe Tax is enabled on all Checkout Sessions. The user's billing address is collected during checkout to automatically calculate and apply local sales tax or VAT, ensuring global compliance.
@@ -78,25 +78,25 @@ HoopsOS strictly minimizes PCI scope by relying entirely on Stripe-hosted surfac
 
 Handling refunds gracefully preserves the brand reputation, while fighting chargebacks aggressively protects revenue.
 
-*   **Refund Policy:** HoopsOS offers a strict 14-day money-back guarantee on annual Core subscriptions, provided the user has watched less than 30 minutes of premium video content and submitted zero AI feedback requests. Monthly subscriptions are non-refundable. Expert Marketplace reviews are refundable only if the expert fails to deliver within the promised SLA (e.g., 72 hours).
+*   **Refund Policy:** HoopsIQ offers a strict 14-day money-back guarantee on annual Core subscriptions, provided the user has watched less than 30 minutes of premium video content and submitted zero AI feedback requests. Monthly subscriptions are non-refundable. Expert Marketplace reviews are refundable only if the expert fails to deliver within the promised SLA (e.g., 72 hours).
 *   **Partial Refunds:** If a Team Pro organization drops from 50 to 30 seats mid-cycle, Stripe automatically calculates the prorated amount and applies it as a credit balance against the next invoice, rather than issuing a cash refund to the original payment method.
-*   **Chargeback Playbook:** When a dispute (`charge.dispute.created`) is received, HoopsOS automatically compiles an evidence packet. This includes the user's `AuditLog` of logins, the `FilmWatchEvent` telemetry proving they consumed the content, and the IP address/device fingerprint from the initial checkout. This packet is submitted to Stripe automatically via API to maximize the win rate against "friendly fraud."
+*   **Chargeback Playbook:** When a dispute (`charge.dispute.created`) is received, HoopsIQ automatically compiles an evidence packet. This includes the user's `AuditLog` of logins, the `FilmWatchEvent` telemetry proving they consumed the content, and the IP address/device fingerprint from the initial checkout. This packet is submitted to Stripe automatically via API to maximize the win rate against "friendly fraud."
 
 ## 9. Customer Portal & Subscription Management
 
 To minimize support tickets, users self-manage their subscriptions via the Stripe Customer Portal.
 
-*   **Portal Integration:** A "Manage Billing" button in the HoopsOS settings (`/(player)/settings/billing`, `/(coach)/settings/billing`) generates a secure, short-lived portal session URL.
+*   **Portal Integration:** A "Manage Billing" button in the HoopsIQ settings (`/(player)/settings/billing`, `/(coach)/settings/billing`) generates a secure, short-lived portal session URL.
 *   **Upgrade/Downgrade Flows:** Users can seamlessly upgrade from Monthly to Annual plans within the portal. Stripe handles the proration calculation automatically. Downgrades (e.g., Annual to Monthly) take effect at the end of the current billing cycle (`cancelAtPeriodEnd: true`).
 *   **Pause/Resume:** Instead of outright cancellation, users are offered the option to pause their subscription for 1, 2, or 3 months. This retains their data (film history, playbooks) while temporarily halting billing.
 *   **Cancellation Flow:** If a user insists on canceling, the portal presents a final retention offer (e.g., "Get 50% off your next 3 months"). If they decline, the subscription is marked to cancel at the end of the period, ensuring they receive the full value of what they've already paid for.
 
 ## 10. Dunning & Failed Payment UX
 
-Involuntary churn (failed payments) is a massive revenue leak. HoopsOS employs a multi-channel dunning strategy.
+Involuntary churn (failed payments) is a massive revenue leak. HoopsIQ employs a multi-channel dunning strategy.
 
 *   **Smart Retries:** Stripe's Smart Retries feature uses machine learning to retry failed cards at optimal times (e.g., immediately after payday).
-*   **Grace Period:** When a payment fails (`invoice.payment_failed`), the user enters a 7-day grace period. Their `Subscription.status` remains `ACTIVE` in the database, but a prominent, un-dismissible red banner appears across all HoopsOS surfaces: "Your payment method failed. Update your billing info to avoid losing access to your team's film room."
+*   **Grace Period:** When a payment fails (`invoice.payment_failed`), the user enters a 7-day grace period. Their `Subscription.status` remains `ACTIVE` in the database, but a prominent, un-dismissible red banner appears across all HoopsIQ surfaces: "Your payment method failed. Update your billing info to avoid losing access to your team's film room."
 *   **Email Cadence:** Automated emails are sent on Day 1, Day 3, and Day 6 of the grace period, containing a direct link to the Stripe Customer Portal to update their card.
 *   **Hard Revocation:** On Day 7, if the invoice remains unpaid, the subscription is marked `CANCELED`, and all premium entitlements are immediately revoked.
 
@@ -107,7 +107,7 @@ The `/(admin)/revenue` dashboard provides real-time visibility into the financia
 *   **Key Metrics:** Monthly Recurring Revenue (MRR), Annual Recurring Revenue (ARR), Average Revenue Per User (ARPU), and Customer Lifetime Value (LTV).
 *   **Churn Tracking:** The dashboard differentiates between Gross Churn (total revenue lost) and Net Churn (revenue lost minus revenue gained from upgrades/expansion).
 *   **Plan-Mix Analysis:** A pie chart visualizes the distribution of users across Player Core, Coach Core, and Team Pro, helping leadership identify which segments are driving growth.
-*   **Add-On Performance:** A separate table tracks the GMV (Gross Merchandise Value) of the Expert Marketplace and the total sales volume of Premium Course Bundles, calculating HoopsOS's take rate (the 20% platform fee).
+*   **Add-On Performance:** A separate table tracks the GMV (Gross Merchandise Value) of the Expert Marketplace and the total sales volume of Premium Course Bundles, calculating HoopsIQ's take rate (the 20% platform fee).
 
 ## 12. High-Fidelity Next.js Scaffolding
 

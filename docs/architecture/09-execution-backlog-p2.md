@@ -1,4 +1,4 @@
-# HoopsOS — Execution Backlog (Continuation)
+# HoopsIQ — Execution Backlog (Continuation)
 ## P2 Completions · New Slices · Cross-Cutting Infrastructure
 
 > Continues from the primary backlog.  
@@ -172,7 +172,7 @@
 | ADMB-104 | Wire payment plan view (parent) — installment timeline component showing paid (checkmark), upcoming (count-up), and future (grey); "Pay Installment N" CTA for next due item | [FE] | [REAL] | Parent sees correct installment state; paying opens Stripe Checkout for the installment amount |
 | ADMB-105 | Implement re-enrollment campaign — `POST /api/seasons/:id/re-enrollment` sends invitation to all players from prior season with a pre-filled registration link; tracks who opened and who completed | [BE][FE] | [REAL] | Invitation email sent; link pre-fills player data; admin sees open/completed counts |
 | ADMB-106 | Implement expert payouts — `expert_payouts` table: `expertId`, `orgId`, `sessionDate`, `sessionType`, `ratePerHour`, `durationMinutes`, `totalOwed`, `paidAt`; `POST /api/billing/payouts`, `GET /api/billing/payouts` | [BE][FE] | [REAL] | Payout records track contracted trainer earnings; admin sees unpaid balance per expert |
-| ADMB-107 | Build `AdminMembershipsPage` — show org's current HoopsOS subscription plan, seat count, renewal date; link to Stripe Customer Portal for plan changes | [FE] | [REAL] | Page shows live subscription data from Stripe Customer; seat count accurate |
+| ADMB-107 | Build `AdminMembershipsPage` — show org's current HoopsIQ subscription plan, seat count, renewal date; link to Stripe Customer Portal for plan changes | [FE] | [REAL] | Page shows live subscription data from Stripe Customer; seat count accurate |
 | ADMB-108 | Implement seat management — `POST /api/team/seats/invite` adds a coaching staff seat; `DELETE /api/team/seats/:userId` removes and cancels the seat subscription | [BE][FE] | [REAL] | Inviting a seat sends email; removing updates Stripe subscription quantity |
 | ADMB-109 | Design: Payment plan installment timeline, re-enrollment invitation email template, expert payout table row, seat management roster | [DS] | - | Figma specs for `InstallmentTimeline`, `PayoutRow`, `SeatRoster` |
 | ADMB-110 | QA: Payment plan total validation — creating payment plan where installment sum ≠ invoice total returns 422; overpaying an installment is blocked | [QA] | - | Boundary test for payment plan total validation |
@@ -182,7 +182,7 @@
 ## SLICE 7: Messaging
 
 ### Release Goal
-Coaches communicate with players and parents inside the platform. Announcements reach the right audience. Broadcasts go to the whole team in one tap. No coaching decision requires leaving HoopsOS to send a text.
+Coaches communicate with players and parents inside the platform. Announcements reach the right audience. Broadcasts go to the whole team in one tap. No coaching decision requires leaving HoopsIQ to send a text.
 
 **Feature flag**: `FLAG_MESSAGING`  
 **Phase**: P1 — Weeks 21–22 (basic), P2 for broadcasts
@@ -551,5 +551,5 @@ Weeks 41-52: RECR-E1..E4 (Recruiting — premium tier unlock)
 
 ---
 
-*End of HoopsOS Execution Backlog (Continuation)*  
+*End of HoopsIQ Execution Backlog (Continuation)*  
 *312 total tasks across 13 categories · Complete backlog: 212 (primary) + 100 (continuation) = 312*

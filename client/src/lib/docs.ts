@@ -1,4 +1,4 @@
-// Canonical HoopsOS documentation registry
+// Canonical HoopsIQ documentation registry
 // Defines the chapter tree, document metadata, and markdown content map.
 
 import architectureMd from "../content/architecture.md?raw";

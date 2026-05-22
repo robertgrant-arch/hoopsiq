@@ -1,5 +1,5 @@
 // ─────────────────────────────────────────────────────────────
-// HoopsOS — Film AI Analysis: API Route Scaffolding (Phase 3)
+// HoopsIQ — Film AI Analysis: API Route Scaffolding (Phase 3)
 // ─────────────────────────────────────────────────────────────
 //
 // Routes are namespaced under /api/film-analysis. Tenant scope comes from

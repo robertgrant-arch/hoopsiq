@@ -1,5 +1,5 @@
 /**
- * Skill Assessment mock data for HoopsOS.
+ * Skill Assessment mock data for HoopsIQ.
  *
  * Defines the 8-category assessment protocol, level criteria,
  * and historical assessment records for the demo player roster.

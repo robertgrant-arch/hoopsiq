@@ -148,7 +148,7 @@ function StepWelcome({ onNext }: { onNext: () => void }) {
       <WelcomeIllustration />
       <div>
         <h1 className="text-3xl font-bold" style={{ color: "var(--text-primary)" }}>
-          Welcome to HoopsOS
+          Welcome to HoopsIQ
         </h1>
         <p className="mt-2 text-base max-w-sm" style={{ color: "var(--text-muted)" }}>
           The only platform where your improvement is verified by your coach — and seen by college recruiters.
@@ -570,7 +570,7 @@ export default function PlayerOnboardingPage() {
   }
 
   function finish() {
-    toast.success("Welcome to HoopsOS! Your profile is ready.");
+    toast.success("Welcome to HoopsIQ! Your profile is ready.");
     navigate("/app/player");
   }
 
@@ -584,7 +584,7 @@ export default function PlayerOnboardingPage() {
       {/* Top bar */}
       <div className="flex items-center justify-between px-4 pt-12 pb-4">
         <div className="text-sm font-semibold" style={{ color: "oklch(0.72 0.18 290)" }}>
-          HoopsOS
+          HoopsIQ
         </div>
         {step < 5 && (
           <button

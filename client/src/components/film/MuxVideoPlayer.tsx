@@ -1,5 +1,5 @@
 // ─────────────────────────────────────────────────────────────
-// HoopsOS — Mux video player wrapper
+// HoopsIQ — Mux video player wrapper
 // ─────────────────────────────────────────────────────────────
 
 import MuxPlayer from "@mux/mux-player-react";

@@ -1,4 +1,4 @@
-# HoopsOS — Vertical Slice Product Specs
+# HoopsIQ — Vertical Slice Product Specs
 ## Six Production Build Specs for the Core Platform
 
 > Written for a startup engineering team  
@@ -15,7 +15,7 @@
 
 **User problem**: Coaches come into practice preparation with five different questions: Who's flagged today? What's still open from last film session? What's on the schedule this week? What hasn't been done that should have been? They currently answer these by texting players, checking a separate scheduling app, and scrolling through notes. The Dashboard collapses all five into one triage interface.
 
-**Platform moat**: The Dashboard is the entry point that makes HoopsOS feel like "the place to go," not a tool you visit for a specific task. It compounds in value as more slices are used because each new slice adds a new signal that surfaces here. A program using all six slices will have a dramatically richer dashboard than one using two — creating retention pressure to stay complete.
+**Platform moat**: The Dashboard is the entry point that makes HoopsIQ feel like "the place to go," not a tool you visit for a specific task. It compounds in value as more slices are used because each new slice adds a new signal that surfaces here. A program using all six slices will have a dramatically richer dashboard than one using two — creating retention pressure to stay complete.
 
 ---
 
@@ -330,7 +330,7 @@ server/modules/dashboard/
 
 ## Purpose
 
-**Business outcome**: Academy earns the platform a recurring learning behavior — coaches and players come back not just for operations, but for growth. This unlocks a certification monetization layer and makes HoopsOS a career development tool, not just a team tool.
+**Business outcome**: Academy earns the platform a recurring learning behavior — coaches and players come back not just for operations, but for growth. This unlocks a certification monetization layer and makes HoopsIQ a career development tool, not just a team tool.
 
 **User problem**: Coaches have no structured path for their own development. They watch YouTube, attend occasional clinics, and learn by doing. Mistakes get repeated across seasons because there's no system for capturing and building on what worked. Players receive film assignments and play diagrams by text message with no accountability or comprehension check.
 
@@ -384,7 +384,7 @@ server/modules/dashboard/
 
 - **Adaptive module prescription**: Based on assessment data and open coaching actions, the system suggests which module a coach should take or assign next. "Your players are scoring 4.2/10 on Contact Finishing — this 20-min finishing module addresses the 3 most common errors."
 - **Drill video uploads**: Coaches record and upload their own drill demonstrations. Stored in the drill library as custom org content.
-- **External content marketplace**: HoopsOS-curated library of paid learning content from recognized coaches. Revenue share model.
+- **External content marketplace**: HoopsIQ-curated library of paid learning content from recognized coaches. Revenue share model.
 - **Observation calibration**: Multi-rater assessment calibration — coaches score the same player independently, system shows variance, facilitates discussion. Ensures assessment reliability across a staff.
 - **Player film annotation**: Players can annotate their own assigned clips — add notes, flag moments — and submit back to coach. Coach reviews annotations as a comprehension signal.
 
@@ -487,7 +487,7 @@ features/academy/components/
 // Drill library entry
 DrillLibraryEntry {
   id:              string
-  orgId:           string         // null = HoopsOS global drill; non-null = org custom
+  orgId:           string         // null = HoopsIQ global drill; non-null = org custom
   name:            string
   description:     string
   focusCategory:   string         // 'Shooting' | 'Finishing' | 'Ball Handling' | 'Defense' | 'Conditioning'
@@ -498,7 +498,7 @@ DrillLibraryEntry {
   cues:            string[]       // verbal coaching cues
   setupNotes:      text
   videoUrl:        string | null
-  createdBy:       string         // userId or 'hoopsos_system'
+  createdBy:       string         // userId or 'hoopsiq_system'
   isPublished:     boolean
   createdAt:       timestamp
 }
@@ -526,7 +526,7 @@ LearningPath {
   modules:          ModuleRef[]   // ordered array
   certificationId:  string | null
   isPublished:      boolean
-  createdBy:        string        // 'hoopsos_system' or coachId
+  createdBy:        string        // 'hoopsiq_system' or coachId
 }
 
 // Module
@@ -667,10 +667,10 @@ CertificationAward {
 
 | Type | Risk | Mitigation |
 |---|---|---|
-| **Scope creep** | Building a full LMS with content authoring takes 6 months — platform becomes a content company | Launch with curated HoopsOS global drill library + simple video module player. Custom content authoring is V2. |
+| **Scope creep** | Building a full LMS with content authoring takes 6 months — platform becomes a content company | Launch with curated HoopsIQ global drill library + simple video module player. Custom content authoring is V2. |
 | **UX** | Players don't engage with "homework" — film assignments ignored | Make completion visible to parents. Show streak indicator on player dashboard for consecutive completed assignments. Frame as preparation, not punishment. |
 | **Complexity** | Certification logic (sequential modules + quiz scoring + expiry) is more complex than it appears | Build certification as a simple state machine. Don't add expiry, CPD credits, or multi-path merges until V2. |
-| **Technical** | Video module hosting costs at scale (if HoopsOS hosts the content) | Use Mux or YouTube unlisted for module video hosting. HoopsOS never stores raw video — only the URL. |
+| **Technical** | Video module hosting costs at scale (if HoopsIQ hosts the content) | Use Mux or YouTube unlisted for module video hosting. HoopsIQ never stores raw video — only the URL. |
 
 ---
 
@@ -725,7 +725,7 @@ server/modules/academy/
 
 **User problem**: Coaches assess players constantly — every rep, every drill — but none of it is captured. IDPs are written from memory. Development conversations have no data to reference. Parents ask "is my child getting better?" and coaches answer with generalities. Assessments make that question answerable with numbers and trends.
 
-**Platform moat**: Three seasons of skill assessment data per player, organized by sub-skill with trend lines, creates a switching cost that no other platform can replicate. That longitudinal record cannot be exported or recreated — it stays with HoopsOS.
+**Platform moat**: Three seasons of skill assessment data per player, organized by sub-skill with trend lines, creates a switching cost that no other platform can replicate. That longitudinal record cannot be exported or recreated — it stays with HoopsIQ.
 
 ---
 
@@ -774,7 +774,7 @@ server/modules/academy/
 
 - **AI-assisted scoring**: Coach plays a film clip, selects a sub-skill, AI suggests a score based on the video with a reasoning sentence. Coach confirms or adjusts.
 - **Observation calibration session**: Structured tool for a coaching staff to align on what a "7" vs. an "8" looks like for a given sub-skill. Uses film clips as calibration anchors.
-- **Cross-org benchmarks**: Anonymized aggregate benchmarks across all HoopsOS programs by age group and position. "Your player scores in the 78th percentile for U16 PG shooting."
+- **Cross-org benchmarks**: Anonymized aggregate benchmarks across all HoopsIQ programs by age group and position. "Your player scores in the 78th percentile for U16 PG shooting."
 - **Predictive development windows**: Based on skill velocity and historical patterns, surface predictions: "At current pace, Marcus will reach a 7 in Contact Finishing by July 15."
 
 ---
@@ -1095,7 +1095,7 @@ server/modules/assessments/
 ### Future Moat
 
 - **Predictive churn model**: ML model trained on behavioral signals to predict with 3-week lead time which players are likely to not re-enroll. Surfaced as a risk score with contributing factors.
-- **Coach effectiveness benchmarking**: Anonymized comparison of a coach's effectiveness metrics against similar programs on HoopsOS (opt-in).
+- **Coach effectiveness benchmarking**: Anonymized comparison of a coach's effectiveness metrics against similar programs on HoopsIQ (opt-in).
 - **Multi-org enterprise rollup**: For organizations managing multiple programs (e.g., an AAU organization with 5 regional programs), a single dashboard aggregating across all programs.
 - **Stakeholder reporting portal**: External-facing report link that can be shared with a board or sponsor — no login required, pre-formatted.
 - **Development ROI calculator**: "In this season, your program invested X coaching hours. Players improved an average of Y points across their focus skills. That's Z improvement per hour of coaching investment."
@@ -1364,7 +1364,7 @@ server/modules/manager-labs/
 
 ## Purpose
 
-**Business outcome**: Coaching is the primary daily use driver for coaches — the slice that justifies the subscription on its own. If this slice is excellent, coaches evangelize the platform to other coaches. If it's mediocre, they continue using Hudl for film and a Google Doc for practice planning, and HoopsOS is just another admin tool.
+**Business outcome**: Coaching is the primary daily use driver for coaches — the slice that justifies the subscription on its own. If this slice is excellent, coaches evangelize the platform to other coaches. If it's mediocre, they continue using Hudl for film and a Google Doc for practice planning, and HoopsIQ is just another admin tool.
 
 **User problem**: Coaching workflow is currently fragmented across 4–6 tools: a video platform, a whiteboard app, a note-taking app, a scheduling app, and a communication tool. Observations made during film are disconnected from what gets planned for practice. What gets planned for practice is disconnected from player development. Coaches spend more time managing the tools than coaching.
 
@@ -1705,11 +1705,11 @@ server/modules/
 
 ## Purpose
 
-**Business outcome**: Admin and Billing is the operational backbone that justifies HoopsOS as the single system of record for a program. If coaches love the product but billing is still done in spreadsheets, the program director will never commit fully. Owning billing means owning the financial relationship — which is the stickiest possible integration.
+**Business outcome**: Admin and Billing is the operational backbone that justifies HoopsIQ as the single system of record for a program. If coaches love the product but billing is still done in spreadsheets, the program director will never commit fully. Owning billing means owning the financial relationship — which is the stickiest possible integration.
 
 **User problem**: Club programs currently manage billing through a patchwork of tools — bank transfers, Venmo, paper checks, SportsEngine payment forms. Families complain about unclear fee structures and missed receipts. Admins track payments manually in spreadsheets. Seasons are set up in one tool, rosters in another, billing in a third. Nothing talks to anything.
 
-**Platform moat**: Once billing, registration, and season management are live in HoopsOS, switching costs become financial. Migrating billing history, open invoices, payment plans, and registration forms out of the platform is a significant operational event that programs will avoid.
+**Platform moat**: Once billing, registration, and season management are live in HoopsIQ, switching costs become financial. Migrating billing history, open invoices, payment plans, and registration forms out of the platform is a significant operational event that programs will avoid.
 
 ---
 
@@ -1717,7 +1717,7 @@ server/modules/
 
 | Role | Motivation | Success criteria |
 |---|---|---|
-| **Club Admin** | Run the program's business operations without needing a separate accounting tool | All billing managed in HoopsOS; zero outstanding invoices older than 30 days without a reason |
+| **Club Admin** | Run the program's business operations without needing a separate accounting tool | All billing managed in HoopsIQ; zero outstanding invoices older than 30 days without a reason |
 | **Director** | Have financial visibility into program health | Can see collection rate, outstanding amounts, and season revenue in real time |
 | **Parent / Guardian** | Pay easily, understand what they owe, and have a record of payments | Pays invoice in under 2 minutes; receives receipt automatically |
 | **Head Coach** | Know who's paid up; not be involved in billing conversations | Sees a simple "paid/unpaid" indicator on the roster — no amounts |
@@ -1753,8 +1753,8 @@ server/modules/
 - **Re-enrollment flow**: Players from the previous season can re-enroll in the new season with a single click — pre-filled form with prior year's data.
 - **Fee requests (one-time)**: Admin creates an ad-hoc fee for a specific player or the whole team (e.g., tournament fee, equipment replacement). Not tied to a membership plan.
 - **Payments dashboard**: Total billed, total collected, collection rate, overdue balance. Revenue trend chart by month.
-- **Seat management**: Manage coaching staff seats on the platform subscription. Add/remove seats. Billing per seat tied to org's HoopsOS subscription.
-- **Admin memberships**: Org's own HoopsOS subscription status, plan tier, feature access, renewal date.
+- **Seat management**: Manage coaching staff seats on the platform subscription. Add/remove seats. Billing per seat tied to org's HoopsIQ subscription.
+- **Admin memberships**: Org's own HoopsIQ subscription status, plan tier, feature access, renewal date.
 - **Forms manager**: Admin creates custom forms beyond waivers — medical history, emergency contacts, travel consent. Assigned to players at registration.
 - **Document library**: Upload and manage org-level documents (team handbook, practice schedule PDF, tournament bracket). All team members can access.
 
@@ -1801,7 +1801,7 @@ server/modules/
 
 ### Flow 4: Parent pays installment on a payment plan
 
-1. Parent opens HoopsOS app. Dashboard shows billing alert: "Installment #2 due in 3 days — $200."
+1. Parent opens HoopsIQ app. Dashboard shows billing alert: "Installment #2 due in 3 days — $200."
 2. Parent taps the billing card → goes to billing portal.
 3. Sees the payment plan: Installment 1 (paid March 15, $200), Installment 2 (due April 15, $200 — due soon), Installment 3 (due May 15, $200).
 4. Parent taps "Pay Installment 2." Stripe form appears (card on file from installment 1 is shown). Taps "Pay."
@@ -1845,7 +1845,7 @@ server/modules/
 - `/admin/forms` — `FormsManagerPage.tsx` (exists)
 - `/admin/onboarding` — `OnboardingPage.tsx` (exists)
 - `/admin/re-enrollment` — `ReEnrollmentPage.tsx` (exists)
-- `/billing/portal` — `BillingPortal.tsx` (exists; coach's own HoopsOS subscription)
+- `/billing/portal` — `BillingPortal.tsx` (exists; coach's own HoopsIQ subscription)
 - `/billing/seats` — `SeatManager.tsx` (exists)
 - `/billing/pricing` — `PricingPage.tsx` (exists)
 - `/billing/payouts` — `ExpertPayouts.tsx` (exists)
@@ -2078,6 +2078,6 @@ server/modules/
 
 ---
 
-*End of HoopsOS Vertical Slice Product Specs*  
+*End of HoopsIQ Vertical Slice Product Specs*  
 *Six slices: Dashboard · Academy · Assessments · Manager Labs · Coaching · Admin/Billing*  
 *May 2026*

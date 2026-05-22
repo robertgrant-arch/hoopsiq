@@ -1,10 +1,10 @@
-# HoopsOS Docs — Design Brainstorm
+# HoopsIQ Docs — Design Brainstorm
 
 <response>
 <text>
 **Direction: "Stripe Docs × Linear × Courtside"**
 
-Design Movement: Precision technical-documentation aesthetic (Stripe Docs, Linear Method, Vercel Guide) fused with an athletic, half-court energy. Treat the docs like an engineering product — fast, dense, keyboard-first — but brand it with the HoopsOS amber accent and Oswald display type established in the design-system spec.
+Design Movement: Precision technical-documentation aesthetic (Stripe Docs, Linear Method, Vercel Guide) fused with an athletic, half-court energy. Treat the docs like an engineering product — fast, dense, keyboard-first — but brand it with the HoopsIQ amber accent and Oswald display type established in the design-system spec.
 
 Core Principles:
 1. Three-column layout: persistent left sidebar (chapter tree), center prose column with 720px max-width, right in-page TOC anchor list.
@@ -37,4 +37,4 @@ Typography System:
 
 **Selected: Direction 1 — "Stripe Docs × Linear × Courtside."**
 
-This direction gives the 17 specs the gravity and scan-ability they deserve. It treats docs as a product, not a landing page. Amber + Oswald keeps the HoopsOS brand signature without slipping into marketing-site theatrics.
+This direction gives the 17 specs the gravity and scan-ability they deserve. It treats docs as a product, not a landing page. Amber + Oswald keeps the HoopsIQ brand signature without slipping into marketing-site theatrics.
