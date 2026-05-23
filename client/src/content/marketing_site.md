@@ -24,7 +24,7 @@ HoopsIQ replaces the fragmented mess of YouTube drills, text message assignments
 
 ### `/` (Homepage)
 *   **Cinematic Hero:** Full-bleed dark video background (Mux playlist). Slow-motion, high-contrast shot of a player executing a drill, overlaid with a coach's telestration.
-    *   *Headline:* THE UNIFIED BASKETBALL OS.
+    *   *Headline:* THE UNIFIED BASKETBALL IQ.
     *   *Subhead:* Elite instruction. AI-powered mechanics. Professional film tools. One platform to build your game or run your program.
     *   *Dual CTA:* [ Start Training (Primary) ] [ Explore Coach HQ (Secondary) ]
 *   **Audience Pivot:** Three massive `MediaCard` blocks side-by-side.
@@ -189,7 +189,7 @@ export default function HomePage() {
     <>
       <CinematicHero 
         videoUrl="https://stream.mux.com/YOUR_MUX_PLAYBACK_ID/high.mp4"
-        headline="THE UNIFIED BASKETBALL OS"
+        headline="THE UNIFIED BASKETBALL IQ"
         subhead="Elite instruction. AI-powered mechanics. Professional film tools. One platform to build your game or run your program."
       >
         <div className="flex flex-col sm:flex-row gap-4 mt-8">
