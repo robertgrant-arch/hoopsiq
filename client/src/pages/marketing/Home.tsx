@@ -36,7 +36,7 @@ export default function Home() {
               <br />
               DEVELOPMENT
               <br />
-              <span className="text-primary">OS.</span>
+              <span className="text-primary">IQ.</span>
             </h1>
 
             <p className="text-[18px] lg:text-[20px] leading-relaxed text-muted-foreground max-w-2xl mt-8">
