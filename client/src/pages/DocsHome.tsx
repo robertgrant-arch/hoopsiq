@@ -30,7 +30,7 @@ export default function DocsHome() {
             <h1 className="display text-[clamp(2.5rem,5.5vw,4.2rem)] leading-[0.95] mb-6">
               The Unified Basketball
               <br />
-              Development OS,
+              Development IQ,
               <br />
               <span className="text-primary">Specified End-to-End.</span>
             </h1>
