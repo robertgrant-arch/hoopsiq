@@ -41,7 +41,7 @@ export default function Home() {
               </div>
 
               <h1 className="display text-5xl md:text-[68px] leading-[0.98] tracking-tight max-w-4xl">
-                The unified basketball development OS,
+                The unified basketball development IQ,
                 <br />
                 <span className="text-primary">specified end-to-end.</span>
               </h1>
