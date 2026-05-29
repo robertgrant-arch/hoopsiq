@@ -199,6 +199,10 @@ const ClubRegistrationsPage = React.lazy(() => import("@/pages/app/admin/AdminRe
 const ClubBillingPage       = React.lazy(() => import("@/pages/app/admin/AdminBillingPage"));
 const ClubTeamsPage         = React.lazy(() => import("@/pages/app/admin/AdminTeamsPage"));
 const ClubMembershipsPage   = React.lazy(() => import("@/pages/app/admin/AdminMembershipsPage"));
+const SafetyFlagsPage         = React.lazy(() => import("@/pages/app/admin/SafetyFlagsPage"));
+const SafetySettingsPage      = React.lazy(() => import("@/pages/app/admin/SafetySettingsPage"));
+const ComplianceDashboardPage = React.lazy(() => import("@/pages/app/admin/ComplianceDashboardPage"));
+const SafetyIncidentsPage     = React.lazy(() => import("@/pages/app/admin/SafetyIncidentsPage"));
 
 // Billing
 const AppPricingPage = React.lazy(() => import("@/pages/app/billing/PricingPage").then(m => ({ default: m.AppPricingPage })));
@@ -472,6 +476,10 @@ function Router() {
         <Route path="/app/admin/season-setup" component={guard(SeasonSetupPage)} />
         <Route path="/app/admin/onboarding" component={guard(OnboardingPage)} />
         <Route path="/app/admin/re-enrollment" component={guard(ReEnrollmentPage)} />
+        <Route path="/app/admin/safety"           component={guard(SafetyFlagsPage)} />
+        <Route path="/app/admin/safety/settings"  component={guard(SafetySettingsPage)} />
+        <Route path="/app/admin/safety/dashboard" component={guard(ComplianceDashboardPage)} />
+        <Route path="/app/admin/safety/incidents" component={guard(SafetyIncidentsPage)} />
 
         {/* Parent */}
         <Route path="/app/parent" component={ParentDashboard} />

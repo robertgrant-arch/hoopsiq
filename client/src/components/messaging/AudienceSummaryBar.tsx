@@ -1,14 +1,32 @@
 import { AlertTriangle, Users } from "lucide-react";
 import type { ResolvedAudience } from "./types";
+import { GuardianIncludedBadge } from "./SafetyPolicyBanner";
+import { ThreadPolicyBadgeRow }  from "./ThreadTypeBadge";
 
 interface AudienceSummaryBarProps {
   audience: ResolvedAudience | null;
   loading: boolean;
   /** If true, renders as an inline validation error (no audience selected) */
   empty?: boolean;
+  /**
+   * Set when the resolved audience contains minors and guardians will be
+   * (or have been) auto-included by the server-side policy.
+   * Pass the number of auto-included guardians, or 0 for "policy active but
+   * count unknown at preview time".
+   */
+  guardiansAutoIncluded?: number;
+  /**
+   * Client-side preview of the thread type classification.
+   * Derived from audience + minor detection before the server validates.
+   * When provided, renders a ThreadPolicyBadgeRow below the recipient count.
+   */
+  threadClassification?: {
+    threadType: string | null;
+    badges: string[];
+  };
 }
 
-export function AudienceSummaryBar({ audience, loading, empty }: AudienceSummaryBarProps) {
+export function AudienceSummaryBar({ audience, loading, empty, guardiansAutoIncluded, threadClassification }: AudienceSummaryBarProps) {
   if (loading) {
     return (
       <div className="flex items-center gap-2 px-3 py-2 rounded border border-border bg-muted/40 text-[12px] text-muted-foreground">
@@ -42,8 +60,22 @@ export function AudienceSummaryBar({ audience, loading, empty }: AudienceSummary
         <Users className="w-3.5 h-3.5 shrink-0 text-muted-foreground" />
         <span className="text-muted-foreground">Sending to:</span>
         <span className="font-medium text-foreground">{summary}</span>
+        {guardiansAutoIncluded !== undefined && guardiansAutoIncluded >= 0 && (
+          <GuardianIncludedBadge count={guardiansAutoIncluded} />
+        )}
         <span className="ml-auto text-muted-foreground tabular-nums">{totalContacts} total</span>
       </div>
+
+      {/* Thread-type policy badge row */}
+      {threadClassification && (
+        threadClassification.badges.length > 0 || threadClassification.threadType
+      ) && (
+        <ThreadPolicyBadgeRow
+          badges={threadClassification.badges}
+          threadType={threadClassification.threadType ?? undefined}
+          className="px-1"
+        />
+      )}
 
       {warnings.length > 0 && (
         <div className="flex items-start gap-2 px-3 py-2 rounded border border-amber-500/20 bg-amber-500/5 text-[11.5px] text-amber-400">

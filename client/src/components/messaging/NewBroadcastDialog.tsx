@@ -30,12 +30,19 @@ import { apiFetch } from "@/lib/api/client";
 import type { RosterAthlete } from "@/lib/mock/data";
 import { RecipientSelector }  from "./RecipientSelector";
 import { AudienceSummaryBar } from "./AudienceSummaryBar";
+import { BlockedSendBanner }  from "./SafetyPolicyBanner";
+import { OutsideHoursWarning, MessageQueuedBanner, EmergencySentBanner } from "./QuietHoursBanner";
+import { QuietHoursModal }    from "./QuietHoursModal";
 import {
   type RecipientSpec,
   type ResolvedAudience,
   type GuardianEntry,
   defaultRecipientSpec,
 } from "./types";
+import {
+  type EmergencyOverride,
+  type QuietHoursResponsePolicy,
+} from "./quiet-hours-types";
 
 // Mock guardians derived from roster isMinor flag.
 // In production this comes from GET /api/roster/guardians.
@@ -73,8 +80,22 @@ export function NewBroadcastDialog({
   const [title,    setTitle]    = useState("");
   const [body,     setBody]     = useState("");
   const [audience, setAudience] = useState<ResolvedAudience | null>(null);
-  const [previewLoading, setPreviewLoading] = useState(false);
-  const [sending,  setSending]  = useState(false);
+  const [previewLoading,  setPreviewLoading]  = useState(false);
+  const [sending,         setSending]         = useState(false);
+  // Policy state — populated after a blocked 422 response from the server.
+  const [blockedReason,         setBlockedReason]         = useState<string | null>(null);
+  const [blockedCode,           setBlockedCode]           = useState<string | null>(null);
+  // Minor-detection flag — derived client-side for preview badge.
+  const [minorsDetected,        setMinorsDetected]        = useState(false);
+  // Client-side thread-type classification (preview — mirrors server logic).
+  const [threadClassification,  setThreadClassification]  = useState<{
+    threadType: string | null;
+    badges: string[];
+  } | null>(null);
+  // Quiet-hours state
+  const [quietHoursModal,       setQuietHoursModal]       = useState(false);
+  const [quietHoursInfo,        setQuietHoursInfo]        = useState<QuietHoursResponsePolicy | null>(null);
+  const [pendingOverride,       setPendingOverride]        = useState<EmergencyOverride | null>(null);
 
   // In production this is fetched from /api/roster/guardians
   const guardians = buildMockGuardians(roster);
@@ -86,6 +107,13 @@ export function NewBroadcastDialog({
       setTitle("");
       setBody("");
       setAudience(null);
+      setBlockedReason(null);
+      setBlockedCode(null);
+      setMinorsDetected(false);
+      setThreadClassification(null);
+      setQuietHoursModal(false);
+      setQuietHoursInfo(null);
+      setPendingOverride(null);
     }
   }, [open]);
 
@@ -95,10 +123,20 @@ export function NewBroadcastDialog({
   const resolveAudience = useCallback(
     (s: RecipientSpec) => {
       setPreviewLoading(true);
+      setBlockedReason(null); // clear any previous block error on re-targeting
       // Simulate async resolution (replace with real API call)
       setTimeout(() => {
         const resolved = resolveAudienceClient(s, roster, guardians);
         setAudience(resolved);
+
+        // Client-side minor detection and thread-type classification for preview.
+        // Mirrors server logic — gives immediate feedback before the server validates.
+        const hasMinors = detectMinorsInSpec(s, roster);
+        setMinorsDetected(hasMinors);
+
+        const classification = deriveClientThreadClassification(s, resolved, hasMinors);
+        setThreadClassification(classification);
+
         setPreviewLoading(false);
       }, 0);
     },
@@ -116,27 +154,95 @@ export function NewBroadcastDialog({
     audience !== null &&
     audience.totalContacts > 0;
 
-  async function handleSend() {
+  async function handleSend(override?: EmergencyOverride) {
     if (!canSend) return;
     setSending(true);
+    setBlockedReason(null);
+    setBlockedCode(null);
+
     try {
-      const result = await apiFetch<{ thread: { id: string }; audience: { totalContacts: number } }>(
+      const result = await apiFetch<{
+        thread:   { id: string };
+        audience: { totalContacts: number };
+        policy?:  {
+          guardianAction:      string;
+          guardiansAutoAdded:  number;
+          threadType:          string;
+          badges:              string[];
+          requiresSecondAdult: boolean;
+          notice?:             string;
+          quietHours?:         QuietHoursResponsePolicy;
+        };
+      }>(
         "/messages/compose",
         {
           method: "POST",
-          body:   JSON.stringify({ spec, title: title.trim() || null, body: body.trim() }),
+          body:   JSON.stringify({
+            spec,
+            title:               title.trim() || null,
+            body:                body.trim(),
+            emergencyOverride:   override ?? null,
+          }),
         }
       );
+
+      const qh = result.policy?.quietHours;
+
+      // 202 Accepted → message was queued for later delivery
+      if (qh?.action === "queued" && qh.scheduledAt) {
+        setQuietHoursInfo(qh);
+        toast.info("Message scheduled", { description: `Will be sent at ${new Intl.DateTimeFormat("en-US", { dateStyle: "medium", timeStyle: "short" }).format(new Date(qh.scheduledAt))}` });
+        onCreated(result.thread.id, buildThreadLabel(spec, audience!));
+        onOpenChange(false);
+        return;
+      }
+
+      // Emergency override was rejected by server (note too short, invalid reason)
+      if (qh?.emergencyRejectedReason) {
+        toast.warning("Override not accepted", { description: qh.emergencyRejectedReason });
+        setPendingOverride(null);
+        return;
+      }
+
+      // Surface any guardian auto-inclusion notice
+      if (result.policy?.notice) toast.info(result.policy.notice);
+
+      // Emergency send confirmation
+      if (qh?.action === "emergency_send") {
+        toast.warning("Emergency override used — this send has been logged for admin review.");
+      }
+
       toast.success(
         `Message sent to ${result.audience.totalContacts} recipient${result.audience.totalContacts !== 1 ? "s" : ""}`
       );
       onCreated(result.thread.id, buildThreadLabel(spec, audience!));
       onOpenChange(false);
-    } catch (err) {
-      toast.error(err instanceof Error ? err.message : "Failed to send message");
+    } catch (err: any) {
+      // 422 policy blocks — show inline blocked banner instead of a toast.
+      const knownCodes = [
+        "GUARDIAN_REQUIRED", "MINOR_WITHOUT_GUARDIAN",
+        "SECOND_ADULT_REQUIRED", "THREAD_TYPE_BLOCKED",
+      ];
+      if (err?.blockedReason || knownCodes.includes(err?.code)) {
+        setBlockedReason(err.blockedReason ?? err.message ?? "Policy violation");
+        setBlockedCode(err.code ?? null);
+      } else {
+        toast.error(err instanceof Error ? err.message : "Failed to send message");
+      }
     } finally {
       setSending(false);
     }
+  }
+
+  function handleEmergencyConfirm(override: EmergencyOverride) {
+    setPendingOverride(override);
+    setQuietHoursModal(false);
+    handleSend(override);
+  }
+
+  function handleQueueFromModal() {
+    // User chose "schedule for later" in the modal — just send without override.
+    handleSend(undefined);
   }
 
   function handleKeyDown(e: React.KeyboardEvent<HTMLTextAreaElement>) {
@@ -145,6 +251,13 @@ export function NewBroadcastDialog({
       handleSend();
     }
   }
+
+  // Client-side quiet-hours preview: check if local hour is outside the default window.
+  // In production this window comes from org settings; here we use the server default (5-21).
+  const outsideHoursPreview = minorsDetected && (() => {
+    const h = new Date().getHours();
+    return h < 5 || h >= 21;
+  })();
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -199,12 +312,37 @@ export function NewBroadcastDialog({
             </div>
           </div>
 
-          {/* Audience summary */}
+          {/* Audience summary + thread-type classification badges */}
           <AudienceSummaryBar
             audience={audience}
             loading={previewLoading}
             empty={audience === null}
+            guardiansAutoIncluded={minorsDetected ? 0 : undefined}
+            threadClassification={threadClassification ?? undefined}
           />
+
+          {/* Blocked-send error — shown when the server rejects with a policy violation */}
+          {blockedReason && (
+            <BlockedSendBanner reason={blockedReason} code={blockedCode ?? undefined} />
+          )}
+
+          {/* Outside-hours preview warning — shown client-side when minors are targeted */}
+          {outsideHoursPreview && !blockedReason && (
+            <OutsideHoursWarning
+              policyWindow="05:00–21:00"
+              localOrgTime={new Intl.DateTimeFormat("en-US", { timeStyle: "short", hour12: false }).format(new Date())}
+            />
+          )}
+
+          {/* Queued message confirmation — set after a 202 response */}
+          {quietHoursInfo?.action === "queued" && quietHoursInfo.scheduledAt && (
+            <MessageQueuedBanner scheduledAt={quietHoursInfo.scheduledAt} />
+          )}
+
+          {/* Emergency override confirmation */}
+          {quietHoursInfo?.action === "emergency_send" && pendingOverride && (
+            <EmergencySentBanner reason={pendingOverride.reason} />
+          )}
         </div>
 
         <Separator />
@@ -218,24 +356,46 @@ export function NewBroadcastDialog({
           >
             Cancel
           </Button>
+          {/* Emergency override trigger — only visible when outside hours with minors */}
+          {outsideHoursPreview && canSend && (
+            <Button
+              variant="outline"
+              className="h-8 text-[12px] px-3 gap-1.5 text-orange-400 border-orange-500/30 hover:bg-orange-500/10"
+              onClick={() => setQuietHoursModal(true)}
+              disabled={sending}
+            >
+              Emergency Override
+            </Button>
+          )}
           <Button
-            onClick={handleSend}
+            onClick={() => handleSend()}
             disabled={!canSend}
             className="h-8 text-[13px] px-4 gap-2"
           >
             {sending ? (
               <>
                 <span className="w-3 h-3 rounded-full border-2 border-primary-foreground/40 border-t-primary-foreground animate-spin" />
-                Sending…
+                {pendingOverride ? "Sending override…" : "Scheduling…"}
               </>
             ) : (
               <>
                 <Send className="w-3.5 h-3.5" />
-                Send Message
+                {outsideHoursPreview ? "Schedule for Later" : "Send Message"}
               </>
             )}
           </Button>
         </DialogFooter>
+
+        {/* Emergency override modal */}
+        <QuietHoursModal
+          open={quietHoursModal}
+          onOpenChange={setQuietHoursModal}
+          policyWindow="05:00–21:00"
+          localOrgTime={new Intl.DateTimeFormat("en-US", { timeStyle: "short", hour12: false }).format(new Date())}
+          onConfirm={handleEmergencyConfirm}
+          onQueue={handleQueueFromModal}
+          submitting={sending}
+        />
       </DialogContent>
     </Dialog>
   );
@@ -303,4 +463,74 @@ function buildThreadLabel(spec: RecipientSpec, audience: ResolvedAudience): stri
   if (spec.mode === "both")        return `Team + Parents (${audience.totalContacts})`;
   if (spec.mode === "individuals") return `Individual Message (${audience.totalContacts})`;
   return "New Message";
+}
+
+/**
+ * Client-side thread-type classification for immediate UI preview.
+ *
+ * Mirrors the server-side classifyThreadType() logic using the same rules,
+ * but operates on client-side roster data and the resolved audience.
+ * The server is the authoritative validator — this is for UX feedback only.
+ *
+ * Returns null when no classification is applicable (e.g. empty audience).
+ */
+function deriveClientThreadClassification(
+  spec: RecipientSpec,
+  audience: ResolvedAudience,
+  hasMinors: boolean,
+): { threadType: string | null; badges: string[] } | null {
+  if (audience.totalContacts === 0) return null;
+
+  // Guardian-only send (mode=parents)
+  if (spec.mode === "parents") {
+    return { threadType: "coach_to_parent", badges: ["guardian_included"] };
+  }
+
+  if (hasMinors) {
+    const isTeam = audience.playerCount > 1;
+    if (isTeam) {
+      return {
+        threadType: "coach_to_team_with_adult_copy",
+        badges:     ["minor_protected", "guardian_included"],
+      };
+    }
+    return {
+      threadType: "coach_to_minor_with_guardian",
+      badges:     ["minor_protected", "guardian_included"],
+    };
+  }
+
+  // Adults only
+  const hasGuardians = audience.guardianCount > 0;
+  return {
+    threadType: hasGuardians ? null : "broadcast",
+    badges:     hasGuardians ? ["guardian_included"] : [],
+  };
+}
+
+/**
+ * Client-side minor detection for preview badge.
+ * Returns true when any player in the current spec is flagged as a minor.
+ * Mirrors the server-side enforceGuardianPolicy minor check without needing
+ * a network round-trip during preview.
+ */
+function detectMinorsInSpec(spec: RecipientSpec, roster: RosterAthlete[]): boolean {
+  if (spec.mode === "parents") return false; // parent-only sends don't trigger minor policy
+
+  if (spec.mode === "individuals") {
+    return spec.individuals
+      .filter((i) => i.type === "player")
+      .some((i) => {
+        const player = roster.find((p) => p.id === i.playerId);
+        return player?.isMinor ?? false;
+      });
+  }
+
+  // players / both: check within scope
+  const targets =
+    spec.playerScope === "all"
+      ? roster
+      : roster.filter((p) => spec.selectedPlayerIds.includes(p.id));
+
+  return targets.some((p) => p.isMinor);
 }

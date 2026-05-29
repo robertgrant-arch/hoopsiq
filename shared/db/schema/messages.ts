@@ -2,10 +2,21 @@ import { pgEnum, pgTable, text, integer, timestamp } from "drizzle-orm/pg-core";
 import { nanoid } from "nanoid";
 
 export const threadTypeEnum = pgEnum("thread_type", [
+  // ── Legacy types (pre-safety-policy) ────────────────────────────────────────
+  // Kept for backward compatibility with existing threads.
+  // New threads created by coaches/staff will use the approved types below.
   "broadcast",
   "dm",
   "parent_dm",
   "staff",
+  // ── Policy-approved types (slice 2 / 0014_thread_type_policy migration) ─────
+  // Each type carries explicit semantics about who is copied and why.
+  // The server enforces that the correct type is selected based on the
+  // participants and the org's messaging settings.
+  "coach_to_parent",               // staff → guardian(s) only; no player recipient
+  "coach_to_minor_with_guardian",  // staff → 1 minor + guardian(s)
+  "coach_to_team_with_adult_copy", // staff → team (includes minors) + guardian(s)
+  "staff_internal",                // staff → staff only; no athletes or guardians
 ]);
 
 export const audienceModeEnum = pgEnum("audience_mode", [
@@ -50,6 +61,13 @@ export const messages = pgTable("messages", {
   body:         text("body").notNull(),
   readBy:       text("read_by").array().notNull().default([]),
   sentAt:       timestamp("sent_at").defaultNow().notNull(),
+  /**
+   * Quiet-hours queue marker (Layer 3).  When set, this message has been
+   * stored in the DB but not yet delivered.  The Inngest quiet-hours release
+   * function fires SMS / push notifications when scheduled_at <= now().
+   * Null for immediately-delivered messages.
+   */
+  scheduledAt:  timestamp("scheduled_at", { withTimezone: true }),
   deletedAt:    timestamp("deleted_at"),
 });
 
