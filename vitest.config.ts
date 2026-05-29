@@ -11,7 +11,14 @@ export default defineConfig({
   test: {
     environment: "node",
     globals: false,
-    include: ["client/src/**/__tests__/**/*.test.ts", "client/src/**/*.test.ts"],
+    include: [
+      // Client-side tests
+      "client/src/**/__tests__/**/*.test.ts",
+      "client/src/**/*.test.ts",
+      // Server-side pure-function tests (no DB / network deps allowed)
+      "server/**/__tests__/**/*.test.ts",
+      "server/**/*.test.ts",
+    ],
   },
   resolve: {
     alias: {

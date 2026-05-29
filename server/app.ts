@@ -21,7 +21,8 @@ import { registerSeasonRoutes } from "./modules/seasons/routes";
 import { registerTeamRoutes } from "./modules/teams/routes";
 import { registerRegistrationRoutes } from "./modules/registrations/routes";
 import { registerInvoiceRoutes } from "./modules/invoices/routes";
-import { registerAdminRoutes } from "./modules/admin/routes";
+import { registerAdminRoutes }  from "./modules/admin/routes";
+import { registerSafetyRoutes } from "./modules/safety/routes";
 import { registerWebhookRoutes } from "./routes/webhooks";
 import { inngest } from "./inngest/client";
 import { analyzeFilmFn, readinessAlertFn, attendanceNotifyFn, notifyCoachingActionFn } from "./inngest";
@@ -155,6 +156,11 @@ export function createApp() {
   const adminRouter = express.Router();
   registerAdminRoutes(adminRouter);
   app.use("/api/admin", adminRouter);
+
+  // ── Safety review queue (Layer 4) ─────────────────────────────────────────
+  const safetyRouter = express.Router();
+  registerSafetyRoutes(safetyRouter);
+  app.use("/api/safety", safetyRouter);
 
   app.use(
     "/api/inngest",

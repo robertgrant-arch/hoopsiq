@@ -1,4 +1,4 @@
-import { pgEnum, pgTable, text, integer, boolean, timestamp } from "drizzle-orm/pg-core";
+import { pgEnum, pgTable, text, integer, boolean, timestamp, date } from "drizzle-orm/pg-core";
 import { nanoid } from "nanoid";
 
 export const playerStatusEnum = pgEnum("player_status", ["active", "injured", "suspended", "inactive"]);
@@ -28,6 +28,19 @@ export const players = pgTable("players", {
   recruitingStatus: text("recruiting_status"),   // "D1 Interest" | "D2 Target" | etc.
   academicNotes:    text("academic_notes"),
   yearsPlaying:     integer("years_playing"),
+  /**
+   * Minor classification — drives guardian-copy messaging policy.
+   *
+   * Defaults to TRUE (safe-by-default: treat every athlete as a minor until
+   * an admin explicitly marks them as an adult or the migration seeds a value
+   * from grad_year).  Set to FALSE once a player turns 18 or when the program
+   * knowingly enrolls adults (e.g. college/adult leagues).
+   *
+   * dateOfBirth is optional; when present it can be used by a scheduled job
+   * to flip isMinor automatically on the player's 18th birthday.
+   */
+  isMinor:          boolean("is_minor").notNull().default(true),
+  dateOfBirth:      date("date_of_birth"),
   createdByUserId: text("created_by_user_id"),
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at").defaultNow().notNull(),
