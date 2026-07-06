@@ -238,14 +238,7 @@ const AdminOverview     = React.lazy(() => import("@/pages/app/AppPages").then(m
 const AdminUsers        = React.lazy(() => import("@/pages/app/AppPages").then(m => ({ default: m.AdminUsers })));
 const AdminModeration   = React.lazy(() => import("@/pages/app/AppPages").then(m => ({ default: m.AdminModeration })));
 const AdminAudit        = React.lazy(() => import("@/pages/app/AppPages").then(m => ({ default: m.AdminAudit })));
-const AdminExperts      = React.lazy(() => import("@/pages/app/AppPages").then(m => ({ default: m.AdminExperts })));
-const AdminJobs         = React.lazy(() => import("@/pages/app/AppPages").then(m => ({ default: m.AdminJobs })));
 const ExpertDashboard   = React.lazy(() => import("@/pages/app/AppPages").then(m => ({ default: m.ExpertDashboard })));
-const ExpertOffers      = React.lazy(() => import("@/pages/app/AppPages").then(m => ({ default: m.ExpertOffers })));
-const ExpertBookings    = React.lazy(() => import("@/pages/app/AppPages").then(m => ({ default: m.ExpertBookings })));
-const TeamRoster        = React.lazy(() => import("@/pages/app/AppPages").then(m => ({ default: m.TeamRoster })));
-const TeamTeams         = React.lazy(() => import("@/pages/app/AppPages").then(m => ({ default: m.TeamTeams })));
-const TeamSettings      = React.lazy(() => import("@/pages/app/AppPages").then(m => ({ default: m.TeamSettings })));
 
 // Payments module
 const PaymentsDashboardPage  = React.lazy(() => import("@/pages/app/payments/PaymentsDashboardPage"));
@@ -472,8 +465,6 @@ function Router() {
         <Route path="/app/admin/moderation" component={AdminModeration} />
         <Route path="/app/admin/audit" component={AdminAudit} />
         <Route path="/app/admin/seasons" component={guard(SeasonManagementPage)} />
-        <Route path="/app/admin/experts" component={AdminExperts} />
-        <Route path="/app/admin/jobs" component={AdminJobs} />
         <Route path="/app/admin/forms" component={guard(FormsManagerPage)} />
         <Route path="/app/admin/season-setup" component={guard(SeasonSetupPage)} />
         <Route path="/app/admin/onboarding" component={guard(OnboardingPage)} />
@@ -532,13 +523,8 @@ function Router() {
 
         {/* Expert */}
         <Route path="/app/expert" component={ExpertDashboard} />
-        <Route path="/app/expert/offers" component={ExpertOffers} />
-        <Route path="/app/expert/bookings" component={ExpertBookings} />
 
         {/* Team extras */}
-        <Route path="/app/team/roster" component={TeamRoster} />
-        <Route path="/app/team/teams" component={TeamTeams} />
-        <Route path="/app/team/settings" component={TeamSettings} />
 
         {/* Payments module */}
         <Route path="/app/payments"             component={guard(PaymentsDashboardPage)} />

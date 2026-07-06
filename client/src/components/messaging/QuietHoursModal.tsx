@@ -65,7 +65,7 @@ export function QuietHoursModal({
   const canSubmit     = reason !== "" && noteValid && !submitting;
 
   function handleConfirm() {
-    if (!canSubmit || reason === "") return;
+    if (!reason || !noteValid || submitting) return;
     onConfirm({ reason, note: note.trim() });
   }
 

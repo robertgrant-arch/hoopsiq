@@ -17,7 +17,6 @@ import {
   CheckCircle2,
   Clock,
   Star,
-  TrendingUp,
   Clipboard,
 } from "lucide-react";
 import { AppShell, PageHeader } from "@/components/app/AppShell";
@@ -60,7 +59,7 @@ const ALERTS = [
   { id: "a1", type: "payment",      urgency: "critical", text: "Tyler Brown — dues overdue 14 days",        action: "Send reminder", href: "/app/team/billing" },
   { id: "a2", type: "payment",      urgency: "critical", text: "Malik Thompson — dues overdue 7 days",      action: "Send reminder", href: "/app/team/billing" },
   { id: "a3", type: "availability", urgency: "warning",  text: "2 players haven't confirmed Friday's game", action: "Send nudge",    href: "/app/team/schedule" },
-  { id: "a4", type: "roster",       urgency: "warning",  text: "Nathan Reed — medical clearance needed",    action: "Request docs",  href: "/app/team/roster" },
+  { id: "a4", type: "roster",       urgency: "warning",  text: "Nathan Reed — medical clearance needed",    action: "Request docs",  href: "/app/team/roster-detail" },
   { id: "a5", type: "message",      urgency: "info",     text: "3 unread parent messages",                  action: "View messages", href: "/app/coach/messages" },
 ];
 
@@ -240,7 +239,7 @@ export function TeamDashboard() {
                 <Bell className="w-3.5 h-3.5" />
                 Send Broadcast
               </Button>
-              <Link href="/app/team/roster" asChild>
+              <Link href="/app/team/roster-detail" asChild>
                 <a className="inline-flex items-center gap-1.5 h-9 px-4 rounded-md bg-primary text-primary-foreground font-semibold text-[12.5px] uppercase tracking-[0.07em] hover:brightness-110 transition">
                   <Plus className="w-3.5 h-3.5" />
                   Add Player
@@ -264,7 +263,7 @@ export function TeamDashboard() {
             value={`${activeRoster.length} active`}
             trend={`${injuredRoster.length} injured`}
             icon={<Users className="w-4 h-4" />}
-            href="/app/team/roster"
+            href="/app/team/roster-detail"
             accent="primary"
           />
           <StatCard
@@ -305,7 +304,7 @@ export function TeamDashboard() {
                   <h3 className="display text-[17px]">Roster</h3>
                   <span className="font-mono text-[11px] text-muted-foreground">{ROSTER.length} total</span>
                 </div>
-                <Link href="/app/team/roster" asChild>
+                <Link href="/app/team/roster-detail" asChild>
                   <a className="text-[12px] text-primary hover:underline flex items-center gap-1">
                     Manage <ChevronRight className="w-3 h-3" />
                   </a>
@@ -608,7 +607,7 @@ export function TeamDashboard() {
                 </div>
 
                 <div className="flex items-center justify-between py-1.5 text-[12.5px]">
-                  <Link href="/app/team/roster" asChild>
+                  <Link href="/app/team/roster-detail" asChild>
                     <a className="flex items-center gap-2 hover:underline">
                       <span className="w-2 h-2 rounded-full bg-[oklch(0.72_0.17_75)] shrink-0" />
                       Partial
@@ -679,17 +678,6 @@ export function TeamDashboard() {
                     <ChevronRight className="w-3.5 h-3.5 text-muted-foreground" />
                   </a>
                 </Link>
-
-                <button
-                  className="w-full flex items-center justify-between p-2.5 rounded-md hover:bg-muted transition text-[13px] text-left"
-                  onClick={() => toast.info("Coming soon")}
-                >
-                  <span className="flex items-center gap-2.5">
-                    <TrendingUp className="w-4 h-4 text-primary" />
-                    View Analytics
-                  </span>
-                  <ChevronRight className="w-3.5 h-3.5 text-muted-foreground" />
-                </button>
               </div>
             </div>
           </div>

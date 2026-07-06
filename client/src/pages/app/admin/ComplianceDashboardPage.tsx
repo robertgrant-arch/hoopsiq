@@ -101,7 +101,7 @@ export default function ComplianceDashboardPage() {
     <AppShell>
       <PageHeader
         title="Compliance Dashboard"
-        description="Operational safety metrics for your organization."
+        subtitle="Operational safety metrics for your organization."
       />
 
       <div className="p-6 max-w-5xl mx-auto space-y-6">

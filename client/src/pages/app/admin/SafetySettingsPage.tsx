@@ -146,7 +146,7 @@ export default function SafetySettingsPage() {
     <AppShell>
       <PageHeader
         title="Safety Settings"
-        description="Configure communication safety policies for your organization."
+        subtitle="Configure communication safety policies for your organization."
       />
 
       <div className="p-6 max-w-2xl mx-auto space-y-8">

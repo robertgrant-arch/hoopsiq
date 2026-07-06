@@ -6,15 +6,12 @@ import {
   Clock,
   ChevronRight,
   ChevronLeft,
-  Plus,
   Users,
   CheckCircle2,
   XCircle,
   AlertCircle,
   Bell,
   ClipboardList,
-  Pencil,
-  Trash2,
   UserCheck,
   UserX,
   Send,
@@ -360,20 +357,6 @@ function UpcomingEventDetail({
             </span>
           </div>
         </div>
-        <div className="flex items-center gap-2 shrink-0">
-          <Button variant="outline" size="sm">
-            <Pencil className="w-3.5 h-3.5 mr-1.5" />
-            Edit
-          </Button>
-          <Button
-            variant="outline"
-            size="sm"
-            className="text-destructive hover:text-destructive"
-            onClick={() => toast("Event deletion coming soon")}
-          >
-            <Trash2 className="w-3.5 h-3.5" />
-          </Button>
-        </div>
       </div>
 
       {/* Availability deadline */}
@@ -564,16 +547,6 @@ function CompletedEventDetail({
           <ClipboardList className="w-4 h-4 mr-2" />
           Save Attendance
         </Button>
-        {event.type === "practice" && (
-          <Button variant="outline" onClick={() => toast("Practice plan viewer coming soon")}>
-            View Practice Plan
-          </Button>
-        )}
-        {event.type === "game" && (
-          <Button variant="outline" onClick={() => toast("Film viewer coming soon")}>
-            View Film
-          </Button>
-        )}
       </div>
     </div>
   );
@@ -765,12 +738,6 @@ export function TeamSchedulePage() {
           eyebrow="Team"
           title="Team Schedule"
           subtitle="Upcoming events, availability, and attendance tracking."
-          actions={
-            <Button onClick={() => toast("Event creation coming soon")}>
-              <Plus className="w-4 h-4 mr-2" />
-              Add Event
-            </Button>
-          }
         />
 
         {/* Filter tabs */}

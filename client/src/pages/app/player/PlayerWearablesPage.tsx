@@ -17,7 +17,6 @@ interface Provider {
   emoji: string;
   status: ConnectionStatus;
   lastSynced: string | null;
-  comingSoon?: boolean;
 }
 
 interface DailyMetrics {
@@ -45,15 +44,6 @@ interface SharingSettings {
 /* -------------------------------------------------------------------------- */
 
 const PROVIDERS: Provider[] = [
-  {
-    id: "apple",
-    name: "Apple Health",
-    tagline: "iPhone & Apple Watch",
-    emoji: "🍎",
-    status: "disconnected",
-    lastSynced: null,
-    comingSoon: true,
-  },
   {
     id: "whoop",
     name: "WHOOP",
@@ -157,11 +147,6 @@ function ProviderCard({
           <div>
             <div className="flex items-center gap-2 flex-wrap">
               <span className="font-semibold text-[14px]">{provider.name}</span>
-              {provider.comingSoon && (
-                <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-muted text-muted-foreground font-mono uppercase tracking-wide">
-                  Coming soon
-                </span>
-              )}
             </div>
             <div className="text-[12px] text-muted-foreground mt-0.5">{provider.tagline}</div>
           </div>
@@ -180,11 +165,7 @@ function ProviderCard({
       )}
 
       <div className="flex items-center gap-2 mt-auto pt-1">
-        {provider.comingSoon ? (
-          <Button variant="outline" size="sm" disabled className="text-xs h-8 opacity-50">
-            Connect
-          </Button>
-        ) : provider.status === "connected" ? (
+        {provider.status === "connected" ? (
           <Button
             variant="ghost"
             size="sm"

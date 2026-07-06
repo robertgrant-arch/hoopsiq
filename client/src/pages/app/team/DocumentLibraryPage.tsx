@@ -1,7 +1,6 @@
 import { useState } from "react";
 import {
   Search,
-  Upload,
   FileText,
   Video,
   Image,
@@ -356,16 +355,6 @@ export function DocumentLibraryPage() {
           eyebrow="TEAM MANAGEMENT"
           title="Document Library"
           subtitle="Handbooks, waivers, policies, and shared resources"
-          actions={
-            <button
-              className="flex items-center gap-1.5 h-9 px-4 rounded-lg text-[13px] font-semibold text-white transition-all hover:brightness-110"
-              style={{ background: PRIMARY }}
-              onClick={() => toast.info("Upload feature coming soon")}
-            >
-              <Upload className="w-3.5 h-3.5" />
-              Upload
-            </button>
-          }
         />
 
         {/* Summary stats */}
@@ -465,14 +454,6 @@ export function DocumentLibraryPage() {
             <p className="text-[12.5px] text-muted-foreground">
               {search ? `No results for "${search}"` : "No documents in this category yet"}
             </p>
-            <button
-              className="mt-4 flex items-center gap-1.5 h-9 px-4 rounded-lg text-[13px] font-semibold text-white mx-auto transition-all hover:brightness-110"
-              style={{ background: PRIMARY }}
-              onClick={() => toast.info("Upload feature coming soon")}
-            >
-              <Upload className="w-3.5 h-3.5" />
-              Upload First Document
-            </button>
           </div>
         ) : (
           <div className="space-y-2">

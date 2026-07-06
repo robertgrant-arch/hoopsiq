@@ -432,13 +432,11 @@ function BoardPlayerCard({
   board,
   accessRequest,
   onStatusChange,
-  onNotes,
 }: {
   player: VerifiedPlayer;
   board: RecruiterBoard;
   accessRequest?: AccessRequest;
   onStatusChange: (playerId: string, status: RecruiterBoard["status"]) => void;
-  onNotes: (playerId: string) => void;
 }) {
   const top2Skills = Object.entries(player.skillScores)
     .sort(([, a], [, b]) => b - a)
@@ -572,13 +570,6 @@ function BoardPlayerCard({
           <option value="watching">Watching</option>
           <option value="not_a_fit">Not a fit</option>
         </select>
-        <button
-          onClick={() => onNotes(player.id)}
-          className="text-[11px] border rounded-lg px-2.5 py-2 transition-colors hover:border-[var(--text-muted)]"
-          style={{ borderColor: "var(--border)", color: "var(--text-muted)" }}
-        >
-          Notes
-        </button>
       </div>
     </div>
   );
@@ -812,11 +803,6 @@ export default function RecruiterDashboardPage() {
     toast.success(`Status updated to ${statusLabel(status)}`);
   }
 
-  function handleNotes(playerId: string) {
-    const player = MOCK_PLAYERS.find((p) => p.id === playerId);
-    toast.info(`Notes for ${player?.name ?? "player"} — notes panel coming soon.`);
-  }
-
   const boardPlayers = MOCK_BOARD
     .filter((b) => boardFilter === "all" || boardStatuses[b.playerId] === boardFilter)
     .map((b) => {
@@ -953,7 +939,6 @@ export default function RecruiterDashboardPage() {
                   board={board}
                   accessRequest={accessRequest}
                   onStatusChange={handleStatusChange}
-                  onNotes={handleNotes}
                 />
               ))}
             </div>

@@ -698,13 +698,6 @@ function FormBuilderTab() {
         {/* Actions */}
         <div className="space-y-2">
           <button
-            onClick={() => toast.info("Preview coming soon")}
-            className="w-full flex items-center justify-center gap-2 text-[13px] font-medium py-2.5 rounded-xl border border-border hover:bg-muted/50 transition-colors"
-          >
-            <Eye className="w-4 h-4" />
-            Preview form
-          </button>
-          <button
             onClick={() => toast.success("Draft saved", { description: formTitle })}
             className="w-full flex items-center justify-center gap-2 text-[13px] font-medium py-2.5 rounded-xl border transition-all"
             style={{ background: "oklch(0.72 0.18 290 / 0.10)", color: "oklch(0.72 0.18 290)", borderColor: "oklch(0.72 0.18 290 / 0.25)" }}

@@ -712,7 +712,7 @@ export default function ProgramTerminologyPage() {
         {/* Export */}
         <div className="mt-8 flex justify-end">
           <button
-            onClick={() => toast("PDF generation coming soon.")}
+            onClick={() => window.print()}
             className="inline-flex items-center gap-2 text-[13px] text-muted-foreground border border-border px-4 py-2 rounded-lg hover:bg-muted/40 transition-colors"
             style={{ minHeight: 44 }}
           >

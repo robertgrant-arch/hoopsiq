@@ -529,7 +529,7 @@ export function registerMessagingRoutes(router: Router) {
           const preview = body.substring(0, 140);
           const smsBody = `HoopsIQ message from your coach: ${preview}`;
           try {
-            const { sendBroadcastSms } = await import("../../lib/twilio");
+            const { sendBroadcastSms } = await import("../../lib/sms");
             await sendBroadcastSms(smsTargets.map((g) => g.phone!), smsBody);
           } catch (smsErr) {
             console.warn("[messaging] SMS broadcast failed:", smsErr);
@@ -596,7 +596,7 @@ export function registerMessagingRoutes(router: Router) {
       if (!Array.isArray(recipients) || !message) {
         return res.status(400).json({ error: "recipients[] and message required" });
       }
-      const { sendBroadcastSms } = await import("../../lib/twilio");
+      const { sendBroadcastSms } = await import("../../lib/sms");
       const result = await sendBroadcastSms(recipients, message);
       res.json(result);
     } catch (e: any) {

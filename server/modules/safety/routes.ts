@@ -310,7 +310,7 @@ export function registerSafetyRoutes(router: Router) {
           subjectType,
           subjectId:        subjectId ?? null,
           category,
-          severity:         severity ?? null,
+          severity:         severity ?? undefined,
           notes,
           evidenceSnapshot: evidenceSnapshot ?? null,
           status:           "open",

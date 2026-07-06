@@ -70,7 +70,7 @@ function ReportHeader() {
           </div>
           <div className="flex items-center gap-2 shrink-0">
             <button
-              onClick={() => toast.info("PDF generation coming soon")}
+              onClick={() => window.print()}
               className="inline-flex items-center gap-2 h-9 px-4 rounded-md border border-border text-[12.5px] font-semibold hover:bg-muted/50 transition"
             >
               <Download className="w-4 h-4" /> Download PDF
@@ -546,7 +546,7 @@ function ExportActionsSection() {
       </div>
       <div className="flex items-center gap-3 shrink-0">
         <button
-          onClick={() => toast.info("PDF generation coming soon")}
+          onClick={() => window.print()}
           className="inline-flex items-center gap-2 h-10 px-5 rounded-lg border border-border text-[13px] font-semibold hover:bg-muted/50 transition"
         >
           <Download className="w-4 h-4" /> Download PDF

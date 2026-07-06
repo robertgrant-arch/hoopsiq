@@ -143,7 +143,7 @@ interface GapsTabProps { onSwitchTab: (tab: Tab) => void; }
 function GapsTab({ onSwitchTab }: GapsTabProps) {
   const { data, isLoading } = useAssessmentData();
   const { gaps, topRecommendations } = useAssessmentGaps();
-  const { getRating, setRating, getDraftRating, submitSelfAssessment, isPending, isSuccess } =
+  const { setRating, getDraftRating, submitSelfAssessment, isPending, isSuccess } =
     useSelfAssessment();
 
   if (isLoading || !data) return <SkeletonCard lines={6} />;

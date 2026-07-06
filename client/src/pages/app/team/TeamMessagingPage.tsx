@@ -8,7 +8,6 @@ import { useState, useRef, useEffect } from "react";
 import {
   Hash,
   Send,
-  Paperclip,
   Megaphone,
   Users,
   Lock,
@@ -918,10 +917,6 @@ function ChannelPanel({ channel }: { channel: Channel }) {
     setDraft("");
   }
 
-  function handleAttach() {
-    toast.info("File attachment coming soon");
-  }
-
   return (
     <div className="flex flex-col flex-1 min-w-0 h-full">
       {/* Channel header */}
@@ -1011,12 +1006,6 @@ function ChannelPanel({ channel }: { channel: Channel }) {
               }}
             />
           </div>
-          <button
-            onClick={handleAttach}
-            className="w-9 h-9 flex items-center justify-center text-muted-foreground hover:text-foreground rounded-lg border border-border transition-colors shrink-0"
-          >
-            <Paperclip className="w-4 h-4" />
-          </button>
           <button
             onClick={handleSend}
             disabled={!draft.trim()}

@@ -358,7 +358,7 @@ export default function FamilyGrowthReportPage() {
   const [narrativeExpanded, setNarrativeExpanded] = useState(false);
 
   function handleDownloadPDF() {
-    toast.info("PDF export coming soon.");
+    window.print();
   }
 
   return (

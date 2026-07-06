@@ -69,11 +69,12 @@ export type TimelineEvent = {
   description?: string;
   coachNote?: string;
   significance?: "high" | "normal";
+  icon?: string;               // emoji shown next to the event title
 };
 
 export type PlayerSeasonSummary = {
   seasonId: string;
-  seasonLabel: string;         // "2023-24"
+  seasonName: string;          // "2023-24"
   skillLevels: Record<string, number>;  // skill name → 1-5
   idpGoalsCompleted: number;
   idpGoalsTotal: number;
@@ -86,13 +87,14 @@ export type PlayerSeasonSummary = {
 export type PlayerSeasonArc = {
   playerId: string;
   playerName: string;
+  position: string;            // "Guard", "Wing", ...
   seasons: PlayerSeasonSummary[];
 };
 
 const DEMO_SEASONS: PlayerSeasonSummary[] = [
   {
     seasonId: "2023-24",
-    seasonLabel: "2023-24",
+    seasonName: "2023-24",
     skillLevels: { Shooting: 3, Finishing: 2, "Ball Handling": 3, Defense: 3, Footwork: 2 },
     idpGoalsCompleted: 3,
     idpGoalsTotal: 5,
@@ -103,7 +105,7 @@ const DEMO_SEASONS: PlayerSeasonSummary[] = [
   },
   {
     seasonId: "2024-25",
-    seasonLabel: "2024-25",
+    seasonName: "2024-25",
     skillLevels: { Shooting: 4, Finishing: 3, "Ball Handling": 4, Defense: 4, Footwork: 3 },
     idpGoalsCompleted: 4,
     idpGoalsTotal: 5,
@@ -115,21 +117,21 @@ const DEMO_SEASONS: PlayerSeasonSummary[] = [
 ];
 
 const DEMO_TIMELINE: TimelineEvent[] = [
-  { id: "te1",  date: "2023-09-15", type: "season_start",  title: "Season 2023-24 begins", significance: "high" },
-  { id: "te2",  date: "2023-10-04", type: "assessment",    title: "Fall skill assessment", description: "Baseline scores recorded across 5 categories." },
-  { id: "te3",  date: "2023-10-18", type: "idp_goal",      title: "IDP created — 5 focus areas", description: "Coach set targets for Finishing, Footwork, and Ball Handling.", coachNote: "This player's instincts are elite. The physical tools need to catch up to the IQ." },
-  { id: "te4",  date: "2024-01-22", type: "film",          title: "Film study — defensive sets", description: "Assigned 3 clips from Toms River game." },
-  { id: "te5",  date: "2024-03-05", type: "milestone",     title: "First varsity start", significance: "high", coachNote: "Earned it." },
-  { id: "te6",  date: "2024-05-10", type: "achievement",   title: "3 of 5 IDP goals completed", significance: "high" },
-  { id: "te7",  date: "2024-09-01", type: "season_start",  title: "Season 2024-25 begins", significance: "high" },
-  { id: "te8",  date: "2024-10-12", type: "assessment",    title: "Fall skill assessment", description: "Scores up across all categories from prior year." },
-  { id: "te9",  date: "2025-01-14", type: "observation",   title: "Film note — contact finishing", coachNote: "The Mikan drill work is showing up in live reps. Keep attacking." },
-  { id: "te10", date: "2025-04-28", type: "milestone",     title: "IDP milestone — Contact Finishing 5→7", significance: "high" },
-  { id: "te11", date: "2025-06-01", type: "season_end",    title: "Season 2024-25 complete", significance: "high" },
+  { id: "te1",  date: "2023-09-15", type: "season_start",  title: "Season 2023-24 begins", icon: "🏀", significance: "high" },
+  { id: "te2",  date: "2023-10-04", type: "assessment",    title: "Fall skill assessment", icon: "📊", description: "Baseline scores recorded across 5 categories." },
+  { id: "te3",  date: "2023-10-18", type: "idp_goal",      title: "IDP created — 5 focus areas", icon: "🎯", description: "Coach set targets for Finishing, Footwork, and Ball Handling.", coachNote: "This player's instincts are elite. The physical tools need to catch up to the IQ." },
+  { id: "te4",  date: "2024-01-22", type: "film",          title: "Film study — defensive sets", icon: "🎬", description: "Assigned 3 clips from Toms River game." },
+  { id: "te5",  date: "2024-03-05", type: "milestone",     title: "First varsity start", icon: "⭐", significance: "high", coachNote: "Earned it." },
+  { id: "te6",  date: "2024-05-10", type: "achievement",   title: "3 of 5 IDP goals completed", icon: "🏆", significance: "high" },
+  { id: "te7",  date: "2024-09-01", type: "season_start",  title: "Season 2024-25 begins", icon: "🏀", significance: "high" },
+  { id: "te8",  date: "2024-10-12", type: "assessment",    title: "Fall skill assessment", icon: "📊", description: "Scores up across all categories from prior year." },
+  { id: "te9",  date: "2025-01-14", type: "observation",   title: "Film note — contact finishing", icon: "👀", coachNote: "The Mikan drill work is showing up in live reps. Keep attacking." },
+  { id: "te10", date: "2025-04-28", type: "milestone",     title: "IDP milestone — Contact Finishing 5→7", icon: "🎯", significance: "high" },
+  { id: "te11", date: "2025-06-01", type: "season_end",    title: "Season 2024-25 complete", icon: "🏁", significance: "high" },
 ];
 
 export function getPlayerSeasonArc(playerId: string): PlayerSeasonArc {
-  return { playerId, playerName: "Marcus Davis", seasons: DEMO_SEASONS };
+  return { playerId, playerName: "Marcus Davis", position: "Guard", seasons: DEMO_SEASONS };
 }
 
 export function getPlayerTimeline(playerId: string): TimelineEvent[] {
@@ -142,33 +144,84 @@ export function getPlayerTimeline(playerId: string): TimelineEvent[] {
 
 export type SeasonType = "fall" | "spring" | "summer" | "winter";
 
-export type Season = {
-  id: string;
-  name: string;
-  type: SeasonType;
-  status: "active" | "upcoming" | "completed";
-  startDate: string;   // ISO date
-  endDate: string;
-  playerCount: number;
-  completionRate: number;  // 0-1
-};
-
-export const seasons: Season[] = [
-  { id: "season_fall_2024",   name: "Fall 2024",   type: "fall",   status: "completed", startDate: "2024-09-01", endDate: "2024-12-20", playerCount: 42, completionRate: 0.88 },
-  { id: "season_spring_2025", name: "Spring 2025", type: "spring", status: "completed", startDate: "2025-01-06", endDate: "2025-05-30", playerCount: 47, completionRate: 0.91 },
-  { id: "season_fall_2025",   name: "Fall 2025",   type: "fall",   status: "active",    startDate: "2025-09-01", endDate: "2025-12-19", playerCount: 50, completionRate: 0.74 },
-  { id: "season_spring_2026", name: "Spring 2026", type: "spring", status: "upcoming",  startDate: "2026-01-05", endDate: "2026-06-12", playerCount: 0,  completionRate: 0    },
-];
-
-export const currentSeason: Season = seasons.find((s) => s.status === "active")!;
-
-type SeasonStats = {
+export type SeasonStats = {
   avgSkillDelta: number;
   avgWodCompletion: number;
   idpGoalsCompleted: number;
   idpGoalsTotal: number;
   playerRetentionRate: number;
 };
+
+export type AssessmentWindow = {
+  id: string;
+  label: string;
+  openDate: string;    // ISO date
+  closeDate: string;
+  status: "open" | "upcoming" | "closed";
+  completionRate: number;  // 0-1
+};
+
+export type Season = {
+  id: string;
+  name: string;
+  type: SeasonType;
+  status: "active" | "upcoming" | "completed" | "archived";
+  startDate: string;   // ISO date
+  endDate: string;
+  playerCount: number;
+  completionRate: number;  // 0-1
+  totalPlayers: number;
+  activeCoaches: number;
+  assessmentWindows: AssessmentWindow[];
+  stats: SeasonStats;
+};
+
+export const seasons: Season[] = [
+  {
+    id: "season_fall_2024", name: "Fall 2024", type: "fall", status: "completed",
+    startDate: "2024-09-01", endDate: "2024-12-20", playerCount: 42, completionRate: 0.88,
+    totalPlayers: 42, activeCoaches: 5,
+    assessmentWindows: [
+      { id: "aw_f24_1", label: "Baseline Assessment", openDate: "2024-09-02", closeDate: "2024-09-16", status: "closed", completionRate: 0.95 },
+      { id: "aw_f24_2", label: "Midseason Check",     openDate: "2024-10-21", closeDate: "2024-11-04", status: "closed", completionRate: 0.90 },
+      { id: "aw_f24_3", label: "Final Assessment",    openDate: "2024-12-02", closeDate: "2024-12-16", status: "closed", completionRate: 0.86 },
+    ],
+    stats: { avgSkillDelta: 1.2, avgWodCompletion: 0.79, idpGoalsCompleted: 31, idpGoalsTotal: 42, playerRetentionRate: 0.84 },
+  },
+  {
+    id: "season_spring_2025", name: "Spring 2025", type: "spring", status: "completed",
+    startDate: "2025-01-06", endDate: "2025-05-30", playerCount: 47, completionRate: 0.91,
+    totalPlayers: 47, activeCoaches: 6,
+    assessmentWindows: [
+      { id: "aw_s25_1", label: "Baseline Assessment", openDate: "2025-01-06", closeDate: "2025-01-20", status: "closed", completionRate: 0.96 },
+      { id: "aw_s25_2", label: "Midseason Check",     openDate: "2025-03-10", closeDate: "2025-03-24", status: "closed", completionRate: 0.92 },
+      { id: "aw_s25_3", label: "Final Assessment",    openDate: "2025-05-12", closeDate: "2025-05-26", status: "closed", completionRate: 0.89 },
+    ],
+    stats: { avgSkillDelta: 1.4, avgWodCompletion: 0.82, idpGoalsCompleted: 38, idpGoalsTotal: 47, playerRetentionRate: 0.87 },
+  },
+  {
+    id: "season_fall_2025", name: "Fall 2025", type: "fall", status: "active",
+    startDate: "2025-09-01", endDate: "2025-12-19", playerCount: 50, completionRate: 0.74,
+    totalPlayers: 50, activeCoaches: 6,
+    assessmentWindows: [
+      { id: "aw_f25_1", label: "Baseline Assessment", openDate: "2025-09-01", closeDate: "2025-09-15", status: "closed",   completionRate: 0.94 },
+      { id: "aw_f25_2", label: "Midseason Check",     openDate: "2025-10-20", closeDate: "2025-11-03", status: "open",     completionRate: 0.62 },
+      { id: "aw_f25_3", label: "Final Assessment",    openDate: "2025-12-01", closeDate: "2025-12-15", status: "upcoming", completionRate: 0 },
+    ],
+    stats: { avgSkillDelta: 0.9, avgWodCompletion: 0.76, idpGoalsCompleted: 22, idpGoalsTotal: 50, playerRetentionRate: 0.9 },
+  },
+  {
+    id: "season_spring_2026", name: "Spring 2026", type: "spring", status: "upcoming",
+    startDate: "2026-01-05", endDate: "2026-06-12", playerCount: 0, completionRate: 0,
+    totalPlayers: 0, activeCoaches: 0,
+    assessmentWindows: [
+      { id: "aw_s26_1", label: "Baseline Assessment", openDate: "2026-01-05", closeDate: "2026-01-19", status: "upcoming", completionRate: 0 },
+    ],
+    stats: { avgSkillDelta: 0, avgWodCompletion: 0, idpGoalsCompleted: 0, idpGoalsTotal: 0, playerRetentionRate: 0 },
+  },
+];
+
+export const currentSeason: Season = seasons.find((s) => s.status === "active")!;
 
 type SeasonComparison = {
   seasonA: { name: string; stats: SeasonStats };

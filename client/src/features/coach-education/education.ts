@@ -705,44 +705,313 @@ export const LEVEL_LABELS: Record<CourseLevel, string> = {
 // aggregations of modules; courses are self-contained curriculum units.
 // ─────────────────────────────────────────────────────────────────────────────
 
+/** A single content section within a module — typed by teaching intent. */
+export type ModuleSection = {
+  id: string;
+  type: "frame" | "concept" | "examine" | "apply" | "reflect";
+  title: string;
+  /** Markdown-lite body: paragraphs separated by \n\n, **bold** supported. */
+  content: string;
+  /** Shown as a "Platform Action" callout on apply sections. */
+  actionPrompt?: string;
+};
+
 export type EducationModule = {
   id: string;
   title: string;
+  subtitle?: string;
   status: "complete" | "in_progress" | "not_started" | "locked";
-  path: string;           // which LearningPath this module belongs to
-  durationMinutes?: number;
-  category?: string;
+  path: string;            // which LearningPath this module belongs to
+  pathId?: string;         // alias of path, kept for reader lookups
+  order?: number;          // 1-based position within its path
+  domain: string;          // coaching domain, e.g. "Film & Analysis"
+  estimatedMinutes: number;
+  completedAt?: string;    // ISO date when status is "complete"
+  sections: ModuleSection[];
+  /** What the coach produces in the platform after finishing the module. */
+  platformDeliverable?: string;
+  deliverablePrompt?: string;
 };
 
 export type LearningPath = {
   id: string;
   level: number;
+  coachLevel?: string;     // alias of id, kept for reader lookups
   title: string;
+  description: string;
+  credentialTitle: string;
   modules: EducationModule[];
 };
+
+/** Builds the standard 5-section reader outline for a module. */
+function buildSections(
+  moduleId: string,
+  spec: {
+    frame: string;
+    concept: string;
+    examine: string;
+    apply: string;
+    applyAction?: string;
+    reflect: string;
+  }
+): ModuleSection[] {
+  return [
+    { id: `${moduleId}-s1`, type: "frame",   title: "Why this matters",       content: spec.frame },
+    { id: `${moduleId}-s2`, type: "concept", title: "The core idea",          content: spec.concept },
+    { id: `${moduleId}-s3`, type: "examine", title: "See it in practice",     content: spec.examine },
+    { id: `${moduleId}-s4`, type: "apply",   title: "Put it to work",         content: spec.apply, actionPrompt: spec.applyAction },
+    { id: `${moduleId}-s5`, type: "reflect", title: "Make it yours",          content: spec.reflect },
+  ];
+}
 
 export const learningPaths: LearningPath[] = [
   {
     id: "foundation",
     level: 1,
+    coachLevel: "foundation",
     title: "Foundation",
+    description:
+      "The core operating system for a modern development coach: film habits, IDPs, readiness signals, and practice design that connect into one weekly loop.",
+    credentialTitle: "HoopsIQ Certified Foundation Coach",
     modules: [
-      { id: "edu-m1", title: "Understanding the Film-to-Action Loop",   status: "complete",    path: "foundation", durationMinutes: 18 },
-      { id: "edu-m2", title: "Building Your First IDP",                 status: "complete",    path: "foundation", durationMinutes: 22 },
-      { id: "edu-m3", title: "Reading Readiness Signals",               status: "in_progress", path: "foundation", durationMinutes: 15 },
-      { id: "edu-m4", title: "Practice Plan Architecture",              status: "not_started", path: "foundation", durationMinutes: 20 },
-      { id: "edu-m5", title: "Coaching Actions That Stick",             status: "locked",      path: "foundation", durationMinutes: 17 },
-      { id: "edu-m6", title: "Parent Communication Systems",            status: "locked",      path: "foundation", durationMinutes: 14 },
+      {
+        id: "edu-m1",
+        title: "Understanding the Film-to-Action Loop",
+        subtitle: "Turn what you see on film into what players do at practice.",
+        status: "complete",
+        path: "foundation",
+        pathId: "foundation",
+        order: 1,
+        domain: "Film & Analysis",
+        estimatedMinutes: 18,
+        completedAt: "2026-04-28",
+        platformDeliverable: "Tag three clips from your last game and attach a coaching action to each.",
+        sections: buildSections("edu-m1", {
+          frame:
+            "Most coaches watch film. Very few convert it. The gap between **seeing a problem** and **changing a behavior** is where player development stalls.\n\nThis module gives you a repeatable loop: watch, tag, prescribe, verify.",
+          concept:
+            "The Film-to-Action Loop has four steps: **capture** the moment, **name** the behavior, **prescribe** a drill or cue, and **verify** it in the next game.\n\nThe loop only works when every tagged clip ends in an assignment a player can actually do this week.",
+          examine:
+            "Watch how a tagged closeout clip becomes a Tuesday drill block. The tag names the behavior (\"late weak-side rotation\"), the prescription is specific (\"3-man shell, 4 min\"), and the verification is scheduled before practice ends.",
+          apply:
+            "Open your most recent game film. Tag three moments — one positive, two correctable. For each, write the behavior in six words or fewer, then attach a drill or cue.",
+          applyAction: "Tag 3 clips in Film Room and assign one coaching action to each.",
+          reflect:
+            "Think about the last correction you gave that actually stuck. What made it stick — the clip, the cue, or the follow-up?",
+        }),
+      },
+      {
+        id: "edu-m2",
+        title: "Building Your First IDP",
+        subtitle: "A development plan a 14-year-old can read and a parent can trust.",
+        status: "complete",
+        path: "foundation",
+        pathId: "foundation",
+        order: 2,
+        domain: "Player Development",
+        estimatedMinutes: 22,
+        completedAt: "2026-05-14",
+        platformDeliverable: "Publish one IDP with two focus areas and a four-week milestone.",
+        sections: buildSections("edu-m2", {
+          frame:
+            "An Individual Development Plan is a contract between you and the player: **this is what we're working on, and this is how we'll know it's working.**\n\nWithout one, development is vibes. With one, it's a schedule.",
+          concept:
+            "A usable IDP has three parts: **two focus areas** (never more), a **four-week milestone** for each, and a **weekly touchpoint** where you look at evidence together.\n\nScope discipline is the whole trick — an IDP with five focus areas is a wish list.",
+          examine:
+            "Review a sample IDP for a combo guard: focus areas are \"off-hand finishing\" and \"pick-and-roll reads.\" Each has one measurable milestone and one film checkpoint per week.",
+          apply:
+            "Pick one player from your roster. Draft their IDP with exactly two focus areas, each with a milestone you could verify on film or in a stat line four weeks from now.",
+          applyAction: "Create and publish one IDP from a player's assessment page.",
+          reflect:
+            "Which player on your roster would benefit most from narrowing their development focus — and what would you cut from what they're working on today?",
+        }),
+      },
+      {
+        id: "edu-m3",
+        title: "Reading Readiness Signals",
+        subtitle: "Check-ins, workload, and knowing when to push versus protect.",
+        status: "in_progress",
+        path: "foundation",
+        pathId: "foundation",
+        order: 3,
+        domain: "Player Development",
+        estimatedMinutes: 15,
+        platformDeliverable: "Review your team's readiness dashboard and flag one player for a modified load.",
+        sections: buildSections("edu-m3", {
+          frame:
+            "The best practice plan in the world fails when it meets a team that slept four hours. Readiness data tells you **which plan to run**, not just how hard to run it.",
+          concept:
+            "Readiness is a composite of **sleep, soreness, energy, and stress** from daily check-ins. You're not reacting to single bad days — you're watching for **trends** (three or more days moving the same direction).",
+          examine:
+            "A player's soreness trend climbs for four straight days while energy drops. The coach swaps their live-contact block for skill work — and the player returns to baseline within a week instead of missing two.",
+          apply:
+            "Open your readiness dashboard before you finalize this week's practice plan. Identify the player with the worst trend and decide one specific modification.",
+          applyAction: "Flag one player for a modified load from the readiness dashboard.",
+          reflect:
+            "When was the last time you pushed a player who needed protecting, or protected one who needed pushing? What signal did you miss — or not have?",
+        }),
+      },
+      {
+        id: "edu-m4",
+        title: "Practice Plan Architecture",
+        subtitle: "Design blocks that serve IDPs, not just the team calendar.",
+        status: "not_started",
+        path: "foundation",
+        pathId: "foundation",
+        order: 4,
+        domain: "Practice Design",
+        estimatedMinutes: 20,
+        platformDeliverable: "Build one practice plan where at least two blocks map to active IDP focus areas.",
+        sections: buildSections("edu-m4", {
+          frame:
+            "A practice plan is a budget. Every minute you spend on one thing is a minute you can't spend on a player's actual development need. Architecture is how you stop spending on autopilot.",
+          concept:
+            "Structure every practice in **blocks with owners**: each block names the skill, the players it targets, and the IDP focus area it serves. If a block serves nobody's plan, it has to justify itself.",
+          examine:
+            "Compare two 90-minute plans for the same roster. The first is a generic template. The second maps three blocks to active IDP focus areas — same drills, different targeting, twice the development yield.",
+          apply:
+            "Take your next scheduled practice and audit it: label each block with the IDP focus areas it serves. Rebuild any block that serves none.",
+          applyAction: "Create a practice plan with at least two IDP-linked blocks.",
+          reflect:
+            "What percentage of your typical practice serves a specific, named development goal — honestly? What would it take to raise it by 20 points?",
+        }),
+      },
+      {
+        id: "edu-m5",
+        title: "Coaching Actions That Stick",
+        subtitle: "Cues, constraints, and follow-ups that survive past Friday.",
+        status: "locked",
+        path: "foundation",
+        pathId: "foundation",
+        order: 5,
+        domain: "Teaching & Cues",
+        estimatedMinutes: 17,
+        platformDeliverable: "Log three coaching actions with scheduled follow-ups on player timelines.",
+        sections: buildSections("edu-m5", {
+          frame:
+            "Players don't fail to improve because they weren't told. They fail because the telling had no **follow-up structure**. A coaching action without a scheduled check is a suggestion.",
+          concept:
+            "A sticky coaching action has three parts: a **short external cue** (\"punch through the window\", not biomechanics lectures), a **constraint** that forces the rep, and a **dated follow-up** where you check the film together.",
+          examine:
+            "Follow one action through two weeks: the cue is given Monday, the constraint drill runs Tuesday and Thursday, and the follow-up film check happens the next Monday. The behavior holds in the Friday game.",
+          apply:
+            "Write three coaching actions for three different players using the cue-constraint-follow-up format. Schedule each follow-up before you finish.",
+          applyAction: "Log 3 coaching actions with follow-up dates.",
+          reflect:
+            "What's the best cue you've ever given — the one players still repeat back to you? What made it land?",
+        }),
+      },
+      {
+        id: "edu-m6",
+        title: "Parent Communication Systems",
+        subtitle: "Proactive updates that build trust and prevent the Sunday-night email.",
+        status: "locked",
+        path: "foundation",
+        pathId: "foundation",
+        order: 6,
+        domain: "Communication",
+        estimatedMinutes: 14,
+        platformDeliverable: "Send one structured progress update to a player's family from the platform.",
+        sections: buildSections("edu-m6", {
+          frame:
+            "Every angry parent email is a data gap. When families can see **what their kid is working on and why**, playing-time conversations become development conversations.",
+          concept:
+            "A communication system has a **cadence** (every two weeks, not when there's a problem), a **format** (what we're working on, what progress looks like, how to help at home), and a **boundary** (development, not lineup decisions).",
+          examine:
+            "Read two versions of the same update. One is a defensive reply to a complaint. The other is a proactive two-paragraph progress note sent before the complaint existed. Note which family renewed for spring.",
+          apply:
+            "Draft a progress update for one family using the three-part format. Keep it under 150 words and tie every claim to something visible in the player's timeline.",
+          applyAction: "Send one progress update from a player's family view.",
+          reflect:
+            "What question do you get most often from parents — and what standing update would make that question unnecessary?",
+        }),
+      },
     ],
   },
   {
     id: "development",
     level: 2,
+    coachLevel: "development",
     title: "Player Development",
+    description:
+      "Advanced assessment and planning: benchmark players honestly, generate IDPs from data, and package development into a resume recruiters believe.",
+    credentialTitle: "HoopsIQ Player Development Specialist",
     modules: [
-      { id: "edu-m7", title: "Skill Assessment Methodology",            status: "locked",      path: "development", durationMinutes: 25 },
-      { id: "edu-m8", title: "Benchmark Analysis and IDP Generation",   status: "locked",      path: "development", durationMinutes: 28 },
-      { id: "edu-m9", title: "Development Resume and Recruiting",       status: "locked",      path: "development", durationMinutes: 20 },
+      {
+        id: "edu-m7",
+        title: "Skill Assessment Methodology",
+        subtitle: "Score what you can defend: rubrics, raters, and repeatability.",
+        status: "locked",
+        path: "development",
+        pathId: "development",
+        order: 1,
+        domain: "Player Development",
+        estimatedMinutes: 25,
+        platformDeliverable: "Complete a full skills assessment for one player using the standard rubric.",
+        sections: buildSections("edu-m7", {
+          frame:
+            "An assessment you can't defend to a parent, a player, or another coach isn't an assessment — it's an opinion with a number on it. Methodology is what makes the number mean something.",
+          concept:
+            "Defensible assessment rests on three legs: a **written rubric** for every score, **consistent conditions** (same drills, same context), and **rater discipline** — score what happened, not what you expect from the player.",
+          examine:
+            "Two coaches score the same player's ball-handling a 6 and an 8. Walk through how a behavioral rubric (\"maintains handle under two-side pressure\") collapses that gap to half a point.",
+          apply:
+            "Run a full assessment on one player using the platform rubric. For any category where you hesitated between two scores, write one sentence of evidence for the score you chose.",
+          applyAction: "Complete one full player assessment with rubric notes.",
+          reflect:
+            "Which skill do you suspect you systematically over- or under-rate — and what would a rubric for it look like?",
+        }),
+      },
+      {
+        id: "edu-m8",
+        title: "Benchmark Analysis and IDP Generation",
+        subtitle: "From percentile to plan: let the gaps write the roadmap.",
+        status: "locked",
+        path: "development",
+        pathId: "development",
+        order: 2,
+        domain: "Player Development",
+        estimatedMinutes: 28,
+        platformDeliverable: "Generate a benchmark-driven IDP and adjust one machine-suggested focus area.",
+        sections: buildSections("edu-m8", {
+          frame:
+            "Assessment tells you where a player is. Benchmarks tell you where that ranks. The IDP is the bridge — and when it's generated from the **gap analysis**, it stops being guesswork.",
+          concept:
+            "Benchmark-driven planning works gap-first: find the **largest gaps versus position and age cohort**, weight them by what the player's role actually demands, then let the top two weighted gaps become the IDP focus areas.",
+          examine:
+            "A wing sits at the 40th percentile for catch-and-shoot but the 75th for finishing. Watch how role-weighting (she plays off-ball) makes shooting the clear priority — and how the generated IDP schedules it.",
+          apply:
+            "Generate an IDP from one player's benchmark report. Review the suggested focus areas and override at least one — the machine sees gaps, you see context.",
+          applyAction: "Generate one IDP from a benchmark report and edit a focus area.",
+          reflect:
+            "Where do you trust data more than your eye, and where do you trust your eye more? Has that boundary moved in the last year?",
+        }),
+      },
+      {
+        id: "edu-m9",
+        title: "Development Resume and Recruiting",
+        subtitle: "Package two years of development into evidence a recruiter opens.",
+        status: "locked",
+        path: "development",
+        pathId: "development",
+        order: 3,
+        domain: "Program Building",
+        estimatedMinutes: 20,
+        platformDeliverable: "Publish one player's development resume with verified metrics and film links.",
+        sections: buildSections("edu-m9", {
+          frame:
+            "Recruiters don't have time to discover your player. A development resume — **verified metrics, trend lines, and curated film** — does the discovering for them, and it makes your program the one that produces documented growth.",
+          concept:
+            "A resume that gets opened has three properties: **verification** (platform-tracked, not self-reported), **trajectory** (growth curves beat snapshots), and **curation** (six clips that prove the trend, not a forty-minute highlight reel).",
+          examine:
+            "Compare a traditional highlight tape with a development resume showing a 14-month shooting-percentile climb, attendance data, and three before/after clip pairs. Which one answers a recruiter's actual questions?",
+          apply:
+            "Build a development resume for your most recruitable player. Pick the two metrics with the strongest verified trend and attach one clip pair that shows the change.",
+          applyAction: "Publish one development resume from a player's profile.",
+          reflect:
+            "If a recruiter judged your program only by the documented growth of your players, what story would the data tell today?",
+        }),
+      },
     ],
   },
 ];
@@ -759,20 +1028,13 @@ export function getNextModule(): EducationModule | undefined {
 }
 
 /** Weekly reflection prompts — last item is shown as today's prompt. */
-export const journalPrompts: string[] = [
-  "What's one habit your best player has that you wish all your players shared?",
-  "Describe the last time you changed your coaching approach based on what you saw on film.",
-  "Which player on your roster has the most unrealized potential right now, and what's your specific plan for them this week?",
-  "What would your program look like in three years if every player hit their IDP milestones consistently?",
-  "What does 'player development' actually mean in your program today — and is that the answer you want it to be?",
+export const journalPrompts: { id: string; prompt: string }[] = [
+  { id: "jp-1", prompt: "What's one habit your best player has that you wish all your players shared?" },
+  { id: "jp-2", prompt: "Describe the last time you changed your coaching approach based on what you saw on film." },
+  { id: "jp-3", prompt: "Which player on your roster has the most unrealized potential right now, and what's your specific plan for them this week?" },
+  { id: "jp-4", prompt: "What would your program look like in three years if every player hit their IDP milestones consistently?" },
+  { id: "jp-5", prompt: "What does 'player development' actually mean in your program today — and is that the answer you want it to be?" },
 ];
-
-/** A single content section within a module — typed by teaching intent. */
-export type ModuleSection = {
-  type: "frame" | "concept" | "examine" | "apply" | "reflect";
-  title?: string;
-  body: string;
-};
 
 /** Look up a single module by id across all paths. */
 export function getModule(id: string): EducationModule | undefined {

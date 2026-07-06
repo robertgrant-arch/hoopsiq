@@ -638,13 +638,6 @@ export default function GoalDetailPage() {
                           ))}
                         </ul>
                       )}
-                      <button
-                        type="button"
-                        onClick={() => toast.info("Film player coming soon")}
-                        className="text-[11px] font-medium px-2.5 py-1 rounded-lg border border-border hover:bg-muted/40 transition-colors"
-                      >
-                        View clip
-                      </button>
                     </div>
                   ))}
                 </div>

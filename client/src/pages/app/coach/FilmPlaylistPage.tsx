@@ -5,11 +5,9 @@ import {
   Pause,
   ChevronLeft,
   ChevronRight,
-  Plus,
   Film,
   Users,
   Share2,
-  Download,
   Trash2,
   GripVertical,
   CheckCircle2,
@@ -389,17 +387,6 @@ export function FilmPlaylistPage() {
                 </button>
               ))}
             </div>
-
-            {/* Add clip */}
-            <Button
-              variant="outline"
-              size="sm"
-              className="mt-1 border-dashed border-slate-700 text-slate-500 hover:text-slate-300 hover:border-slate-600 w-full"
-              onClick={() => toast.info("Clip picker coming soon")}
-            >
-              <Plus className="w-4 h-4 mr-2" />
-              Add Clip
-            </Button>
           </div>
         </div>
 
@@ -472,15 +459,6 @@ export function FilmPlaylistPage() {
 
             {/* Actions */}
             <div className="flex items-center gap-2 pt-1">
-              <Button
-                variant="outline"
-                size="sm"
-                className="flex-1 border-slate-700 text-slate-400 hover:text-white h-8 text-xs"
-                onClick={() => toast.info("Download coming soon")}
-              >
-                <Download className="w-3.5 h-3.5 mr-1.5" />
-                Export
-              </Button>
               <Button
                 variant="outline"
                 size="sm"

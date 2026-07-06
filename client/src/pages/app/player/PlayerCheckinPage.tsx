@@ -350,7 +350,7 @@ function CheckinForm({
   onSubmit,
 }: {
   playerName: string;
-  onSubmit: (entry: Partial<ExtendedCheckin>) => void;
+  onSubmit: (entry: Omit<ExtendedCheckin, "id" | "playerId" | "date">) => void;
 }) {
   const [soreness, setSoreness] = useState<1 | 2 | 3 | 4 | 5>(2);
   const [sleep, setSleep] = useState<1 | 2 | 3 | 4 | 5>(4);

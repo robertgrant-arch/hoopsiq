@@ -120,7 +120,7 @@ interface BlockedSendBannerProps {
 }
 
 export function BlockedSendBanner({ reason, code, className = "" }: BlockedSendBannerProps) {
-  const meta = (code && BLOCK_CODE_META[code]) ?? DEFAULT_BLOCK_META;
+  const meta = (code ? BLOCK_CODE_META[code] : undefined) ?? DEFAULT_BLOCK_META;
 
   return (
     <div

@@ -213,7 +213,8 @@ function ReviewRow({ item, onTriage, triaging }: ReviewRowProps) {
               <SelectContent>
                 {item.status !== "open"       && <SelectItem value="open"      className="text-[12px]">Mark Open</SelectItem>}
                 {item.status !== "escalated"  && <SelectItem value="escalated" className="text-[12px]">Escalate</SelectItem>}
-                {item.status !== "dismissed"  && <SelectItem value="dismissed" className="text-[12px]">Dismiss</SelectItem>}
+                {/* Outer guard already excludes dismissed flags, so Dismiss is always offered. */}
+                <SelectItem value="dismissed" className="text-[12px]">Dismiss</SelectItem>
               </SelectContent>
             </Select>
           )}
@@ -287,7 +288,7 @@ export default function SafetyFlagsPage() {
     <AppShell>
       <PageHeader
         title="Safety Review Queue"
-        description="Flagged messages requiring administrator review."
+        subtitle="Flagged messages requiring administrator review."
       />
 
       <div className="p-6 max-w-4xl mx-auto space-y-5">

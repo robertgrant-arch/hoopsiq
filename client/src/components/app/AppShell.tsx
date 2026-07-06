@@ -423,11 +423,9 @@ const NAV: Record<Role, NavItem[]> = {
     { href: "/app/admin/re-enrollment",   label: "Re-Enrollment",       icon: <ClipboardList className="w-5 h-5" />   },
     { href: "/app/admin/forms",           label: "Forms Manager",       icon: <FileText className="w-5 h-5" />        },
     { href: "/app/club/billing",          label: "Dues & Billing",      icon: <DollarSign className="w-5 h-5" />      },
-    { href: "/app/team/roster",           label: "All Athletes",        icon: <UserIcon className="w-5 h-5" />        },
     { href: "/app/team/invite",           label: "Invite",              icon: <Users className="w-5 h-5" />           },
     { href: "/app/billing",               label: "Platform Billing",    icon: <CreditCard className="w-5 h-5" />      },
     { href: "/app/team/seats",            label: "Seat Manager",        icon: <Users className="w-5 h-5" />           },
-    { href: "/app/team/settings",              label: "Settings",            icon: <Shield className="w-5 h-5" />          },
     { href: "/app/director/prospects",          label: "Prospect Pool",       icon: <Star className="w-5 h-5" />           },
     { href: "/app/director/program-reputation", label: "Program Reputation",  icon: <TrendingUp className="w-5 h-5" />     },
     { href: "/app/director/recruiter-access",   label: "Recruiter Activity",  icon: <Activity className="w-5 h-5" />      },
@@ -447,8 +445,6 @@ const NAV: Record<Role, NavItem[]> = {
   ],
   EXPERT: [
     { href: "/app/expert",          label: "Dashboard", icon: <LayoutDashboard className="w-5 h-5" /> },
-    { href: "/app/expert/offers",   label: "Offers",    icon: <Package className="w-5 h-5" />         },
-    { href: "/app/expert/bookings", label: "Bookings",  icon: <Calendar className="w-5 h-5" />        },
     { href: "/app/expert/payouts",  label: "Payouts",   icon: <CreditCard className="w-5 h-5" />      },
     { href: "/app/messages",        label: "Messages",  icon: <MessageSquare className="w-5 h-5" />   },
   ],
@@ -473,10 +469,8 @@ const NAV: Record<Role, NavItem[]> = {
     { href: "/app/admin",            label: "Overview",            icon: <LayoutDashboard className="w-5 h-5" /> },
     { href: "/app/admin/users",      label: "Users",               icon: <UserIcon className="w-5 h-5" />       },
     { href: "/app/admin/billing",    label: "Billing & Revenue",   icon: <CreditCard className="w-5 h-5" />     },
-    { href: "/app/admin/experts",    label: "Expert Verification", icon: <GraduationCap className="w-5 h-5" />  },
     { href: "/app/admin/moderation", label: "Moderation",         icon: <Flag className="w-5 h-5" />           },
     { href: "/app/admin/audit",      label: "Audit Log",           icon: <Database className="w-5 h-5" />       },
-    { href: "/app/admin/jobs",       label: "AI Jobs",             icon: <Activity className="w-5 h-5" />       },
   ],
 };
 

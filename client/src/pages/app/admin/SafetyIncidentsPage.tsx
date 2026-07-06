@@ -435,7 +435,7 @@ export default function SafetyIncidentsPage() {
     <AppShell>
       <PageHeader
         title="Safety Incidents"
-        description="Track and triage safety incidents reported within your organization."
+        subtitle="Track and triage safety incidents reported within your organization."
       />
 
       <div className="p-6 max-w-4xl mx-auto space-y-4">
