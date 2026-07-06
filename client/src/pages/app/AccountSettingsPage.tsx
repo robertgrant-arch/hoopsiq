@@ -1,17 +1,33 @@
 /**
  * AccountSettingsPage — /app/settings
  *
- * Account management hub. With real Clerk auth this exposes profile info,
- * sign-out, and permanent account deletion (required by App Store guideline
- * 5.1.1(v) for any app that supports account creation). In demo mode it
- * offers sign-out and local demo-data reset instead.
+ * Account management hub. With first-party auth this exposes profile info,
+ * password change, sign-out, and permanent account deletion (required by App
+ * Store guideline 5.1.1(v)). SUPER_ADMIN additionally gets a portal-role
+ * switcher (to test every role's experience) and a link to user management.
+ * In demo mode it offers sign-out and local demo-data reset instead.
  */
 import { useState } from "react";
 import { useLocation, Link } from "wouter";
-import { useUser } from "@clerk/clerk-react";
 import { toast } from "sonner";
-import { ArrowLeft, LogOut, Trash2, ShieldAlert, CreditCard } from "lucide-react";
-import { useAuth, HAS_CLERK, ROLE_META } from "@/lib/auth";
+import {
+  ArrowLeft,
+  LogOut,
+  Trash2,
+  ShieldAlert,
+  CreditCard,
+  KeyRound,
+  Users,
+  Eye,
+} from "lucide-react";
+import {
+  useAuth,
+  HAS_CUSTOM_AUTH,
+  ROLE_META,
+  clearAuthSession,
+  type Role,
+} from "@/lib/auth";
+import { apiPost, apiDelete } from "@/lib/api/client";
 import { AppShell } from "@/components/app/AppShell";
 import {
   AlertDialog,
@@ -25,19 +41,76 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 
+const ALL_ROLES: Role[] = ["ATHLETE", "COACH", "TEAM_ADMIN", "EXPERT", "PARENT", "SUPER_ADMIN"];
+
+function ChangePasswordSection() {
+  const [current, setCurrent] = useState("");
+  const [next, setNext] = useState("");
+  const [pending, setPending] = useState(false);
+
+  async function handleChange(e: React.FormEvent) {
+    e.preventDefault();
+    if (next.length < 8) {
+      toast.error("New password must be at least 8 characters.");
+      return;
+    }
+    setPending(true);
+    try {
+      await apiPost("/auth/change-password", { currentPassword: current, newPassword: next });
+      toast.success("Password updated.");
+      setCurrent("");
+      setNext("");
+    } catch (e: any) {
+      toast.error(e?.message ?? "Could not update password.");
+    } finally {
+      setPending(false);
+    }
+  }
+
+  return (
+    <section className="rounded-xl border border-border bg-card p-5">
+      <h2 className="display text-[15px] mb-3 flex items-center gap-2">
+        <KeyRound className="w-4 h-4 text-muted-foreground" /> Change password
+      </h2>
+      <form onSubmit={handleChange} className="space-y-3 max-w-sm">
+        <input
+          type="password"
+          autoComplete="current-password"
+          placeholder="Current password"
+          value={current}
+          onChange={(e) => setCurrent(e.target.value)}
+          className="w-full rounded-lg border border-border bg-background px-3 py-2 text-[13.5px] outline-none focus:border-primary/60 transition"
+        />
+        <input
+          type="password"
+          autoComplete="new-password"
+          placeholder="New password (min 8 characters)"
+          value={next}
+          onChange={(e) => setNext(e.target.value)}
+          className="w-full rounded-lg border border-border bg-background px-3 py-2 text-[13.5px] outline-none focus:border-primary/60 transition"
+        />
+        <button
+          type="submit"
+          disabled={pending || !current || !next}
+          className="px-4 py-2 rounded-lg border border-border text-[13px] hover:bg-muted disabled:opacity-50 transition"
+        >
+          {pending ? "Updating…" : "Update password"}
+        </button>
+      </form>
+    </section>
+  );
+}
+
 function DeleteAccountSection() {
-  const { user: clerkUser } = useUser();
-  const [, navigate] = useLocation();
   const [deleting, setDeleting] = useState(false);
 
   async function handleDelete() {
-    if (!clerkUser) return;
     setDeleting(true);
     try {
-      await clerkUser.delete();
-      // Clerk ends the session as part of deletion; land on the marketing page.
+      await apiDelete("/auth/me");
+      clearAuthSession();
       window.location.replace("/");
-    } catch (e) {
+    } catch {
       setDeleting(false);
       toast.error("Could not delete your account. Please try again or contact support.");
     }
@@ -88,28 +161,8 @@ function DeleteAccountSection() {
   );
 }
 
-function ClerkProfileCard() {
-  const { user: clerkUser } = useUser();
-  if (!clerkUser) return null;
-  return (
-    <section className="rounded-xl border border-border bg-card p-5">
-      <h2 className="display text-[15px] mb-3">Profile</h2>
-      <dl className="space-y-2 text-[13.5px]">
-        <div className="flex justify-between gap-4">
-          <dt className="text-muted-foreground">Name</dt>
-          <dd>{clerkUser.fullName ?? clerkUser.username ?? "—"}</dd>
-        </div>
-        <div className="flex justify-between gap-4">
-          <dt className="text-muted-foreground">Email</dt>
-          <dd>{clerkUser.primaryEmailAddress?.emailAddress ?? "—"}</dd>
-        </div>
-      </dl>
-    </section>
-  );
-}
-
 export default function AccountSettingsPage() {
-  const { user, signOut } = useAuth();
+  const { user, signOut, setRole } = useAuth();
   const [, navigate] = useLocation();
 
   if (!user) {
@@ -118,6 +171,17 @@ export default function AccountSettingsPage() {
   }
 
   const meta = ROLE_META[user.role];
+  // The stored portal role (not the view-as override) decides admin surfaces.
+  const isAdmin = HAS_CUSTOM_AUTH
+    ? (() => {
+        try {
+          const raw = window.localStorage.getItem("hoopsiq.authUser");
+          return raw ? JSON.parse(raw).portalRole === "SUPER_ADMIN" : false;
+        } catch {
+          return false;
+        }
+      })()
+    : user.role === "SUPER_ADMIN";
 
   function handleSignOut() {
     signOut();
@@ -146,21 +210,62 @@ export default function AccountSettingsPage() {
           <h1 className="display text-2xl">Account</h1>
         </div>
 
-        {HAS_CLERK ? (
-          <ClerkProfileCard />
-        ) : (
+        <section className="rounded-xl border border-border bg-card p-5">
+          <h2 className="display text-[15px] mb-3">Profile</h2>
+          <dl className="space-y-2 text-[13.5px]">
+            <div className="flex justify-between gap-4">
+              <dt className="text-muted-foreground">Name</dt>
+              <dd>{user.name}</dd>
+            </div>
+            <div className="flex justify-between gap-4">
+              <dt className="text-muted-foreground">{HAS_CUSTOM_AUTH ? "Email" : "Handle"}</dt>
+              <dd>{user.handle}</dd>
+            </div>
+            <div className="flex justify-between gap-4">
+              <dt className="text-muted-foreground">Role</dt>
+              <dd style={{ color: meta.color }}>{meta.label}</dd>
+            </div>
+          </dl>
+        </section>
+
+        {isAdmin && (
           <section className="rounded-xl border border-border bg-card p-5">
-            <h2 className="display text-[15px] mb-3">Profile</h2>
-            <dl className="space-y-2 text-[13.5px]">
-              <div className="flex justify-between gap-4">
-                <dt className="text-muted-foreground">Name</dt>
-                <dd>{user.name}</dd>
+            <h2 className="display text-[15px] mb-1 flex items-center gap-2">
+              <Eye className="w-4 h-4 text-muted-foreground" /> View as role
+            </h2>
+            <p className="text-[12.5px] text-muted-foreground mb-3">
+              Admin only — switch which portal you experience to test every feature.
+            </p>
+            <div className="flex flex-wrap gap-2">
+              {ALL_ROLES.map((r) => (
+                <button
+                  key={r}
+                  onClick={() => {
+                    setRole(r);
+                    toast.success(`Viewing as ${ROLE_META[r].label}`);
+                    navigate(ROLE_META[r].home);
+                  }}
+                  className="px-3 py-1.5 rounded-lg border text-[12px] font-mono uppercase tracking-wide transition hover:border-primary/60"
+                  style={
+                    user.role === r
+                      ? { borderColor: ROLE_META[r].color, color: ROLE_META[r].color }
+                      : { borderColor: "var(--border)", color: "var(--muted-foreground)" }
+                  }
+                >
+                  {ROLE_META[r].label}
+                </button>
+              ))}
+            </div>
+            {HAS_CUSTOM_AUTH && (
+              <div className="mt-4 pt-4 border-t border-border">
+                <Link href="/app/admin/users" asChild>
+                  <a className="flex items-center gap-2 text-[13.5px] text-primary hover:underline">
+                    <Users className="w-4 h-4" />
+                    Manage users
+                  </a>
+                </Link>
               </div>
-              <div className="flex justify-between gap-4">
-                <dt className="text-muted-foreground">Role</dt>
-                <dd style={{ color: meta.color }}>{meta.label}</dd>
-              </div>
-            </dl>
+            )}
           </section>
         )}
 
@@ -173,6 +278,8 @@ export default function AccountSettingsPage() {
             </a>
           </Link>
         </section>
+
+        {HAS_CUSTOM_AUTH && <ChangePasswordSection />}
 
         <section className="rounded-xl border border-border bg-card p-5">
           <h2 className="display text-[15px] mb-3">Session</h2>
@@ -197,7 +304,7 @@ export default function AccountSettingsPage() {
           </div>
         </section>
 
-        {HAS_CLERK ? (
+        {HAS_CUSTOM_AUTH ? (
           <DeleteAccountSection />
         ) : (
           <section className="rounded-xl border border-border bg-card p-5">

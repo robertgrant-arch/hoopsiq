@@ -1,6 +1,6 @@
 import { Link, useLocation } from "wouter";
 import { Logo } from "@/components/brand/Logo";
-import { useAuth, HAS_CLERK } from "@/lib/auth";
+import { useAuth, IS_DEMO } from "@/lib/auth";
 import { ROLE_META } from "@/lib/mock/users";
 
 const links = [
@@ -19,7 +19,7 @@ export function MarketingHeader() {
   return (
     <div className="sticky top-0 z-40">
       {/* Demo banner — only shown when running without real auth */}
-      {!HAS_CLERK && (
+      {IS_DEMO && (
         <Link href="/sign-in" asChild>
           <a
             className="block w-full bg-primary text-primary-foreground text-center text-[12px] font-mono uppercase tracking-[0.14em] py-2 hover:brightness-110 transition"

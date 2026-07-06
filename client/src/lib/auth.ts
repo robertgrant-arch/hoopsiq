@@ -32,14 +32,151 @@ function isDemoMode(): boolean {
   return false;
 }
 
-/** Single source of truth for "is real Clerk auth active" — a publishable key
- *  is configured AND we're not in explicit demo mode. Import this everywhere
- *  instead of re-deriving from import.meta.env so the gates never disagree. */
-export const HAS_CLERK = !!import.meta.env.VITE_CLERK_PUBLISHABLE_KEY && !isDemoMode();
+/** Clerk SSO is parked — first-party auth (below) is the active sign-in path.
+ *  Re-enable by restoring the key check if SSO comes back. */
+export const HAS_CLERK = false;
 
-/** Complement of HAS_CLERK for the API hook layer: when real auth isn't
+/** First-party email/password auth. Active in production builds (and anywhere
+ *  VITE_CUSTOM_AUTH=true) unless explicit demo mode is requested. */
+export const HAS_CUSTOM_AUTH =
+  (import.meta.env.PROD || import.meta.env.VITE_CUSTOM_AUTH === "true") && !isDemoMode();
+
+/** True when some real auth mode is active (custom or Clerk). */
+export const HAS_AUTH = HAS_CUSTOM_AUTH || HAS_CLERK;
+
+/** Complement of HAS_AUTH for the API hook layer: when real auth isn't
  *  active, hooks serve mock data instead of hitting endpoints that would 401. */
-export const IS_DEMO = !HAS_CLERK;
+export const IS_DEMO = !HAS_AUTH;
+
+// ---------------------------------------------------------------------------
+// First-party auth path (custom sign-in managed by admins)
+// ---------------------------------------------------------------------------
+
+const TOKEN_KEY = "hoopsiq.authToken";
+const AUTH_USER_KEY = "hoopsiq.authUser";
+
+export type AuthUser = {
+  id: string;
+  email: string;
+  name: string;
+  portalRole: Role;
+  mustChangePassword?: boolean;
+};
+
+export function getAuthToken(): string | null {
+  if (typeof window === "undefined") return null;
+  return window.localStorage.getItem(TOKEN_KEY);
+}
+
+export function storeAuthSession(token: string, user: AuthUser): void {
+  window.localStorage.setItem(TOKEN_KEY, token);
+  window.localStorage.setItem(AUTH_USER_KEY, JSON.stringify(user));
+  window.dispatchEvent(new CustomEvent("hoopsiq-user-changed"));
+}
+
+export function clearAuthSession(): void {
+  window.localStorage.removeItem(TOKEN_KEY);
+  window.localStorage.removeItem(AUTH_USER_KEY);
+  window.localStorage.removeItem(ROLE_KEY);
+  window.dispatchEvent(new CustomEvent("hoopsiq-user-changed"));
+}
+
+function readStoredAuthUser(): AuthUser | null {
+  if (typeof window === "undefined") return null;
+  try {
+    const raw = window.localStorage.getItem(AUTH_USER_KEY);
+    return raw ? (JSON.parse(raw) as AuthUser) : null;
+  } catch {
+    return null;
+  }
+}
+
+function toDemoUserShape(u: AuthUser, roleOverride: Role | null): DemoUser {
+  // SUPER_ADMIN can view the app as any portal role (for testing all features);
+  // everyone else is pinned to their assigned role.
+  const role = u.portalRole === "SUPER_ADMIN" && roleOverride ? roleOverride : u.portalRole;
+  const initials = u.name
+    .split(/\s+/)
+    .map((p) => p[0] ?? "")
+    .join("")
+    .slice(0, 2)
+    .toUpperCase();
+  return {
+    id: u.id,
+    role,
+    name: u.name,
+    handle: u.email,
+    avatar: initials || "U",
+    title: ROLE_META[role]?.label ?? role,
+    orgId: undefined,
+    teamId: undefined,
+  };
+}
+
+function useCustomAuth(): {
+  user: DemoUser | null;
+  signIn: (id: string) => void;
+  signOut: () => void;
+  setRole: (role: Role) => void;
+} {
+  const [authUser, setAuthUser] = useState<AuthUser | null>(() => readStoredAuthUser());
+  const [roleOverride, setRoleOverride] = useState<Role | null>(() => {
+    const stored = typeof window !== "undefined" ? window.localStorage.getItem(ROLE_KEY) : null;
+    return (stored as Role) ?? null;
+  });
+
+  useEffect(() => {
+    const handler = () => {
+      setAuthUser(readStoredAuthUser());
+      const stored = window.localStorage.getItem(ROLE_KEY);
+      setRoleOverride((stored as Role) ?? null);
+    };
+    window.addEventListener("hoopsiq-user-changed", handler);
+    window.addEventListener("storage", handler);
+    return () => {
+      window.removeEventListener("hoopsiq-user-changed", handler);
+      window.removeEventListener("storage", handler);
+    };
+  }, []);
+
+  // Revalidate the session against the server once per mount; a 401 clears it.
+  useEffect(() => {
+    const token = getAuthToken();
+    if (!token) return;
+    const base = (import.meta.env.VITE_API_BASE as string | undefined)?.replace(/\/$/, "") ?? "";
+    fetch(`${base}/api/auth/me`, { headers: { Authorization: `Bearer ${token}` } })
+      .then(async (res) => {
+        if (res.status === 401) {
+          clearAuthSession();
+          return;
+        }
+        if (res.ok) {
+          const body = (await res.json()) as { user: AuthUser };
+          window.localStorage.setItem(AUTH_USER_KEY, JSON.stringify(body.user));
+          setAuthUser(body.user);
+        }
+      })
+      .catch(() => {
+        /* network failure — keep the cached session */
+      });
+  }, []);
+
+  const signIn = useCallback((_id: string) => {
+    // Sign-in happens on the SignIn page via POST /api/auth/login.
+  }, []);
+
+  const signOut = useCallback(() => {
+    clearAuthSession();
+  }, []);
+
+  const setRole = useCallback((role: Role) => {
+    if (typeof window !== "undefined") window.localStorage.setItem(ROLE_KEY, role);
+    setRoleOverride(role);
+  }, []);
+
+  const user = authUser ? toDemoUserShape(authUser, roleOverride) : null;
+  return { user, signIn, signOut, setRole };
+}
 
 // ---------------------------------------------------------------------------
 // Clerk path — only imported when Clerk is actually configured
@@ -141,11 +278,11 @@ function useDemoAuth(): {
 
 export function useAuth() {
   // Rules of Hooks: we must call the same hook every render.
-  // We branch at module load time (HAS_CLERK is a module-level constant).
+  // We branch at module load time (the mode flags are module-level constants).
   const clerkResult = HAS_CLERK ? useClerkAuth() : null; // eslint-disable-line react-hooks/rules-of-hooks
-  const demoResult = !HAS_CLERK ? useDemoAuth() : null;  // eslint-disable-line react-hooks/rules-of-hooks
+  const customResult = !HAS_CLERK && HAS_CUSTOM_AUTH ? useCustomAuth() : null; // eslint-disable-line react-hooks/rules-of-hooks
+  const demoResult = !HAS_CLERK && !HAS_CUSTOM_AUTH ? useDemoAuth() : null; // eslint-disable-line react-hooks/rules-of-hooks
 
-  // Return whichever branch is active
   // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-  return HAS_CLERK ? clerkResult! : demoResult!;
+  return HAS_CLERK ? clerkResult! : HAS_CUSTOM_AUTH ? customResult! : demoResult!;
 }

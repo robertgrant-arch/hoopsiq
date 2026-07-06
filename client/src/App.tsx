@@ -240,7 +240,7 @@ const LearnCourseDetail = React.lazy(() => import("@/pages/app/AppPages").then(m
 const SettingsBilling   = React.lazy(() => import("@/pages/app/AppPages").then(m => ({ default: m.SettingsBilling })));
 const AccountSettings   = React.lazy(() => import("@/pages/app/AccountSettingsPage"));
 const AdminOverview     = React.lazy(() => import("@/pages/app/AppPages").then(m => ({ default: m.AdminOverview })));
-const AdminUsers        = React.lazy(() => import("@/pages/app/AppPages").then(m => ({ default: m.AdminUsers })));
+const AdminUsers        = React.lazy(() => import("@/pages/app/admin/UserManagementPage"));
 const AdminModeration   = React.lazy(() => import("@/pages/app/AppPages").then(m => ({ default: m.AdminModeration })));
 const AdminAudit        = React.lazy(() => import("@/pages/app/AppPages").then(m => ({ default: m.AdminAudit })));
 const ExpertDashboard   = React.lazy(() => import("@/pages/app/AppPages").then(m => ({ default: m.ExpertDashboard })));

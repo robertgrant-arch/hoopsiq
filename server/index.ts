@@ -3,6 +3,7 @@ import { createServer } from "http";
 import path from "path";
 import { fileURLToPath } from "url";
 import { createApp } from "./app";
+import { bootstrapLocalAuth } from "./auth/local";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -10,6 +11,14 @@ const __dirname = path.dirname(__filename);
 async function startServer() {
   const app = createApp();
   const server = createServer(app);
+
+  // Seed auth table, default org, and master admin. Non-fatal so the app
+  // still serves the SPA when the database is unreachable.
+  try {
+    await bootstrapLocalAuth();
+  } catch (e) {
+    console.error("[auth] bootstrap failed:", e);
+  }
 
   const staticPath =
     process.env.NODE_ENV === "production"

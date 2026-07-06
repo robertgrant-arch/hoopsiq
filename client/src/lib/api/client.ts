@@ -11,15 +11,18 @@ export async function apiFetch<T>(
   path: string,
   options: RequestInit = {},
 ): Promise<T> {
-  // Get Clerk token if available
-  let token: string | null = null;
-  try {
-    const { Clerk } = window as any;
-    if (Clerk?.session) {
-      token = await Clerk.session.getToken();
+  // First-party session token takes precedence; Clerk is the parked fallback.
+  let token: string | null =
+    typeof window !== "undefined" ? window.localStorage.getItem("hoopsiq.authToken") : null;
+  if (!token) {
+    try {
+      const { Clerk } = window as any;
+      if (Clerk?.session) {
+        token = await Clerk.session.getToken();
+      }
+    } catch {
+      // Clerk not loaded — demo mode
     }
-  } catch {
-    // Clerk not loaded — demo mode
   }
 
   const headers: Record<string, string> = {

@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { useLocation, Link } from "wouter";
 import {
   User,
@@ -6,11 +7,13 @@ import {
   Flame,
   Heart,
   Settings,
+  Lock,
+  Mail,
+  Loader2,
 } from "lucide-react";
-import { useAuth, HAS_CLERK } from "@/lib/auth";
+import { useAuth, HAS_CUSTOM_AUTH, storeAuthSession, type AuthUser } from "@/lib/auth";
 import { ROLE_META, demoUsers, type Role } from "@/lib/mock/users";
 import { Logo } from "@/components/brand/Logo";
-import { SignIn as ClerkSignIn } from "@clerk/clerk-react";
 
 const iconFor: Record<Role, React.ReactNode> = {
   ATHLETE: <User className="w-5 h-5" />,
@@ -21,21 +24,127 @@ const iconFor: Record<Role, React.ReactNode> = {
   SUPER_ADMIN: <Settings className="w-5 h-5" />,
 };
 
+const API_BASE = (import.meta.env.VITE_API_BASE as string | undefined)?.replace(/\/$/, "") ?? "";
+
+function CredentialsSignIn() {
+  const [, navigate] = useLocation();
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState<string | null>(null);
+  const [pending, setPending] = useState(false);
+
+  async function handleSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    setError(null);
+    setPending(true);
+    try {
+      const res = await fetch(`${API_BASE}/api/auth/login`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password }),
+      });
+      const body = await res.json().catch(() => ({}));
+      if (!res.ok) {
+        setError(body.error ?? "Sign-in failed. Please try again.");
+        return;
+      }
+      const user = body.user as AuthUser;
+      storeAuthSession(body.token as string, user);
+      const home = ROLE_META[user.portalRole]?.home ?? "/app/coach";
+      navigate(home);
+    } catch {
+      setError("Could not reach the server. Check your connection and try again.");
+    } finally {
+      setPending(false);
+    }
+  }
+
+  return (
+    <div className="min-h-screen flex flex-col bg-background">
+      <header className="h-16 border-b border-border flex items-center px-5 lg:px-8">
+        <Logo />
+      </header>
+      <main className="flex-1 flex items-center justify-center p-6">
+        <div className="w-full max-w-sm">
+          <div className="text-center mb-8">
+            <h1 className="display text-3xl leading-tight">
+              Sign in <span className="text-primary">to HoopsIQ.</span>
+            </h1>
+            <p className="text-[13.5px] text-muted-foreground mt-3">
+              Accounts are created by your program administrator.
+            </p>
+          </div>
+
+          <form onSubmit={handleSubmit} className="space-y-4">
+            <label className="block">
+              <span className="text-[12px] uppercase tracking-[0.1em] font-mono text-muted-foreground mb-1.5 flex items-center gap-1.5">
+                <Mail className="w-3.5 h-3.5" /> Email
+              </span>
+              <input
+                type="email"
+                required
+                autoComplete="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                className="w-full rounded-lg border border-border bg-card px-3.5 py-2.5 text-[14px] outline-none focus:border-primary/60 transition"
+                placeholder="you@program.com"
+              />
+            </label>
+            <label className="block">
+              <span className="text-[12px] uppercase tracking-[0.1em] font-mono text-muted-foreground mb-1.5 flex items-center gap-1.5">
+                <Lock className="w-3.5 h-3.5" /> Password
+              </span>
+              <input
+                type="password"
+                required
+                autoComplete="current-password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                className="w-full rounded-lg border border-border bg-card px-3.5 py-2.5 text-[14px] outline-none focus:border-primary/60 transition"
+                placeholder="••••••••••••"
+              />
+            </label>
+
+            {error && (
+              <p className="text-[13px] text-destructive rounded-lg border border-destructive/30 bg-destructive/5 px-3 py-2.5">
+                {error}
+              </p>
+            )}
+
+            <button
+              type="submit"
+              disabled={pending}
+              className="w-full flex items-center justify-center gap-2 rounded-lg bg-primary text-primary-foreground font-semibold text-[14px] py-2.5 hover:brightness-110 disabled:opacity-60 transition"
+            >
+              {pending && <Loader2 className="w-4 h-4 animate-spin" />}
+              {pending ? "Signing in…" : "Sign in"}
+            </button>
+          </form>
+
+          <div className="text-center mt-8 text-[12.5px] text-muted-foreground space-y-2">
+            <p>
+              Trouble signing in? Contact your administrator or{" "}
+              <Link href="/support" asChild>
+                <a className="text-primary hover:underline">support</a>
+              </Link>
+              .
+            </p>
+            <Link href="/" asChild>
+              <a className="inline-block hover:text-foreground">← Back to the main site</a>
+            </Link>
+          </div>
+        </div>
+      </main>
+    </div>
+  );
+}
+
 export default function SignIn() {
   const [, navigate] = useLocation();
   const { signIn } = useAuth();
 
-  if (HAS_CLERK) {
-    return (
-      <div className="min-h-screen flex flex-col bg-background">
-        <header className="h-16 border-b border-border flex items-center px-5 lg:px-8">
-          <Logo />
-        </header>
-        <main className="flex-1 flex items-center justify-center p-6">
-          <ClerkSignIn routing="virtual" signUpUrl="/sign-up" afterSignInUrl="/app/coach" />
-        </main>
-      </div>
-    );
+  if (HAS_CUSTOM_AUTH) {
+    return <CredentialsSignIn />;
   }
 
   function chooseUser(id: string, role: Role) {

@@ -15,6 +15,7 @@ import { and, eq, isNull, or, sql } from "drizzle-orm";
 import type { Request, Response, NextFunction } from "express";
 import { getDb } from "@shared/db";
 import { orgMembers, orgs } from "@shared/db";
+import { localAuth } from "./local";
 
 /** Express equivalent of Clerk's `auth()` (reads the same session claims). */
 export function auth(req: Request) {
@@ -143,6 +144,36 @@ export type RequireOrgResult = {
  * @throws HttpError 403 when there is no Clerk org context or no DB org / membership
  */
 export async function requireOrg(req: Request): Promise<RequireOrgResult> {
+  // First-party sessions (custom auth) take precedence over Clerk. The local
+  // user's org is their first active membership — single-org deployment.
+  const local = localAuth(req);
+  if (local) {
+    let membership: typeof orgMembers.$inferSelect | undefined;
+    try {
+      const db = getDb();
+      [membership] = await db
+        .select()
+        .from(orgMembers)
+        .where(and(eq(orgMembers.userId, local.userId), isNull(orgMembers.deletedAt)))
+        .limit(1);
+    } catch (e) {
+      const msg = e instanceof Error ? e.message : String(e);
+      if (msg.includes("DATABASE_URL") || msg.includes("not set")) {
+        throw new HttpError(503, "Database is not configured in this environment.");
+      }
+      throw e;
+    }
+    if (!membership) {
+      throw new HttpError(403, "Not a member of any organization");
+    }
+    return {
+      userId: local.userId,
+      orgId: membership.orgId,
+      role: membership.role,
+      teamId: req.get("x-hoops-team-id") ?? "default",
+    };
+  }
+
   const clerkAuth = auth(req);
   if (!clerkAuth.userId) {
     throw new HttpError(401, "Unauthorized");

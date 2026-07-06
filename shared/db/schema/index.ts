@@ -35,3 +35,4 @@ export * from "./thread_type_policy_log";
 export * from "./quiet_hours_log";
 export * from "./safety_flags";
 export * from "./safety_incidents";
+export * from "./app_users";

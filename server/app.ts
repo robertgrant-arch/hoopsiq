@@ -5,6 +5,7 @@ import { serve } from "inngest/express";
 import { registerFilmAnalysisRoutes } from "./modules/film-analysis/routes";
 import { DbFilmAnalysisService } from "./modules/film-analysis/service";
 import { registerMeRoute } from "./routes/me";
+import { registerAuthRoutes } from "./modules/auth/routes";
 import { registerRosterRoutes } from "./modules/roster/routes";
 import { registerAssignmentRoutes } from "./modules/assignments/routes";
 import { registerPracticePlanRoutes } from "./modules/practice-plans/routes";
@@ -80,6 +81,10 @@ export function createApp() {
 
   app.use(express.json());
   app.use(clerkMiddleware());
+
+  // First-party auth (login, session, admin user management) — replaces Clerk
+  // SSO for interactive sign-in. Registered before tenant-scoped routes.
+  registerAuthRoutes(app);
 
   const filmRouter = express.Router();
   registerFilmAnalysisRoutes(filmRouter, new DbFilmAnalysisService());
