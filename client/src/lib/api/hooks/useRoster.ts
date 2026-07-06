@@ -1,5 +1,8 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { IS_DEMO } from "@/lib/auth";
 import { apiGet, apiPost, apiPatch, apiDelete } from "../client";
+import { roster as demoRoster } from "@/lib/mock/data";
+
 
 // Types (subset of DB schema shape)
 export type Player = {
@@ -18,17 +21,42 @@ export type Player = {
   createdAt: string;
 };
 
+// Demo mode: map the mock roster into the API Player shape so pages render
+// without a live backend (mirrors the IS_DEMO pattern in useAdmin/useAnnouncements).
+const DEMO_PLAYERS: Player[] = demoRoster.map((a) => ({
+  id: a.id,
+  name: a.name,
+  position: a.position,
+  jerseyNumber: null,
+  grade: null,
+  gradYear: a.classYear,
+  height: a.height,
+  weight: null,
+  // One injured player so readiness views show a RESTRICTED example in demo.
+  status: a.id === "a_5" ? ("injured" as const) : ("active" as const),
+  role: null,
+  parentGuardianName: null,
+  parentGuardianEmail: null,
+  createdAt: "2026-01-15T00:00:00.000Z",
+}));
+
 export function useRoster() {
   return useQuery({
     queryKey: ["roster"],
-    queryFn: () => apiGet<Player[]>("/roster"),
+    queryFn: async (): Promise<Player[]> => {
+      if (IS_DEMO) return DEMO_PLAYERS;
+      return apiGet<Player[]>("/roster");
+    },
   });
 }
 
 export function usePlayer(id: string) {
   return useQuery({
     queryKey: ["roster", id],
-    queryFn: () => apiGet<Player>(`/roster/${id}`),
+    queryFn: async (): Promise<Player | null> => {
+      if (IS_DEMO) return DEMO_PLAYERS.find((p) => p.id === id) ?? null;
+      return apiGet<Player>(`/roster/${id}`);
+    },
     enabled: !!id,
   });
 }

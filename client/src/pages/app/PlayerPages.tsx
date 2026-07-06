@@ -30,6 +30,8 @@ import {
   todayWodRecord,
 } from "@/features/readiness/checkin";
 import { apiGet } from "@/lib/api/client";
+import { useTeamReadinessToday } from "@/lib/api/hooks/useReadiness";
+import { useAssignments } from "@/lib/api/hooks/useAssignments";
 import { AppShell, PageHeader } from "@/components/app/AppShell";
 import { useAuth } from "@/lib/auth";
 import {
@@ -134,7 +136,14 @@ const DANGER_CLR = "oklch(0.68 0.22 25)";
 const MUTED_CLR = "oklch(0.55 0.02 260)";
 
 function DailyStatusStrip() {
-  const checkinDone = todayCheckinDone;
+  const { user } = useAuth();
+  // Server stores readiness check-ins keyed by the auth userId (see
+  // server/modules/readiness/routes.ts POST /). Fall back to the static mock
+  // flag until data arrives so the strip never renders blank.
+  const { data: todayCheckins } = useTeamReadinessToday();
+  const checkinDone = todayCheckins
+    ? todayCheckins.some((c) => c.playerId === user?.id)
+    : todayCheckinDone;
   const wodState = todayWodRecord.state;
 
   const checkinColor = checkinDone ? SUCCESS_CLR : WARNING_CLR;
@@ -231,6 +240,12 @@ export function PlayerDashboard() {
   const { user } = useAuth();
   const unread = notifications.filter((n) => !n.read).length;
 
+  // Assignments summary — wired to /api/assignments (mock in demo mode).
+  const { data: myAssignments, isLoading: assignmentsLoading } = useAssignments();
+  const openAssignments = (myAssignments ?? []).filter(
+    (a) => a.status === "assigned" || a.status === "in_progress" || a.status === "overdue",
+  ).length;
+
   return (
     <AppShell>
       <div className="px-6 lg:px-10 py-8 max-w-[1400px] mx-auto">
@@ -299,29 +314,31 @@ export function PlayerDashboard() {
             icon={<Flame className="w-4 h-4" />}
           />
 
-          {/* Open coaching actions */}
+          {/* Open assignments */}
           <div
             className="rounded-lg border p-5 flex flex-col justify-between"
             style={{
-              borderColor: MOCK_HUB_DATA.coachActions.filter(a => a.status !== "resolved").length > 0
+              borderColor: openAssignments > 0
                 ? "oklch(0.78 0.16 75 / 0.35)"
                 : "hsl(var(--border))",
-              background: MOCK_HUB_DATA.coachActions.filter(a => a.status !== "resolved").length > 0
+              background: openAssignments > 0
                 ? "oklch(0.78 0.16 75 / 0.07)"
                 : "hsl(var(--card))",
             }}
           >
             <div className="flex items-center justify-between mb-3">
               <div className="text-[11px] uppercase tracking-[0.12em] font-mono text-muted-foreground">
-                Coach Actions
+                Assignments
               </div>
               <Zap className="w-4 h-4 text-amber-500" />
             </div>
             <div className="display text-3xl leading-none mb-2">
-              {MOCK_HUB_DATA.coachActions.filter(a => a.status !== "resolved").length}
+              {assignmentsLoading ? "…" : openAssignments}
             </div>
             <div className="text-[12px] text-muted-foreground">
-              {MOCK_HUB_DATA.coachActions.filter(a => a.status !== "resolved").length > 0
+              {assignmentsLoading
+                ? "loading"
+                : openAssignments > 0
                 ? "open · needs action"
                 : "all caught up"}
             </div>

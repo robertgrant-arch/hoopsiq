@@ -48,6 +48,10 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { useAuth } from "@/lib/auth";
 import { apiGet } from "@/lib/api/client";
+import { toast } from "sonner";
+import { SkeletonCard } from "@/components/ui/SkeletonCard";
+import { useRoster } from "@/lib/api/hooks/useRoster";
+import { useCreateAssignment } from "@/lib/api/hooks/useAssignments";
 import {
   org,
   roster,
@@ -142,7 +146,42 @@ export { CoachDashboard } from "./coach/CoachDashboard";
 
 export function CoachRoster() {
   const [search, setSearch] = useState("");
-  const filtered = roster.filter(
+  const { data: players, isLoading, isError, refetch } = useRoster();
+
+  // Gamification/contact columns (level, XP, streak, WOD compliance, phone,
+  // email, last-active) have no API hook yet — enrich from mock by id when
+  // available, otherwise show placeholders.
+  const mockById = useMemo(() => new Map(roster.map((m) => [m.id, m])), []);
+  const athletes = useMemo(
+    () =>
+      (players ?? []).map((p) => {
+        const extras = mockById.get(p.id);
+        return {
+          id: p.id,
+          name: p.name,
+          initials: p.name
+            .split(" ")
+            .map((w) => w[0] ?? "")
+            .slice(0, 2)
+            .join("")
+            .toUpperCase(),
+          position: p.position ?? "—",
+          height: p.height ?? "—",
+          classYear: p.gradYear,
+          level: extras?.level ?? null,
+          xp: extras?.xp ?? null,
+          streak: extras?.streak ?? null,
+          compliance: extras?.compliance ?? null,
+          lastActive: extras?.lastActive ?? "—",
+          phone: extras?.phone,
+          email: extras?.email,
+          isMinor: extras?.isMinor ?? false,
+        };
+      }),
+    [players, mockById],
+  );
+
+  const filtered = athletes.filter(
     (a) =>
       !search.trim() ||
       a.name.toLowerCase().includes(search.toLowerCase()) ||
@@ -155,7 +194,11 @@ export function CoachRoster() {
         <PageHeader
           eyebrow="Coach HQ · Roster"
           title="Texas Elite Varsity"
-          subtitle="12 athletes · 2025–2026 season"
+          subtitle={
+            isLoading
+              ? "Loading roster…"
+              : `${athletes.length} athlete${athletes.length !== 1 ? "s" : ""} · 2025–2026 season`
+          }
           actions={
             <div className="flex items-center gap-2">
               <Link href="/app/coach/parents" asChild>
@@ -181,6 +224,29 @@ export function CoachRoster() {
           />
         </div>
 
+        {isLoading ? (
+          <div className="space-y-3">
+            {[0, 1, 2, 3].map((i) => <SkeletonCard key={i} lines={2} />)}
+          </div>
+        ) : isError ? (
+          <div className="rounded-xl border border-border bg-card px-5 py-10 text-center">
+            <AlertTriangle className="w-5 h-5 mx-auto mb-2 text-muted-foreground" />
+            <p className="text-[13px] font-semibold mb-1">Couldn't load the roster</p>
+            <p className="text-[12px] text-muted-foreground mb-4">Check your connection and try again.</p>
+            <button
+              onClick={() => refetch()}
+              className="inline-flex items-center gap-2 h-9 px-4 rounded-md border border-border text-[12.5px] font-semibold hover:bg-muted transition"
+            >
+              Retry
+            </button>
+          </div>
+        ) : athletes.length === 0 ? (
+          <div className="rounded-xl border border-border bg-card px-5 py-10 text-center">
+            <Users className="w-5 h-5 mx-auto mb-2 text-muted-foreground" />
+            <p className="text-[13px] font-semibold mb-1">No athletes on the roster yet</p>
+            <p className="text-[12px] text-muted-foreground">Invite athletes to get your team set up.</p>
+          </div>
+        ) : (
         <div className="rounded-xl border border-border bg-card overflow-x-auto">
           <table className="w-full text-[13px]">
             <thead>
@@ -231,16 +297,24 @@ export function CoachRoster() {
                   </Td>
                   <Td>{a.position}</Td>
                   <Td className="whitespace-nowrap">{a.height}</Td>
-                  <Td>'{a.classYear.toString().slice(2)}</Td>
-                  <Td><span className="font-mono">{a.level}</span></Td>
-                  <Td className="font-mono">{a.xp.toLocaleString()}</Td>
+                  <Td>{a.classYear != null ? `'${a.classYear.toString().slice(2)}` : "—"}</Td>
+                  <Td><span className="font-mono">{a.level ?? "—"}</span></Td>
+                  <Td className="font-mono">{a.xp != null ? a.xp.toLocaleString() : "—"}</Td>
                   <Td>
-                    <span className="inline-flex items-center gap-1">
-                      🔥 <span className="font-mono">{a.streak}</span>
-                    </span>
+                    {a.streak != null ? (
+                      <span className="inline-flex items-center gap-1">
+                        🔥 <span className="font-mono">{a.streak}</span>
+                      </span>
+                    ) : (
+                      <span className="text-muted-foreground/40">—</span>
+                    )}
                   </Td>
                   <Td>
-                    <ComplianceChip value={a.compliance} />
+                    {a.compliance != null ? (
+                      <ComplianceChip value={a.compliance} />
+                    ) : (
+                      <span className="text-muted-foreground/40">—</span>
+                    )}
                   </Td>
                   <Td className="text-muted-foreground whitespace-nowrap">{a.lastActive}</Td>
                 </tr>
@@ -255,6 +329,7 @@ export function CoachRoster() {
             </tbody>
           </table>
         </div>
+        )}
       </div>
     </AppShell>
   );
@@ -827,7 +902,64 @@ function TelestrationCanvas({ activeTimestamp }: { activeTimestamp: string | nul
   );
 }
 
+const ASSIGNMENT_TYPES = ["Workout", "Drill", "Film Clip", "Quiz"] as const;
+
 export function CoachAssignments() {
+  const rosterQuery = useRoster();
+  const createAssignment = useCreateAssignment();
+
+  const [type, setType] = useState<(typeof ASSIGNMENT_TYPES)[number]>("Workout");
+  const [title, setTitle] = useState("Pull-up Jumper Sharpening");
+  const [description, setDescription] = useState(
+    "Three-round circuit. Focus on balance before release. Submit video of last set.",
+  );
+  const [dueDate, setDueDate] = useState("");
+  const [recurrence, setRecurrence] = useState("One time");
+  const [targetGroup, setTargetGroup] = useState("Full Team");
+
+  const players = rosterQuery.data ?? [];
+  // Season runs Aug–Jul: graduating class for the current season, then work back.
+  const now = new Date();
+  const seasonEndYear = now.getMonth() >= 7 ? now.getFullYear() + 1 : now.getFullYear();
+  const groups = [
+    { label: "Full Team", members: players },
+    { label: "Guards", members: players.filter((p) => p.position === "PG" || p.position === "SG") },
+    { label: "Wings", members: players.filter((p) => p.position === "SF") },
+    { label: "Bigs", members: players.filter((p) => p.position === "PF" || p.position === "C") },
+    { label: "Juniors", members: players.filter((p) => p.gradYear === seasonEndYear + 1) },
+    { label: "Underclassmen", members: players.filter((p) => (p.gradYear ?? 0) >= seasonEndYear + 2) },
+  ];
+  const selected = groups.find((g) => g.label === targetGroup) ?? groups[0];
+
+  function handleAssign() {
+    if (!title.trim()) {
+      toast.error("Give the assignment a title first.");
+      return;
+    }
+    createAssignment.mutate(
+      {
+        title: title.trim(),
+        description: description.trim() || null,
+        status: "assigned",
+        dueAt: dueDate ? new Date(`${dueDate}T23:59:00`).toISOString() : null,
+        payload: {
+          type,
+          recurrence,
+          targetGroup: selected.label,
+          targetPlayerIds: selected.members.map((m) => m.id),
+        },
+      },
+      {
+        onSuccess: () =>
+          toast.success(
+            `Assigned "${title.trim()}" to ${selected.members.length} athlete${selected.members.length !== 1 ? "s" : ""}`,
+          ),
+        onError: () =>
+          toast.error("Couldn't create the assignment — check your connection and try again."),
+      },
+    );
+  }
+
   return (
     <AppShell>
       <div className="px-6 lg:px-10 py-8 max-w-[1400px] mx-auto">
@@ -840,10 +972,15 @@ export function CoachAssignments() {
           <div className="space-y-5">
             <Field label="Type" required>
               <div className="grid grid-cols-4 gap-2">
-                {["Workout", "Drill", "Film Clip", "Quiz"].map((t) => (
+                {ASSIGNMENT_TYPES.map((t) => (
                   <button
                     key={t}
-                    className="h-10 rounded-md border border-border text-[13px] hover:border-primary hover:bg-primary/5 transition"
+                    onClick={() => setType(t)}
+                    className={`h-10 rounded-md border text-[13px] transition ${
+                      type === t
+                        ? "border-primary bg-primary/10 text-primary"
+                        : "border-border hover:border-primary hover:bg-primary/5"
+                    }`}
                   >
                     {t}
                   </button>
@@ -853,25 +990,33 @@ export function CoachAssignments() {
             <Field label="Title" required>
               <input
                 className="w-full bg-transparent border border-border rounded-md h-10 px-3 text-[13px] focus:outline-none focus:border-primary"
-                defaultValue="Pull-up Jumper Sharpening"
+                value={title}
+                onChange={(e) => setTitle(e.target.value)}
               />
             </Field>
             <Field label="Description">
               <textarea
                 rows={3}
                 className="w-full bg-transparent border border-border rounded-md p-3 text-[13px] resize-none focus:outline-none focus:border-primary"
-                defaultValue="Three-round circuit. Focus on balance before release. Submit video of last set."
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
               />
             </Field>
             <div className="grid grid-cols-2 gap-4">
               <Field label="Due Date" required>
                 <input
                   type="date"
+                  value={dueDate}
+                  onChange={(e) => setDueDate(e.target.value)}
                   className="w-full bg-transparent border border-border rounded-md h-10 px-3 text-[13px] focus:outline-none focus:border-primary"
                 />
               </Field>
               <Field label="Recurrence">
-                <select className="w-full bg-transparent border border-border rounded-md h-10 px-3 text-[13px] focus:outline-none focus:border-primary">
+                <select
+                  value={recurrence}
+                  onChange={(e) => setRecurrence(e.target.value)}
+                  className="w-full bg-transparent border border-border rounded-md h-10 px-3 text-[13px] focus:outline-none focus:border-primary"
+                >
                   <option>One time</option>
                   <option>Daily</option>
                   <option>3x / week</option>
@@ -880,14 +1025,38 @@ export function CoachAssignments() {
               </Field>
             </div>
             <Field label="Assign To" required>
-              <div className="flex flex-wrap gap-2">
-                <Chip selected>Full Team · 12</Chip>
-                <Chip>Guards · 5</Chip>
-                <Chip>Wings · 3</Chip>
-                <Chip>Bigs · 4</Chip>
-                <Chip>Juniors · 5</Chip>
-                <Chip>Underclassmen · 7</Chip>
-              </div>
+              {rosterQuery.isLoading ? (
+                <SkeletonCard lines={1} />
+              ) : rosterQuery.isError ? (
+                <div className="rounded-md border border-border bg-card px-4 py-3 flex items-center gap-3">
+                  <AlertTriangle className="w-4 h-4 text-muted-foreground shrink-0" />
+                  <span className="text-[12.5px] text-muted-foreground flex-1">
+                    Couldn't load the roster for targeting.
+                  </span>
+                  <button
+                    onClick={() => rosterQuery.refetch()}
+                    className="h-8 px-3 rounded-md border border-border text-[12px] font-semibold hover:bg-muted transition"
+                  >
+                    Retry
+                  </button>
+                </div>
+              ) : players.length === 0 ? (
+                <div className="rounded-md border border-border bg-card px-4 py-3 text-[12.5px] text-muted-foreground">
+                  No athletes on the roster yet — add players before assigning work.
+                </div>
+              ) : (
+                <div className="flex flex-wrap gap-2">
+                  {groups.map((g) => (
+                    <Chip
+                      key={g.label}
+                      selected={targetGroup === g.label}
+                      onClick={() => setTargetGroup(g.label)}
+                    >
+                      {g.label} · {g.members.length}
+                    </Chip>
+                  ))}
+                </div>
+              )}
             </Field>
           </div>
           <div className="rounded-xl border border-border bg-card p-5 h-fit sticky top-6">
@@ -895,8 +1064,19 @@ export function CoachAssignments() {
             <p className="text-[13px] text-muted-foreground leading-relaxed mb-5">
               Athletes will receive an in-app notification + email. Parents of minor athletes auto-cc'd.
             </p>
-            <button className="w-full h-11 rounded-md bg-primary text-primary-foreground font-semibold text-[13px] uppercase tracking-[0.08em] hover:brightness-110 transition">
-              Assign to 12 Athletes
+            <button
+              onClick={handleAssign}
+              disabled={
+                createAssignment.isPending ||
+                rosterQuery.isLoading ||
+                rosterQuery.isError ||
+                selected.members.length === 0
+              }
+              className="w-full h-11 rounded-md bg-primary text-primary-foreground font-semibold text-[13px] uppercase tracking-[0.08em] hover:brightness-110 transition disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              {createAssignment.isPending
+                ? "Assigning…"
+                : `Assign to ${selected.members.length} Athlete${selected.members.length !== 1 ? "s" : ""}`}
             </button>
             <button className="w-full mt-2 h-11 rounded-md border border-border text-[12.5px] hover:bg-muted transition">
               Save as Template
@@ -929,12 +1109,15 @@ function Field({
 function Chip({
   children,
   selected,
+  onClick,
 }: {
   children: React.ReactNode;
   selected?: boolean;
+  onClick?: () => void;
 }) {
   return (
     <button
+      onClick={onClick}
       className={`h-8 px-3 rounded-full text-[12px] border transition ${
         selected
           ? "bg-primary/15 border-primary text-primary"

@@ -40,6 +40,7 @@ import {
 import { useAuth } from "@/lib/auth";
 import { toast } from "sonner";
 import { useSubmitCheckin } from "@/features/workout-log";
+import { useTeamReadinessToday } from "@/lib/api/hooks/useReadiness";
 
 // ─── Constants ────────────────────────────────────────────────────────────────
 
@@ -743,6 +744,12 @@ export default function PlayerCheckinPage(): React.ReactElement {
   const todayEntry = myReadinessHistory[0];
   const { mutate: submitCheckin } = useSubmitCheckin();
 
+  // If the server already has a check-in for this player today (readiness rows
+  // are keyed by the auth userId), show the submitted state on revisit.
+  const { data: todayCheckins } = useTeamReadinessToday();
+  const alreadyCheckedIn =
+    submitted || (todayCheckins?.some((c) => c.playerId === user?.id) ?? false);
+
   function handleCheckinSubmit(data: {
     soreness: 1|2|3|4|5;
     sleep: 1|2|3|4|5;
@@ -760,7 +767,7 @@ export default function PlayerCheckinPage(): React.ReactElement {
     <AppShell>
       <div className="px-4 pb-24 max-w-lg mx-auto pt-4 space-y-5">
 
-        {submitted ? (
+        {alreadyCheckedIn ? (
           <SubmittedCard today={todayEntry} />
         ) : (
           <CheckinForm

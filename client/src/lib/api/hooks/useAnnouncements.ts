@@ -4,13 +4,10 @@
  * parent and athlete portals still work without a live backend.
  */
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { IS_DEMO } from "@/lib/auth";
 import { apiGet, apiPost, apiDelete } from "../client";
 import { mockAnnouncements } from "@/lib/mock/parent";
 
-const IS_DEMO =
-  typeof window !== "undefined" &&
-  (new URLSearchParams(window.location.search).get("demo") === "true" ||
-    import.meta.env.VITE_DEMO_MODE === "true");
 
 export type AnnouncementItem = {
   id: string;

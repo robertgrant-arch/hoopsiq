@@ -11,13 +11,10 @@
  * Counts are capped at 99 for display purposes.
  */
 import { useQuery } from "@tanstack/react-query";
+import { IS_DEMO } from "@/lib/auth";
 import { athleteUploads } from "@/lib/mock/data";
 import { apiGet } from "@/lib/api/client";
 
-const IS_DEMO =
-  typeof window !== "undefined" &&
-  (new URLSearchParams(window.location.search).get("demo") === "true" ||
-    import.meta.env.VITE_DEMO_MODE === "true");
 
 type BadgeCounts = {
   filmPending: number;

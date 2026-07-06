@@ -9,7 +9,9 @@ import { Link } from "wouter";
 import { AppShell, PageHeader } from "@/components/app/AppShell";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { mockPlayerAssignments, type PlayerAssignment, type AssignmentType, type AssignmentStatus } from "@/features/player/mock";
+import { type PlayerAssignment, type AssignmentType, type AssignmentStatus } from "@/features/player/mock";
+import { useAssignments, useCompleteAssignment, type Assignment } from "@/lib/api/hooks/useAssignments";
+import { SkeletonCard } from "@/components/ui/SkeletonCard";
 
 // ── Film Feedback slice ───────────────────────────────────────────────────────
 import { useFilmRepPlans } from "@/features/film-feedback";
@@ -42,6 +44,48 @@ const TYPE_META: Record<AssignmentType, { label: string; icon: React.ComponentTy
 };
 
 const STATUS_ORDER: AssignmentStatus[] = ["open", "in_progress", "submitted", "graded"];
+
+/* -------------------------------------------------------------------------- */
+/* API → view mapping                                                          */
+/* -------------------------------------------------------------------------- */
+
+/** Server statuses (shared/db/schema/assignments.ts) → athlete-portal statuses. */
+const API_STATUS_MAP: Record<string, AssignmentStatus> = {
+  assigned: "open",
+  overdue: "open",
+  in_progress: "in_progress",
+  submitted: "submitted",
+  reviewed: "graded",
+};
+
+/** Display extras the coach can attach in the assignment payload. */
+type AssignmentPayloadExtras = {
+  type?: AssignmentType;
+  priority?: "normal" | "high";
+  xpReward?: number;
+  assignedBy?: string;
+  coachFeedback?: string;
+};
+
+function toViewAssignment(a: Assignment): PlayerAssignment {
+  const extras = (a.payload ?? {}) as AssignmentPayloadExtras;
+  return {
+    id: a.id,
+    type: extras.type && extras.type in TYPE_META ? extras.type : "drill",
+    title: a.title,
+    description: a.description ?? "",
+    assignedBy: extras.assignedBy ?? "Coach",
+    assignedByRole: "coach",
+    dueDate: a.dueAt ?? a.createdAt,
+    status: API_STATUS_MAP[a.status] ?? "open",
+    priority: extras.priority === "high" ? "high" : "normal",
+    linkedClipId: a.filmClipId ?? undefined,
+    completedAt: a.submittedAt ?? undefined,
+    coachFeedback: extras.coachFeedback,
+    // 0 = no XP defined on this assignment; the card hides the XP row.
+    xpReward: extras.xpReward ?? 0,
+  };
+}
 
 function statusIcon(status: AssignmentStatus) {
   if (status === "graded" || status === "submitted") {
@@ -195,8 +239,12 @@ function AssignmentCard({
 
             <div className="flex items-center justify-between mt-3 flex-wrap gap-2">
               <div className="flex items-center gap-1.5 text-[11px]" style={{ color: "oklch(0.78 0.17 75)" }}>
-                <Star className="w-3 h-3" />
-                +{assignment.xpReward} XP
+                {assignment.xpReward > 0 && (
+                  <>
+                    <Star className="w-3 h-3" />
+                    +{assignment.xpReward} XP
+                  </>
+                )}
               </div>
 
               <div className="flex items-center gap-2">
@@ -260,8 +308,23 @@ function EmptyState() {
 type FilterTab = "all" | AssignmentStatus | AssignmentType;
 
 export default function PlayerAssignmentsPage() {
-  const [assignments, setAssignments] = useState(mockPlayerAssignments);
   const [filter, setFilter] = useState<"film" | "active" | "done">("film");
+  // Local status overrides: "Start" has no API endpoint yet, and "Submit"
+  // should reflect immediately without waiting for a refetch.
+  const [statusOverrides, setStatusOverrides] = useState<Record<string, AssignmentStatus>>({});
+
+  const {
+    data: apiAssignments,
+    isLoading: assignmentsLoading,
+    isError: assignmentsError,
+    refetch: refetchAssignments,
+  } = useAssignments();
+  const completeAssignment = useCompleteAssignment();
+
+  const assignments: PlayerAssignment[] = (apiAssignments ?? [])
+    .filter((a) => a.status !== "draft")
+    .map(toViewAssignment)
+    .map((a) => (statusOverrides[a.id] ? { ...a, status: statusOverrides[a.id] } : a));
 
   // Film Feedback slice — from coaching actions
   const { data: filmRepPlans = [], isLoading: filmLoading } = useFilmRepPlans();
@@ -273,22 +336,30 @@ export default function PlayerAssignmentsPage() {
   );
 
   function handleStart(id: string) {
-    setAssignments((prev) =>
-      prev.map((a) => (a.id === id ? { ...a, status: "in_progress" as const } : a)),
-    );
+    setStatusOverrides((prev) => ({ ...prev, [id]: "in_progress" }));
     toast.success("Assignment started — good luck!");
   }
 
   function handleSubmit(id: string) {
-    setAssignments((prev) =>
-      prev.map((a) =>
-        a.id === id
-          ? { ...a, status: "submitted" as const, completedAt: new Date().toISOString() }
-          : a,
-      ),
-    );
     const assignment = assignments.find((a) => a.id === id);
-    toast.success(`Submitted! +${assignment?.xpReward ?? 0} XP earned`);
+    setStatusOverrides((prev) => ({ ...prev, [id]: "submitted" }));
+    completeAssignment.mutate(
+      { id },
+      {
+        onSuccess: () => {
+          const xp = assignment?.xpReward ?? 0;
+          toast.success(xp > 0 ? `Submitted! +${xp} XP earned` : "Submitted!");
+        },
+        onError: () => {
+          setStatusOverrides((prev) => {
+            const next = { ...prev };
+            delete next[id];
+            return next;
+          });
+          toast.error("Couldn't submit — check your connection and try again.");
+        },
+      },
+    );
   }
 
   const active = assignments.filter((a) => a.status === "open" || a.status === "in_progress");
@@ -309,6 +380,30 @@ export default function PlayerAssignmentsPage() {
           subtitle="From your coach — film to watch, drills to run, work to do."
         />
 
+        {/* ── Loading / error states ──────────────────────────────────────── */}
+        {assignmentsLoading && (
+          <div className="flex flex-col gap-3">
+            <SkeletonCard lines={3} />
+            <SkeletonCard lines={3} />
+            <SkeletonCard lines={3} />
+          </div>
+        )}
+
+        {!assignmentsLoading && assignmentsError && (
+          <div className="rounded-xl border border-border bg-card px-6 py-10 flex flex-col items-center text-center gap-3">
+            <AlertCircle className="w-8 h-8" style={{ color: "oklch(0.68 0.22 25)" }} />
+            <p className="font-semibold">Couldn't load your assignments</p>
+            <p className="text-[12px] text-muted-foreground max-w-xs">
+              Check your connection and try again.
+            </p>
+            <Button size="sm" variant="outline" onClick={() => refetchAssignments()}>
+              Retry
+            </Button>
+          </div>
+        )}
+
+        {!assignmentsLoading && !assignmentsError && (
+        <>
         {/* ── Tab bar ─────────────────────────────────────────────────────── */}
         <div className="flex gap-1.5">
           {(["film", "active", "done"] as const).map((f) => {
@@ -417,6 +512,8 @@ export default function PlayerAssignmentsPage() {
               </div>
             )}
           </div>
+        )}
+        </>
         )}
       </div>
     </AppShell>

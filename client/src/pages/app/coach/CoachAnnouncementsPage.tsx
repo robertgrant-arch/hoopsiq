@@ -24,18 +24,63 @@ import {
 import { AppShell, PageHeader } from "@/components/app/AppShell";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { SkeletonCard } from "@/components/ui/SkeletonCard";
 import {
-  announcements as initialAnnouncements,
-  type Announcement,
-  type AnnouncementAudience,
-  type AnnouncementPriority,
-} from "@/features/announcements/mock";
+  useAnnouncements,
+  useCreateAnnouncement,
+  useDeleteAnnouncement,
+  type AnnouncementItem,
+} from "@/lib/api/hooks/useAnnouncements";
 
 /* -------------------------------------------------------------------------- */
-/* Constants                                                                   */
+/* Types & constants                                                           */
 /* -------------------------------------------------------------------------- */
 
-const NOW = new Date("2026-05-15T12:00:00Z");
+type AnnouncementAudience = "all" | "players" | "parents" | "coaches";
+type AnnouncementPriority = "normal" | "urgent";
+
+/** View model rendered by this page, mapped from the API AnnouncementItem. */
+type Announcement = {
+  id: string;
+  authorName: string;
+  authorRole: string;
+  title: string;
+  body: string;
+  audience: AnnouncementAudience;
+  priority: AnnouncementPriority;
+  pinned: boolean;
+  createdAt: string;
+  /** Read receipts have no API endpoint yet — 0 recipients hides the bar. */
+  readBy: string[];
+  recipientCount: number;
+};
+
+function toView(a: AnnouncementItem): Announcement {
+  const roles = a.audienceRoles ?? [];
+  const audience: AnnouncementAudience =
+    roles.length === 0 || roles.length >= 3
+      ? "all"
+      : roles.some((r) => r.startsWith("player") || r.startsWith("athlete"))
+        ? "players"
+        : roles.some((r) => r.startsWith("parent") || r.startsWith("guardian"))
+          ? "parents"
+          : "coaches";
+  return {
+    id: a.id,
+    authorName: a.authorName,
+    authorRole: "coach",
+    title: a.title,
+    body: a.body,
+    audience,
+    priority: a.priority === "urgent" ? "urgent" : "normal",
+    pinned: a.pinned,
+    createdAt: a.publishedAt,
+    readBy: [],
+    recipientCount: 0,
+  };
+}
+
+const NOW = new Date();
 
 const PRIMARY   = "oklch(0.72 0.18 290)";
 const DANGER    = "oklch(0.68 0.22 25)";
@@ -100,14 +145,16 @@ function StatsStrip({ items }: { items: Announcement[] }) {
     const d = new Date(a.createdAt);
     return d.getFullYear() === NOW.getFullYear() && d.getMonth() === NOW.getMonth();
   });
-  const avgReadRate = items.length === 0 ? 0 :
-    Math.round(items.reduce((sum, a) => sum + (a.readBy.length / a.recipientCount), 0) / items.length * 100);
-  const unread = items.reduce((sum, a) => sum + Math.max(0, a.recipientCount - a.readBy.length), 0);
+  // Read receipts are only available for items that carry recipient data.
+  const withReceipts = items.filter((a) => a.recipientCount > 0);
+  const avgReadRate = withReceipts.length === 0 ? null :
+    Math.round(withReceipts.reduce((sum, a) => sum + (a.readBy.length / a.recipientCount), 0) / withReceipts.length * 100);
+  const unread = withReceipts.reduce((sum, a) => sum + Math.max(0, a.recipientCount - a.readBy.length), 0);
 
   const stats = [
     { label: "Sent this month", value: String(thisMonth.length) },
-    { label: "Avg read rate",   value: `${avgReadRate}%` },
-    { label: "Unread total",    value: String(unread) },
+    { label: "Avg read rate",   value: avgReadRate === null ? "—" : `${avgReadRate}%` },
+    { label: "Unread total",    value: withReceipts.length === 0 ? "—" : String(unread) },
   ];
 
   return (
@@ -308,7 +355,9 @@ function AnnouncementCard({
   onDelete: (id: string) => void;
 }) {
   const [confirmDelete, setConfirmDelete] = useState(false);
-  const readPct = Math.round((item.readBy.length / item.recipientCount) * 100);
+  const readPct = item.recipientCount > 0
+    ? Math.round((item.readBy.length / item.recipientCount) * 100)
+    : 0;
   const color = audienceColor(item.audience);
 
   return (
@@ -390,24 +439,26 @@ function AnnouncementCard({
           {item.authorName} · <span className="capitalize">{item.authorRole}</span>
         </div>
 
-        {/* Read receipt */}
-        <div className="mt-3">
-          <div className="flex items-center justify-between text-[11px] text-muted-foreground mb-1">
-            <span>{item.readBy.length} / {item.recipientCount} read</span>
-            <span className="font-medium" style={{ color: readPct >= 80 ? SUCCESS : readPct >= 50 ? WARNING : DANGER }}>
-              {readPct}%
-            </span>
+        {/* Read receipt — only rendered when recipient data exists */}
+        {item.recipientCount > 0 && (
+          <div className="mt-3">
+            <div className="flex items-center justify-between text-[11px] text-muted-foreground mb-1">
+              <span>{item.readBy.length} / {item.recipientCount} read</span>
+              <span className="font-medium" style={{ color: readPct >= 80 ? SUCCESS : readPct >= 50 ? WARNING : DANGER }}>
+                {readPct}%
+              </span>
+            </div>
+            <div className="h-1.5 rounded-full bg-muted overflow-hidden">
+              <div
+                className="h-full rounded-full transition-all"
+                style={{
+                  width: `${readPct}%`,
+                  background: readPct >= 80 ? SUCCESS : readPct >= 50 ? WARNING : DANGER,
+                }}
+              />
+            </div>
           </div>
-          <div className="h-1.5 rounded-full bg-muted overflow-hidden">
-            <div
-              className="h-full rounded-full transition-all"
-              style={{
-                width: `${readPct}%`,
-                background: readPct >= 80 ? SUCCESS : readPct >= 50 ? WARNING : DANGER,
-              }}
-            />
-          </div>
-        </div>
+        )}
 
         {/* Actions */}
         <div className="mt-3 flex items-center gap-2">
@@ -531,11 +582,25 @@ function EmptyState() {
 /* -------------------------------------------------------------------------- */
 
 export default function CoachAnnouncementsPage() {
-  const [items, setItems]           = useState<Announcement[]>(initialAnnouncements);
-  const [composing, setComposing]   = useState(false);
+  const { data, isLoading, isError, refetch } = useAnnouncements();
+  const createAnnouncement = useCreateAnnouncement();
+  const deleteAnnouncement = useDeleteAnnouncement();
+
+  // Local overlay so composing/deleting stays responsive even when the API is
+  // unavailable (demo mode); server data remains the source of truth otherwise.
+  const [localItems, setLocalItems]   = useState<Announcement[]>([]);
+  const [removedIds, setRemovedIds]   = useState<Set<string>>(new Set());
+  const [composing, setComposing]     = useState(false);
   const [activeFilter, setActiveFilter] = useState<FilterTab>("all");
-  const [pinnedOnly, setPinnedOnly] = useState(false);
-  const [expanded, setExpanded]     = useState<Set<string>>(new Set());
+  const [pinnedOnly, setPinnedOnly]   = useState(false);
+  const [expanded, setExpanded]       = useState<Set<string>>(new Set());
+
+  const items = useMemo<Announcement[]>(() => {
+    const fetched = (data ?? []).map(toView);
+    const fetchedIds = new Set(fetched.map((a) => a.id));
+    return [...localItems.filter((a) => !fetchedIds.has(a.id)), ...fetched]
+      .filter((a) => !removedIds.has(a.id));
+  }, [data, localItems, removedIds]);
 
   /* Derived list */
   const filtered = useMemo(() => {
@@ -563,27 +628,48 @@ export default function CoachAnnouncementsPage() {
   }, [items, activeFilter, pinnedOnly]);
 
   function handlePost(form: FormState) {
-    const next: Announcement = {
-      id:            `ann_new_${Date.now()}`,
-      orgId:         "org_barnegat",
-      authorId:      "coach_1",
-      authorName:    "Coach Marcus",
+    const local: Announcement = {
+      id:            `ann_local_${Date.now()}`,
+      authorName:    "You",
       authorRole:    "coach",
       title:         form.title,
       body:          form.body,
       audience:      form.audience,
       priority:      form.priority,
       pinned:        form.pinned,
-      createdAt:     NOW.toISOString(),
+      createdAt:     new Date().toISOString(),
       readBy:        [],
-      recipientCount: form.audience === "all" ? 18 : form.audience === "players" ? 12 : form.audience === "parents" ? 10 : 3,
+      recipientCount: 0,
     };
-    setItems((prev) => [next, ...prev]);
+    const audienceRoles =
+      form.audience === "all"     ? null :
+      form.audience === "players" ? ["player"] :
+      form.audience === "parents" ? ["parent"] : ["coach"];
+
+    createAnnouncement.mutate(
+      {
+        title: form.title,
+        body: form.body,
+        priority: form.priority,
+        pinned: form.pinned,
+        audienceRoles,
+        tags: [],
+      },
+      {
+        // API unavailable (e.g. demo mode) — keep the post locally so the
+        // composer still works.
+        onError: () => setLocalItems((prev) => [local, ...prev]),
+      },
+    );
     setComposing(false);
   }
 
   function handleDelete(id: string) {
-    setItems((prev) => prev.filter((a) => a.id !== id));
+    // Optimistically remove; local-only items never reach the API.
+    setRemovedIds((prev) => new Set(prev).add(id));
+    if (!id.startsWith("ann_local_")) {
+      deleteAnnouncement.mutate(id);
+    }
   }
 
   function toggleExpand(id: string) {
@@ -632,7 +718,20 @@ export default function CoachAnnouncementsPage() {
           onTogglePinned={() => setPinnedOnly((v) => !v)}
         />
 
-        {filtered.length === 0 ? (
+        {isLoading ? (
+          <div className="space-y-3">
+            {[0, 1, 2].map((i) => <SkeletonCard key={i} lines={3} />)}
+          </div>
+        ) : isError ? (
+          <div className="rounded-xl border border-border bg-card px-5 py-8 text-center">
+            <AlertTriangle className="w-5 h-5 mx-auto mb-2 text-muted-foreground" />
+            <p className="text-[13px] font-semibold mb-1">Couldn't load announcements</p>
+            <p className="text-[12px] text-muted-foreground mb-4">Check your connection and try again.</p>
+            <Button size="sm" variant="outline" onClick={() => refetch()}>
+              Retry
+            </Button>
+          </div>
+        ) : filtered.length === 0 ? (
           <EmptyState />
         ) : (
           <div className="space-y-3">

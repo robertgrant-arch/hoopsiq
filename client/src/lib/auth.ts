@@ -37,6 +37,10 @@ function isDemoMode(): boolean {
  *  instead of re-deriving from import.meta.env so the gates never disagree. */
 export const HAS_CLERK = !!import.meta.env.VITE_CLERK_PUBLISHABLE_KEY && !isDemoMode();
 
+/** Complement of HAS_CLERK for the API hook layer: when real auth isn't
+ *  active, hooks serve mock data instead of hitting endpoints that would 401. */
+export const IS_DEMO = !HAS_CLERK;
+
 // ---------------------------------------------------------------------------
 // Clerk path — only imported when Clerk is actually configured
 // ---------------------------------------------------------------------------

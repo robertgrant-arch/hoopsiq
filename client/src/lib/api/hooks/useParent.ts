@@ -7,6 +7,7 @@
  * validateParentChildAccess on every /api/parent/* endpoint.
  */
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { IS_DEMO } from "@/lib/auth";
 import { apiGet, apiPost } from "../client";
 import { useAuth } from "@/lib/auth";
 import {
@@ -18,10 +19,6 @@ import {
 } from "@/lib/mock/parent";
 import { mockPlayerAssignments } from "@/lib/mock/athlete";
 
-const IS_DEMO =
-  typeof window !== "undefined" &&
-  (new URLSearchParams(window.location.search).get("demo") === "true" ||
-    import.meta.env.VITE_DEMO_MODE === "true");
 
 // ── Children list ─────────────────────────────────────────────────────────────
 

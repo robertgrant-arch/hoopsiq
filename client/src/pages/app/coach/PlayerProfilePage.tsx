@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useMemo } from "react";
 import { useRoute, Link } from "wouter";
 import {
   TrendingUp, TrendingDown, Minus, Target, ChevronDown, ChevronUp,
@@ -14,6 +14,8 @@ import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
 import { computePlayerReadiness, REASON_LABELS as READINESS_REASON_LABELS } from "@/features/readiness";
 import { ReadinessStatusBadge } from "@/features/readiness";
+import { usePlayer } from "@/lib/api/hooks/useRoster";
+import { usePlayerReadiness } from "@/lib/api/hooks/useReadiness";
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 
@@ -84,7 +86,7 @@ const MOCK_PLAYER = {
   yearsPlaying: 8, role: "Starter", gpa: "3.4",
   recruitingStatus: "D1 Interest",
   phone: "(832) 555-0194", email: "mdavis26@school.edu",
-  status: "active" as const,
+  status: "active" as "active" | "injured" | "suspended" | "inactive",
   bio: "Lead guard with elite court vision and a developing off-dribble game. Three-year varsity starter with D1 evaluations in progress.",
   academicNotes: "3.4 GPA as of Spring semester. AP History and AP Calculus enrolled. NCAA eligibility on track.",
 };
@@ -202,23 +204,6 @@ const MOCK_ATTENDANCE: AttendanceRecord[] = [
   { id: "a10", date: "2025-04-02", eventType: "practice",  eventTitle: "Wednesday Practice",        status: "present" },
   { id: "a11", date: "2025-03-29", eventType: "practice",  eventTitle: "Saturday Practice",         status: "present" },
   { id: "a12", date: "2025-03-26", eventType: "practice",  eventTitle: "Wednesday Practice",        status: "absent",  note: "Illness — unexcused" },
-];
-
-const MOCK_READINESS: ReadinessDay[] = [
-  { label: "Apr 15", fatigue: 3, sleep: 8, soreness: 2, mood: 8, flagged: false },
-  { label: "Apr 16", fatigue: 4, sleep: 7, soreness: 3, mood: 7, flagged: false },
-  { label: "Apr 17", fatigue: 5, sleep: 6, soreness: 5, mood: 6, flagged: false },
-  { label: "Apr 18", fatigue: 6, sleep: 6, soreness: 6, mood: 5, flagged: false },
-  { label: "Apr 19", fatigue: 4, sleep: 7, soreness: 4, mood: 7, flagged: false },
-  { label: "Apr 20", fatigue: 7, sleep: 5, soreness: 7, mood: 4, flagged: true  },
-  { label: "Apr 21", fatigue: 8, sleep: 6, soreness: 7, mood: 4, flagged: true  },
-  { label: "Apr 22", fatigue: 5, sleep: 8, soreness: 4, mood: 7, flagged: false },
-  { label: "Apr 23", fatigue: 3, sleep: 9, soreness: 2, mood: 9, flagged: false },
-  { label: "Apr 24", fatigue: 4, sleep: 8, soreness: 3, mood: 8, flagged: false },
-  { label: "Apr 25", fatigue: 5, sleep: 7, soreness: 4, mood: 7, flagged: false },
-  { label: "Apr 26", fatigue: 6, sleep: 7, soreness: 5, mood: 6, flagged: false },
-  { label: "Apr 27", fatigue: 3, sleep: 8, soreness: 2, mood: 9, flagged: false },
-  { label: "Apr 28", fatigue: 4, sleep: 8, soreness: 3, mood: 8, flagged: false },
 ];
 
 const MOCK_INJURIES: InjuryRecord[] = [
@@ -1655,20 +1640,55 @@ const TABS: ProfileTab[] = ["Overview", "Development", "Film", "Attendance", "He
 export function PlayerProfilePage() {
   const [_match, params] = useRoute("/app/coach/players/:id");
   const playerId = params?.id ?? MOCK_PLAYER.id;
-  void playerId;
+
+  const playerQuery = usePlayer(playerId);
+  const readinessQuery = usePlayerReadiness(playerId, 14);
 
   const [activeTab, setActiveTab] = useState<ProfileTab>("Overview");
-  const [isLoading, setIsLoading] = useState(true);
   const [notes, setNotes] = useState<PlayerNote[]>(MOCK_NOTES_INIT);
   const [recStatuses, setRecStatuses] = useState<Record<string, AIRec["status"]>>(
     Object.fromEntries(AI_RECS.map(r => [r.id, r.status]))
   );
 
-  // Simulate data loading
-  useEffect(() => {
-    const t = setTimeout(() => setIsLoading(false), 480);
-    return () => clearTimeout(t);
-  }, [playerId]);
+  // Identity fields come from the API player when available; profile depth
+  // (tier, role, GPA, bio, recruiting…) has no API endpoint yet and stays mock.
+  const apiPlayer = playerQuery.data;
+  const player = useMemo(() => {
+    if (!apiPlayer) return MOCK_PLAYER;
+    return {
+      ...MOCK_PLAYER,
+      id: apiPlayer.id,
+      name: apiPlayer.name,
+      initials: apiPlayer.name
+        .split(" ")
+        .map((w) => w[0] ?? "")
+        .slice(0, 2)
+        .join("")
+        .toUpperCase(),
+      position: apiPlayer.position ?? MOCK_PLAYER.position,
+      jerseyNumber: apiPlayer.jerseyNumber ?? MOCK_PLAYER.jerseyNumber,
+      gradYear: apiPlayer.gradYear ?? MOCK_PLAYER.gradYear,
+      height: apiPlayer.height ?? MOCK_PLAYER.height,
+      weight: apiPlayer.weight ?? MOCK_PLAYER.weight,
+      status: apiPlayer.status,
+    };
+  }, [apiPlayer]);
+
+  // Wellness history from the readiness API, mapped to the chart's day shape.
+  const readinessDays = useMemo<ReadinessDay[]>(
+    () =>
+      [...(readinessQuery.data ?? [])]
+        .sort((a, b) => a.checkedInAt.localeCompare(b.checkedInAt))
+        .map((c) => ({
+          label: new Date(c.checkedInAt).toLocaleDateString("en-US", { month: "short", day: "numeric" }),
+          fatigue: c.fatigue,
+          sleep: c.sleep,
+          soreness: c.soreness,
+          mood: c.mood,
+          flagged: c.flagged,
+        })),
+    [readinessQuery.data],
+  );
 
   function acceptRec(id: string) {
     setRecStatuses(prev => ({ ...prev, [id]: "accepted" }));
@@ -1697,7 +1717,31 @@ export function PlayerProfilePage() {
   const overallAvg = (SKILLS.reduce((a, s) => a + s.avg, 0) / SKILLS.length).toFixed(1);
   const hasActiveInjury = MOCK_INJURIES.some(i => i.status !== "cleared");
 
-  if (isLoading) return <AppShell><ProfileSkeleton /></AppShell>;
+  if (playerQuery.isLoading || readinessQuery.isLoading) {
+    return <AppShell><ProfileSkeleton /></AppShell>;
+  }
+
+  if (playerQuery.isError) {
+    return (
+      <AppShell>
+        <div className="p-6 max-w-[1200px] mx-auto">
+          <Link href="/app/coach/roster" asChild>
+            <a className="inline-flex items-center gap-1.5 text-[12.5px] text-muted-foreground hover:text-foreground transition mb-5">
+              <ArrowLeft className="w-3.5 h-3.5" /> Roster
+            </a>
+          </Link>
+          <div className="rounded-xl border border-border bg-card px-5 py-10 text-center">
+            <AlertTriangle className="w-5 h-5 mx-auto mb-2 text-muted-foreground" />
+            <p className="text-[13px] font-semibold mb-1">Couldn't load this player</p>
+            <p className="text-[12px] text-muted-foreground mb-4">Check your connection and try again.</p>
+            <Button size="sm" variant="outline" onClick={() => playerQuery.refetch()}>
+              Retry
+            </Button>
+          </div>
+        </div>
+      </AppShell>
+    );
+  }
 
   return (
     <AppShell>
@@ -1715,17 +1759,17 @@ export function PlayerProfilePage() {
           <div className="flex items-start gap-5">
             {/* Avatar */}
             <div className="w-16 h-16 rounded-xl bg-[oklch(0.72_0.18_290_/_0.15)] border border-[oklch(0.72_0.18_290_/_0.3)] flex items-center justify-center text-[22px] font-bold shrink-0 text-[oklch(0.65_0.18_290)]">
-              {MOCK_PLAYER.initials}
+              {player.initials}
             </div>
             <div>
               <div className="flex items-center gap-2 flex-wrap mb-1.5">
-                <h1 className="text-[26px] font-bold leading-none">{MOCK_PLAYER.name}</h1>
+                <h1 className="text-[26px] font-bold leading-none">{player.name}</h1>
                 <Badge className="text-[11px] font-mono h-6 px-2"
                        style={{ background: "oklch(0.72 0.18 290 / 0.15)", color: "oklch(0.65 0.18 290)", border: "1px solid oklch(0.72 0.18 290 / 0.35)" }}>
-                  #{MOCK_PLAYER.jerseyNumber} · {MOCK_PLAYER.position}
+                  #{player.jerseyNumber} · {player.position}
                 </Badge>
-                <Badge variant="outline" className="text-[11px] h-6 px-2">{MOCK_PLAYER.tier}</Badge>
-                <Badge variant="outline" className="text-[11px] h-6 px-2">{MOCK_PLAYER.role}</Badge>
+                <Badge variant="outline" className="text-[11px] h-6 px-2">{player.tier}</Badge>
+                <Badge variant="outline" className="text-[11px] h-6 px-2">{player.role}</Badge>
                 {hasActiveInjury && (
                   <Badge className="text-[11px] h-6 px-2 bg-[oklch(0.72_0.17_75_/_0.15)] text-[oklch(0.65_0.17_75)] border border-[oklch(0.72_0.17_75_/_0.4)]">
                     <AlertTriangle className="w-3 h-3 mr-1" /> Health Flag
@@ -1733,20 +1777,20 @@ export function PlayerProfilePage() {
                 )}
               </div>
               <div className="flex items-center gap-3 flex-wrap text-[12.5px] text-muted-foreground">
-                <span>{MOCK_PLAYER.height} · {MOCK_PLAYER.weight} lbs</span>
+                <span>{player.height} · {player.weight} lbs</span>
                 <span>·</span>
-                <span>{MOCK_PLAYER.handedness}-handed</span>
+                <span>{player.handedness}-handed</span>
                 <span>·</span>
-                <span>{MOCK_PLAYER.yearsPlaying} yrs playing</span>
+                <span>{player.yearsPlaying} yrs playing</span>
                 <span>·</span>
-                <span>GPA {MOCK_PLAYER.gpa}</span>
+                <span>GPA {player.gpa}</span>
                 <span>·</span>
-                <span>Class of {MOCK_PLAYER.gradYear}</span>
+                <span>Class of {player.gradYear}</span>
               </div>
               <div className="flex items-center gap-2 mt-2">
                 <span className="text-[11.5px] px-2.5 py-0.5 rounded-full font-semibold"
                       style={{ background: "oklch(0.75 0.18 150 / 0.15)", color: "oklch(0.75 0.18 150)", border: "1px solid oklch(0.75 0.18 150 / 0.3)" }}>
-                  <Star className="w-3 h-3 inline mr-1 -mt-0.5" />{MOCK_PLAYER.recruitingStatus}
+                  <Star className="w-3 h-3 inline mr-1 -mt-0.5" />{player.recruitingStatus}
                 </span>
                 <span className="text-[12px] text-muted-foreground font-mono">{overallAvg}/10 overall</span>
               </div>
@@ -1776,21 +1820,21 @@ export function PlayerProfilePage() {
 
         {/* Tab content */}
         {activeTab === "Overview" && (
-          <OverviewTab player={MOCK_PLAYER} guardians={MOCK_GUARDIANS} injuries={MOCK_INJURIES}
-                       focusAreas={FOCUS_AREAS} attendance={MOCK_ATTENDANCE} readiness={MOCK_READINESS} skills={SKILLS} />
+          <OverviewTab player={player} guardians={MOCK_GUARDIANS} injuries={MOCK_INJURIES}
+                       focusAreas={FOCUS_AREAS} attendance={MOCK_ATTENDANCE} readiness={readinessDays} skills={SKILLS} />
         )}
         {activeTab === "Development" && (
           <DevelopmentTab skills={SKILLS} focusAreas={FOCUS_AREAS} aiRecs={aiRecs}
                           onAcceptRec={acceptRec} onOverrideRec={overrideRec} playerId={playerId} />
         )}
         {activeTab === "Film" && (
-          <FilmTab sessions={MOCK_FILM_SESSIONS} playerName={MOCK_PLAYER.name} />
+          <FilmTab sessions={MOCK_FILM_SESSIONS} playerName={player.name} />
         )}
         {activeTab === "Attendance" && (
           <AttendanceTab records={MOCK_ATTENDANCE} />
         )}
         {activeTab === "Health" && (
-          <HealthTab readiness={MOCK_READINESS} injuries={MOCK_INJURIES} />
+          <HealthTab readiness={readinessDays} injuries={MOCK_INJURIES} />
         )}
         {activeTab === "Notes" && (
           <NotesTab notes={notes} onAddNote={addNote} onDeleteNote={deleteNote} onTogglePin={togglePin} />

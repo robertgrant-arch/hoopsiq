@@ -11,7 +11,7 @@
  *   6. DevelopmentAlerts— IDP + streak gaps by player name
  *   7. QuickActions     — 4 high-frequency coach actions
  */
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { Link } from "wouter";
 import {
   AlertTriangle,
@@ -47,36 +47,50 @@ import {
 } from "@/components/ui/dialog";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
+// Mock imports retained only for data with no API hook yet:
+// roster.compliance (WOD completion) and athleteUploads (film queue list).
 import { roster, athleteUploads } from "@/lib/mock/data";
-import { MOCK_TEAM_READINESS } from "@/features/readiness";
+import { computePlayerReadiness } from "@/features/readiness";
 import { ActionLanes } from "@/components/app/ActionLanes";
+import { SkeletonCard } from "@/components/ui/SkeletonCard";
+import { useEvents, type Event } from "@/lib/api/hooks/useEvents";
+import { useRoster } from "@/lib/api/hooks/useRoster";
+import { useTeamReadinessToday, type ReadinessCheckin } from "@/lib/api/hooks/useReadiness";
+import { useCoachBadgeCounts } from "@/lib/api/hooks/useCoachBadgeCounts";
 
 /* -------------------------------------------------------------------------- */
-/* Mock data — command-center specific                                         */
+/* Date / event display helpers                                                */
 /* -------------------------------------------------------------------------- */
 
-const TODAY_SESSION = {
-  type: "practice" as const,
-  label: "Practice",
-  location: "Barnegat HS · Main Gym",
-  time: "3:30 – 5:15 PM",
-  focus: "Ball pressure defense → half-court execution",
-};
+function isSameDay(a: Date, b: Date) {
+  return a.getFullYear() === b.getFullYear() && a.getMonth() === b.getMonth() && a.getDate() === b.getDate();
+}
 
-const NEXT_GAME = {
-  opponent: "Oak Hill Academy",
-  date: "Saturday",
-  daysOut: 2,
-  location: "Oak Hill HS · Away",
-  scoutingReady: false,
-};
+function fmtTime(iso: string) {
+  return new Date(iso).toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" });
+}
 
-const UPCOMING_EVENTS = [
-  { id: "e1", type: "practice" as const, label: "Practice",            date: "Today",    time: "3:30 PM",  location: "Barnegat HS"        },
-  { id: "e2", type: "game"     as const, label: "Game — Oak Hill",     date: "Saturday", time: "5:00 PM",  location: "Oak Hill HS · Away" },
-  { id: "e3", type: "practice" as const, label: "Walkthrough",         date: "Friday",   time: "4:00 PM",  location: "Barnegat HS"        },
-];
+function fmtTimeRange(startsAt: string, endsAt: string | null) {
+  return endsAt ? `${fmtTime(startsAt)} – ${fmtTime(endsAt)}` : fmtTime(startsAt);
+}
 
+function daysOut(iso: string) {
+  const now = new Date(); now.setHours(0, 0, 0, 0);
+  const then = new Date(iso); then.setHours(0, 0, 0, 0);
+  return Math.round((then.getTime() - now.getTime()) / 86_400_000);
+}
+
+function dateLabel(iso: string) {
+  const d = daysOut(iso);
+  if (d === 0) return "Today";
+  if (d === 1) return "Tomorrow";
+  if (d > 1 && d < 7) return new Date(iso).toLocaleDateString("en-US", { weekday: "long" });
+  return new Date(iso).toLocaleDateString("en-US", { month: "short", day: "numeric" });
+}
+
+/* -------------------------------------------------------------------------- */
+/* Mock data — no API hook exists for development alerts yet                   */
+/* -------------------------------------------------------------------------- */
 
 const DEVELOPMENT_ALERTS = [
   { id: "d1", player: "Tyler Brooks",  playerId: "p3",  note: "No IDP activity in 9 days",        href: "/app/coach/players/p3/idp"   },
@@ -170,20 +184,53 @@ function StarRating({ value, onChange }: { value: number; onChange: (v: number) 
 /* -------------------------------------------------------------------------- */
 
 function CommandStrip({
+  todaySession,
+  nextGame,
+  isLoading,
+  isError,
+  onRetry,
   onPracticeNotes,
   showPrompt,
   onDismissPrompt,
 }: {
+  todaySession: Event | undefined;
+  nextGame: Event | undefined;
+  isLoading: boolean;
+  isError: boolean;
+  onRetry: () => void;
   onPracticeNotes: () => void;
   showPrompt: boolean;
   onDismissPrompt: () => void;
 }) {
-  const eventIcon =
-    TODAY_SESSION.type === "practice" ? (
-      <Dumbbell className="w-4 h-4 shrink-0" />
-    ) : (
-      <Swords className="w-4 h-4 shrink-0" />
+  if (isLoading) {
+    return (
+      <div className="mb-6">
+        <SkeletonCard lines={3} />
+      </div>
     );
+  }
+
+  if (isError) {
+    return (
+      <div className="mb-6 rounded-xl border border-border bg-card px-5 py-4 flex items-center gap-3">
+        <AlertTriangle className="w-4 h-4 text-muted-foreground shrink-0" />
+        <span className="text-[13px] text-muted-foreground flex-1">Couldn't load today's schedule.</span>
+        <Button size="sm" variant="outline" className="h-8 text-[12px]" onClick={onRetry}>
+          Retry
+        </Button>
+      </div>
+    );
+  }
+
+  const eventIcon =
+    todaySession?.type === "game" ? (
+      <Swords className="w-4 h-4 shrink-0" />
+    ) : (
+      <Dumbbell className="w-4 h-4 shrink-0" />
+    );
+
+  const nextGameDaysOut = nextGame ? daysOut(nextGame.startsAt) : null;
+  const nextGameUrgent = nextGameDaysOut !== null && nextGameDaysOut <= 2;
 
   return (
     <div className="space-y-3 mb-6">
@@ -198,33 +245,46 @@ function CommandStrip({
             >
               {eventIcon}
             </div>
-            <div>
-              <div className="flex items-center gap-2 flex-wrap">
-                <span className="font-bold text-[15px]">{TODAY_SESSION.label}</span>
-                <span
-                  className="text-[10px] font-mono px-2 py-0.5 rounded-full font-semibold"
-                  style={{
-                    background: "oklch(0.72 0.18 290 / 0.12)",
-                    color: "oklch(0.72 0.18 290)",
-                  }}
-                >
-                  TODAY
-                </span>
+            {todaySession ? (
+              <div>
+                <div className="flex items-center gap-2 flex-wrap">
+                  <span className="font-bold text-[15px]">{todaySession.title}</span>
+                  <span
+                    className="text-[10px] font-mono px-2 py-0.5 rounded-full font-semibold"
+                    style={{
+                      background: "oklch(0.72 0.18 290 / 0.12)",
+                      color: "oklch(0.72 0.18 290)",
+                    }}
+                  >
+                    TODAY
+                  </span>
+                </div>
+                <div className="flex items-center gap-3 mt-1 text-[12px] text-muted-foreground flex-wrap">
+                  <span className="flex items-center gap-1">
+                    <Clock className="w-3 h-3" /> {fmtTimeRange(todaySession.startsAt, todaySession.endsAt)}
+                  </span>
+                  {todaySession.location && (
+                    <span className="flex items-center gap-1">
+                      <MapPin className="w-3 h-3" /> {todaySession.location}
+                    </span>
+                  )}
+                </div>
+                {todaySession.notes && (
+                  <div className="mt-2 flex items-center gap-1.5 text-[12.5px]">
+                    <Target className="w-3.5 h-3.5 text-muted-foreground" />
+                    <span className="text-muted-foreground">Focus:</span>
+                    <span className="font-medium">{todaySession.notes}</span>
+                  </div>
+                )}
               </div>
-              <div className="flex items-center gap-3 mt-1 text-[12px] text-muted-foreground flex-wrap">
-                <span className="flex items-center gap-1">
-                  <Clock className="w-3 h-3" /> {TODAY_SESSION.time}
-                </span>
-                <span className="flex items-center gap-1">
-                  <MapPin className="w-3 h-3" /> {TODAY_SESSION.location}
-                </span>
+            ) : (
+              <div>
+                <span className="font-bold text-[15px]">No session today</span>
+                <div className="mt-1 text-[12px] text-muted-foreground">
+                  Nothing on the schedule — enjoy the reset or plan ahead.
+                </div>
               </div>
-              <div className="mt-2 flex items-center gap-1.5 text-[12.5px]">
-                <Target className="w-3.5 h-3.5 text-muted-foreground" />
-                <span className="text-muted-foreground">Focus:</span>
-                <span className="font-medium">{TODAY_SESSION.focus}</span>
-              </div>
-            </div>
+            )}
           </div>
 
           {/* Right — next game */}
@@ -232,10 +292,10 @@ function CommandStrip({
             <div
               className="w-9 h-9 rounded-lg flex items-center justify-center shrink-0 mt-0.5"
               style={{
-                background: NEXT_GAME.daysOut <= 2
+                background: nextGameUrgent
                   ? "oklch(0.68 0.22 25 / 0.12)"
                   : "oklch(0.72 0.17 75 / 0.10)",
-                color: NEXT_GAME.daysOut <= 2
+                color: nextGameUrgent
                   ? "oklch(0.68 0.22 25)"
                   : "oklch(0.72 0.17 75)",
               }}
@@ -245,36 +305,52 @@ function CommandStrip({
             <div>
               <div className="flex items-center gap-2">
                 <span className="font-bold text-[14px]">Next Game</span>
-                <span
-                  className="text-[10px] font-mono px-2 py-0.5 rounded-full font-semibold"
-                  style={{
-                    background: NEXT_GAME.daysOut <= 2
-                      ? "oklch(0.68 0.22 25 / 0.12)"
-                      : "oklch(0.72 0.17 75 / 0.10)",
-                    color: NEXT_GAME.daysOut <= 2
-                      ? "oklch(0.68 0.22 25)"
-                      : "oklch(0.72 0.17 75)",
-                  }}
-                >
-                  {NEXT_GAME.daysOut === 0 ? "TODAY" : `${NEXT_GAME.daysOut}d`}
-                </span>
-              </div>
-              <div className="text-[13px] font-medium mt-0.5">vs {NEXT_GAME.opponent}</div>
-              <div className="text-[11.5px] text-muted-foreground mt-0.5">{NEXT_GAME.date} · {NEXT_GAME.location}</div>
-              {!NEXT_GAME.scoutingReady && NEXT_GAME.daysOut <= 2 && (
-                <Link href="/app/coach/scouting/opp_westbury/game-plan" asChild>
-                  <a
-                    className="mt-2 flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg border text-[11px] font-semibold w-full transition-colors hover:brightness-110"
+                {nextGameDaysOut !== null && (
+                  <span
+                    className="text-[10px] font-mono px-2 py-0.5 rounded-full font-semibold"
                     style={{
-                      borderColor: "oklch(0.68 0.22 25 / 0.35)",
-                      background: "oklch(0.68 0.22 25 / 0.08)",
-                      color: "oklch(0.68 0.22 25)",
+                      background: nextGameUrgent
+                        ? "oklch(0.68 0.22 25 / 0.12)"
+                        : "oklch(0.72 0.17 75 / 0.10)",
+                      color: nextGameUrgent
+                        ? "oklch(0.68 0.22 25)"
+                        : "oklch(0.72 0.17 75)",
                     }}
                   >
-                    <AlertTriangle className="w-3.5 h-3.5 shrink-0" />
-                    Game prep incomplete — open game-day view
-                  </a>
-                </Link>
+                    {nextGameDaysOut === 0 ? "TODAY" : `${nextGameDaysOut}d`}
+                  </span>
+                )}
+              </div>
+              {nextGame ? (
+                <>
+                  <div className="text-[13px] font-medium mt-0.5">
+                    vs {nextGame.opponent ?? nextGame.title}
+                  </div>
+                  <div className="text-[11.5px] text-muted-foreground mt-0.5">
+                    {dateLabel(nextGame.startsAt)}
+                    {nextGame.location && ` · ${nextGame.location}`}
+                    {nextGame.homeAway === "away" && " · Away"}
+                  </div>
+                  {nextGameUrgent && (
+                    <Link href="/app/coach/scouting/opp_westbury/game-plan" asChild>
+                      <a
+                        className="mt-2 flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg border text-[11px] font-semibold w-full transition-colors hover:brightness-110"
+                        style={{
+                          borderColor: "oklch(0.68 0.22 25 / 0.35)",
+                          background: "oklch(0.68 0.22 25 / 0.08)",
+                          color: "oklch(0.68 0.22 25)",
+                        }}
+                      >
+                        <AlertTriangle className="w-3.5 h-3.5 shrink-0" />
+                        Game prep incomplete — open game-day view
+                      </a>
+                    </Link>
+                  )}
+                </>
+              ) : (
+                <div className="text-[11.5px] text-muted-foreground mt-0.5">
+                  No games on the schedule
+                </div>
               )}
             </div>
           </div>
@@ -324,12 +400,53 @@ function CommandStrip({
 /* -------------------------------------------------------------------------- */
 
 function TeamSnapshotRow() {
-  const total = MOCK_TEAM_READINESS.length;
-  const submitted = MOCK_TEAM_READINESS.filter((p) => p.checkinSubmitted).length;
-  const ready = MOCK_TEAM_READINESS.filter((p) => p.status === "READY").length;
-  const flagged = MOCK_TEAM_READINESS.filter((p) => p.status === "FLAGGED").length;
-  const restricted = MOCK_TEAM_READINESS.filter((p) => p.status === "RESTRICTED").length;
-  const unknown = MOCK_TEAM_READINESS.filter((p) => p.status === "UNKNOWN").length;
+  const rosterQuery = useRoster();
+  const readinessQuery = useTeamReadinessToday();
+
+  if (rosterQuery.isLoading || readinessQuery.isLoading) {
+    return <SkeletonCard lines={2} />;
+  }
+
+  if (rosterQuery.isError || readinessQuery.isError) {
+    return (
+      <div className="rounded-xl border border-border bg-card px-5 py-4 flex items-center gap-3">
+        <AlertTriangle className="w-4 h-4 text-muted-foreground shrink-0" />
+        <span className="text-[13px] text-muted-foreground flex-1">Couldn't load the team snapshot.</span>
+        <Button
+          size="sm"
+          variant="outline"
+          className="h-8 text-[12px]"
+          onClick={() => { rosterQuery.refetch(); readinessQuery.refetch(); }}
+        >
+          Retry
+        </Button>
+      </div>
+    );
+  }
+
+  const players = rosterQuery.data ?? [];
+  const latestByPlayer = new Map<string, ReadinessCheckin>();
+  for (const c of readinessQuery.data ?? []) {
+    const prev = latestByPlayer.get(c.playerId);
+    if (!prev || c.checkedInAt > prev.checkedInAt) latestByPlayer.set(c.playerId, c);
+  }
+  const statuses = players.map((p) => {
+    const checkin = latestByPlayer.get(p.id);
+    return computePlayerReadiness({
+      latestCheckin: checkin
+        ? { fatigue: checkin.fatigue, sleep: checkin.sleep, soreness: checkin.soreness, flagged: checkin.flagged }
+        : null,
+      playerStatus: p.status,
+    }).status;
+  });
+
+  const total = players.length;
+  const submitted = players.filter((p) => latestByPlayer.has(p.id)).length;
+  const ready = statuses.filter((s) => s === "READY").length;
+  const flagged = statuses.filter((s) => s === "FLAGGED").length;
+  const restricted = statuses.filter((s) => s === "RESTRICTED").length;
+  const unknown = statuses.filter((s) => s === "UNKNOWN").length;
+  // WOD compliance has no API hook yet — still sourced from mock data.
   const wodDone = roster.filter((a) => a.compliance === 100).length;
 
   const cells = [
@@ -365,51 +482,87 @@ function TeamSnapshotRow() {
 /* Zone 4 — UpcomingEvents                                                     */
 /* -------------------------------------------------------------------------- */
 
-function UpcomingEvents() {
-  const eventTypeStyle = (type: "practice" | "game" | "tournament") => {
+function UpcomingEvents({
+  events,
+  isLoading,
+  isError,
+  onRetry,
+}: {
+  events: Event[];
+  isLoading: boolean;
+  isError: boolean;
+  onRetry: () => void;
+}) {
+  const eventTypeStyle = (type: string) => {
     if (type === "game")       return { bg: "oklch(0.68 0.22 25 / 0.1)",  text: "oklch(0.68 0.22 25)",  label: "Game" };
     if (type === "tournament") return { bg: "oklch(0.72 0.18 290 / 0.1)", text: "oklch(0.72 0.18 290)", label: "Tournament" };
     return                            { bg: "oklch(0.75 0.12 140 / 0.1)", text: "oklch(0.75 0.12 140)", label: "Practice" };
   };
 
-  const nextGame = UPCOMING_EVENTS.find((e) => e.type === "game");
+  if (isLoading) return <SkeletonCard lines={3} />;
+
+  if (isError) {
+    return (
+      <div className="rounded-xl border border-border bg-card px-5 py-4 flex items-center gap-3">
+        <AlertTriangle className="w-4 h-4 text-muted-foreground shrink-0" />
+        <span className="text-[13px] text-muted-foreground flex-1">Couldn't load upcoming events.</span>
+        <Button size="sm" variant="outline" className="h-8 text-[12px]" onClick={onRetry}>
+          Retry
+        </Button>
+      </div>
+    );
+  }
+
+  const upcoming = events.slice(0, 3);
+  const nextGame = upcoming.find((e) => e.type === "game");
 
   return (
     <CollapsibleSection
       title="Upcoming"
-      count={UPCOMING_EVENTS.length}
+      count={upcoming.length}
       href="/app/team/schedule"
       linkLabel="Full schedule"
       defaultOpen
-      summary={nextGame ? `Next game ${nextGame.date} · ${nextGame.time}` : `${UPCOMING_EVENTS.length} events`}
+      summary={
+        nextGame
+          ? `Next game ${dateLabel(nextGame.startsAt)} · ${fmtTime(nextGame.startsAt)}`
+          : `${upcoming.length} event${upcoming.length !== 1 ? "s" : ""}`
+      }
     >
-      <div className="divide-y divide-border/40">
-        {UPCOMING_EVENTS.map((ev) => {
-          const s = eventTypeStyle(ev.type);
-          return (
-            <div key={ev.id} className="px-5 py-3 flex items-center gap-3.5">
-              <div
-                className="w-8 h-8 rounded-lg flex items-center justify-center shrink-0"
-                style={{ background: s.bg, color: s.text }}
-              >
-                {ev.type === "game" ? <Swords className="w-3.5 h-3.5" /> : <Dumbbell className="w-3.5 h-3.5" />}
-              </div>
-              <div className="flex-1 min-w-0">
-                <div className="text-[13px] font-medium">{ev.label}</div>
-                <div className="text-[11px] text-muted-foreground mt-0.5">
-                  {ev.date} · {ev.time} · {ev.location}
+      {upcoming.length === 0 ? (
+        <div className="px-5 py-4 text-[12px] text-muted-foreground">
+          No upcoming events on the schedule.
+        </div>
+      ) : (
+        <div className="divide-y divide-border/40">
+          {upcoming.map((ev) => {
+            const s = eventTypeStyle(ev.type);
+            return (
+              <div key={ev.id} className="px-5 py-3 flex items-center gap-3.5">
+                <div
+                  className="w-8 h-8 rounded-lg flex items-center justify-center shrink-0"
+                  style={{ background: s.bg, color: s.text }}
+                >
+                  {ev.type === "game" ? <Swords className="w-3.5 h-3.5" /> : <Dumbbell className="w-3.5 h-3.5" />}
                 </div>
+                <div className="flex-1 min-w-0">
+                  <div className="text-[13px] font-medium">{ev.title}</div>
+                  <div className="text-[11px] text-muted-foreground mt-0.5">
+                    {dateLabel(ev.startsAt)} · {fmtTime(ev.startsAt)}
+                    {ev.location && ` · ${ev.location}`}
+                  </div>
+                </div>
+                <span
+                  className="text-[10px] font-semibold px-2 py-0.5 rounded-full shrink-0"
+                  style={{ background: s.bg, color: s.text }}
+                >
+                  {s.label}
+                </span>
               </div>
-              <span
-                className="text-[10px] font-semibold px-2 py-0.5 rounded-full shrink-0"
-                style={{ background: s.bg, color: s.text }}
-              >
-                {s.label}
-              </span>
-            </div>
-          );
-        })}
-      </div>
+            );
+          })}
+        </div>
+      )}
     </CollapsibleSection>
   );
 }
@@ -420,15 +573,19 @@ function UpcomingEvents() {
 /* -------------------------------------------------------------------------- */
 
 function FilmQueue() {
+  // Pending list has no API hook yet (mock); the count comes from the live
+  // badge-counts endpoint when available.
   const pending = athleteUploads.filter((u) => u.status !== "COACH_REVIEWED");
+  const { data: badgeCounts } = useCoachBadgeCounts();
+  const pendingCount = badgeCounts?.filmPending ?? pending.length;
 
   return (
     <CollapsibleSection
       title="Film Queue"
-      count={pending.length}
+      count={pendingCount}
       href="/app/coach/queue"
       linkLabel="Open queue"
-      summary={pending.length > 0 ? `${pending.length} video${pending.length !== 1 ? "s" : ""} need review` : "Queue clear"}
+      summary={pendingCount > 0 ? `${pendingCount} video${pendingCount !== 1 ? "s" : ""} need review` : "Queue clear"}
     >
       {pending.length === 0 ? (
         <div className="px-5 py-4 flex items-center gap-2 text-[12px]" style={{ color: "oklch(0.65 0.18 150)" }}>
@@ -515,6 +672,23 @@ export function CoachDashboard() {
   const [practiceNotesOpen, setPracticeNotesOpen] = useState(false);
   const [phaseRatings, setPhaseRatings] = useState([0, 0, 0, 0]);
   const [practiceNotes, setPracticeNotes] = useState("");
+
+  const startOfToday = useMemo(() => {
+    const d = new Date();
+    d.setHours(0, 0, 0, 0);
+    return d;
+  }, []);
+  const eventsQuery = useEvents(startOfToday);
+  const sortedEvents = useMemo(
+    () =>
+      [...(eventsQuery.data ?? [])].sort(
+        (a, b) => new Date(a.startsAt).getTime() - new Date(b.startsAt).getTime(),
+      ),
+    [eventsQuery.data],
+  );
+  const todaySession = sortedEvents.find((e) => isSameDay(new Date(e.startsAt), new Date()));
+  const nextGame = sortedEvents.find((e) => e.type === "game");
+
   function submitPracticeNotes() {
     setPracticeNotesOpen(false);
     setShowPracticePrompt(false);
@@ -541,6 +715,11 @@ export function CoachDashboard() {
 
         {/* Zone 1 — Command strip */}
         <CommandStrip
+          todaySession={todaySession}
+          nextGame={nextGame}
+          isLoading={eventsQuery.isLoading}
+          isError={eventsQuery.isError}
+          onRetry={() => eventsQuery.refetch()}
           onPracticeNotes={() => setPracticeNotesOpen(true)}
           showPrompt={showPracticePrompt}
           onDismissPrompt={() => setShowPracticePrompt(false)}
@@ -559,7 +738,12 @@ export function CoachDashboard() {
             <TeamSnapshotRow />
 
             {/* Zone 4 — Upcoming events */}
-            <UpcomingEvents />
+            <UpcomingEvents
+              events={sortedEvents}
+              isLoading={eventsQuery.isLoading}
+              isError={eventsQuery.isError}
+              onRetry={() => eventsQuery.refetch()}
+            />
           </div>
 
           {/* ---------------------------------------------------------------- */}
@@ -607,7 +791,15 @@ export function CoachDashboard() {
           <DialogHeader>
             <DialogTitle className="font-bold text-[18px]">Post-Practice Notes</DialogTitle>
             <p className="text-[12.5px] text-muted-foreground">
-              {TODAY_SESSION.label} · {TODAY_SESSION.location} · {TODAY_SESSION.time}
+              {todaySession
+                ? [
+                    todaySession.title,
+                    todaySession.location,
+                    fmtTimeRange(todaySession.startsAt, todaySession.endsAt),
+                  ]
+                    .filter(Boolean)
+                    .join(" · ")
+                : "Today's session"}
             </p>
           </DialogHeader>
 

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import {
   AlertTriangle, Ban, CheckCircle2, HelpCircle,
   ChevronDown, ChevronUp, RefreshCw, Info,
@@ -8,15 +8,18 @@ import { AppShell, PageHeader } from "@/components/app/AppShell";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Textarea } from "@/components/ui/textarea";
+import { SkeletonCard } from "@/components/ui/SkeletonCard";
 import {
   Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter,
 } from "@/components/ui/dialog";
 import { toast } from "sonner";
 import {
   type PlayerReadiness, type ReadinessStatus,
-  MOCK_TEAM_READINESS, REASON_LABELS, statusColor, statusLabel,
+  computePlayerReadiness, REASON_LABELS, statusColor, statusLabel,
 } from "@/features/readiness";
 import { ReadinessStatusBadge } from "@/features/readiness";
+import { useTeamReadinessToday, type ReadinessCheckin } from "@/lib/api/hooks/useReadiness";
+import { useRoster } from "@/lib/api/hooks/useRoster";
 
 // ── Helpers ────────────────────────────────────────────────────────────────
 
@@ -25,10 +28,6 @@ const STATUS_ORDER: ReadinessStatus[] = ["RESTRICTED", "FLAGGED", "UNKNOWN", "RE
 function sortByRisk(a: PlayerReadiness, b: PlayerReadiness) {
   return STATUS_ORDER.indexOf(a.status) - STATUS_ORDER.indexOf(b.status);
 }
-
-const CHECKIN_PCT = Math.round(
-  (MOCK_TEAM_READINESS.filter((p) => p.checkinSubmitted).length / MOCK_TEAM_READINESS.length) * 100,
-);
 
 // ── Sub-components ─────────────────────────────────────────────────────────
 
@@ -235,15 +234,71 @@ const GROUP_META: Record<ReadinessStatus, { icon: React.ReactNode; label: string
 
 // ── Main page ──────────────────────────────────────────────────────────────
 
+type CoachOverride = { status: ReadinessStatus; note: string };
+
 export default function TeamReadinessPage() {
-  const [players, setPlayers] = useState<PlayerReadiness[]>(
-    [...MOCK_TEAM_READINESS].sort(sortByRisk),
-  );
-  const [overrides, setOverrides] = useState<Record<string, boolean>>({});
+  const rosterQuery = useRoster();
+  const readinessQuery = useTeamReadinessToday();
+
+  const [overrides, setOverrides] = useState<Record<string, CoachOverride>>({});
   const [overrideTarget, setOverrideTarget] = useState<PlayerReadiness | null>(null);
   const [hiddenGroups, setHiddenGroups] = useState<Set<ReadinessStatus>>(
     new Set<ReadinessStatus>(["READY"]),
   );
+
+  const isLoading = rosterQuery.isLoading || readinessQuery.isLoading;
+  const isError = rosterQuery.isError || readinessQuery.isError;
+  const refetchAll = () => {
+    rosterQuery.refetch();
+    readinessQuery.refetch();
+  };
+
+  // Derive per-player readiness from today's check-ins + roster status,
+  // then apply any local coach overrides on top.
+  const players = useMemo<PlayerReadiness[]>(() => {
+    const latestByPlayer = new Map<string, ReadinessCheckin>();
+    for (const c of readinessQuery.data ?? []) {
+      const prev = latestByPlayer.get(c.playerId);
+      if (!prev || c.checkedInAt > prev.checkedInAt) latestByPlayer.set(c.playerId, c);
+    }
+    return (rosterQuery.data ?? [])
+      .map((p) => {
+        const checkin = latestByPlayer.get(p.id);
+        const scored = computePlayerReadiness({
+          latestCheckin: checkin
+            ? {
+                fatigue: checkin.fatigue,
+                sleep: checkin.sleep,
+                soreness: checkin.soreness,
+                flagged: checkin.flagged,
+              }
+            : null,
+          playerStatus: p.status,
+        });
+        const base: PlayerReadiness = {
+          playerId: p.id,
+          playerName: p.name,
+          position: p.position ?? undefined,
+          jerseyNumber: p.jerseyNumber != null ? String(p.jerseyNumber) : undefined,
+          checkinSubmitted: !!checkin,
+          ...scored,
+        };
+        const override = overrides[p.id];
+        return override
+          ? {
+              ...base,
+              status: override.status,
+              confidence: "high" as const,
+              reasons: [],
+              summary: `Coach override: ${override.note}`,
+            }
+          : base;
+      })
+      .sort(sortByRisk);
+  }, [rosterQuery.data, readinessQuery.data, overrides]);
+
+  const submittedCount = players.filter((p) => p.checkinSubmitted).length;
+  const checkinPct = players.length > 0 ? Math.round((submittedCount / players.length) * 100) : 0;
 
   const grouped = STATUS_ORDER.reduce(
     (acc, s) => { acc[s] = players.filter((p) => p.status === s); return acc; },
@@ -256,26 +311,13 @@ export default function TeamReadinessPage() {
   const ready = grouped.READY.length;
 
   function handleSaveOverride(playerId: string, status: ReadinessStatus, note: string) {
-    setPlayers((prev) =>
-      prev.map((p) =>
-        p.playerId === playerId
-          ? { ...p, status, confidence: "high" as const, reasons: [], summary: `Coach override: ${note}` }
-          : p,
-      ).sort(sortByRisk),
-    );
-    setOverrides((prev) => ({ ...prev, [playerId]: true }));
+    setOverrides((prev) => ({ ...prev, [playerId]: { status, note } }));
     toast.success("Override saved — expires in 24 h");
   }
 
   function handleClearOverride(playerId: string) {
+    // Removing the override re-derives the player's status from fetched data.
     setOverrides((prev) => { const n = { ...prev }; delete n[playerId]; return n; });
-    // Restore original mock status — in prod this would re-fetch
-    const original = MOCK_TEAM_READINESS.find((p) => p.playerId === playerId);
-    if (original) {
-      setPlayers((prev) =>
-        prev.map((p) => (p.playerId === playerId ? original : p)).sort(sortByRisk),
-      );
-    }
     toast.success("Override cleared");
   }
 
@@ -285,6 +327,51 @@ export default function TeamReadinessPage() {
       if (next.has(s)) next.delete(s); else next.add(s);
       return next;
     });
+  }
+
+  if (isLoading) {
+    return (
+      <AppShell>
+        <PageHeader title="Team Readiness" subtitle="Today's practice readiness by player" />
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-6">
+          {[0, 1, 2, 3].map((i) => <SkeletonCard key={i} lines={2} />)}
+        </div>
+        <div className="flex flex-col gap-2">
+          {[0, 1, 2, 3, 4].map((i) => <SkeletonCard key={i} lines={2} />)}
+        </div>
+      </AppShell>
+    );
+  }
+
+  if (isError) {
+    return (
+      <AppShell>
+        <PageHeader title="Team Readiness" subtitle="Today's practice readiness by player" />
+        <div className="rounded-xl border border-border bg-card px-5 py-8 text-center">
+          <AlertTriangle className="w-5 h-5 mx-auto mb-2 text-muted-foreground" />
+          <p className="text-[13px] font-semibold mb-1">Couldn't load team readiness</p>
+          <p className="text-[12px] text-muted-foreground mb-4">Check your connection and try again.</p>
+          <Button size="sm" variant="outline" className="gap-1.5" onClick={refetchAll}>
+            <RefreshCw className="w-3.5 h-3.5" /> Retry
+          </Button>
+        </div>
+      </AppShell>
+    );
+  }
+
+  if (players.length === 0) {
+    return (
+      <AppShell>
+        <PageHeader title="Team Readiness" subtitle="Today's practice readiness by player" />
+        <div className="rounded-xl border border-border bg-card px-5 py-8 text-center">
+          <Info className="w-5 h-5 mx-auto mb-2 text-muted-foreground" />
+          <p className="text-[13px] font-semibold mb-1">No players on the roster yet</p>
+          <p className="text-[12px] text-muted-foreground">
+            Add players to your roster to see their daily readiness here.
+          </p>
+        </div>
+      </AppShell>
+    );
   }
 
   return (
@@ -324,21 +411,19 @@ export default function TeamReadinessPage() {
       <div className="flex items-center gap-3 mb-5 rounded-xl border border-border bg-card px-4 py-3">
         <Info className="w-4 h-4 text-muted-foreground shrink-0" />
         <div className="flex-1 text-[13px] text-muted-foreground">
-          <span className="font-semibold text-foreground">
-            {MOCK_TEAM_READINESS.filter((p) => p.checkinSubmitted).length}
-          </span>{" "}
+          <span className="font-semibold text-foreground">{submittedCount}</span>{" "}
           of{" "}
-          <span className="font-semibold text-foreground">{MOCK_TEAM_READINESS.length}</span>{" "}
+          <span className="font-semibold text-foreground">{players.length}</span>{" "}
           players submitted morning check-ins today
         </div>
-        <div className="text-[12px] font-semibold text-muted-foreground">{CHECKIN_PCT}%</div>
+        <div className="text-[12px] font-semibold text-muted-foreground">{checkinPct}%</div>
         <div className="w-24 h-1.5 rounded-full bg-muted overflow-hidden">
           <div
             className="h-full rounded-full bg-[oklch(0.65_0.18_290)]"
-            style={{ width: `${CHECKIN_PCT}%` }}
+            style={{ width: `${checkinPct}%` }}
           />
         </div>
-        <Button size="sm" variant="ghost" className="gap-1 text-[12px] h-7">
+        <Button size="sm" variant="ghost" className="gap-1 text-[12px] h-7" onClick={refetchAll}>
           <RefreshCw className="w-3 h-3" /> Refresh
         </Button>
       </div>

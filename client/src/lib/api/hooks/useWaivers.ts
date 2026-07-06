@@ -8,13 +8,10 @@
  * checkbox — never auto-set it to true.
  */
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { IS_DEMO } from "@/lib/auth";
 import { apiGet, apiPost } from "../client";
 import { mockForms } from "@/lib/mock/parent";
 
-const IS_DEMO =
-  typeof window !== "undefined" &&
-  (new URLSearchParams(window.location.search).get("demo") === "true" ||
-    import.meta.env.VITE_DEMO_MODE === "true");
 
 export type WaiverItem = {
   id: string;

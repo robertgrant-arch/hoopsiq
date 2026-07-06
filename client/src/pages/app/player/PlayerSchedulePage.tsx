@@ -6,8 +6,10 @@ import {
 import { toast } from "sonner";
 import { AppShell, PageHeader } from "@/components/app/AppShell";
 import { Badge } from "@/components/ui/badge";
-import { mockScheduleEvents, type ScheduleEvent } from "@/features/parent/mock";
-import { mockAvailability, type AvailabilityEntry } from "@/features/player/mock";
+import { type ScheduleEvent } from "@/features/parent/mock";
+import { mockAvailability } from "@/features/player/mock";
+import { useEvents, useSubmitAvailability, type Event } from "@/lib/api/hooks/useEvents";
+import { SkeletonCard } from "@/components/ui/SkeletonCard";
 
 /* -------------------------------------------------------------------------- */
 /* Helpers                                                                     */
@@ -49,6 +51,36 @@ const TYPE_COLOR: Record<string, string> = {
 };
 
 type AvailStatus = "available" | "unavailable" | "maybe";
+
+/* -------------------------------------------------------------------------- */
+/* API → view mapping                                                          */
+/* -------------------------------------------------------------------------- */
+
+const KNOWN_EVENT_TYPES: ReadonlyArray<ScheduleEvent["type"]> = [
+  "practice", "game", "tournament", "film", "conditioning",
+];
+
+function formatTime(iso: string) {
+  return new Date(iso).toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" });
+}
+
+function toScheduleEvent(e: Event): ScheduleEvent {
+  const type = (KNOWN_EVENT_TYPES as readonly string[]).includes(e.type)
+    ? (e.type as ScheduleEvent["type"])
+    : "practice";
+  return {
+    id: e.id,
+    type,
+    title: e.title,
+    date: e.startsAt,
+    startTime: formatTime(e.startsAt),
+    endTime: e.endsAt ? formatTime(e.endsAt) : undefined,
+    location: e.location ?? "Location TBD",
+    rsvpStatus: null,
+    required: type === "game" || type === "tournament",
+    notes: e.notes ?? undefined,
+  };
+}
 
 const AVAIL_CONFIG: Record<AvailStatus, { label: string; icon: React.ComponentType<any>; color: string }> = {
   available:   { label: "I'm going",     icon: CheckCircle2, color: "oklch(0.75 0.12 140)" },
@@ -233,10 +265,22 @@ export default function PlayerSchedulePage() {
 
   const [filter, setFilter] = useState<"upcoming" | "all">("upcoming");
 
+  const {
+    data: apiEvents,
+    isLoading: eventsLoading,
+    isError: eventsError,
+    refetch: refetchEvents,
+  } = useEvents();
+  const submitAvailability = useSubmitAvailability();
+
+  const allEvents = (apiEvents ?? [])
+    .map(toScheduleEvent)
+    .sort((a, b) => a.date.localeCompare(b.date));
+
   const now = new Date();
   const events = filter === "upcoming"
-    ? mockScheduleEvents.filter((e) => new Date(e.date) >= now)
-    : mockScheduleEvents;
+    ? allEvents.filter((e) => new Date(e.date) >= now)
+    : allEvents;
 
   const grouped = events.reduce<Record<string, ScheduleEvent[]>>((acc, e) => {
     const key = formatMonth(e.date);
@@ -250,9 +294,25 @@ export default function PlayerSchedulePage() {
   ).length;
 
   function handleAvail(eventId: string, status: AvailStatus) {
+    const previous = availability[eventId] ?? null;
+    // Optimistic update; rolled back if the API rejects it.
     setAvailability((prev) => ({ ...prev, [eventId]: status }));
-    toast.success(
-      `Availability updated — ${AVAIL_CONFIG[status].label}`,
+    submitAvailability.mutate(
+      { eventId, status },
+      {
+        onSuccess: () => {
+          toast.success(`Availability updated — ${AVAIL_CONFIG[status].label}`);
+        },
+        onError: () => {
+          setAvailability((prev) => {
+            const next = { ...prev };
+            if (previous) next[eventId] = previous;
+            else delete next[eventId];
+            return next;
+          });
+          toast.error("Couldn't update availability — try again.");
+        },
+      },
     );
   }
 
@@ -271,8 +331,31 @@ export default function PlayerSchedulePage() {
         }
       />
 
+      {eventsLoading && (
+        <div className="space-y-3">
+          <SkeletonCard lines={4} />
+          <SkeletonCard lines={3} />
+          <SkeletonCard lines={3} />
+        </div>
+      )}
+
+      {!eventsLoading && eventsError && (
+        <div className="rounded-xl border border-border bg-card px-6 py-12 flex flex-col items-center text-center gap-3">
+          <Calendar className="w-8 h-8 text-muted-foreground/30" />
+          <p className="font-semibold">Couldn't load your schedule</p>
+          <p className="text-[12px] text-muted-foreground">Check your connection and try again.</p>
+          <button
+            onClick={() => refetchEvents()}
+            className="px-3 py-1.5 rounded-full text-[12px] font-medium border border-border hover:bg-muted transition-all"
+          >
+            Retry
+          </button>
+        </div>
+      )}
+
+      {!eventsLoading && !eventsError && (
       <div className="space-y-5">
-        <NextUpHero events={mockScheduleEvents} avail={availability} />
+        <NextUpHero events={allEvents} avail={availability} />
 
         {/* Filter strip */}
         <div className="flex gap-2">
@@ -319,6 +402,7 @@ export default function PlayerSchedulePage() {
           </div>
         )}
       </div>
+      )}
     </AppShell>
   );
 }

@@ -3,6 +3,7 @@
  * Demo mode returns mock data; production calls /api/admin/* and related endpoints.
  */
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { IS_DEMO } from "@/lib/auth";
 import { apiGet, apiPost, apiPatch } from "../client";
 import {
   mockSeasons, mockTeams, mockMembershipPlans,
@@ -11,10 +12,6 @@ import {
   type Registration, type Invoice,
 } from "@/lib/mock/admin";
 
-const IS_DEMO =
-  typeof window !== "undefined" &&
-  (new URLSearchParams(window.location.search).get("demo") === "true" ||
-    import.meta.env.VITE_DEMO_MODE === "true");
 
 // ── Overview ──────────────────────────────────────────────────────────────────
 
