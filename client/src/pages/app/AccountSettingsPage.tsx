@@ -185,6 +185,18 @@ export default function AccountSettingsPage() {
           </button>
         </section>
 
+        <section className="rounded-xl border border-border bg-card p-5">
+          <h2 className="display text-[15px] mb-3">Legal</h2>
+          <div className="flex flex-col gap-2 text-[13.5px]">
+            <Link href="/privacy" asChild>
+              <a className="text-primary hover:underline">Privacy Policy</a>
+            </Link>
+            <Link href="/terms" asChild>
+              <a className="text-primary hover:underline">Terms of Service</a>
+            </Link>
+          </div>
+        </section>
+
         {HAS_CLERK ? (
           <DeleteAccountSection />
         ) : (

@@ -42,6 +42,12 @@ export function createApp() {
   const allowedOrigins: (string | RegExp)[] = [
     /^http:\/\/localhost:\d+$/,
     /^http:\/\/127\.0\.0\.1:\d+$/,
+    // Capacitor native shells (iOS WKWebView serves from capacitor://localhost)
+    "capacitor://localhost",
+    "http://localhost",
+    // Production web origin — same-origin today, but required when the native
+    // app or a split-out frontend calls this API cross-origin.
+    "https://hoopsos-docs.vercel.app",
   ];
   if (process.env.APP_BASE_URL) {
     allowedOrigins.push(process.env.APP_BASE_URL);

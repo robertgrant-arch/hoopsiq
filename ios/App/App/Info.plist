@@ -47,5 +47,13 @@
 	</array>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<true/>
+	<key>NSCameraUsageDescription</key>
+	<string>HoopsIQ uses the camera to record and upload game and practice film.</string>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>HoopsIQ uses the microphone when recording game and practice film.</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>HoopsIQ accesses your photo library so you can upload game and practice film.</string>
+	<key>ITSAppUsesNonExemptEncryption</key>
+	<false/>
 </dict>
 </plist>

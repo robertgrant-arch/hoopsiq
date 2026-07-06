@@ -37,10 +37,9 @@ export function MarketingFooter() {
         <FooterCol
           title="Legal"
           links={[
-            { href: "/legal/terms", label: "Terms" },
-            { href: "/legal/privacy", label: "Privacy" },
-            { href: "/legal/youth", label: "Youth Safety (COPPA)" },
-            { href: "/legal/a11y", label: "Accessibility" },
+            { href: "/privacy", label: "Privacy" },
+            { href: "/terms", label: "Terms" },
+            { href: "/support", label: "Support" },
           ]}
         />
       </div>

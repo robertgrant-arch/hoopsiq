@@ -21,6 +21,11 @@ const ExpertsPage     = React.lazy(() => import("@/pages/marketing/audiencePages
 const PricingPage     = React.lazy(() => import("@/pages/marketing/audiencePages").then(m => ({ default: m.PricingPage })));
 const LiveLanding     = React.lazy(() => import("@/pages/marketing/audiencePages").then(m => ({ default: m.LiveLanding })));
 
+// Legal & support (public — required for App Store submission)
+const PrivacyPolicyPage = React.lazy(() => import("@/pages/legal/PrivacyPolicyPage"));
+const TermsPage         = React.lazy(() => import("@/pages/legal/TermsPage"));
+const SupportPage       = React.lazy(() => import("@/pages/legal/SupportPage"));
+
 // Auth
 const SignIn = React.lazy(() => import("@/pages/SignIn"));
 const SignUp = React.lazy(() => import("@/pages/SignUp"));
@@ -306,6 +311,11 @@ function Router() {
         <Route path="/experts" component={ExpertsPage} />
         <Route path="/pricing" component={PricingPage} />
         <Route path="/live" component={LiveLanding} />
+
+        {/* Legal & support — public, no auth */}
+        <Route path="/privacy" component={PrivacyPolicyPage} />
+        <Route path="/terms" component={TermsPage} />
+        <Route path="/support" component={SupportPage} />
 
         {/* Auth */}
         <Route path="/sign-in" component={SignIn} />
