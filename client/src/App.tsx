@@ -233,6 +233,7 @@ const LiveEventDetail   = React.lazy(() => import("@/pages/app/AppPages").then(m
 const LearnHome         = React.lazy(() => import("@/pages/app/AppPages").then(m => ({ default: m.LearnHome })));
 const LearnCourseDetail = React.lazy(() => import("@/pages/app/AppPages").then(m => ({ default: m.LearnCourseDetail })));
 const SettingsBilling   = React.lazy(() => import("@/pages/app/AppPages").then(m => ({ default: m.SettingsBilling })));
+const AccountSettings   = React.lazy(() => import("@/pages/app/AccountSettingsPage"));
 const AdminOverview     = React.lazy(() => import("@/pages/app/AppPages").then(m => ({ default: m.AdminOverview })));
 const AdminUsers        = React.lazy(() => import("@/pages/app/AppPages").then(m => ({ default: m.AdminUsers })));
 const AdminModeration   = React.lazy(() => import("@/pages/app/AppPages").then(m => ({ default: m.AdminModeration })));
@@ -456,6 +457,7 @@ function Router() {
 
         {/* Settings */}
         <Route path="/app/settings/billing" component={SettingsBilling} />
+        <Route path="/app/settings" component={AccountSettings} />
 
         {/* Billing */}
         <Route path="/app/billing" component={BillingPortal} />

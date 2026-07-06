@@ -1,6 +1,6 @@
 import { Link, useLocation } from "wouter";
 import { Logo } from "@/components/brand/Logo";
-import { useAuth } from "@/lib/auth";
+import { useAuth, HAS_CLERK } from "@/lib/auth";
 import { ROLE_META } from "@/lib/mock/users";
 
 const links = [
@@ -18,14 +18,16 @@ export function MarketingHeader() {
 
   return (
     <div className="sticky top-0 z-40">
-      {/* Demo banner */}
-      <Link href="/sign-in" asChild>
-        <a
-          className="block w-full bg-primary text-primary-foreground text-center text-[12px] font-mono uppercase tracking-[0.14em] py-2 hover:brightness-110 transition"
-        >
-          ▶ This is a demo · Click any role on Sign-in to use the actual app — no password, no signup
-        </a>
-      </Link>
+      {/* Demo banner — only shown when running without real auth */}
+      {!HAS_CLERK && (
+        <Link href="/sign-in" asChild>
+          <a
+            className="block w-full bg-primary text-primary-foreground text-center text-[12px] font-mono uppercase tracking-[0.14em] py-2 hover:brightness-110 transition"
+          >
+            ▶ This is a demo · Click any role on Sign-in to use the actual app — no password, no signup
+          </a>
+        </Link>
+      )}
       <header className="h-16 border-b border-border bg-background/70 backdrop-blur-xl">
       <div className="h-full max-w-[1400px] mx-auto px-5 lg:px-8 flex items-center gap-8">
         <Logo />

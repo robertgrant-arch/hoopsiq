@@ -365,22 +365,6 @@ export default function RosterImportPage(): React.ReactElement {
                 description="Paste a spreadsheet or CSV text directly. We'll validate each row instantly."
                 onClick={() => handleSourceSelect("csv_paste")}
               />
-              <SourceOption
-                icon={<FileSpreadsheet />}
-                title="Upload CSV file"
-                description="Select a .csv file from your device. Same format as paste."
-                badge="Coming soon"
-                onClick={() => {}}
-                disabled
-              />
-              <SourceOption
-                icon={<UserPlus />}
-                title="Add manually"
-                description="Enter players one by one using a guided form."
-                badge="Coming soon"
-                onClick={() => {}}
-                disabled
-              />
             </div>
 
             {/* Format guide */}

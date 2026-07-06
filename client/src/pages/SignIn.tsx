@@ -7,7 +7,7 @@ import {
   Heart,
   Settings,
 } from "lucide-react";
-import { useAuth } from "@/lib/auth";
+import { useAuth, HAS_CLERK } from "@/lib/auth";
 import { ROLE_META, demoUsers, type Role } from "@/lib/mock/users";
 import { Logo } from "@/components/brand/Logo";
 import { SignIn as ClerkSignIn } from "@clerk/clerk-react";
@@ -24,13 +24,19 @@ const iconFor: Record<Role, React.ReactNode> = {
 export default function SignIn() {
   const [, navigate] = useLocation();
   const { signIn } = useAuth();
-    const HAS_CLERK = false;
-if (HAS_CLERK) {
-return (
-<div className="min-h-screen flex items-center justify-center p-6 bg-background">
-<ClerkSignIn routing="virtual" signUpUrl="/sign-up" afterSignInUrl="/app/coach" /></div>
-);
-}
+
+  if (HAS_CLERK) {
+    return (
+      <div className="min-h-screen flex flex-col bg-background">
+        <header className="h-16 border-b border-border flex items-center px-5 lg:px-8">
+          <Logo />
+        </header>
+        <main className="flex-1 flex items-center justify-center p-6">
+          <ClerkSignIn routing="virtual" signUpUrl="/sign-up" afterSignInUrl="/app/coach" />
+        </main>
+      </div>
+    );
+  }
 
   function chooseUser(id: string, role: Role) {
     signIn(id);

@@ -69,6 +69,7 @@ import {
   Award,
   GripVertical,
   Settings2,
+  Settings,
   RotateCcw,
 } from "lucide-react";
 import {
@@ -797,6 +798,12 @@ function CoachProfileSheet({
           className="border-t border-border p-3 shrink-0"
           style={{ paddingBottom: "max(env(safe-area-inset-bottom), 12px)" }}
         >
+          <Link href="/app/settings" asChild>
+            <a className="w-full flex items-center gap-3 px-3 py-3 rounded-xl text-[14px] text-muted-foreground hover:text-foreground hover:bg-muted/50 transition-colors">
+              <Settings className="w-4 h-4" />
+              Account
+            </a>
+          </Link>
           <button
             onClick={onSignOut}
             className="w-full flex items-center gap-3 px-3 py-3 rounded-xl text-[14px] text-muted-foreground hover:text-destructive hover:bg-destructive/8 transition-colors"
@@ -1136,6 +1143,12 @@ function CoachDesktopSidebar({
             ← Marketing site
           </a>
         </Link>
+        <Link href="/app/settings" asChild>
+          <a className="flex items-center gap-2.5 px-2.5 py-2 rounded-lg text-[12.5px] text-muted-foreground/60 hover:text-muted-foreground transition-colors">
+            <Settings className="w-4 h-4" />
+            Account
+          </a>
+        </Link>
         <button
           onClick={onSignOut}
           className="w-full flex items-center gap-2.5 px-2.5 py-2 rounded-lg text-[12.5px] text-muted-foreground/60 hover:text-destructive transition-colors"
@@ -1399,6 +1412,12 @@ function PlayerDesktopSidebar({
             ← Back to marketing
           </a>
         </Link>
+        <Link href="/app/settings" asChild>
+          <a className="flex items-center gap-2.5 px-2.5 py-2 rounded-lg text-[12.5px] text-muted-foreground/60 hover:text-muted-foreground transition-colors">
+            <Settings className="w-4 h-4" />
+            Account
+          </a>
+        </Link>
         <button
           onClick={onSignOut}
           className="w-full flex items-center gap-2.5 px-2.5 py-2 rounded-lg text-[12.5px] text-muted-foreground/60 hover:text-destructive transition-colors"
@@ -1642,6 +1661,12 @@ function GenericMoreSheet({
         </div>
 
         <div className="border-t border-border p-2 shrink-0" style={{ paddingBottom: "max(env(safe-area-inset-bottom), 8px)" }}>
+          <Link href="/app/settings" asChild>
+            <a className="w-full flex items-center gap-3 px-3 py-3 rounded-xl text-[13.5px] text-muted-foreground hover:text-foreground hover:bg-muted/50 transition-colors">
+              <Settings className="w-4 h-4" />
+              Account
+            </a>
+          </Link>
           <button
             onClick={onSignOut}
             className="w-full flex items-center gap-3 px-3 py-3 rounded-xl text-[13.5px] text-muted-foreground hover:text-destructive hover:bg-destructive/8 transition-colors"

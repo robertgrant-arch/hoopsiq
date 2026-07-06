@@ -1,8 +1,8 @@
 import { Link } from "wouter";
 import { SignUp as ClerkSignUp } from "@clerk/clerk-react";
 import { Logo } from "@/components/brand/Logo";
+import { HAS_CLERK } from "@/lib/auth";
 
-const HAS_CLERK = !!(import.meta.env as any).VITE_CLERK_PUBLISHABLE_KEY;
 
 export default function SignUp() {
   if (HAS_CLERK) {

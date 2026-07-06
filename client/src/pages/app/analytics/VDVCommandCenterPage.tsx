@@ -646,7 +646,7 @@ export default function VDVCommandCenterPage() {
                 variant="outline"
                 size="sm"
                 className="gap-2"
-                onClick={() => {}}
+                onClick={() => window.print()}
               >
                 <Download className="w-4 h-4" />
                 Export Report

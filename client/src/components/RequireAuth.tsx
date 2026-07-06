@@ -1,8 +1,8 @@
 import React from "react";
 import { useLocation } from "wouter";
 import { useAuth } from "@clerk/clerk-react";
+import { HAS_CLERK } from "@/lib/auth";
 
-const HAS_CLERK = !!import.meta.env.VITE_CLERK_PUBLISHABLE_KEY;
 const CLERK_LOAD_TIMEOUT_MS = 3000;
 
 function clearClerkLocalState() {

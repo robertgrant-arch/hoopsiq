@@ -142,9 +142,6 @@ function EvidenceItem({ ev, detailed = false }: EvidenceItemProps) {
                 >
                   AI {Math.round(clip.aiConfidence * 100)}%
                 </span>
-                <a href="#" className="text-[11px] underline-offset-2 hover:underline" style={{ color: "oklch(0.72 0.18 290)" }}>
-                  View clip
-                </a>
               </div>
               {clip.aiTags.length > 0 && (
                 <div className="flex flex-wrap gap-1">

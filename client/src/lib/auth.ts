@@ -32,7 +32,10 @@ function isDemoMode(): boolean {
   return false;
 }
 
-const HAS_CLERK = !!import.meta.env.VITE_CLERK_PUBLISHABLE_KEY && !isDemoMode();
+/** Single source of truth for "is real Clerk auth active" — a publishable key
+ *  is configured AND we're not in explicit demo mode. Import this everywhere
+ *  instead of re-deriving from import.meta.env so the gates never disagree. */
+export const HAS_CLERK = !!import.meta.env.VITE_CLERK_PUBLISHABLE_KEY && !isDemoMode();
 
 // ---------------------------------------------------------------------------
 // Clerk path — only imported when Clerk is actually configured
