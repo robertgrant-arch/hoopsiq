@@ -17,18 +17,26 @@ Apple Developer account and Clerk keys.
 | Privacy Policy / Terms / Support pages | ✅ `/privacy`, `/terms`, `/support` (have counsel review before launch) |
 | No "coming soon" or dead buttons in UI | ✅ |
 | CORS allows `capacitor://localhost` | ✅ |
-| API base for native builds | ✅ `pnpm ios:build` bakes in `VITE_API_BASE=https://hoopsos-docs.vercel.app` |
+| API base for native builds | ✅ `pnpm ios:build` bakes in `VITE_API_BASE=https://hoopsos-docs.onrender.com` |
+
+**Production is Render** (`hoopsos-docs.onrender.com`): it serves the SPA and the
+full Express API, with DB, Clerk, and Mux already configured (`/health` reports
+all three). The Vercel deployment is a legacy duplicate. Render auto-deploys
+from `main`.
 
 ## Blocked on you
 
-1. **Clerk keys** — create a production instance at clerk.com, then:
-   - Vercel env: `VITE_CLERK_PUBLISHABLE_KEY`, `CLERK_SECRET_KEY` → redeploy.
+1. **Clerk production instance** — Render currently runs a **test-mode** key
+   (`pk_test_…`). Before App Store launch, create the production instance at
+   clerk.com (needs your production domain), then in Render env replace
+   `VITE_CLERK_PUBLISHABLE_KEY` and `CLERK_SECRET_KEY` and redeploy.
    - In the Clerk dashboard add `capacitor://localhost` to allowed origins
      (Configure → Domains / native applications) so auth works inside the iOS shell.
-   - Local iOS builds: put `VITE_CLERK_PUBLISHABLE_KEY` in `.env` before `pnpm ios:build`.
+   - Local iOS builds: put the same `VITE_CLERK_PUBLISHABLE_KEY` in `.env`
+     before `pnpm ios:build`.
 2. **Apple Developer Program** ($99/yr) — enroll at developer.apple.com.
-3. **Mux key rotation** — the local `.env` held live Mux credentials; rotate in the
-   Mux dashboard and update Vercel env when convenient (they were never in git).
+3. **Mux key rotation** — the local `.env` held live Mux credentials; rotate in
+   the Mux dashboard and update Render env when convenient (they were never in git).
 
 ## Build & submit steps (once unblocked)
 
@@ -59,8 +67,8 @@ In App Store Connect (appstoreconnect.apple.com):
 - **Category:** Sports (secondary: Productivity)
 - **Age rating:** 4+ (questionnaire: no objectionable content; app is used by
   minors under parental/coach supervision)
-- **Support URL:** https://hoopsos-docs.vercel.app/support
-- **Privacy Policy URL:** https://hoopsos-docs.vercel.app/privacy
+- **Support URL:** https://hoopsos-docs.onrender.com/support
+- **Privacy Policy URL:** https://hoopsos-docs.onrender.com/privacy
 - **Description (draft):**
 
   > HoopsIQ is the operating system for basketball programs. Coaches run

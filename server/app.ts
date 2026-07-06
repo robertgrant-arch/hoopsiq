@@ -37,16 +37,17 @@ export function createApp() {
   app.set("trust proxy", 1);
 
   // ── CORS ───────────────────────────────────────────────────────────────────
-  // Allow requests from the Vercel frontend and localhost dev servers.
-  // APP_BASE_URL should be set to https://hoopsiq.vercel.app on Render.
+  // Allow requests from the production frontends and localhost dev servers.
+  // APP_BASE_URL can add an extra origin via Render env if the domain changes.
   const allowedOrigins: (string | RegExp)[] = [
     /^http:\/\/localhost:\d+$/,
     /^http:\/\/127\.0\.0\.1:\d+$/,
     // Capacitor native shells (iOS WKWebView serves from capacitor://localhost)
     "capacitor://localhost",
     "http://localhost",
-    // Production web origin — same-origin today, but required when the native
-    // app or a split-out frontend calls this API cross-origin.
+    // Production web origins — same-origin for the Render web app; the
+    // native iOS shell and the legacy Vercel frontend call cross-origin.
+    "https://hoopsos-docs.onrender.com",
     "https://hoopsos-docs.vercel.app",
   ];
   if (process.env.APP_BASE_URL) {

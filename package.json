@@ -16,7 +16,7 @@
     "db:migrate": "drizzle-kit migrate",
     "db:studio": "drizzle-kit studio",
     "cap:sync": "pnpm build && cap sync",
-    "ios:build": "VITE_API_BASE=https://hoopsos-docs.vercel.app vite build && cap sync ios",
+    "ios:build": "VITE_API_BASE=https://hoopsos-docs.onrender.com vite build && cap sync ios",
     "cap:ios": "cap open ios",
     "cap:android": "cap open android",
     "cap:run:ios": "cap run ios",
