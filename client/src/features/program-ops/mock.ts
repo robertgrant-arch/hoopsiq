@@ -583,7 +583,7 @@ export const SOUTH_TEXAS_SHOWCASE: TournamentWeekend = {
     address: "889 E Market St, San Antonio, TX 78205",
     checkIn:  "2026-05-29",
     checkOut: "2026-06-01",
-    groupCode: "HOOPSOS26",
+    groupCode: "HOOPSIQ26",
   },
   transport: {
     departureTime: "2026-05-29T07:00:00",

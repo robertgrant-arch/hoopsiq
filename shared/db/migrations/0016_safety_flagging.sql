@@ -1,5 +1,5 @@
 -- Migration: 0016_safety_flagging
--- Adds Layer 4 of the HoopsOS communications safety stack:
+-- Adds Layer 4 of the HoopsIQ communications safety stack:
 -- deterministic rule-based content flagging.
 --
 -- Design

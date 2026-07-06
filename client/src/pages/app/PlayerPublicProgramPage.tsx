@@ -72,7 +72,7 @@ type StaffMember = {
   title: string;
   bio: string;
   certifications: string[];
-  hoopsOSCredential?: "Foundation" | "Development" | "Elite";
+  hoopsIQCredential?: "Foundation" | "Development" | "Elite";
 };
 
 const STAFF: StaffMember[] = [
@@ -83,7 +83,7 @@ const STAFF: StaffMember[] = [
     title: "Head Coach — 17U",
     bio: "12 years coaching experience at the youth and high school level. Specializes in guard development and film-based feedback. Holds a USAB License and coaches at Barnegat High School varsity program.",
     certifications: ["USAB License", "CPR/AED Certified", "Background Cleared"],
-    hoopsOSCredential: "Elite",
+    hoopsIQCredential: "Elite",
   },
   {
     id: "s2",
@@ -92,7 +92,7 @@ const STAFF: StaffMember[] = [
     title: "Head Coach — 15U",
     bio: "Former D3 collegiate player with 8 years of youth development coaching. Certified in Positive Coaching Alliance methodology and leads the program's IDP review process.",
     certifications: ["PCA Certified", "NFHS Fundamentals", "Background Cleared"],
-    hoopsOSCredential: "Development",
+    hoopsIQCredential: "Development",
   },
   {
     id: "s3",
@@ -101,7 +101,7 @@ const STAFF: StaffMember[] = [
     title: "Skills Trainer",
     bio: "Specializes in shooting mechanics and footwork development. Works with players 1-on-1 and in small groups as part of the IDP supplemental training program.",
     certifications: ["USAB License", "Background Cleared"],
-    hoopsOSCredential: "Foundation",
+    hoopsIQCredential: "Foundation",
   },
   {
     id: "s4",
@@ -110,7 +110,7 @@ const STAFF: StaffMember[] = [
     title: "Program Coordinator",
     bio: "Manages scheduling, registrations, and family communications. Former collegiate track athlete who brings a systems mindset to program operations.",
     certifications: ["Background Cleared", "CPR/AED Certified"],
-    hoopsOSCredential: undefined,
+    hoopsIQCredential: undefined,
   },
 ];
 
@@ -301,7 +301,7 @@ const CREDENTIAL_CONFIG = {
 } as const;
 
 function StaffCard({ member }: { member: StaffMember }) {
-  const cred = member.hoopsOSCredential ? CREDENTIAL_CONFIG[member.hoopsOSCredential] : null;
+  const cred = member.hoopsIQCredential ? CREDENTIAL_CONFIG[member.hoopsIQCredential] : null;
 
   return (
     <div className="rounded-xl border border-border bg-card p-5 space-y-3">

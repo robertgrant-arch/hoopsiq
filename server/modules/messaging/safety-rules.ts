@@ -1,5 +1,5 @@
 /**
- * Safety rule engine — Layer 4 of the HoopsOS communications safety stack.
+ * Safety rule engine — Layer 4 of the HoopsIQ communications safety stack.
  *
  *   Layer 1  guardian-policy.ts    — guardian-copy enforcement
  *   Layer 2  thread-type-policy.ts — approved thread type classification

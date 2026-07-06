@@ -1,7 +1,7 @@
 -- Migration: 0015_quiet_hours
 -- Adds send-time enforcement to the communications safety stack.
 --
--- Layer 3 of the HoopsOS messaging safety model:
+-- Layer 3 of the HoopsIQ messaging safety model:
 --   Layer 1  guardian-policy     — Is every minor covered by a guardian?
 --   Layer 2  thread-type-policy  — Is the thread structure itself safe?
 --   Layer 3  quiet-hours         — Is this being sent during allowed hours?
