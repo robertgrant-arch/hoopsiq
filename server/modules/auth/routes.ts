@@ -27,6 +27,8 @@ import {
   localUser,
   loginRateLimited,
   clearLoginAttempts,
+  bootstrapLocalAuth,
+  bootstrapAdminEmail,
 } from "../../auth/local";
 
 const PORTAL_ROLES = ["ATHLETE", "COACH", "TEAM_ADMIN", "EXPERT", "PARENT", "SUPER_ADMIN"] as const;
@@ -97,11 +99,26 @@ export function registerAuthRoutes(app: Express): void {
         return res.status(429).json({ error: "Too many attempts. Try again in 15 minutes." });
       }
       const db = getDb();
-      const [user] = await db
+      let [user] = await db
         .select()
         .from(appUsers)
         .where(and(eq(appUsers.email, email), isNull(appUsers.deletedAt)))
         .limit(1);
+      // Self-heal: if the seeded master admin is missing (e.g. the startup
+      // bootstrap never ran on this platform), run the idempotent bootstrap
+      // and retry the lookup once.
+      if (!user && email === bootstrapAdminEmail()) {
+        try {
+          await bootstrapLocalAuth();
+          [user] = await db
+            .select()
+            .from(appUsers)
+            .where(and(eq(appUsers.email, email), isNull(appUsers.deletedAt)))
+            .limit(1);
+        } catch (bootErr) {
+          console.error("[auth] login-time bootstrap failed:", bootErr);
+        }
+      }
       if (!user || !user.active || !user.passwordHash || !verifyPassword(password, user.passwordHash)) {
         return res.status(401).json({ error: "Invalid email or password" });
       }

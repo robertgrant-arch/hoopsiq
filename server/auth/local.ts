@@ -145,8 +145,36 @@ const DEFAULT_ADMIN_EMAIL = "robert.grant@selectquote.com";
 const DEFAULT_ADMIN_HASH =
   "scrypt$16384$8$1$izi438A3dwRM/BIMBUMqZg==$/kX/oF3c8kCditTbWHUHUHa7SKxwc4oLcYuhIllFRSiOmgS6EIjL/8vVMKUF1R0DPbUi+pHVJxHC1k32CgAJ8w==";
 
+/** Last bootstrap outcome — surfaced via /health for production diagnostics. */
+export const bootstrapStatus: { ran: boolean; ok: boolean; step: string; error: string | null } = {
+  ran: false,
+  ok: false,
+  step: "not-started",
+  error: null,
+};
+
 export async function bootstrapLocalAuth(): Promise<void> {
+  bootstrapStatus.ran = true;
+  bootstrapStatus.ok = false;
+  bootstrapStatus.error = null;
+  try {
+    await runBootstrap();
+    bootstrapStatus.ok = true;
+    bootstrapStatus.step = "done";
+  } catch (e) {
+    bootstrapStatus.error = e instanceof Error ? e.message : String(e);
+    throw e;
+  }
+}
+
+/** The admin email the bootstrap seeds — used by login's self-heal path. */
+export function bootstrapAdminEmail(): string {
+  return (process.env.ADMIN_EMAIL ?? DEFAULT_ADMIN_EMAIL).toLowerCase();
+}
+
+async function runBootstrap(): Promise<void> {
   const db = getDb();
+  bootstrapStatus.step = "create-table";
 
   // Defensive table creation so auth works even if the migration pipeline
   // hasn't run (mirrors shared/db/migrations/0017_app_users.sql).
@@ -169,6 +197,7 @@ export async function bootstrapLocalAuth(): Promise<void> {
   );
 
   // Default org
+  bootstrapStatus.step = "default-org";
   let [org] = await db
     .select()
     .from(orgs)
@@ -186,6 +215,7 @@ export async function bootstrapLocalAuth(): Promise<void> {
   }
 
   // Master admin
+  bootstrapStatus.step = "master-admin";
   const adminEmail = (process.env.ADMIN_EMAIL ?? DEFAULT_ADMIN_EMAIL).toLowerCase();
   const adminHash = process.env.ADMIN_PASSWORD_HASH ?? DEFAULT_ADMIN_HASH;
   let [admin] = await db
@@ -208,6 +238,7 @@ export async function bootstrapLocalAuth(): Promise<void> {
   }
 
   // Org membership (owner) so tenant-scoped API routes authorize the admin.
+  bootstrapStatus.step = "org-membership";
   if (org && admin) {
     await db
       .insert(orgMembers)

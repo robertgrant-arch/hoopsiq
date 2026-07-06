@@ -6,6 +6,7 @@ import { registerFilmAnalysisRoutes } from "./modules/film-analysis/routes";
 import { DbFilmAnalysisService } from "./modules/film-analysis/service";
 import { registerMeRoute } from "./routes/me";
 import { registerAuthRoutes } from "./modules/auth/routes";
+import { bootstrapStatus } from "./auth/local";
 import { registerRosterRoutes } from "./modules/roster/routes";
 import { registerAssignmentRoutes } from "./modules/assignments/routes";
 import { registerPracticePlanRoutes } from "./modules/practice-plans/routes";
@@ -70,6 +71,7 @@ export function createApp() {
       db:     !!process.env.DATABASE_URL,
       clerk:  !!process.env.CLERK_SECRET_KEY,
       mux:    !!process.env.MUX_TOKEN_ID,
+      auth:   bootstrapStatus,
     });
   });
 
