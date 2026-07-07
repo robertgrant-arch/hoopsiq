@@ -82,7 +82,16 @@ export function createApp() {
   app.use("/webhooks", webhookRouter);
 
   app.use(express.json());
-  app.use(clerkMiddleware());
+
+  // Clerk must not see first-party session tokens ("Bearer v1.…") — it tries
+  // to verify them as Clerk JWTs and throws, turning every authenticated
+  // request into a 500. Bypass it for our scheme; Clerk still runs for its
+  // own sessions (parked SSO path).
+  const clerk = clerkMiddleware();
+  app.use((req, res, next) => {
+    if (req.get("authorization")?.startsWith("Bearer v1.")) return next();
+    return clerk(req, res, next);
+  });
 
   // First-party auth (login, session, admin user management) — replaces Clerk
   // SSO for interactive sign-in. Registered before tenant-scoped routes.
