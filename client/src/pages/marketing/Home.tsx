@@ -47,7 +47,7 @@ export default function Home() {
             </p>
 
             <div className="flex flex-wrap gap-3 mt-10">
-              <Link href="/sign-in" asChild>
+              <Link href="/demo" asChild>
                 <a className="inline-flex items-center gap-2 h-12 px-6 rounded-md bg-primary text-primary-foreground font-semibold text-[13px] uppercase tracking-[0.08em] hover:brightness-110 transition shadow-[0_0_40px_-8px_oklch(0.78_0.18_75/0.6)]">
                   Open Demo App <ArrowRight className="w-4 h-4" />
                 </a>
@@ -261,7 +261,7 @@ export default function Home() {
               they got better. That data follows the player into recruiting
               season.
             </p>
-            <Link href="/sign-in" asChild>
+            <Link href="/demo" asChild>
               <a className="inline-flex items-center gap-2 h-12 px-6 mt-10 rounded-md bg-primary text-primary-foreground font-semibold text-[13px] uppercase tracking-[0.08em] hover:brightness-110 transition">
                 Open Demo App <ArrowRight className="w-4 h-4" />
               </a>

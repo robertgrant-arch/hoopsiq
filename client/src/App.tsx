@@ -14,6 +14,7 @@ import RequireAuth from "@/components/RequireAuth";
 
 // Marketing
 const MarketingHome   = React.lazy(() => import("@/pages/marketing/Home"));
+const DemoEntry       = React.lazy(() => import("@/pages/DemoEntryPage"));
 const PlayersPage     = React.lazy(() => import("@/pages/marketing/audiencePages").then(m => ({ default: m.PlayersPage })));
 const CoachesPage     = React.lazy(() => import("@/pages/marketing/audiencePages").then(m => ({ default: m.CoachesPage })));
 const TeamsPage       = React.lazy(() => import("@/pages/marketing/audiencePages").then(m => ({ default: m.TeamsPage })));
@@ -318,6 +319,7 @@ function Router() {
         <Route path="/experts" component={ExpertsPage} />
         <Route path="/pricing" component={PricingPage} />
         <Route path="/live" component={LiveLanding} />
+        <Route path="/demo" component={DemoEntry} />
 
         {/* Legal & support — public, no auth */}
         <Route path="/privacy" component={PrivacyPolicyPage} />

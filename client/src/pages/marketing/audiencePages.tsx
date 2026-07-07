@@ -89,7 +89,7 @@ export function PlayersPage() {
       titleAccent="IN MOTION."
       lede="Your coach sees the film. They write the plan. You execute the drills. You both watch the skill scores move. HoopsIQ is where individual development actually happens — not just gets scheduled."
       primaryCta="Open Player Demo"
-      primaryHref="/sign-in"
+      primaryHref="/demo"
       secondaryCta="See How the IDP Works"
       secondaryHref="#idp"
       accent="amber"
@@ -175,7 +175,7 @@ export function PlayersPage() {
               they're on the roster.
             </p>
           </div>
-          <Link href="/sign-in" asChild>
+          <Link href="/demo" asChild>
             <a className="shrink-0 inline-flex items-center gap-2 h-11 px-5 rounded-md bg-primary text-primary-foreground font-semibold text-[13px] uppercase tracking-[0.08em] hover:brightness-110 transition">
               Join My Team
             </a>
@@ -243,7 +243,7 @@ export function CoachesPage() {
       titleAccent="DEVELOPS PLAYERS."
       lede="Turn what you see on film into what players actually work on. Individual development plans built from your coaching observations. Readiness tracking, practice planning, playbook, and film — one workflow that connects observation to outcome."
       primaryCta="Open Coach Demo"
-      primaryHref="/sign-in"
+      primaryHref="/demo"
       secondaryCta="See the Development Loop"
       secondaryHref="#dev-loop"
       accent="indigo"
@@ -357,7 +357,7 @@ export function TeamsPage() {
       titleAccent="ACROSS YOUR ORG."
       lede="From one varsity team to a 16-team travel program. Seat-based billing, SSO, roster SSO-import, and a flagship perk for your athletes: 50% off Player Core — forever, while they're on roster."
       primaryCta="Open Org Admin Demo"
-      primaryHref="/sign-in"
+      primaryHref="/demo"
       secondaryCta="See Pricing"
       secondaryHref="/pricing"
       accent="teal"
@@ -446,7 +446,7 @@ export function ExpertsPage() {
       titleAccent="BASKETBALL MIND."
       lede="List async video reviews, 1:1 consults, live classes, and premium courses. We handle payments, member pricing, and the platform. You set the price and keep 80%."
       primaryCta="Open Expert Demo"
-      primaryHref="/sign-in"
+      primaryHref="/demo"
       secondaryCta="Browse the Marketplace"
       secondaryHref="/experts#marketplace"
       accent="amber"
@@ -549,7 +549,7 @@ export function PricingPage() {
                 </li>
               ))}
             </ul>
-            <Link href="/sign-in" asChild>
+            <Link href="/demo" asChild>
               <a
                 className={`inline-flex items-center justify-center gap-2 h-11 rounded-md text-[13px] font-semibold uppercase tracking-[0.08em] transition ${
                   i === 2
@@ -594,7 +594,7 @@ export function LiveLanding() {
             Sign in to see the full live class schedule, reserve your spot, and
             join waitlists for sold-out sessions.
           </p>
-          <Link href="/sign-in" asChild>
+          <Link href="/demo" asChild>
             <a className="inline-flex items-center gap-2 h-11 px-5 mt-6 rounded-md bg-primary text-primary-foreground font-semibold text-[12.5px] uppercase tracking-[0.08em]">
               Sign In to See Schedule
             </a>

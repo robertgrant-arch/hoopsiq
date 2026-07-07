@@ -68,7 +68,7 @@ export function MarketingHeader() {
                   Sign in
                 </a>
               </Link>
-              <Link href="/sign-in" asChild>
+              <Link href="/demo" asChild>
                 <a className="inline-flex items-center gap-2 h-9 px-4 rounded-md bg-primary text-primary-foreground font-semibold text-[12.5px] uppercase tracking-[0.08em] hover:brightness-110 transition">
                   Open Demo App
                 </a>
