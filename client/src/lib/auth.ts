@@ -24,12 +24,32 @@ function writeStoredUserId(id: string | null) {
   window.dispatchEvent(new CustomEvent("hoopsiq-user-changed"));
 }
 
+const DEMO_FLAG_KEY = "hoopsiq.demoMode";
+
 function isDemoMode(): boolean {
   if (typeof window === "undefined") return true;
   const params = new URLSearchParams(window.location.search);
-  if (params.get("demo") === "true") return true;
+  if (params.get("demo") === "true") {
+    // Entering via ?demo=true makes demo sticky for this browser until a
+    // real sign-in or an explicit exit — SPA navigation drops the query
+    // param, so the choice must persist.
+    try { window.localStorage.setItem(DEMO_FLAG_KEY, "true"); } catch { /* ignore */ }
+    return true;
+  }
+  if (params.get("demo") === "false") {
+    try { window.localStorage.removeItem(DEMO_FLAG_KEY); } catch { /* ignore */ }
+    return import.meta.env.VITE_DEMO_MODE === "true";
+  }
   if (import.meta.env.VITE_DEMO_MODE === "true") return true;
+  try {
+    if (window.localStorage.getItem(DEMO_FLAG_KEY) === "true") return true;
+  } catch { /* ignore */ }
   return false;
+}
+
+/** Leave sticky demo mode (used by real sign-in and the demo exit link). */
+export function exitDemoMode(): void {
+  try { window.localStorage.removeItem(DEMO_FLAG_KEY); } catch { /* ignore */ }
 }
 
 /** Clerk SSO is parked — first-party auth (below) is the active sign-in path.
@@ -69,6 +89,7 @@ export function getAuthToken(): string | null {
 }
 
 export function storeAuthSession(token: string, user: AuthUser): void {
+  exitDemoMode(); // a real sign-in always leaves sticky demo mode
   window.localStorage.setItem(TOKEN_KEY, token);
   window.localStorage.setItem(AUTH_USER_KEY, JSON.stringify(user));
   window.dispatchEvent(new CustomEvent("hoopsiq-user-changed"));

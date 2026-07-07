@@ -257,13 +257,24 @@ export default function AccountSettingsPage() {
               ))}
             </div>
             {HAS_CUSTOM_AUTH && (
-              <div className="mt-4 pt-4 border-t border-border">
+              <div className="mt-4 pt-4 border-t border-border space-y-2">
                 <Link href="/app/admin/users" asChild>
                   <a className="flex items-center gap-2 text-[13.5px] text-primary hover:underline">
                     <Users className="w-4 h-4" />
                     Manage users
                   </a>
                 </Link>
+                <a
+                  href="/sign-in?demo=true"
+                  className="flex items-center gap-2 text-[13.5px] text-primary hover:underline"
+                >
+                  <Eye className="w-4 h-4" />
+                  Open the interactive demo (sample data)
+                </a>
+                <p className="text-[11.5px] text-muted-foreground">
+                  Role switching above shows your real org data — currently empty.
+                  The demo uses a fully populated sample team.
+                </p>
               </div>
             )}
           </section>

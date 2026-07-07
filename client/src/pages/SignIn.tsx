@@ -129,9 +129,18 @@ function CredentialsSignIn() {
               </Link>
               .
             </p>
-            <Link href="/" asChild>
-              <a className="inline-block hover:text-foreground">← Back to the main site</a>
-            </Link>
+            {/* Full page load so auth-mode constants re-evaluate in demo mode */}
+            <a
+              href="/sign-in?demo=true"
+              className="inline-block px-4 py-2 rounded-lg border border-border text-[13px] text-foreground hover:border-primary/50 transition"
+            >
+              ▶ Explore the interactive demo
+            </a>
+            <div>
+              <Link href="/" asChild>
+                <a className="inline-block hover:text-foreground">← Back to the main site</a>
+              </Link>
+            </div>
           </div>
         </div>
       </main>
@@ -208,6 +217,14 @@ export default function SignIn() {
             <Link href="/" asChild>
               <a className="hover:text-foreground">← Back to the main site</a>
             </Link>
+            {(import.meta.env.PROD || import.meta.env.VITE_CUSTOM_AUTH === "true") && (
+              <a
+                href="/sign-in?demo=false"
+                className="block mt-2 hover:text-foreground"
+              >
+                Exit demo · Sign in with your account
+              </a>
+            )}
           </div>
         </div>
       </main>
