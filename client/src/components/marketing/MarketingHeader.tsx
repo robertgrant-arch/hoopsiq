@@ -17,7 +17,10 @@ export function MarketingHeader() {
   const { user } = useAuth();
 
   return (
-    <div className="sticky top-0 z-40">
+    <div
+      className="sticky top-0 z-40 bg-background"
+      style={{ paddingTop: "env(safe-area-inset-top)" }}
+    >
       {/* Demo banner — only shown when running without real auth */}
       {IS_DEMO && (
         <Link href="/sign-in" asChild>

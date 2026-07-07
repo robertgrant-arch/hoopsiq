@@ -250,19 +250,18 @@ const pwaPlugin = VitePWA({
   },
 });
 
-const isDev = process.env.NODE_ENV !== "production";
-const plugins = [
-  react(),
-  tailwindcss(),
-  ...(isDev ? [jsxLocPlugin()] : []),
-  ...(isDev ? [vitePluginManusRuntime()] : []),
-  vitePluginManusDebugCollector(),
-  vitePluginStorageProxy(),
-  pwaPlugin,
-];
-
-export default defineConfig({
-  plugins,
+export default defineConfig(({ command }) => ({
+  // Dev-only plugins gate on the Vite command, NOT process.env.NODE_ENV —
+  // Vite 7 sets NODE_ENV after config resolution, so an env check here let
+  // jsxLocPlugin (dev-runtime JSX) leak into local `vite build` output.
+  plugins: [
+    react(),
+    tailwindcss(),
+    ...(command === "serve" ? [jsxLocPlugin(), vitePluginManusRuntime()] : []),
+    vitePluginManusDebugCollector(),
+    vitePluginStorageProxy(),
+    pwaPlugin,
+  ],
   assetsInclude: ["**/*.md"],
   resolve: {
     alias: {
@@ -302,4 +301,4 @@ export default defineConfig({
       ],
     },
   },
-});
+}));
