@@ -27,6 +27,7 @@ import {
   CalendarDays,
 } from "lucide-react";
 import { SOUTH_TEXAS_SHOWCASE, type TournamentGame, type TournamentWeekend } from "@/features/program-ops/mock";
+import { AppShell } from "@/components/app/AppShell";
 
 /* ─── Colour tokens ──────────────────────────────────────────────────────────── */
 
@@ -268,6 +269,7 @@ export default function TournamentWeekendPage(): React.ReactElement {
   const upcomingCount  = tournament.games.filter((g) => g.result === "upcoming").length;
 
   return (
+    <AppShell>
     <div className="min-h-screen" style={{ background: "oklch(0.12 0.01 260)", color: "oklch(0.93 0.01 260)" }}>
       {/* Header */}
       <div
@@ -439,5 +441,6 @@ export default function TournamentWeekendPage(): React.ReactElement {
         </section>
       </div>
     </div>
+    </AppShell>
   );
 }

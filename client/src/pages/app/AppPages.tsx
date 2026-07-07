@@ -2807,7 +2807,8 @@ export function PlaybookStudio() {
 export function AdminModeration() {
   const queue = moderationQueue;
   return (
-    <div className="space-y-5">
+    <AppShell>
+      <div className="px-6 lg:px-10 py-8 max-w-[1400px] mx-auto space-y-5">
       <div>
         <p className="text-xs uppercase tracking-[0.2em] text-muted-foreground mb-1">Moderation</p>
         <h1 className="font-display text-3xl uppercase tracking-tight">Moderation Queue</h1>
@@ -2855,13 +2856,15 @@ export function AdminModeration() {
           </div>
         ))}
       </div>
-    </div>
+      </div>
+    </AppShell>
   );
 }
 
 export function AdminAudit() {
   return (
-    <div className="space-y-5">
+    <AppShell>
+      <div className="px-6 lg:px-10 py-8 max-w-[1400px] mx-auto space-y-5">
       <div>
         <p className="text-xs uppercase tracking-[0.2em] text-muted-foreground mb-1">Audit Log</p>
         <h1 className="font-display text-3xl uppercase tracking-tight">Immutable Audit Log</h1>
@@ -2888,7 +2891,8 @@ export function AdminAudit() {
           </div>
         ))}
       </div>
-    </div>
+      </div>
+    </AppShell>
   );
 }
 

@@ -6,6 +6,7 @@ import { registerFilmAnalysisRoutes } from "./modules/film-analysis/routes";
 import { DbFilmAnalysisService } from "./modules/film-analysis/service";
 import { registerMeRoute } from "./routes/me";
 import { registerAuthRoutes } from "./modules/auth/routes";
+import { registerClipRoutes } from "./modules/clips/routes";
 import { bootstrapStatus } from "./auth/local";
 import { registerRosterRoutes } from "./modules/roster/routes";
 import { registerAssignmentRoutes } from "./modules/assignments/routes";
@@ -96,6 +97,9 @@ export function createApp() {
   // First-party auth (login, session, admin user management) — replaces Clerk
   // SSO for interactive sign-in. Registered before tenant-scoped routes.
   registerAuthRoutes(app);
+
+  // Film Room v2 — coach-created clip assignments (docs/film-room-*.md)
+  registerClipRoutes(app);
 
   const filmRouter = express.Router();
   registerFilmAnalysisRoutes(filmRouter, new DbFilmAnalysisService());

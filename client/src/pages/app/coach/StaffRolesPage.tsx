@@ -54,6 +54,7 @@ import {
   type StaffRecord,
 } from "@/features/admin/audit";
 import { PermissionGate, RequestAccess } from "@/components/PermissionGate";
+import { AppShell } from "@/components/app/AppShell";
 
 /* ─── Colour tokens ──────────────────────────────────────────────────────── */
 
@@ -704,6 +705,7 @@ export default function StaffRolesPage(): React.ReactElement {
   const canViewAudit   = can(demoRole, "view_audit_log");
 
   return (
+    <AppShell>
     <div className="min-h-screen" style={{ background: "oklch(0.12 0.01 260)", color: "oklch(0.93 0.01 260)" }}>
 
       {/* Header */}
@@ -897,5 +899,6 @@ export default function StaffRolesPage(): React.ReactElement {
       {/* Invite modal */}
       {showInvite && <InviteForm onClose={() => setShowInvite(false)} />}
     </div>
+    </AppShell>
   );
 }

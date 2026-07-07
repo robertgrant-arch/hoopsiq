@@ -165,7 +165,7 @@ const COACH_TABS: CoachTab[] = [
     id: "film",
     label: "Film",
     Icon: Film,
-    href: "/app/coach/film",
+    href: "/app/coach/film-room",
     isActive: (l) =>
       ["/app/coach/film", "/app/coach/queue", "/app/coach/scouting"]
         .some((p) => l.startsWith(p)),
@@ -205,9 +205,9 @@ const COACH_SUBNAV_SECTIONS: SubNavSection[] = [
     id: "film",
     rootPaths: ["/app/coach/film", "/app/coach/queue", "/app/coach/scouting"],
     tabs: [
-      { label: "Film Room", href: "/app/coach/film"     },
-      { label: "Queue",     href: "/app/coach/queue"    },
-      { label: "Scouting",  href: "/app/coach/scouting" },
+      { label: "Film Room",   href: "/app/coach/film-room"             },
+      { label: "Assignments", href: "/app/coach/film-room/assignments" },
+      { label: "Scouting",    href: "/app/coach/scouting"              },
     ],
   },
   {
@@ -302,9 +302,9 @@ const COACH_SIDEBAR_SECTIONS: SidebarSection[] = [
   {
     title: "FILM",
     items: [
-      { href: "/app/coach/film",         label: "Film Room",    icon: <Film className="w-4 h-4" />       },
-      { href: "/app/coach/film/analyze", label: "AI Analysis",  icon: <Sparkles className="w-4 h-4" />   },
-      { href: "/app/coach/queue",        label: "Review Queue", icon: <ListChecks className="w-4 h-4" /> },
+      { href: "/app/coach/film-room",             label: "Film Room",   icon: <Film className="w-4 h-4" />       },
+      { href: "/app/coach/film-room/assignments", label: "Assignments", icon: <ListChecks className="w-4 h-4" /> },
+      { href: "/app/coach/film/analyze",          label: "AI Analysis", icon: <Sparkles className="w-4 h-4" />   },
       { href: "/app/coach/scouting",     label: "Scouting",     icon: <Crosshair className="w-4 h-4" /> },
     ],
   },
@@ -392,7 +392,7 @@ const NAV: Record<Role, NavItem[]> = {
     { href: "/app/player/recruiting",            label: "Recruiting Profile", icon: <Star className="w-5 h-5" />        },
     { href: "/app/player/resume",                label: "My Resume",          icon: <FileText className="w-5 h-5" />    },
     { href: "/app/player/uploads",      label: "Uploads",      icon: <UploadCloud className="w-5 h-5" />  },
-    { href: "/app/film/inbox",          label: "Film Inbox",   icon: <Film className="w-5 h-5" />         },
+    { href: "/app/player/film",         label: "Film",         icon: <Film className="w-5 h-5" />         },
     { href: "/app/player/coach-view",     label: "Coach's View",       icon: <Target className="w-5 h-5" />      },
     { href: "/app/player/vdv",            label: "My VDV Score",       icon: <TrendingUp className="w-5 h-5" />  },
     { href: "/app/player/recruiting/visibility", label: "Privacy Settings",   icon: <Shield className="w-5 h-5" />     },

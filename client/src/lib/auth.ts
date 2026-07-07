@@ -170,7 +170,12 @@ function useCustomAuth(): {
   }, []);
 
   const setRole = useCallback((role: Role) => {
-    if (typeof window !== "undefined") window.localStorage.setItem(ROLE_KEY, role);
+    if (typeof window !== "undefined") {
+      window.localStorage.setItem(ROLE_KEY, role);
+      // Broadcast so every useAuth() instance (AppShell, pages) re-reads the
+      // override — without this only the calling component saw the switch.
+      window.dispatchEvent(new CustomEvent("hoopsiq-user-changed"));
+    }
     setRoleOverride(role);
   }, []);
 
@@ -265,8 +270,13 @@ function useDemoAuth(): {
 
   const setRole = useCallback((role: Role) => {
     if (typeof window !== "undefined") window.localStorage.setItem(ROLE_KEY, role);
-    // For demo mode, role is embedded in the DemoUser object; this is a no-op
-    // unless the caller also swaps the active demo user.
+    // Demo mode: switch to the demo user holding that role so "View as role"
+    // works identically to production.
+    const target = demoUsers.find((u) => u.role === role);
+    if (target) {
+      writeStoredUserId(target.id);
+      setUserId(target.id);
+    }
   }, []);
 
   return { user, signIn, signOut, setRole };

@@ -23,6 +23,7 @@ import {
   Download,
 } from "lucide-react";
 import { toast } from "sonner";
+import { AppShell } from "@/components/app/AppShell";
 import {
   SAMPLE_CSV,
   parseRosterCsv,
@@ -263,6 +264,7 @@ export default function RosterImportPage(): React.ReactElement {
   /* ── Success screen ─────────────────────────────────────────────────────── */
   if (done) {
     return (
+      <AppShell>
       <div className="min-h-screen" style={{ background: "oklch(0.12 0.01 260)", color: "oklch(0.93 0.01 260)" }}>
         {/* Header */}
         <div
@@ -310,11 +312,13 @@ export default function RosterImportPage(): React.ReactElement {
           </div>
         </div>
       </div>
+      </AppShell>
     );
   }
 
   /* ── Main layout ─────────────────────────────────────────────────────────── */
   return (
+    <AppShell>
     <div className="min-h-screen" style={{ background: "oklch(0.12 0.01 260)", color: "oklch(0.93 0.01 260)" }}>
       {/* Header */}
       <div
@@ -529,5 +533,6 @@ export default function RosterImportPage(): React.ReactElement {
         )}
       </div>
     </div>
+    </AppShell>
   );
 }

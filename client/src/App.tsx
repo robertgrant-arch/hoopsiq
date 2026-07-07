@@ -67,6 +67,13 @@ const GameDayPage         = React.lazy(() => import("@/pages/app/coach/GameDayPa
 // Staff Roles & Audit Trail
 const StaffRolesPage      = React.lazy(() => import("@/pages/app/coach/StaffRolesPage"));
 
+// Film Room v2 — coach-created clip assignments
+const FilmRoomV2Landing       = React.lazy(() => import("@/pages/app/coach/film-room/FilmRoomPage"));
+const FilmRoomWorkspace       = React.lazy(() => import("@/pages/app/coach/film-room/ClipWorkspacePage"));
+const FilmRoomAssignmentQueue = React.lazy(() => import("@/pages/app/coach/film-room/AssignmentQueuePage"));
+const PlayerFilmInbox         = React.lazy(() => import("@/pages/app/player/film/PlayerFilmInboxPage"));
+const PlayerClipReview        = React.lazy(() => import("@/pages/app/player/film/PlayerClipReviewPage"));
+
 // Program Operations pages
 const ProgramOpsHub          = React.lazy(() => import("@/pages/app/coach/ProgramOpsHub"));
 const RosterImportPage       = React.lazy(() => import("@/pages/app/coach/RosterImportPage"));
@@ -430,6 +437,13 @@ function Router() {
         <Route path="/app/film" component={FilmRoomHome} />
         <Route path="/app/film/clips/:id" component={FilmClipDetail} />
         <Route path="/app/film/inbox" component={FilmInbox} />
+
+        {/* Film Room v2 — coach-created clip assignments (docs/film-room-*.md) */}
+        <Route path="/app/coach/film-room/assignments" component={guard(FilmRoomAssignmentQueue)} />
+        <Route path="/app/coach/film-room/:sessionId" component={guard(FilmRoomWorkspace)} />
+        <Route path="/app/coach/film-room" component={guard(FilmRoomV2Landing)} />
+        <Route path="/app/player/film/:assignmentId" component={PlayerClipReview} />
+        <Route path="/app/player/film" component={PlayerFilmInbox} />
         <Route path="/app/coach/film/upload" component={guard(FilmUploadPage)} />
         <Route path="/app/coach/film/sessions/:id" component={guard(FilmSessionDetail)} />
         <Route path="/app/coach/film/playlists/:id" component={guard(FilmPlaylistPage)} />

@@ -36,3 +36,4 @@ export * from "./quiet_hours_log";
 export * from "./safety_flags";
 export * from "./safety_incidents";
 export * from "./app_users";
+export * from "./film_room";

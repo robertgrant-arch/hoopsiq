@@ -32,6 +32,7 @@ import {
   Eye,
 } from "lucide-react";
 import { toast } from "sonner";
+import { AppShell } from "@/components/app/AppShell";
 import {
   PROGRAMS,
   getCoachPrograms,
@@ -187,6 +188,7 @@ export default function BroadcastPage(): React.ReactElement {
   /* ── Success state ──────────────────────────────────────────────────────── */
   if (sent) {
     return (
+      <AppShell>
       <div className="min-h-screen" style={{ background: "oklch(0.12 0.01 260)", color: "oklch(0.93 0.01 260)" }}>
         <div
           className="sticky top-0 z-10 flex items-center gap-3 px-4 py-3 border-b"
@@ -236,11 +238,13 @@ export default function BroadcastPage(): React.ReactElement {
           </div>
         </div>
       </div>
+      </AppShell>
     );
   }
 
   /* ── Composer layout ─────────────────────────────────────────────────────── */
   return (
+    <AppShell>
     <div className="min-h-screen" style={{ background: "oklch(0.12 0.01 260)", color: "oklch(0.93 0.01 260)" }}>
       {/* Header */}
       <div
@@ -501,5 +505,6 @@ export default function BroadcastPage(): React.ReactElement {
         </div>
       </div>
     </div>
+    </AppShell>
   );
 }

@@ -48,6 +48,7 @@ import {
   Swords,
 } from "lucide-react";
 import { toast } from "sonner";
+import { AppShell } from "@/components/app/AppShell";
 import {
   DOSSIERS,
   getDossierByPlayerId,
@@ -615,6 +616,7 @@ export default function DossierBuilderPage(): React.ReactElement {
   const activeSection_ = dossier.sections.find((s) => s.key === activeSection)!;
 
   return (
+    <AppShell>
     <div className="min-h-screen" style={{ background: "oklch(0.12 0.01 260)", color: "oklch(0.93 0.01 260)" }}>
       {/* ── Header ──────────────────────────────────────────────────────────── */}
       <div
@@ -917,5 +919,6 @@ export default function DossierBuilderPage(): React.ReactElement {
         </main>
       </div>
     </div>
+    </AppShell>
   );
 }

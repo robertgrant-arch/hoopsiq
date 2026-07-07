@@ -24,6 +24,7 @@ import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useFilmAnalysis } from "@/hooks/useFilmAnalysis";
+import { AppShell } from "@/components/app/AppShell";
 import type {
   FilmSession,
   FilmSessionStatus,
@@ -257,6 +258,7 @@ export function FilmUploadPage() {
   const isSubmitting = phase === "uploading" || phase === "processing";
 
   return (
+    <AppShell>
     <div className="p-6 max-w-xl mx-auto">
       <h1 className="text-2xl font-semibold mb-4">Upload Film</h1>
       <Card>
@@ -359,6 +361,7 @@ export function FilmUploadPage() {
         </CardContent>
       </Card>
     </div>
+    </AppShell>
   );
 }
 
@@ -509,6 +512,7 @@ export function PlayerHighlightsPage() {
   const highlights = getPlayerHighlights(playerId);
 
   return (
+    <AppShell>
     <div className="p-6 space-y-4">
       <h1 className="text-2xl font-semibold">My Highlights</h1>
       {highlights.length === 0 ? (
@@ -526,6 +530,7 @@ export function PlayerHighlightsPage() {
         </div>
       )}
     </div>
+    </AppShell>
   );
 }
 
