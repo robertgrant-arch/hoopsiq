@@ -47,9 +47,9 @@ export default function PrivacyPolicyPage() {
         <ul className="list-disc pl-5 space-y-2 mb-4">
           <LI>
             <span className="text-foreground">Account information.</span> Name, email address,
-            and role (coach, athlete, parent, or program staff), managed through our
-            authentication provider, Clerk. Depending on your program, a phone number may be
-            collected for SMS notifications.
+            and role (coach, athlete, parent, or program staff). Accounts are created by your
+            program administrator and secured with a password we store only in hashed form.
+            Depending on your program, a phone number may be collected for SMS notifications.
           </LI>
           <LI>
             <span className="text-foreground">Athlete performance data.</span> Skill assessments,
@@ -115,7 +115,7 @@ export default function PrivacyPolicyPage() {
           only on our instructions:
         </P>
         <ul className="list-disc pl-5 space-y-2 mb-4">
-          <LI><span className="text-foreground">Clerk</span> — authentication and account management.</LI>
+          <LI><span className="text-foreground">Render</span> — application and API hosting (authentication is handled first-party on our servers).</LI>
           <LI><span className="text-foreground">Mux</span> — video processing and streaming.</LI>
           <LI><span className="text-foreground">Neon (Postgres)</span> — database hosting.</LI>
           <LI><span className="text-foreground">Twilio</span> — SMS notifications.</LI>

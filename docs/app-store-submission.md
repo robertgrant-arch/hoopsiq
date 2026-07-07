@@ -13,35 +13,40 @@ Apple Developer account and Clerk keys.
 | App icons (1024 App Store + all iOS sizes + splash, light/dark) | ✅ generated from brand SVG |
 | `Info.plist` usage strings (camera / mic / photo library) | ✅ |
 | `ITSAppUsesNonExemptEncryption = false` (skips export-compliance question) | ✅ |
-| Account deletion in-app (guideline 5.1.1(v)) | ✅ `/app/settings` → Delete account (active with Clerk) |
+| Account deletion in-app (guideline 5.1.1(v)) | ✅ `/app/settings` → Delete account (first-party auth, verified on prod) |
+| First-party auth (admin-managed accounts, master admin seeded) | ✅ replaced Clerk SSO; verified E2E on prod |
+| In-app interactive demo (`/demo`, sticky, exit link) | ✅ reviewers can explore the populated sample team without credentials |
 | Privacy Policy / Terms / Support pages | ✅ `/privacy`, `/terms`, `/support` (have counsel review before launch) |
 | No "coming soon" or dead buttons in UI | ✅ |
 | CORS allows `capacitor://localhost` | ✅ |
 | API base for native builds | ✅ `pnpm ios:build` bakes in `VITE_API_BASE=https://hoopsos-docs.onrender.com` |
 
-**Production is Render** (`hoopsos-docs.onrender.com`): it serves the SPA and the
-full Express API, with DB, Clerk, and Mux already configured (`/health` reports
-all three). The Vercel deployment is a legacy duplicate. Render auto-deploys
-from `main`.
+**Production is Render** (`hoopsos-docs.onrender.com`): it serves the SPA and
+the full Express API with the database, first-party auth, and Mux configured.
+Migrations auto-apply at startup. The Vercel deployment is a legacy duplicate.
+Render auto-deploys from `main`. (Clerk SSO is parked — auth is now first-party
+email/password; no Clerk setup is needed for launch.)
 
 ## Blocked on you
 
-1. **Clerk production instance** — Render currently runs a **test-mode** key
-   (`pk_test_…`). Before App Store launch, create the production instance at
-   clerk.com (needs your production domain), then in Render env replace
-   `VITE_CLERK_PUBLISHABLE_KEY` and `CLERK_SECRET_KEY` and redeploy.
-   - In the Clerk dashboard add `capacitor://localhost` to allowed origins
-     (Configure → Domains / native applications) so auth works inside the iOS shell.
-   - Local iOS builds: put the same `VITE_CLERK_PUBLISHABLE_KEY` in `.env`
-     before `pnpm ios:build`.
-2. **Apple Developer Program** ($99/yr) — enroll at developer.apple.com.
+1. **Apple Developer Program** ($99/yr) — enroll at developer.apple.com.
+2. **Counsel review** of `/privacy` and `/terms`.
 3. **Mux key rotation** — the local `.env` held live Mux credentials; rotate in
    the Mux dashboard and update Render env when convenient (they were never in git).
+
+## Review readiness
+
+- **Reviewer credentials**: create a reviewer account in `/app/admin/users`
+  (role Coach, temp password) and paste the credentials into App Review notes.
+- **Empty-org risk**: a fresh real account shows an empty org. Mitigate by
+  (a) pointing reviewers at the in-app "▶ Explore the interactive demo" in the
+  review notes, and (b) lightly seeding the production org (a few players +
+  one film) before submission.
 
 ## Build & submit steps (once unblocked)
 
 ```bash
-# 1. Build web assets with prod API + Clerk key, sync into the iOS project
+# 1. Build web assets with the prod API baked in, sync into the iOS project
 pnpm ios:build
 
 # 2. Open in Xcode
