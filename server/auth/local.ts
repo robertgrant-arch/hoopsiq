@@ -174,6 +174,14 @@ export function bootstrapAdminEmail(): string {
 
 async function runBootstrap(): Promise<void> {
   const db = getDb();
+
+  // Bring the database fully up to date first — production Neon had never
+  // had migrations applied, so no schema tables existed at all.
+  bootstrapStatus.step = "migrations";
+  const { runMigrations } = await import("../db/migrate");
+  const { applied } = await runMigrations();
+  if (applied.length) console.log(`[db] ${applied.length} migrations applied`);
+
   bootstrapStatus.step = "create-table";
 
   // Defensive table creation so auth works even if the migration pipeline
