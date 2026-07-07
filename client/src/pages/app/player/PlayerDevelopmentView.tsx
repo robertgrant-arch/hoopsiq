@@ -21,6 +21,10 @@
 import { Flame, ChevronRight } from "lucide-react";
 import { Link } from "wouter";
 import { AppShell } from "@/components/app/AppShell";
+import { FocusChip } from "@/components/player/FocusChip";
+import { skillTracks } from "@/lib/mock/data";
+import { SKILLS as SKILL_VELOCITIES } from "@/pages/app/player/SkillVelocityPage";
+import { MILESTONES } from "@/pages/app/player/PlayerMilestonePage";
 import { SkeletonCard } from "@/components/ui/SkeletonCard";
 import { Empty, EmptyTitle, EmptyDescription, EmptyMedia } from "@/components/ui/empty";
 import { Badge } from "@/components/ui/badge";
@@ -145,20 +149,71 @@ export function PlayerDevelopmentView() {
 
         {/* ── Header ───────────────────────────────────────────────────── */}
         <div className="flex items-start justify-between mb-1">
-          <div>
+          <div className="min-w-0">
             <div className="text-[12px] text-muted-foreground mb-0.5">
               Good work, {data.player.firstName}.
             </div>
             <h1 className="text-[24px] font-black leading-tight">
-              Your Plan
+              My Development
             </h1>
+            <div className="mt-1.5">
+              <FocusChip />
+            </div>
           </div>
           <div className="flex items-center gap-1.5 bg-amber-500/10 border border-amber-500/25 rounded-full px-3 py-1.5 shrink-0 mt-0.5">
             <Flame className="w-3.5 h-3.5 text-amber-500" />
             <span className="text-[12px] font-bold text-amber-500">{data.season.streakDays}</span>
-            <span className="text-[11px] text-amber-500/80">days</span>
+            <span className="text-[11px] text-amber-500/80">training days</span>
           </div>
         </div>
+
+        {/* ── Hub grid — one development arc, six sections (§3) ─────────── */}
+        <nav className="grid grid-cols-2 gap-2" aria-label="Development sections">
+          {[
+            {
+              href: "/app/player/skills",
+              label: "Skills",
+              stat: `${skillTracks.length} tracks in progress`,
+            },
+            {
+              href: "/app/player/skill-velocity",
+              label: "Skill Velocity",
+              stat: `${SKILL_VELOCITIES[0]?.velocityLabel ?? "+0.8/cycle"} fastest`,
+            },
+            {
+              href: "/app/player/assessments",
+              label: "Assessments",
+              stat: "Scores, gaps & plan",
+            },
+            {
+              href: "/app/player/milestones",
+              label: "Milestones",
+              stat: `${MILESTONES.length} earned`,
+            },
+            {
+              href: "/app/player/timeline",
+              label: "My Timeline",
+              stat: "Season by season",
+            },
+            {
+              href: "/app/player/vdv",
+              label: "Development Score (VDV)",
+              stat: "How growth is verified",
+            },
+          ].map(({ href, label, stat }) => (
+            <Link key={href} href={href} asChild>
+              <a className="rounded-xl border border-border bg-card p-3.5 hover:border-primary/50 transition-colors group flex items-start justify-between gap-2">
+                <div className="min-w-0">
+                  <div className="text-[13px] font-semibold leading-tight group-hover:text-primary transition-colors">
+                    {label}
+                  </div>
+                  <div className="text-[11px] text-muted-foreground mt-1 truncate">{stat}</div>
+                </div>
+                <ChevronRight className="w-3.5 h-3.5 text-muted-foreground/50 group-hover:text-primary shrink-0 mt-0.5 transition-colors" />
+              </a>
+            </Link>
+          ))}
+        </nav>
 
         {/* ── Check-in prompt (conditional) ────────────────────────────── */}
         {!data.checkedInToday && <CheckInPrompt />}
@@ -186,7 +241,7 @@ export function PlayerDevelopmentView() {
         <nav className="rounded-2xl border border-border bg-card divide-y divide-border/60" aria-label="Development navigation">
           {[
             { href: "/app/player/assessments",    label: "Skill Scores & Gaps",       sub: "See how your coach rates each skill" },
-            { href: "/app/player/progress",       label: "Streak & Consistency",      sub: "Your habit calendar and compliance" },
+            { href: "/app/player/progress",       label: "Training Days & Consistency", sub: "Your habit calendar and compliance" },
             { href: "/app/player/skill-velocity", label: "How Fast You're Improving", sub: "Rate of growth across all skills" },
             { href: "/app/player/milestones",     label: "Milestones Hit",            sub: "Achievements in your development" },
           ].map(({ href, label, sub }) => (

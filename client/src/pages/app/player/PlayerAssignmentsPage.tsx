@@ -376,7 +376,7 @@ export default function PlayerAssignmentsPage() {
       <div className="px-4 py-6 max-w-2xl mx-auto flex flex-col gap-4 pb-12">
         <PageHeader
           eyebrow="Athlete Portal"
-          title="My Assignments"
+          title="From Coach"
           subtitle="From your coach — film to watch, drills to run, work to do."
         />
 

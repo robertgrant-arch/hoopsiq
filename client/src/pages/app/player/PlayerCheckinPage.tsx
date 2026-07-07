@@ -302,7 +302,7 @@ function SubmittedCard({ today }: { today: ReadinessEntry }) {
             style={{ background: ACCENT, color: "white" }}
           >
             <Dumbbell className="w-4 h-4" />
-            Today's WOD
+            Today's Training
           </a>
         </Link>
       </div>

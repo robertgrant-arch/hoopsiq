@@ -470,7 +470,7 @@ export default function DevelopmentTimelinePage() {
             { label: "Total Sessions",    value: totalSessions,    color: PRIMARY  },
             { label: "Film Submissions",  value: totalFilm,         color: "oklch(0.72 0.14 200)" },
             { label: "IDP Goals Done",    value: `${totalIdpCompleted}/${totalIdpGoals}`, color: SUCCESS },
-            { label: "Current Streak",    value: `${currentStreak}d`, color: WARNING  },
+            { label: "Training Days in a Row", value: `${currentStreak}`, color: WARNING  },
           ].map((stat) => (
             <div
               key={stat.label}

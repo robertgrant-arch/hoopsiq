@@ -46,7 +46,7 @@ export function PlayStudyList() {
       <div className="px-6 lg:px-10 py-8 max-w-[1200px] mx-auto">
         <PageHeader
           eyebrow="Study Mode"
-          title="Playbook Study"
+          title="Basketball IQ"
           subtitle="Walk through every play phase by phase. Master the reads, then prove it with a quiz."
         />
 

@@ -51,6 +51,7 @@ import { toast } from "sonner";
 // roster.compliance (WOD completion) and athleteUploads (film queue list).
 import { roster, athleteUploads } from "@/lib/mock/data";
 import { computePlayerReadiness } from "@/features/readiness";
+import { useAssignmentQueue } from "@/features/film-room/hooks";
 import { ActionLanes } from "@/components/app/ActionLanes";
 import { SkeletonCard } from "@/components/ui/SkeletonCard";
 import { useEvents, type Event } from "@/lib/api/hooks/useEvents";
@@ -392,6 +393,186 @@ function CommandStrip({
   );
 }
 
+/* -------------------------------------------------------------------------- */
+/* Zone 1.5 — CoachingNeededToday                                              */
+/* A worklist of coaching acts, not a status board. First actionable block.    */
+/* -------------------------------------------------------------------------- */
+
+/** Deterministic tiny hash so mock-derived picks are stable across renders. */
+function hashCode(s: string) {
+  let h = 0;
+  for (let i = 0; i < s.length; i++) h = (h * 31 + s.charCodeAt(i)) | 0;
+  return Math.abs(h);
+}
+
+function WorklistRow({
+  href,
+  icon,
+  iconColor,
+  label,
+  detail,
+  count,
+}: {
+  href: string;
+  icon: React.ReactNode;
+  iconColor: string;
+  label: string;
+  detail: string;
+  count?: number;
+}) {
+  return (
+    <Link href={href} asChild>
+      <a className="px-5 py-3 flex items-center gap-3.5 hover:bg-muted/30 transition block">
+        <div
+          className="w-8 h-8 rounded-lg flex items-center justify-center shrink-0"
+          style={{ background: iconColor.replace(")", " / 0.12)"), color: iconColor }}
+        >
+          {icon}
+        </div>
+        <div className="flex-1 min-w-0">
+          <div className="text-[13px] font-medium leading-snug">{label}</div>
+          <div className="text-[11px] text-muted-foreground mt-0.5">{detail}</div>
+        </div>
+        {count != null && (
+          <span
+            className="text-[12px] font-mono font-bold px-2 py-0.5 rounded-full shrink-0"
+            style={{ background: iconColor.replace(")", " / 0.12)"), color: iconColor }}
+          >
+            {count}
+          </span>
+        )}
+        <ChevronRight className="w-3.5 h-3.5 text-muted-foreground shrink-0" />
+      </a>
+    </Link>
+  );
+}
+
+function CoachingNeededToday() {
+  const rosterQuery = useRoster();
+  const readinessQuery = useTeamReadinessToday();
+  const queueQuery = useAssignmentQueue();
+
+  if (rosterQuery.isLoading || readinessQuery.isLoading || queueQuery.isLoading) {
+    return <SkeletonCard lines={3} />;
+  }
+
+  const allFailed = rosterQuery.isError && readinessQuery.isError && queueQuery.isError;
+  if (allFailed) {
+    return (
+      <div className="rounded-xl border border-border bg-card px-5 py-4 flex items-center gap-3">
+        <AlertTriangle className="w-4 h-4 text-muted-foreground shrink-0" />
+        <span className="text-[13px] text-muted-foreground flex-1">
+          Couldn't load today's coaching worklist.
+        </span>
+        <Button
+          size="sm"
+          variant="outline"
+          className="h-8 text-[12px]"
+          onClick={() => { rosterQuery.refetch(); readinessQuery.refetch(); queueQuery.refetch(); }}
+        >
+          Retry
+        </Button>
+      </div>
+    );
+  }
+
+  // Readiness flags needing a decision (flagged + restricted) — same
+  // computation the team snapshot uses.
+  const players = rosterQuery.data ?? [];
+  const latestByPlayer = new Map<string, ReadinessCheckin>();
+  for (const c of readinessQuery.data ?? []) {
+    const prev = latestByPlayer.get(c.playerId);
+    if (!prev || c.checkedInAt > prev.checkedInAt) latestByPlayer.set(c.playerId, c);
+  }
+  const readinessFlagged = players.filter((p) => {
+    const checkin = latestByPlayer.get(p.id);
+    const status = computePlayerReadiness({
+      latestCheckin: checkin
+        ? { fatigue: checkin.fatigue, sleep: checkin.sleep, soreness: checkin.soreness, flagged: checkin.flagged }
+        : null,
+      playerStatus: p.status,
+    }).status;
+    return status === "FLAGGED" || status === "RESTRICTED";
+  }).length;
+
+  // Film assignment queue signals.
+  const queueRows = queueQuery.data?.rows ?? [];
+  const responded = queueRows.filter((r) => r.status === "responded").length;
+  const overdue = queueRows.filter((r) => r.overdue).length;
+
+  // Stalled players — no evidence-activity hook exists yet, so pick 1–2 roster
+  // players deterministically (stable hash of player id) as the mock signal.
+  const stalled = [...players]
+    .sort((a, b) => a.id.localeCompare(b.id))
+    .filter((p) => hashCode(`stalled:${p.id}`) % 4 === 0)
+    .slice(0, 2);
+
+  const nothingNeedsAttention =
+    readinessFlagged === 0 && responded === 0 && overdue === 0 && stalled.length === 0;
+
+  return (
+    <div className="rounded-xl border border-border bg-card overflow-hidden">
+      <div className="px-5 py-4 border-b border-border flex items-center justify-between">
+        <div>
+          <h3 className="font-bold text-[15px]">Coaching needed today</h3>
+          <p className="text-[11.5px] text-muted-foreground mt-0.5">
+            Decisions and replies waiting on you — work the list top to bottom.
+          </p>
+        </div>
+        <Bell className="w-4 h-4 text-muted-foreground shrink-0" />
+      </div>
+      {nothingNeedsAttention ? (
+        <div className="px-5 py-5 flex items-center gap-2 text-[13px]" style={{ color: "oklch(0.65 0.18 150)" }}>
+          <CheckCircle2 className="w-4 h-4" /> No coaching debt today. 🟢
+        </div>
+      ) : (
+        <div className="divide-y divide-border/40">
+          {readinessFlagged > 0 && (
+            <WorklistRow
+              href="/app/coach/readiness"
+              icon={<AlertTriangle className="w-3.5 h-3.5" />}
+              iconColor="oklch(0.72 0.17 75)"
+              label="Readiness flags needing a decision"
+              detail="Flagged or restricted check-ins — clear them before practice"
+              count={readinessFlagged}
+            />
+          )}
+          {responded > 0 && (
+            <WorklistRow
+              href="/app/coach/film-room/assignments?filter=responded"
+              icon={<MessageSquare className="w-3.5 h-3.5" />}
+              iconColor="oklch(0.72 0.18 290)"
+              label="Film responses awaiting reply"
+              detail="Players answered your clip prompts — close the loop"
+              count={responded}
+            />
+          )}
+          {overdue > 0 && (
+            <WorklistRow
+              href="/app/coach/film-room/assignments?filter=overdue"
+              icon={<Clock className="w-3.5 h-3.5" />}
+              iconColor="oklch(0.68 0.22 25)"
+              label="Overdue film & reps"
+              detail="Past-due assignments — nudge or reassign"
+              count={overdue}
+            />
+          )}
+          {stalled.map((p) => (
+            <WorklistRow
+              key={p.id}
+              href={`/app/coach/players/${p.id}`}
+              icon={<Target className="w-3.5 h-3.5" />}
+              iconColor="oklch(0.55 0.04 240)"
+              label={`${p.name} — stalled focus area`}
+              detail="No new reps or film in 14 days"
+            />
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
 /* Zone 2 — ActionLanes (imported from @/components/app/ActionLanes) */
 
 /* -------------------------------------------------------------------------- */
@@ -724,6 +905,11 @@ export function CoachDashboard() {
           showPrompt={showPracticePrompt}
           onDismissPrompt={() => setShowPracticePrompt(false)}
         />
+
+        {/* Zone 1.5 — Coaching needed today: the first actionable block */}
+        <div className="mb-5">
+          <CoachingNeededToday />
+        </div>
 
         <div className="grid lg:grid-cols-3 gap-5">
           {/* ---------------------------------------------------------------- */}

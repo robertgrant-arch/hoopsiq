@@ -87,7 +87,7 @@ function TodayStrip({ history }: { history: any[] }) {
             style={{ color: wodDone ? SUCCESS : WARNING }}
           />
           <div className="min-w-0">
-            <div className="text-[12px] font-semibold leading-tight">Today's WOD</div>
+            <div className="text-[12px] font-semibold leading-tight">Today's Training</div>
             <div className="text-[10.5px] mt-0.5" style={{ color: wodDone ? SUCCESS : WARNING }}>
               {wodDone ? "Done ✓" : "Let's go →"}
             </div>

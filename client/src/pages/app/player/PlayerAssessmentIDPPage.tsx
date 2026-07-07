@@ -22,6 +22,7 @@ import { ClipboardCheck, TrendingUp, Target, ArrowRight } from "lucide-react";
 import { Link } from "wouter";
 import { toast } from "sonner";
 import { AppShell, PageHeader } from "@/components/app/AppShell";
+import { FocusChip } from "@/components/player/FocusChip";
 import { SkeletonCard } from "@/components/ui/SkeletonCard";
 import { Badge } from "@/components/ui/badge";
 
@@ -365,6 +366,7 @@ export function PlayerAssessmentIDPPage() {
           eyebrow="Development"
           title="Know Your Game"
           subtitle="Your scores, where to grow, and the plan to get there."
+          actions={<FocusChip />}
         />
 
         {/* Tab bar */}

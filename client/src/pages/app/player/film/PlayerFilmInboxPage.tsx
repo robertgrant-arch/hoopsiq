@@ -11,6 +11,7 @@ import { useMemo, useState } from "react";
 import { Link } from "wouter";
 import { ChevronDown, ChevronRight, RotateCcw } from "lucide-react";
 import { AppShell } from "@/components/app/AppShell";
+import { FocusChip } from "@/components/player/FocusChip";
 import { usePlayerFilmInbox } from "@/features/film-room/hooks";
 import { clipDuration, isActionable, type QueueRow } from "@/features/film-room/types";
 
@@ -141,8 +142,8 @@ export default function PlayerFilmInboxPage() {
         className="max-w-xl mx-auto px-4 pt-4"
         style={{ paddingBottom: "calc(env(safe-area-inset-bottom) + 24px)" }}
       >
-        {/* Header: "Film" + needs-action count. Nothing else. */}
-        <div className="flex items-baseline gap-2 mb-4">
+        {/* Header: "Film" + needs-action count + current focus chip. */}
+        <div className="flex items-center gap-2 mb-4">
           <h1 className="text-[22px] font-bold tracking-tight">Film</h1>
           {needsActionCount > 0 && (
             <span
@@ -153,6 +154,7 @@ export default function PlayerFilmInboxPage() {
               {needsActionCount}
             </span>
           )}
+          <FocusChip className="ml-auto min-w-0" />
         </div>
 
         {isLoading && <SkeletonCards />}

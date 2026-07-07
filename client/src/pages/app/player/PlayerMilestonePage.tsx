@@ -23,7 +23,7 @@ interface Milestone {
   isFeatured?: boolean;
 }
 
-interface UpcomingMilestone {
+export interface UpcomingMilestone {
   id: number;
   title: string;
   description: string;
@@ -33,7 +33,7 @@ interface UpcomingMilestone {
   pct: number;
 }
 
-const MILESTONES: Milestone[] = [
+export const MILESTONES: Milestone[] = [
   {
     id: 1,
     type: "DEVELOPMENT MILESTONE",
@@ -109,7 +109,7 @@ const MILESTONES: Milestone[] = [
   },
 ];
 
-const UPCOMING_MILESTONES: UpcomingMilestone[] = [
+export const UPCOMING_MILESTONES: UpcomingMilestone[] = [
   {
     id: 1,
     title: "Ball Handling Elite",

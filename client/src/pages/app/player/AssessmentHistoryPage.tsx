@@ -11,6 +11,7 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 import { AppShell, PageHeader } from "@/components/app/AppShell";
+import { FocusChip } from "@/components/player/FocusChip";
 import { useAuth } from "@/lib/auth";
 import {
   getAssessmentHistory,
@@ -474,6 +475,7 @@ export default function AssessmentHistoryPage() {
           eyebrow="Development"
           title="Assessment History"
           subtitle="Track your skill progression across every assessment you've completed."
+          actions={<FocusChip />}
         />
 
         {/* Summary banner */}

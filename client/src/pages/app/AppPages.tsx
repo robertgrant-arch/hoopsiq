@@ -73,6 +73,11 @@ import {
 } from "@/lib/mock/data";
 import { demoUsers, ROLE_META } from "@/lib/mock/users";
 import {
+  DEVELOPMENT_GOALS,
+  DEVELOPMENT_PROFILES,
+  SKILL_AREAS,
+} from "@/features/player-development/mock";
+import {
   courses as educationCourses,
   getCourse,
   CATEGORY_LABELS,
@@ -144,6 +149,78 @@ function Section({
 
 export { CoachDashboard } from "./coach/CoachDashboard";
 
+/* --- Development-state derivation for the roster table -------------------- */
+/* Focus area / trend / last-touch have no API hook yet. Focus maps from the  */
+/* player-development mock where a player matches; everything else is a       */
+/* deterministic mock-derive (stable hash of the player id).                  */
+
+function rosterHash(s: string) {
+  let h = 0;
+  for (let i = 0; i < s.length; i++) h = (h * 31 + s.charCodeAt(i)) | 0;
+  return Math.abs(h);
+}
+
+const FOCUS_FALLBACKS = [
+  "Finishing through contact",
+  "Off-dribble shooting",
+  "Weak-hand handle",
+  "Closeout footwork",
+  "Help-side rotations",
+  "Pick & roll reads",
+];
+
+const SKILL_AREA_NAMES = new Map(SKILL_AREAS.map((s) => [s.id, s.name]));
+
+function deriveFocusArea(playerId: string): string {
+  const goal =
+    DEVELOPMENT_GOALS.find((g) => g.playerId === playerId && g.status === "active") ??
+    DEVELOPMENT_GOALS.find((g) => g.playerId === playerId);
+  if (goal) return SKILL_AREA_NAMES.get(goal.skillAreaId) ?? goal.title;
+  return FOCUS_FALLBACKS[rosterHash(`focus:${playerId}`) % FOCUS_FALLBACKS.length];
+}
+
+type RosterTrend = "up" | "flat" | "down";
+
+function deriveTrend(playerId: string): RosterTrend {
+  const profile = DEVELOPMENT_PROFILES.find((p) => p.playerId === playerId);
+  if (profile) {
+    if (profile.status === "thriving") return "up";
+    if (profile.status === "stale" || profile.status === "restricted" || profile.status === "missing-data") return "down";
+    return "flat";
+  }
+  const roll = rosterHash(`trend:${playerId}`) % 3;
+  return roll === 0 ? "up" : roll === 1 ? "flat" : "down";
+}
+
+function deriveLastTouch(playerId: string): string {
+  const days = rosterHash(`touch:${playerId}`) % 10;
+  return days === 0 ? "Today" : `${days}d ago`;
+}
+
+const TREND_META: Record<RosterTrend, { glyph: string; color: string; label: string }> = {
+  up:   { glyph: "↑", color: "oklch(0.75 0.18 150)", label: "Trending up" },
+  flat: { glyph: "→", color: "oklch(0.6 0.05 240)",  label: "Holding steady" },
+  down: { glyph: "↓", color: "oklch(0.68 0.22 25)",  label: "Trending down" },
+};
+
+/** Readiness dot derived from the roster status field (no check-in hook here). */
+function ReadinessDot({ status }: { status: "active" | "injured" | "suspended" | "inactive" }) {
+  const meta =
+    status === "injured" || status === "suspended"
+      ? { color: "oklch(0.68 0.22 25)", label: "Restricted" }
+      : status === "inactive"
+        ? { color: "oklch(0.55 0.04 240)", label: "Unknown" }
+        : { color: "oklch(0.75 0.18 150)", label: "Ready" };
+  return (
+    <span
+      className="inline-block w-2.5 h-2.5 rounded-full"
+      style={{ background: meta.color }}
+      title={meta.label}
+      aria-label={meta.label}
+    />
+  );
+}
+
 export function CoachRoster() {
   const [search, setSearch] = useState("");
   const { data: players, isLoading, isError, refetch } = useRoster();
@@ -168,6 +245,10 @@ export function CoachRoster() {
           position: p.position ?? "—",
           height: p.height ?? "—",
           classYear: p.gradYear,
+          focusArea: deriveFocusArea(p.id),
+          trend: deriveTrend(p.id),
+          lastTouch: deriveLastTouch(p.id),
+          status: p.status,
           level: extras?.level ?? null,
           xp: extras?.xp ?? null,
           streak: extras?.streak ?? null,
@@ -251,8 +332,12 @@ export function CoachRoster() {
           <table className="w-full text-[13px]">
             <thead>
               <tr className="border-b border-border text-left">
+                {/* Development state leads; admin columns follow. */}
                 <Th>Athlete</Th>
-                <Th>Phone</Th>
+                <Th>Current Focus</Th>
+                <Th>Trend</Th>
+                <Th>Last Touch</Th>
+                <Th>Ready</Th>
                 <Th>Pos</Th>
                 <Th>HT</Th>
                 <Th>Class</Th>
@@ -261,6 +346,7 @@ export function CoachRoster() {
                 <Th>Streak</Th>
                 <Th>Today</Th>
                 <Th>Last Active</Th>
+                <Th>Phone</Th>
               </tr>
             </thead>
             <tbody>
@@ -286,15 +372,19 @@ export function CoachRoster() {
                       </a>
                     </Link>
                   </Td>
+                  <Td className="whitespace-nowrap">{a.focusArea}</Td>
                   <Td>
-                    {a.phone ? (
-                      <a href={`tel:${a.phone}`} className="font-mono text-[12px] text-muted-foreground hover:text-foreground transition whitespace-nowrap">
-                        {a.phone}
-                      </a>
-                    ) : (
-                      <span className="text-muted-foreground/40">—</span>
-                    )}
+                    <span
+                      className="font-mono font-bold text-[14px]"
+                      style={{ color: TREND_META[a.trend].color }}
+                      title={TREND_META[a.trend].label}
+                      aria-label={TREND_META[a.trend].label}
+                    >
+                      {TREND_META[a.trend].glyph}
+                    </span>
                   </Td>
+                  <Td className="text-muted-foreground whitespace-nowrap">{a.lastTouch}</Td>
+                  <Td><ReadinessDot status={a.status} /></Td>
                   <Td>{a.position}</Td>
                   <Td className="whitespace-nowrap">{a.height}</Td>
                   <Td>{a.classYear != null ? `'${a.classYear.toString().slice(2)}` : "—"}</Td>
@@ -317,11 +407,20 @@ export function CoachRoster() {
                     )}
                   </Td>
                   <Td className="text-muted-foreground whitespace-nowrap">{a.lastActive}</Td>
+                  <Td>
+                    {a.phone ? (
+                      <a href={`tel:${a.phone}`} className="font-mono text-[12px] text-muted-foreground hover:text-foreground transition whitespace-nowrap">
+                        {a.phone}
+                      </a>
+                    ) : (
+                      <span className="text-muted-foreground/40">—</span>
+                    )}
+                  </Td>
                 </tr>
               ))}
               {filtered.length === 0 && (
                 <tr>
-                  <td colSpan={10} className="px-4 py-10 text-center text-[13px] text-muted-foreground">
+                  <td colSpan={14} className="px-4 py-10 text-center text-[13px] text-muted-foreground">
                     No athletes match "{search}"
                   </td>
                 </tr>

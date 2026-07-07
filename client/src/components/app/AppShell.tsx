@@ -374,33 +374,40 @@ const COACH_PINNED_SECTIONS = ["DAILY"] as const;
 /* -------------------------------------------------------------------------- */
 
 const NAV: Record<Role, NavItem[]> = {
+  // Development-first order (docs/development-first-reframe.md):
+  // first 4 = bottom tabs (Today / My Development / Train / Film) + More.
+  // More sheet: development actions, then My Story, Team life, Grow beyond.
   ATHLETE: [
-    { href: "/app/player",              label: "Home",         icon: <Home className="w-5 h-5" />         },
-    { href: "/app/player/development",  label: "My Plan",  icon: <Target className="w-5 h-5" />       },
-    { href: "/app/player/checkin",      label: "Check-In",     icon: <Activity className="w-5 h-5" />     },
-    { href: "/app/player/assignments",  label: "Assignments",  icon: <CheckSquare className="w-5 h-5" />  },
-    { href: "/app/player/skills",       label: "Skills", icon: <TrendingUp className="w-5 h-5" />   },
-    { href: "/app/player/timeline",     label: "My Timeline",  icon: <TrendingUp className="w-5 h-5" />   },
-    { href: "/app/player/assessments",  label: "Assessments",  icon: <ClipboardCheck className="w-5 h-5" /> },
-    { href: "/app/player/skill-velocity", label: "Skill Velocity",     icon: <Activity className="w-5 h-5" />    },
-    { href: "/app/player/milestones",     label: "Milestones",         icon: <Trophy className="w-5 h-5" />      },
-    { href: "/app/player/workout",      label: "Today's WOD", icon: <Dumbbell className="w-5 h-5" />     },
-    { href: "/app/player/plays",        label: "Study Plays",  icon: <BookOpen className="w-5 h-5" />     },
-    { href: "/app/player/schedule",     label: "Schedule",     icon: <Calendar className="w-5 h-5" />     },
-    { href: "/app/player/achievements", label: "Achievements", icon: <Trophy className="w-5 h-5" />       },
-    { href: "/app/player/growth-story",   label: "My Growth Story",    icon: <Star className="w-5 h-5" />        },
-    { href: "/app/player/recruiting",            label: "Recruiting Profile", icon: <Star className="w-5 h-5" />        },
-    { href: "/app/player/resume",                label: "My Resume",          icon: <FileText className="w-5 h-5" />    },
-    { href: "/app/player/uploads",      label: "Uploads",      icon: <UploadCloud className="w-5 h-5" />  },
-    { href: "/app/player/film",         label: "Film",         icon: <Film className="w-5 h-5" />         },
-    { href: "/app/player/coach-view",     label: "Coach's View",       icon: <Target className="w-5 h-5" />      },
-    { href: "/app/player/vdv",            label: "My VDV Score",       icon: <TrendingUp className="w-5 h-5" />  },
-    { href: "/app/player/recruiting/visibility", label: "Privacy Settings",   icon: <Shield className="w-5 h-5" />     },
-    { href: "/app/messages",                     label: "Messages",          icon: <MessageSquare className="w-5 h-5" />},
-    { href: "/app/billing",             label: "Billing",      icon: <CreditCard className="w-5 h-5" />   },
-    { href: "/app/learn",               label: "Learn",        icon: <BookOpen className="w-5 h-5" />     },
-    { href: "/app/live",                label: "Live",         icon: <Radio className="w-5 h-5" />        },
-    { href: "/app/marketplace",         label: "Marketplace",  icon: <Package className="w-5 h-5" />      }
+    { href: "/app/player",              label: "Today",          icon: <Home className="w-5 h-5" />         },
+    { href: "/app/player/development",  label: "My Development", icon: <Target className="w-5 h-5" />       },
+    { href: "/app/player/workout",      label: "Train",          icon: <Dumbbell className="w-5 h-5" />     },
+    { href: "/app/player/film",         label: "Film",           icon: <Film className="w-5 h-5" />         },
+    // ── More: the development loop, in loop order ──
+    { href: "/app/player/checkin",        label: "Check-In",       icon: <Activity className="w-5 h-5" />     },
+    { href: "/app/player/assignments",    label: "From Coach",     icon: <CheckSquare className="w-5 h-5" />  },
+    { href: "/app/player/plays",          label: "Basketball IQ",  icon: <BookOpen className="w-5 h-5" />     },
+    { href: "/app/player/skills",         label: "Skills",         icon: <TrendingUp className="w-5 h-5" />   },
+    { href: "/app/player/skill-velocity", label: "Skill Velocity", icon: <Activity className="w-5 h-5" />     },
+    { href: "/app/player/assessments",    label: "Assessments",    icon: <ClipboardCheck className="w-5 h-5" /> },
+    { href: "/app/player/milestones",     label: "Milestones",     icon: <Trophy className="w-5 h-5" />       },
+    { href: "/app/player/timeline",       label: "My Timeline",    icon: <TrendingUp className="w-5 h-5" />   },
+    { href: "/app/player/vdv",            label: "Development Score (VDV)", icon: <TrendingUp className="w-5 h-5" /> },
+    { href: "/app/player/uploads",        label: "My Uploads",     icon: <UploadCloud className="w-5 h-5" />  },
+    { href: "/app/player/coach-view",     label: "What Coach Sees", icon: <Target className="w-5 h-5" />      },
+    // ── My Story (outputs of development) ──
+    { href: "/app/player/growth-story",   label: "My Growth Story",    icon: <Star className="w-5 h-5" />     },
+    { href: "/app/player/recruiting",     label: "Recruiting Profile", icon: <Star className="w-5 h-5" />     },
+    { href: "/app/player/resume",         label: "My Resume",          icon: <FileText className="w-5 h-5" /> },
+    { href: "/app/player/achievements",   label: "Achievements",       icon: <Trophy className="w-5 h-5" />   },
+    // ── Team life ──
+    { href: "/app/player/schedule",       label: "Schedule",       icon: <Calendar className="w-5 h-5" />     },
+    { href: "/app/messages",              label: "Messages",       icon: <MessageSquare className="w-5 h-5" />},
+    { href: "/app/live",                  label: "Live",           icon: <Radio className="w-5 h-5" />        },
+    // ── Grow beyond ──
+    { href: "/app/learn",                 label: "Learn",          icon: <BookOpen className="w-5 h-5" />     },
+    { href: "/app/marketplace",           label: "Marketplace",    icon: <Package className="w-5 h-5" />      },
+    { href: "/app/player/recruiting/visibility", label: "Privacy Settings", icon: <Shield className="w-5 h-5" /> },
+    { href: "/app/billing",               label: "Billing",        icon: <CreditCard className="w-5 h-5" />   }
   ],
   COACH: [], // handled via COACH_SIDEBAR_SECTIONS + COACH_TABS
   TEAM_ADMIN: [
@@ -475,7 +482,7 @@ const NAV: Record<Role, NavItem[]> = {
 };
 
 const BOTTOM_NAV_COUNT: Partial<Record<Role, number>> = {
-  ATHLETE:    5,
+  ATHLETE:    4, // Today · My Development · Train · Film (+ More)
   TEAM_ADMIN: 4,
   EXPERT:     4,
   PARENT:     4,

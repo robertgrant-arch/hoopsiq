@@ -249,7 +249,7 @@ export default function PlayerGrowthStoryPage() {
       <PageHeader
         eyebrow="Your Story"
         title={`${story?.playerFirstName ?? "Marcus"}'s Growth Story`}
-        subtitle={story ? `${story.periodLabel} · ${Math.round(story.drillCompletionRate * 100)}% drill compliance · ${story.checkInStreak}-day streak` : "Last 30 Days"}
+        subtitle={story ? `${story.periodLabel} · ${Math.round(story.drillCompletionRate * 100)}% drill compliance · ${story.checkInStreak} training days in a row` : "Last 30 Days"}
       />
 
       <div style={{ maxWidth: 920, margin: "0 auto", padding: "0 0 80px", display: "flex", flexDirection: "column", gap: 48 }}>

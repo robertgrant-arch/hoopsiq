@@ -1,4 +1,5 @@
 import { AppShell, PageHeader } from "@/components/app/AppShell";
+import { FocusChip } from "@/components/player/FocusChip";
 import { toast } from "sonner";
 
 const PRIMARY = "oklch(0.72 0.18 290)";
@@ -9,7 +10,7 @@ const MUTED   = "oklch(0.55 0.02 260)";
 
 // ─── Data ────────────────────────────────────────────────────────────────────
 
-interface SkillVelocity {
+export interface SkillVelocity {
   skill: string;
   score: number;
   velocity: number;
@@ -19,7 +20,7 @@ interface SkillVelocity {
   badge?: "fastest" | "focus";
 }
 
-const SKILLS: SkillVelocity[] = [
+export const SKILLS: SkillVelocity[] = [
   {
     skill: "Ball Handling",
     score: 7.2,
@@ -327,6 +328,7 @@ export default function SkillVelocityPage() {
         eyebrow="Your Development"
         title="Growth Engine"
         subtitle="How fast you're improving, where you rank among peers, and where you're headed."
+        actions={<FocusChip />}
       />
 
       <div style={{ maxWidth: 860, margin: "0 auto", padding: "0 0 72px", display: "flex", flexDirection: "column", gap: 56 }}>

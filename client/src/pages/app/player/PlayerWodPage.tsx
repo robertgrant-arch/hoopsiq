@@ -26,6 +26,7 @@ import {
   Flame,
 } from "lucide-react";
 import { AppShell } from "@/components/app/AppShell";
+import { FocusChip } from "@/components/player/FocusChip";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { todaysWod } from "@/lib/mock/data";
@@ -622,7 +623,7 @@ export default function PlayerWodPage(): React.ReactElement {
               className="text-[10px] uppercase tracking-widest font-mono"
               style={{ color: ACCENT }}
             >
-              Today's WOD
+              Today's Training · WOD
             </p>
             <h1 className="text-xl font-bold leading-tight">{wod.title}</h1>
           </div>
@@ -638,6 +639,9 @@ export default function PlayerWodPage(): React.ReactElement {
             </span>
           )}
         </div>
+
+        {/* Current focus follows the player onto every training screen */}
+        <FocusChip />
 
         {/* ── WOD meta ─────────────────────────────────────────────────────── */}
         <div
@@ -761,8 +765,8 @@ export default function PlayerWodPage(): React.ReactElement {
         >
           <Flame className="w-4 h-4 shrink-0" style={{ color: "oklch(0.72 0.20 50)" }} />
           <p className="text-[12.5px] text-muted-foreground">
-            Complete today's WOD to protect your{" "}
-            <span className="font-semibold text-foreground">5-day streak</span>.
+            Complete today's training to protect your{" "}
+            <span className="font-semibold text-foreground">5 training days in a row</span>.
           </p>
           <ChevronRight className="w-4 h-4 shrink-0 text-muted-foreground ml-auto" />
         </div>

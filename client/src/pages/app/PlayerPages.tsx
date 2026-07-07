@@ -4,8 +4,6 @@ import {
   Play,
   Upload,
   Sparkles,
-  Flame,
-  TrendingUp,
   Trophy,
   CheckCircle2,
   Clock,
@@ -19,11 +17,6 @@ import {
   Star,
   RotateCcw,
   AlertCircle,
-  Dumbbell,
-  AlertTriangle,
-  XCircle,
-  Zap,
-  BookOpen,
 } from "lucide-react";
 import {
   todayCheckinDone,
@@ -32,7 +25,10 @@ import {
 import { apiGet } from "@/lib/api/client";
 import { useTeamReadinessToday } from "@/lib/api/hooks/useReadiness";
 import { useAssignments } from "@/lib/api/hooks/useAssignments";
+import { usePlayerFilmInbox } from "@/features/film-room/hooks";
+import { isActionable } from "@/features/film-room/types";
 import { AppShell, PageHeader } from "@/components/app/AppShell";
+import { FocusChip, useCurrentFocus } from "@/components/player/FocusChip";
 import { useAuth } from "@/lib/auth";
 import {
   todaysWod,
@@ -44,43 +40,10 @@ import {
   type VideoUpload,
 } from "@/lib/mock/data";
 import { MOCK_HUB_DATA } from "@/features/player-development/mock";
+import { SKILLS as SKILL_VELOCITIES } from "@/pages/app/player/SkillVelocityPage";
+import { UPCOMING_MILESTONES } from "@/pages/app/player/PlayerMilestonePage";
 
 /* ----------------------------- Shared primitives ----------------------------- */
-
-function StatCard({
-  label,
-  value,
-  trend,
-  icon,
-  accent = "default",
-}: {
-  label: string;
-  value: React.ReactNode;
-  trend?: string;
-  icon: React.ReactNode;
-  accent?: "default" | "primary" | "indigo" | "flame";
-}) {
-  const colors = {
-    default: "text-muted-foreground",
-    primary: "text-primary",
-    indigo: "text-[oklch(0.72_0.18_290)]",
-    flame: "text-[oklch(0.72_0.2_50)]",
-  };
-  return (
-    <div className="rounded-lg border border-border bg-card p-5">
-      <div className="flex items-center justify-between mb-3">
-        <div className="text-[11px] uppercase tracking-[0.12em] font-mono text-muted-foreground">
-          {label}
-        </div>
-        <div className={`${colors[accent]}`}>{icon}</div>
-      </div>
-      <div className="display text-3xl leading-none">{value}</div>
-      {trend && (
-        <div className="text-[12px] text-muted-foreground mt-2">{trend}</div>
-      )}
-    </div>
-  );
-}
 
 function ProgressRing({
   percent,
@@ -127,109 +90,129 @@ function ProgressRing({
   );
 }
 
-/* ─── Daily Status Strip ───────────────────────────────────────────────────── */
+/* ─── Today's Work checklist ─────────────────────────────────────────────────
+ * Reshape of the old daily status strip + assignments card: the same data
+ * sources (readiness check-in, WOD record, film inbox, assignments) rendered
+ * as the day's checklist per the development-first reframe (§4.2).
+ * ──────────────────────────────────────────────────────────────────────────── */
 
-const CHECKIN_ACCENT = "oklch(0.72 0.18 290)";
 const SUCCESS_CLR = "oklch(0.75 0.12 140)";
 const WARNING_CLR = "oklch(0.78 0.16 75)";
-const DANGER_CLR = "oklch(0.68 0.22 25)";
 const MUTED_CLR = "oklch(0.55 0.02 260)";
 
-function DailyStatusStrip() {
+function TodaysWorkChecklist() {
   const { user } = useAuth();
   // Server stores readiness check-ins keyed by the auth userId (see
   // server/modules/readiness/routes.ts POST /). Fall back to the static mock
-  // flag until data arrives so the strip never renders blank.
+  // flag until data arrives so the checklist never renders blank.
   const { data: todayCheckins } = useTeamReadinessToday();
   const checkinDone = todayCheckins
     ? todayCheckins.some((c) => c.playerId === user?.id)
     : todayCheckinDone;
+
   const wodState = todayWodRecord.state;
+  const wodDone = wodState === "completed";
+  const wodSub = wodDone
+    ? `${todayWodRecord.drillsCompleted}/${todayWodRecord.drillsTotal} drills done`
+    : wodState === "skipped"
+    ? "Skipped — coach notified"
+    : wodState === "modified_by_coach"
+    ? `Modified by coach · ${todayWodRecord.plannedMinutes} min`
+    : `${todayWodRecord.plannedMinutes} min · ${todayWodRecord.drillsTotal} drills`;
 
-  const checkinColor = checkinDone ? SUCCESS_CLR : WARNING_CLR;
-  const checkinLabel = checkinDone ? "Check-in done" : "Check-in needed";
-  const checkinIcon = checkinDone ? (
-    <CheckCircle2 className="w-4 h-4" style={{ color: SUCCESS_CLR }} />
-  ) : (
-    <AlertTriangle className="w-4 h-4" style={{ color: WARNING_CLR }} />
-  );
+  // Film to review — needs-action count from the film-room inbox.
+  const { data: filmInbox, isLoading: filmLoading } = usePlayerFilmInbox();
+  const filmCount = (filmInbox ?? []).filter((r) => isActionable(r.status)).length;
 
-  const wodColor =
-    wodState === "completed"
-      ? SUCCESS_CLR
-      : wodState === "skipped"
-      ? DANGER_CLR
-      : wodState === "modified_by_coach"
-      ? WARNING_CLR
-      : wodState === "in_progress"
-      ? CHECKIN_ACCENT
-      : MUTED_CLR;
-  const wodLabel =
-    wodState === "completed"
-      ? "WOD complete"
-      : wodState === "skipped"
-      ? "WOD skipped"
-      : wodState === "modified_by_coach"
-      ? "WOD modified"
-      : wodState === "in_progress"
-      ? "WOD in progress"
-      : "WOD not started";
-  const wodIcon =
-    wodState === "completed" ? (
-      <CheckCircle2 className="w-4 h-4" style={{ color: SUCCESS_CLR }} />
-    ) : wodState === "skipped" ? (
-      <XCircle className="w-4 h-4" style={{ color: DANGER_CLR }} />
-    ) : (
-      <Dumbbell className="w-4 h-4" style={{ color: wodColor }} />
-    );
+  // From Coach — open assignments (wired to /api/assignments, mock in demo).
+  const { data: myAssignments, isLoading: assignmentsLoading } = useAssignments();
+  const openAssignments = (myAssignments ?? []).filter(
+    (a) => a.status === "assigned" || a.status === "in_progress" || a.status === "overdue",
+  ).length;
+
+  const tasks = [
+    {
+      id: "checkin",
+      label: "Check in",
+      sub: checkinDone ? "Submitted today" : "60 seconds — how you're feeling",
+      href: "/app/player/checkin",
+      done: checkinDone,
+      loading: false,
+    },
+    {
+      id: "training",
+      label: "Today's Training",
+      sub: wodSub,
+      href: "/app/player/wod",
+      done: wodDone,
+      loading: false,
+    },
+    {
+      id: "film",
+      label: `Film to review${filmLoading ? "" : ` (${filmCount})`}`,
+      sub: filmLoading
+        ? "Loading…"
+        : filmCount > 0
+        ? `${filmCount} clip${filmCount > 1 ? "s" : ""} from coach`
+        : "Nothing waiting",
+      href: "/app/player/film",
+      done: !filmLoading && filmCount === 0,
+      loading: filmLoading,
+    },
+    {
+      id: "coach",
+      label: "From Coach",
+      sub: assignmentsLoading
+        ? "Loading…"
+        : openAssignments > 0
+        ? `${openAssignments} open assignment${openAssignments > 1 ? "s" : ""}`
+        : "All caught up",
+      href: "/app/player/assignments",
+      done: !assignmentsLoading && openAssignments === 0,
+      loading: assignmentsLoading,
+    },
+  ];
+
+  const doneCount = tasks.filter((t) => t.done).length;
+  const allDone = doneCount === tasks.length;
 
   return (
-    <div className="flex gap-2 mb-6">
-      {/* Check-in card */}
-      <Link href="/app/player/checkin" asChild>
-        <a
-          className="flex-1 flex items-center gap-2.5 rounded-xl border px-3 py-3 hover:brightness-110 transition-all min-h-[52px]"
-          style={{
-            borderColor: checkinColor.replace(")", " / 0.30)"),
-            background: checkinColor.replace(")", " / 0.07)"),
-          }}
-        >
-          {checkinIcon}
-          <div className="flex-1 min-w-0">
-            <p className="text-[11px] font-semibold uppercase tracking-wide" style={{ color: checkinColor }}>
-              {checkinLabel}
-            </p>
-            <p className="text-[10px]" style={{ color: MUTED_CLR }}>
-              {checkinDone ? "Submitted today" : "Tap to check in"}
-            </p>
-          </div>
-          <ChevronRight className="w-3.5 h-3.5 shrink-0" style={{ color: MUTED_CLR }} />
-        </a>
-      </Link>
-
-      {/* WOD card */}
-      <Link href="/app/player/wod" asChild>
-        <a
-          className="flex-1 flex items-center gap-2.5 rounded-xl border px-3 py-3 hover:brightness-110 transition-all min-h-[52px]"
-          style={{
-            borderColor: wodColor.replace(")", " / 0.30)"),
-            background: wodColor.replace(")", " / 0.07)"),
-          }}
-        >
-          {wodIcon}
-          <div className="flex-1 min-w-0">
-            <p className="text-[11px] font-semibold uppercase tracking-wide" style={{ color: wodColor }}>
-              {wodLabel}
-            </p>
-            <p className="text-[10px]" style={{ color: MUTED_CLR }}>
-              {wodState === "completed"
-                ? `${todayWodRecord.drillsCompleted}/${todayWodRecord.drillsTotal} drills`
-                : `${todayWodRecord.plannedMinutes} min · ${todayWodRecord.drillsTotal} drills`}
-            </p>
-          </div>
-          <ChevronRight className="w-3.5 h-3.5 shrink-0" style={{ color: MUTED_CLR }} />
-        </a>
-      </Link>
+    <div className="rounded-xl border border-border bg-card mb-4 overflow-hidden">
+      <div className="flex items-center justify-between px-4 pt-3.5 pb-2">
+        <div className="text-[11px] uppercase tracking-[0.12em] font-mono text-muted-foreground">
+          Today's Work
+        </div>
+        <span className="text-[11px] font-mono tabular-nums text-muted-foreground">
+          {doneCount}/{tasks.length}
+        </span>
+      </div>
+      <div className="divide-y divide-border/60">
+        {tasks.map((t) => (
+          <Link key={t.id} href={t.href} asChild>
+            <a className="flex items-center gap-3 px-4 py-3 min-h-[52px] hover:bg-muted/40 transition">
+              {t.done ? (
+                <CheckCircle2 className="w-5 h-5 shrink-0" style={{ color: SUCCESS_CLR }} />
+              ) : (
+                <Circle className="w-5 h-5 shrink-0" style={{ color: t.loading ? MUTED_CLR : WARNING_CLR }} />
+              )}
+              <div className="flex-1 min-w-0">
+                <div className={`text-[13px] font-semibold leading-tight ${t.done ? "text-muted-foreground" : ""}`}>
+                  {t.label}
+                </div>
+                <div className="text-[11.5px] text-muted-foreground mt-0.5 truncate">{t.sub}</div>
+              </div>
+              {!t.done && (
+                <ChevronRight className="w-4 h-4 shrink-0" style={{ color: MUTED_CLR }} />
+              )}
+            </a>
+          </Link>
+        ))}
+      </div>
+      {allDone && (
+        <div className="px-4 py-3 border-t border-border bg-[oklch(0.75_0.12_140/0.08)] text-[13px] font-semibold" style={{ color: SUCCESS_CLR }}>
+          Day complete. {doneCount} for {tasks.length}.
+        </div>
+      )}
     </div>
   );
 }
@@ -240,11 +223,18 @@ export function PlayerDashboard() {
   const { user } = useAuth();
   const unread = notifications.filter((n) => !n.read).length;
 
-  // Assignments summary — wired to /api/assignments (mock in demo mode).
-  const { data: myAssignments, isLoading: assignmentsLoading } = useAssignments();
-  const openAssignments = (myAssignments ?? []).filter(
-    (a) => a.status === "assigned" || a.status === "in_progress" || a.status === "overdue",
-  ).length;
+  // Current focus — the IDP #1 priority, shared with the FocusChip.
+  const focus = useCurrentFocus();
+  const topFocusArea = MOCK_HUB_DATA.focusAreas[0];
+
+  // Coach's latest — most recent coach note; falls back to the focus cue.
+  const latestFeedback = MOCK_HUB_DATA.recentFeedback[0];
+
+  // Progress strip — focus-area velocity + nearest incomplete milestone.
+  const focusVelocity = SKILL_VELOCITIES.find((s) => s.skill === focus.category);
+  const nextMilestone = [...UPCOMING_MILESTONES]
+    .filter((m) => m.pct < 100)
+    .sort((a, b) => b.pct - a.pct)[0];
 
   return (
     <AppShell>
@@ -252,7 +242,7 @@ export function PlayerDashboard() {
         <PageHeader
           eyebrow="Player · Today"
           title={`Let's get it, ${user?.name.split(" ")[0]}.`}
-          subtitle="Your daily blueprint is ready. Hit your WOD, log film, stack reps."
+          subtitle="Your daily blueprint is ready. Hit your training, log film, stack reps."
           actions={
             <Link href="/app/messages" asChild>
               <a className="relative inline-flex items-center gap-2 h-9 px-3 rounded-md border border-border text-[13px] hover:bg-muted transition">
@@ -268,90 +258,112 @@ export function PlayerDashboard() {
           }
         />
 
-        {/* ── Today's status strip ────────────────────────────────────────── */}
-        <DailyStatusStrip />
-
-        {/* Development context — what matters today */}
-        <div className="grid md:grid-cols-4 gap-3 mb-10">
-          {/* Top Focus — IDP #1 priority */}
-          <div className="md:col-span-2 rounded-lg border border-primary/30 bg-primary/5 p-5 flex flex-col justify-between">
-            <div className="flex items-center justify-between mb-3">
-              <div className="text-[11px] uppercase tracking-[0.12em] font-mono text-primary">
-                Top Focus Area
-              </div>
-              <span className="text-lg leading-none">{MOCK_HUB_DATA.focusAreas[0]?.emoji ?? "🎯"}</span>
+        {/* ── 1. Focus banner — visually dominant (reframe §4.1) ──────────── */}
+        <div className="rounded-xl border border-primary/30 bg-gradient-to-br from-primary/10 via-card to-card p-6 sm:p-7 mb-4">
+          <div className="flex items-center justify-between mb-2">
+            <div className="text-[11px] uppercase tracking-[0.14em] font-mono text-primary">
+              Today's Focus
             </div>
-            <div>
-              <div className="display text-[22px] leading-tight mb-1">
-                {MOCK_HUB_DATA.focusAreas[0]?.subSkill ?? "Not set"}
-              </div>
-              <div className="text-[12px] text-muted-foreground">
-                Score{" "}
-                <span className="text-amber-500 font-bold">
-                  {MOCK_HUB_DATA.focusAreas[0]?.currentScore ?? "—"}
-                </span>
-                {" → "}
-                <span className="text-primary font-bold">
-                  {MOCK_HUB_DATA.focusAreas[0]?.targetScore ?? "—"}
-                </span>
-                {" / 10 · "}
-                {MOCK_HUB_DATA.focusAreas[0]?.todayDrill ?? "No drill today"}
-              </div>
-            </div>
-            <Link href="/app/player/development" asChild>
-              <a className="text-[11.5px] text-primary hover:underline flex items-center gap-1 mt-3">
-                View full plan <ChevronRight className="w-3.5 h-3.5" />
-              </a>
-            </Link>
+            <span className="text-lg leading-none">{topFocusArea?.emoji ?? "🎯"}</span>
           </div>
-
-          {/* Streak */}
-          <StatCard
-            label="Streak"
-            value={<span>{user?.streak ?? 0}<span className="text-base font-normal text-muted-foreground ml-1">days</span></span>}
-            trend="🔥 Keep it alive"
-            accent="flame"
-            icon={<Flame className="w-4 h-4" />}
-          />
-
-          {/* Open assignments */}
-          <div
-            className="rounded-lg border p-5 flex flex-col justify-between"
-            style={{
-              borderColor: openAssignments > 0
-                ? "oklch(0.78 0.16 75 / 0.35)"
-                : "hsl(var(--border))",
-              background: openAssignments > 0
-                ? "oklch(0.78 0.16 75 / 0.07)"
-                : "hsl(var(--card))",
-            }}
-          >
-            <div className="flex items-center justify-between mb-3">
-              <div className="text-[11px] uppercase tracking-[0.12em] font-mono text-muted-foreground">
-                Assignments
-              </div>
-              <Zap className="w-4 h-4 text-amber-500" />
-            </div>
-            <div className="display text-3xl leading-none mb-2">
-              {assignmentsLoading ? "…" : openAssignments}
-            </div>
-            <div className="text-[12px] text-muted-foreground">
-              {assignmentsLoading
-                ? "loading"
-                : openAssignments > 0
-                ? "open · needs action"
-                : "all caught up"}
-            </div>
-            <Link href="/app/player/assignments" asChild>
-              <a className="text-[11.5px] text-amber-500 hover:underline flex items-center gap-1 mt-3">
-                View assignments <ChevronRight className="w-3.5 h-3.5" />
+          <h2 className="display text-3xl sm:text-4xl leading-tight mb-3">
+            {focus.focusArea}
+          </h2>
+          {focus.coachCue && (
+            <p className="text-[13.5px] text-muted-foreground italic leading-relaxed max-w-2xl">
+              “{focus.coachCue}”{" "}
+              <span className="not-italic font-medium text-foreground/80">
+                — {focus.coachName}
+              </span>
+            </p>
+          )}
+          <div className="flex items-center gap-4 mt-3 text-[12px] text-muted-foreground">
+            <span>
+              Score{" "}
+              <span className="text-amber-500 font-bold">
+                {topFocusArea?.currentScore ?? "—"}
+              </span>
+              {" → "}
+              <span className="text-primary font-bold">
+                {topFocusArea?.targetScore ?? "—"}
+              </span>
+              {" / 10"}
+            </span>
+            <Link href="/app/player/development" asChild>
+              <a className="text-[11.5px] text-primary hover:underline flex items-center gap-1">
+                View full plan <ChevronRight className="w-3.5 h-3.5" />
               </a>
             </Link>
           </div>
         </div>
 
+        {/* ── 2. Today's work checklist (reframe §4.2) ────────────────────── */}
+        <TodaysWorkChecklist />
+
+        {/* ── 3. Coach's latest (reframe §4.3) ────────────────────────────── */}
+        <div className="rounded-xl border border-[oklch(0.72_0.18_290)]/30 bg-[oklch(0.72_0.18_290)]/5 p-4 sm:p-5 mb-4">
+          <div className="flex items-center gap-2 text-[11px] uppercase tracking-[0.12em] font-mono text-[oklch(0.72_0.18_290)] mb-2">
+            <MessageSquare className="w-3.5 h-3.5" />
+            Coach's Latest
+          </div>
+          <p className="text-[13px] leading-relaxed mb-2">
+            “{latestFeedback?.text ?? focus.coachCue}”
+          </p>
+          <div className="text-[11.5px] text-muted-foreground">
+            {latestFeedback?.coachName ?? focus.coachName}
+            {latestFeedback?.date && <> · {latestFeedback.date}</>}
+            {latestFeedback?.linkedClip && (
+              <>
+                {" · "}
+                <Link href={latestFeedback.linkedClip.href} asChild>
+                  <a className="text-primary hover:underline">
+                    {latestFeedback.linkedClip.title}
+                  </a>
+                </Link>
+              </>
+            )}
+          </div>
+        </div>
+
+        {/* ── 4. Progress strip (reframe §4.4) ────────────────────────────── */}
+        <div className="grid grid-cols-3 gap-2 mb-8">
+          <div className="rounded-lg border border-border bg-card p-3">
+            <div className="text-[10px] uppercase tracking-[0.12em] font-mono text-muted-foreground mb-1.5">
+              Focus velocity
+            </div>
+            <div className="display text-xl leading-none" style={{ color: SUCCESS_CLR }}>
+              {focusVelocity?.velocityLabel ?? "+0.2/cycle"}
+            </div>
+            <div className="text-[11px] text-muted-foreground mt-1 truncate">
+              {focus.category || focus.focusArea}
+            </div>
+          </div>
+          <div className="rounded-lg border border-border bg-card p-3">
+            <div className="text-[10px] uppercase tracking-[0.12em] font-mono text-muted-foreground mb-1.5">
+              Consistency
+            </div>
+            <div className="display text-xl leading-none text-[oklch(0.72_0.2_50)]">
+              {user?.streak ?? 0}
+            </div>
+            <div className="text-[11px] text-muted-foreground mt-1 truncate">
+              training days in a row
+            </div>
+          </div>
+          <div className="rounded-lg border border-border bg-card p-3">
+            <div className="text-[10px] uppercase tracking-[0.12em] font-mono text-muted-foreground mb-1.5">
+              Next milestone
+            </div>
+            <div className="display text-xl leading-none text-primary">
+              {nextMilestone ? `${nextMilestone.pct}%` : "—"}
+            </div>
+            <div className="text-[11px] text-muted-foreground mt-1 truncate">
+              {nextMilestone?.title ?? "All caught up"}
+            </div>
+          </div>
+        </div>
+
         <div className="grid lg:grid-cols-3 gap-6">
-          {/* Today's WOD — centerpiece */}
+          {/* Today's Training (WOD) — centerpiece */}
           <div className="lg:col-span-2">
             <div className="rounded-xl border border-border bg-gradient-to-br from-card via-card to-[oklch(0.17_0.01_260)] overflow-hidden">
               <div className="flex flex-col md:flex-row">
@@ -714,9 +726,10 @@ export function PlayerWorkout() {
     <AppShell>
       <div className="px-6 lg:px-10 py-8 max-w-[900px] mx-auto">
         <PageHeader
-          eyebrow={`Today's WOD · ${todaysWod.category}`}
+          eyebrow={`Today's Training · WOD · ${todaysWod.category}`}
           title={todaysWod.title}
           subtitle={todaysWod.description}
+          actions={<FocusChip />}
         />
 
         <div className="flex items-center gap-6 mb-8">
@@ -758,7 +771,7 @@ export function PlayerWorkout() {
           <div className="mt-8 rounded-xl border border-primary/40 bg-primary/10 p-6 text-center">
             <div className="display text-2xl mb-2 text-primary">🔥 Session Complete</div>
             <p className="text-[13.5px] text-muted-foreground mb-4">
-              +{todaysWod.xp} XP earned. Streak protected. Don't stop.
+              +{todaysWod.xp} XP earned. Another training day in a row banked. Don't stop.
             </p>
             <Link href="/app/player" asChild>
               <a className="inline-flex items-center gap-2 h-10 px-5 rounded-md bg-primary text-primary-foreground font-semibold text-[12.5px] uppercase tracking-[0.08em] hover:brightness-110 transition">
@@ -838,7 +851,7 @@ export function PlayerUploads() {
       <div className="px-6 lg:px-10 py-8 max-w-[1100px] mx-auto">
         <PageHeader
           eyebrow="Film · Personal uploads"
-          title="Your uploads"
+          title="My Uploads"
           subtitle="Submit video. AI reviews. Coach confirms. Stack the reps."
           actions={
             <button className="inline-flex items-center gap-2 h-10 px-4 rounded-md bg-primary text-primary-foreground font-semibold text-[12.5px] uppercase tracking-[0.08em] hover:brightness-110 transition">
@@ -1035,7 +1048,8 @@ export function PlayerSkills() {
         <PageHeader
           eyebrow="Progression · Skill Tracks"
           title="Your five pillars"
-          subtitle="Every WOD contributes XP to one or more tracks. Level up each skill independently."
+          subtitle="Every training session contributes XP to one or more tracks. Level up each skill independently."
+          actions={<FocusChip />}
         />
         <div className="grid md:grid-cols-2 gap-4">
           {skillTracks.map((t) => (

@@ -1635,7 +1635,41 @@ function TimelineTab({ playerId }: { playerId: string }) {
 // MAIN PAGE
 // ══════════════════════════════════════════════════════════════════════════════
 
-const TABS: ProfileTab[] = ["Overview", "Development", "Film", "Attendance", "Health", "Notes", "Timeline"];
+// ── Development loop stages ───────────────────────────────────────────────────
+// Tabs are grouped and ordered along the coaching loop:
+// FOCUS → TRAIN → PROVE → REVIEW → PROGRESS. Existing sections are untouched;
+// this only reorders the tab bar and adds stage-label eyebrows.
+
+type LoopStage = "FOCUS" | "TRAIN" | "PROVE" | "REVIEW" | "PROGRESS";
+
+const STAGE_COLORS: Record<LoopStage, string> = {
+  FOCUS:    "oklch(0.72 0.18 290)",
+  TRAIN:    "oklch(0.72 0.17 75)",
+  PROVE:    "oklch(0.72 0.18 240)",
+  REVIEW:   "oklch(0.68 0.15 320)",
+  PROGRESS: "oklch(0.75 0.18 150)",
+};
+
+const STAGE_TAGLINES: Record<LoopStage, string> = {
+  FOCUS:    "What they're working on now",
+  TRAIN:    "Doing the work",
+  PROVE:    "Evidence in — film & check-ins",
+  REVIEW:   "Coach feedback & corrections",
+  PROGRESS: "Measured growth",
+};
+
+const TAB_STAGE: Record<ProfileTab, LoopStage> = {
+  Overview:    "FOCUS",    // current focus areas / IDP summary
+  Development: "FOCUS",    // IDP + skill plan
+  Attendance:  "TRAIN",    // showing up for the work
+  Film:        "PROVE",    // film evidence
+  Health:      "PROVE",    // check-in / wellness trend
+  Notes:       "REVIEW",   // coach notes & corrections
+  Timeline:    "PROGRESS", // coaching actions resolved over time
+};
+
+// Loop order: FOCUS → TRAIN → PROVE → REVIEW → PROGRESS
+const TABS: ProfileTab[] = ["Overview", "Development", "Attendance", "Film", "Health", "Notes", "Timeline"];
 
 export function PlayerProfilePage() {
   const [_match, params] = useRoute("/app/coach/players/:id");
@@ -1806,16 +1840,32 @@ export function PlayerProfilePage() {
           </div>
         </div>
 
-        {/* Tab bar */}
+        {/* Tab bar — ordered along the development loop, with stage eyebrows */}
         <div className="flex items-center gap-1 border-b border-border mb-6 -mx-0.5 overflow-x-auto">
-          {TABS.map(tab => (
-            <button key={tab} onClick={() => setActiveTab(tab)}
-                    className={`px-4 py-2.5 text-[13px] font-medium whitespace-nowrap border-b-2 transition-colors -mb-px ${
-                      activeTab === tab ? "border-primary text-foreground" : "border-transparent text-muted-foreground hover:text-foreground"
-                    }`}>
-              {tab}
-            </button>
-          ))}
+          {TABS.map(tab => {
+            const stage = TAB_STAGE[tab];
+            return (
+              <button key={tab} onClick={() => setActiveTab(tab)}
+                      className={`px-4 pt-2 pb-2.5 text-[13px] font-medium whitespace-nowrap border-b-2 transition-colors -mb-px text-left ${
+                        activeTab === tab ? "border-primary text-foreground" : "border-transparent text-muted-foreground hover:text-foreground"
+                      }`}>
+                <span className="block text-[8.5px] font-mono font-semibold uppercase tracking-[0.16em] leading-none mb-1"
+                      style={{ color: STAGE_COLORS[stage], opacity: activeTab === tab ? 1 : 0.65 }}>
+                  {stage}
+                </span>
+                {tab}
+              </button>
+            );
+          })}
+        </div>
+
+        {/* Active stage label */}
+        <div className="flex items-center gap-2 mb-5">
+          <span className="text-[10px] font-mono font-bold uppercase tracking-[0.18em]"
+                style={{ color: STAGE_COLORS[TAB_STAGE[activeTab]] }}>
+            {TAB_STAGE[activeTab]}
+          </span>
+          <span className="text-[11.5px] text-muted-foreground">· {STAGE_TAGLINES[TAB_STAGE[activeTab]]}</span>
         </div>
 
         {/* Tab content */}

@@ -440,7 +440,7 @@ export default function PlayerVDVContributionPage() {
       <div className="p-4 sm:p-6 lg:p-8 max-w-4xl mx-auto space-y-12">
         <PageHeader
           eyebrow="My Development"
-          title="Development Velocity"
+          title="Development Score (VDV)"
           subtitle="How your progress is verified — and what it means for your future"
         />
 
