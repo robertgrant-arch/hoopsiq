@@ -133,8 +133,14 @@ export async function runMigrations(): Promise<{ applied: string[] }> {
     const text = fs.readFileSync(path.join(MIGRATIONS_DIR, file), "utf8");
     const statements = splitSqlStatements(text);
     for (const stmt of statements) {
+      // Postgres has no CREATE TYPE IF NOT EXISTS — some hand-written
+      // migrations use it anyway. Rewrite to the guarded DO-block form.
+      const typeMatch = /^((?:--[^\n]*\n|\s)*)CREATE TYPE IF NOT EXISTS\s+([\s\S]+)$/i.exec(stmt);
+      const runnable = typeMatch
+        ? `DO $mig$ BEGIN CREATE TYPE ${typeMatch[2]}; EXCEPTION WHEN duplicate_object THEN NULL; END $mig$`
+        : stmt;
       try {
-        await db.execute(sql.raw(stmt));
+        await db.execute(sql.raw(runnable));
       } catch (e) {
         const msg = e instanceof Error ? e.message : String(e);
         // Hand-written migrations predate this runner and some objects may
