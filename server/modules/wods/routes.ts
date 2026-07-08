@@ -1,12 +1,29 @@
 import { Router } from "express";
-import { generateWod } from "../../lib/openai";
+import { generateWod as generateWodOpenAI } from "../../lib/openai";
+import { generateWod as generateWodGemini } from "../../lib/gemini";
+
+/** Provider-agnostic dispatch: use whichever key is configured (OpenAI
+ *  preferred when both are present — identical signatures and result shape). */
+function pickGenerator() {
+  if (process.env.OPENAI_API_KEY) return { name: "openai" as const, fn: generateWodOpenAI };
+  if (process.env.GEMINI_API_KEY) return { name: "gemini" as const, fn: generateWodGemini };
+  return null;
+}
 
 export function registerWodRoutes(router: Router) {
   // Diagnostic — returns env var presence without exposing values
   router.get("/health", (_req, res) => {
+    const provider = pickGenerator();
     res.json({
+      provider: provider?.name ?? null,
       openai_key_set: !!process.env.OPENAI_API_KEY,
-      openai_model: process.env.OPENAI_MODEL ?? "gpt-4o (default)",
+      gemini_key_set: !!process.env.GEMINI_API_KEY,
+      model:
+        provider?.name === "openai"
+          ? process.env.OPENAI_MODEL ?? "gpt-4o (default)"
+          : provider?.name === "gemini"
+            ? process.env.GEMINI_MODEL ?? "gemini-2.5-pro (default)"
+            : null,
     });
   });
 
@@ -35,7 +52,15 @@ export function registerWodRoutes(router: Router) {
         return;
       }
 
-      const result = await generateWod({
+      const provider = pickGenerator();
+      if (!provider) {
+        res.status(503).json({
+          error: "Workout generation isn't configured — set OPENAI_API_KEY or GEMINI_API_KEY.",
+        });
+        return;
+      }
+
+      const result = await provider.fn({
         playerName,
         position,
         focusAreas,
