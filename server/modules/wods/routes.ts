@@ -1,29 +1,26 @@
 import { Router } from "express";
-import { generateWod as generateWodOpenAI } from "../../lib/openai";
-import { generateWod as generateWodGemini } from "../../lib/gemini";
-
-/** Provider-agnostic dispatch: use whichever key is configured (OpenAI
- *  preferred when both are present — identical signatures and result shape). */
-function pickGenerator() {
-  if (process.env.OPENAI_API_KEY) return { name: "openai" as const, fn: generateWodOpenAI };
-  if (process.env.GEMINI_API_KEY) return { name: "gemini" as const, fn: generateWodGemini };
-  return null;
-}
+import { generateWodResilient } from "../../lib/wod";
 
 export function registerWodRoutes(router: Router) {
-  // Diagnostic — returns env var presence without exposing values
+  // Diagnostic — reports the provider chain without exposing key values.
   router.get("/health", (_req, res) => {
-    const provider = pickGenerator();
+    const order = (process.env.WOD_PROVIDER_ORDER ?? "openai,gemini")
+      .split(",")
+      .map((s) => s.trim().toLowerCase())
+      .filter((s) => s === "openai" || s === "gemini");
+    const chain = (order.length ? order : ["openai", "gemini"])
+      .filter((p) => (p === "openai" ? process.env.OPENAI_API_KEY : process.env.GEMINI_API_KEY))
+      .concat("template"); // always the final backstop
     res.json({
-      provider: provider?.name ?? null,
       openai_key_set: !!process.env.OPENAI_API_KEY,
       gemini_key_set: !!process.env.GEMINI_API_KEY,
+      chain, // e.g. ["openai","gemini","template"] — tried in this order
       model:
-        provider?.name === "openai"
+        chain[0] === "openai"
           ? process.env.OPENAI_MODEL ?? "gpt-4o (default)"
-          : provider?.name === "gemini"
+          : chain[0] === "gemini"
             ? process.env.GEMINI_MODEL ?? "gemini-2.5-pro (default)"
-            : null,
+            : "template (deterministic)",
     });
   });
 
@@ -52,15 +49,9 @@ export function registerWodRoutes(router: Router) {
         return;
       }
 
-      const provider = pickGenerator();
-      if (!provider) {
-        res.status(503).json({
-          error: "Workout generation isn't configured — set OPENAI_API_KEY or GEMINI_API_KEY.",
-        });
-        return;
-      }
-
-      const result = await provider.fn({
+      // Never hard-fails: AI providers are tried in order, then a deterministic
+      // template generator. `generatedBy` tells the client which produced it.
+      const { result, attempts } = await generateWodResilient({
         playerName,
         position,
         focusAreas,
@@ -70,12 +61,15 @@ export function registerWodRoutes(router: Router) {
         wearableSnapshot,
       });
 
+      if (attempts.some((a) => a.provider !== "template" && !a.ok)) {
+        console.warn("[WOD generate] provider fallbacks:", JSON.stringify(attempts));
+      }
       res.json(result);
     } catch (err: unknown) {
+      // Should be unreachable — the template backstop can't throw — but stay safe.
       const message = err instanceof Error ? err.message : String(err);
-      const status = (err as { status?: number }).status ?? 500;
       console.error("[WOD generate]", message);
-      res.status(status).json({ error: message });
+      res.status(500).json({ error: message });
     }
   });
 }
