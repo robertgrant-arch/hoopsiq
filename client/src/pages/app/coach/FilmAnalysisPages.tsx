@@ -24,6 +24,7 @@ import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useFilmAnalysis } from "@/hooks/useFilmAnalysis";
+import { authFetch } from "@/lib/api/client";
 import { AppShell } from "@/components/app/AppShell";
 import type {
   FilmSession,
@@ -155,9 +156,7 @@ export function FilmUploadPage() {
     let stopped = false;
     const interval = setInterval(async () => {
       try {
-        const res = await fetch(`/api/film-analysis/sessions/${sessionId}`, {
-          credentials: "include",
-        });
+        const res = await authFetch(`/film-analysis/sessions/${sessionId}`);
         if (!res.ok) return;
         const data = (await res.json()) as { status?: string };
         if (data.status === "ready" && !stopped) {
@@ -197,9 +196,8 @@ export function FilmUploadPage() {
 
     try {
       // 1. Request a Mux direct-upload URL from our server.
-      const initiateRes = await fetch("/api/film-analysis/uploads/initiate", {
+      const initiateRes = await authFetch("/film-analysis/uploads/initiate", {
         method: "POST",
-        credentials: "include",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           filename: file.name,
