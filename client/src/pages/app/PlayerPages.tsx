@@ -8,10 +8,8 @@ import {
   CheckCircle2,
   Clock,
   Circle,
-  Target,
   MessageSquare,
   Film,
-  ArrowRight,
   ChevronRight,
   Bell,
   Star,
@@ -35,7 +33,6 @@ import {
   skillTracks,
   achievements,
   athleteUploads,
-  filmRoom,
   notifications,
   type VideoUpload,
 } from "@/lib/mock/data";
@@ -236,6 +233,9 @@ export function PlayerDashboard() {
     .filter((m) => m.pct < 100)
     .sort((a, b) => b.pct - a.pct)[0];
 
+  // Compact summaries — top skill track by progress (full list at /app/player/skills).
+  const topTrack = [...skillTracks].sort((a, b) => b.progress - a.progress)[0];
+
   return (
     <AppShell>
       <div className="px-6 lg:px-10 py-8 max-w-[1400px] mx-auto">
@@ -362,192 +362,101 @@ export function PlayerDashboard() {
           </div>
         </div>
 
-        <div className="grid lg:grid-cols-3 gap-6">
-          {/* Today's Training (WOD) — centerpiece */}
-          <div className="lg:col-span-2">
-            <div className="rounded-xl border border-border bg-gradient-to-br from-card via-card to-[oklch(0.17_0.01_260)] overflow-hidden">
-              <div className="flex flex-col md:flex-row">
-                <div className="md:w-2/3 p-7">
-                  <div className="text-[11px] uppercase tracking-[0.14em] text-primary font-mono mb-3">
-                    Today's Blueprint · {todaysWod.category}
-                  </div>
-                  <h2 className="display text-3xl leading-tight mb-3">
-                    {todaysWod.title}
-                  </h2>
-                  <p className="text-[14px] text-muted-foreground mb-6 leading-relaxed">
-                    {todaysWod.description}
-                  </p>
-                  <div className="flex items-center gap-5 mb-6 text-[13px]">
-                    <span className="flex items-center gap-1.5 text-muted-foreground">
-                      <Clock className="w-3.5 h-3.5" /> {todaysWod.durationMin} min
-                    </span>
-                    <span className="flex items-center gap-1.5 text-muted-foreground">
-                      <Target className="w-3.5 h-3.5" /> Level {todaysWod.level}
-                    </span>
-                    <span className="flex items-center gap-1.5 text-primary">
-                      <Sparkles className="w-3.5 h-3.5" /> +{todaysWod.xp} XP
-                    </span>
-                  </div>
-                  <Link href="/app/player/workout" asChild>
-                    <a className="inline-flex items-center gap-2 h-11 px-5 rounded-md bg-primary text-primary-foreground font-semibold text-[13px] uppercase tracking-[0.08em] hover:brightness-110 transition">
-                      <Play className="w-4 h-4" /> Start Session
-                    </a>
-                  </Link>
+        {/* ── 5. Everything else, one tap away — compact link rows ────────── */}
+        <div className="grid gap-2 lg:grid-cols-2 lg:gap-3">
+          {/* Up next — WOD summary (full plan lives at /app/player/wod) */}
+          <Link href="/app/player/wod" asChild>
+            <a className="flex items-center gap-3 rounded-xl border border-border bg-card p-3.5 hover:border-primary/50 transition group">
+              <div className="w-9 h-9 rounded-md bg-primary/15 flex items-center justify-center shrink-0">
+                <Play className="w-4 h-4 text-primary" />
+              </div>
+              <div className="flex-1 min-w-0">
+                <div className="text-[10px] uppercase tracking-[0.12em] font-mono text-muted-foreground">
+                  Up next
                 </div>
-                <div className="md:w-1/3 border-l border-border bg-[oklch(0.15_0.01_260)] p-6">
-                  <div className="text-[11px] uppercase tracking-[0.12em] font-mono text-muted-foreground mb-3">
-                    Drills · {todaysWod.drills.length}
-                  </div>
-                  <ol className="space-y-2.5 text-[12.5px]">
-                    {todaysWod.drills.map((d, i) => (
-                      <li key={d.id} className="flex items-start gap-2">
-                        <span className="font-mono text-[11px] text-muted-foreground w-4 shrink-0 pt-0.5">
-                          {String(i + 1).padStart(2, "0")}
-                        </span>
-                        <span className="flex-1 min-w-0">
-                          <span className="font-medium block">{d.name}</span>
-                          <span className="block text-muted-foreground text-[11px]">
-                            {d.sets} × {d.reps}
-                            {d.skillFocus && (
-                              <> · <span className="text-primary/70">{d.skillFocus.split(" · ")[0]}</span></>
-                            )}
-                          </span>
-                        </span>
-                      </li>
-                    ))}
-                  </ol>
+                <div className="text-[13px] font-semibold truncate group-hover:text-primary transition">
+                  {todaysWod.drills[0]?.name ?? todaysWod.title}
+                </div>
+                <div className="text-[11.5px] text-muted-foreground truncate">
+                  {todaysWod.drills.length} drills · {todaysWod.durationMin} min
                 </div>
               </div>
-            </div>
+              <ChevronRight className="w-4 h-4 shrink-0 text-muted-foreground group-hover:text-primary transition" />
+            </a>
+          </Link>
 
-            {/* Recent uploads */}
-            <div className="mt-6">
-              <div className="flex items-center justify-between mb-3">
-                <h3 className="display text-xl">Recent uploads</h3>
-                <Link href="/app/player/uploads" asChild>
-                  <a className="text-[12.5px] text-muted-foreground hover:text-foreground flex items-center gap-1">
-                    View all <ArrowRight className="w-3 h-3" />
-                  </a>
-                </Link>
+          {/* Recent uploads — one-line summary */}
+          <Link href="/app/player/uploads" asChild>
+            <a className="flex items-center gap-3 rounded-xl border border-border bg-card p-3.5 hover:border-primary/50 transition group">
+              <div className="w-9 h-9 rounded-md bg-muted flex items-center justify-center shrink-0">
+                <Film className="w-4 h-4 text-muted-foreground" />
               </div>
-              <div className="space-y-2">
-                {athleteUploads.map((v) => (
-                  <UploadRow key={v.id} upload={v} />
-                ))}
-              </div>
-            </div>
-          </div>
-
-          {/* Right rail */}
-          <div className="space-y-6">
-            {/* Skill tracks */}
-            <div className="rounded-xl border border-border bg-card p-5">
-              <div className="flex items-center justify-between mb-4">
-                <h3 className="display text-[16px]">Skill Tracks</h3>
-                <Link href="/app/player/skills" asChild>
-                  <a className="text-[11px] text-muted-foreground hover:text-foreground">
-                    Details →
-                  </a>
-                </Link>
-              </div>
-              <div className="space-y-3">
-                {skillTracks.map((t) => (
-                  <div key={t.id}>
-                    <div className="flex items-center justify-between mb-1.5 text-[12.5px]">
-                      <span className="flex items-center gap-2">
-                        <span>{t.icon}</span>
-                        <span className="font-medium">{t.name}</span>
-                      </span>
-                      <span className="font-mono text-[11px] text-muted-foreground">
-                        L{t.level}
-                      </span>
-                    </div>
-                    <div className="h-1.5 rounded-full bg-[oklch(0.28_0.01_260)] overflow-hidden">
-                      <div
-                        className="h-full bg-primary transition-all"
-                        style={{ width: `${t.progress}%` }}
-                      />
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            {/* Film inbox preview */}
-            <div className="rounded-xl border border-border bg-card p-5">
-              <div className="flex items-center justify-between mb-4">
-                <h3 className="display text-[16px]">Film Assigned</h3>
-                <Link href="/app/film/inbox" asChild>
-                  <a className="text-[11px] text-muted-foreground hover:text-foreground">
-                    All →
-                  </a>
-                </Link>
-              </div>
-              <div className="space-y-2.5">
-                {filmRoom.clips.slice(0, 3).map((c) => (
-                  <Link key={c.id} href={`/app/film/clips/${c.id}`} asChild>
-                    <a className="block rounded-md border border-border p-3 hover:border-primary/50 transition group">
-                      <div className="flex items-start justify-between gap-3 mb-1.5">
-                        <span className="text-[12.5px] font-medium leading-tight group-hover:text-primary transition">
-                          {c.title}
-                        </span>
-                        <span className="text-[10px] text-muted-foreground font-mono shrink-0">
-                          {c.duration}
-                        </span>
-                      </div>
-                      <div className="flex items-center justify-between text-[11px]">
-                        <span className="text-muted-foreground">{c.dueIn}</span>
-                        {c.watchPercent > 0 ? (
-                          <span className="text-primary font-mono">
-                            {c.watchPercent}%
-                          </span>
-                        ) : (
-                          <span className="text-muted-foreground">Not started</span>
-                        )}
-                      </div>
-                    </a>
-                  </Link>
-                ))}
-              </div>
-            </div>
-
-            {/* Recent wins — growth story preview */}
-            <div className="rounded-xl border border-border bg-card p-5">
-              <div className="flex items-center justify-between mb-4">
-                <h3 className="display text-[16px]">Recent Wins</h3>
-                <Link href="/app/player/growth-story" asChild>
-                  <a className="text-[11px] text-muted-foreground hover:text-foreground">
-                    Full story →
-                  </a>
-                </Link>
-              </div>
-              <div className="space-y-3.5">
-                {[
-                  { skill: "Ball Handling", delta: "+1.4", period: "last 30 days", color: "oklch(0.72 0.18 290)" },
-                  { skill: "Defensive IQ",  delta: "+1.4", period: "last 30 days", color: "oklch(0.75 0.12 140)" },
-                  { skill: "Finishing",     delta: "+0.6", period: "last 14 days", color: "oklch(0.78 0.16 75)"  },
-                ].map((w) => (
-                  <div key={w.skill} className="flex items-center justify-between">
-                    <div>
-                      <div className="text-[13px] font-medium">{w.skill}</div>
-                      <div className="text-[10.5px] text-muted-foreground">{w.period}</div>
-                    </div>
-                    <span
-                      className="text-[14px] font-bold font-mono tabular-nums"
-                      style={{ color: w.color }}
-                    >
-                      {w.delta}
+              <div className="flex-1 min-w-0">
+                <div className="text-[10px] uppercase tracking-[0.12em] font-mono text-muted-foreground">
+                  Recent uploads
+                </div>
+                <div className="text-[12.5px] truncate">
+                  <span className="font-semibold">{athleteUploads.length} recent</span>
+                  {athleteUploads[0] && (
+                    <span className="text-muted-foreground">
+                      {" "}· latest: {athleteUploads[0].title} ({statusMeta(athleteUploads[0].status).label})
                     </span>
-                  </div>
-                ))}
-              </div>
-              <div className="mt-4 pt-3 border-t border-border">
-                <div className="text-[11px] text-muted-foreground">
-                  Coach-verified · based on assessment data
+                  )}
                 </div>
               </div>
-            </div>
-          </div>
+              <ChevronRight className="w-4 h-4 shrink-0 text-muted-foreground group-hover:text-primary transition" />
+            </a>
+          </Link>
+
+          {/* Skill tracks — top track summary */}
+          <Link href="/app/player/skills" asChild>
+            <a className="flex items-center gap-3 rounded-xl border border-border bg-card p-3.5 hover:border-primary/50 transition group">
+              <span className="w-9 h-9 rounded-md bg-muted flex items-center justify-center shrink-0 text-[16px]">
+                {topTrack?.icon ?? "🏀"}
+              </span>
+              <div className="flex-1 min-w-0">
+                <div className="flex items-center justify-between gap-2 mb-1">
+                  <span className="text-[12.5px] font-semibold truncate">
+                    {topTrack?.name ?? "Skill Tracks"}
+                  </span>
+                  <span className="text-[11px] font-mono text-muted-foreground shrink-0">
+                    View all →
+                  </span>
+                </div>
+                <div className="h-1.5 rounded-full bg-[oklch(0.28_0.01_260)] overflow-hidden">
+                  <div
+                    className="h-full bg-primary"
+                    style={{ width: `${topTrack?.progress ?? 0}%` }}
+                  />
+                </div>
+              </div>
+            </a>
+          </Link>
+
+          {/* Most recent win — growth story preview */}
+          <Link href="/app/player/growth-story" asChild>
+            <a className="flex items-center gap-3 rounded-xl border border-border bg-card p-3.5 hover:border-primary/50 transition group">
+              <div className="w-9 h-9 rounded-md bg-muted flex items-center justify-center shrink-0">
+                <Trophy className="w-4 h-4" style={{ color: "oklch(0.72 0.18 290)" }} />
+              </div>
+              <div className="flex-1 min-w-0">
+                <div className="text-[10px] uppercase tracking-[0.12em] font-mono text-muted-foreground">
+                  Recent win
+                </div>
+                <div className="text-[12.5px] truncate">
+                  <span className="font-semibold">Ball Handling</span>
+                  <span className="font-mono font-bold" style={{ color: "oklch(0.72 0.18 290)" }}>
+                    {" "}+1.4
+                  </span>
+                  <span className="text-muted-foreground"> · last 30 days</span>
+                </div>
+                <div className="text-[11px] text-muted-foreground truncate">
+                  See all wins →
+                </div>
+              </div>
+              <ChevronRight className="w-4 h-4 shrink-0 text-muted-foreground group-hover:text-primary transition" />
+            </a>
+          </Link>
         </div>
       </div>
     </AppShell>
@@ -586,13 +495,13 @@ function UploadRow({ upload }: { upload: VideoUpload }) {
               {upload.duration}
             </span>
           </div>
-          <div className="flex items-center gap-3 text-[11.5px]">
-            <span className={`px-2 py-0.5 rounded-full ${s.bg} ${s.color} font-medium`}>
+          <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-[11.5px]">
+            <span className={`px-2 py-0.5 rounded-full ${s.bg} ${s.color} font-medium max-w-full truncate`}>
               {s.label}
             </span>
-            <span className="text-muted-foreground">{upload.uploadedAt}</span>
+            <span className="text-muted-foreground whitespace-nowrap">{upload.uploadedAt}</span>
             {upload.issues.length > 0 && (
-              <span className="text-muted-foreground">
+              <span className="text-muted-foreground whitespace-nowrap">
                 · {upload.issues.length} observations
               </span>
             )}

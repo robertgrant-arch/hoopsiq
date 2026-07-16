@@ -328,7 +328,45 @@ export function CoachRoster() {
             <p className="text-[12px] text-muted-foreground">Invite athletes to get your team set up.</p>
           </div>
         ) : (
-        <div className="rounded-xl border border-border bg-card overflow-x-auto">
+        <>
+        {/* Mobile — card list (table is unusable at phone widths) */}
+        <div className="lg:hidden space-y-2">
+          {filtered.map((a) => (
+            <Link key={a.id} href={`/app/coach/players/${a.id}`} asChild>
+              <a className="block rounded-xl border border-border bg-card px-4 py-3 hover:bg-muted/30 transition">
+                {/* Line 1 — name + position, readiness dot right */}
+                <div className="flex items-center gap-2 min-w-0">
+                  <span className="text-[14px] font-semibold truncate">{a.name}</span>
+                  <span className="text-[11px] font-mono text-muted-foreground shrink-0">
+                    {a.position}
+                  </span>
+                  <span className="flex-1" />
+                  <ReadinessDot status={a.status} />
+                </div>
+                {/* Line 2 — focus area + trend + last touch */}
+                <div className="flex items-center gap-2 mt-1 text-[12px] text-muted-foreground min-w-0">
+                  <span className="truncate">{a.focusArea}</span>
+                  <span
+                    className="font-mono font-bold text-[13px] shrink-0"
+                    style={{ color: TREND_META[a.trend].color }}
+                    aria-label={TREND_META[a.trend].label}
+                  >
+                    {TREND_META[a.trend].glyph}
+                  </span>
+                  <span className="ml-auto shrink-0">{a.lastTouch}</span>
+                </div>
+              </a>
+            </Link>
+          ))}
+          {filtered.length === 0 && (
+            <div className="rounded-xl border border-border bg-card px-4 py-10 text-center text-[13px] text-muted-foreground">
+              No athletes match "{search}"
+            </div>
+          )}
+        </div>
+
+        {/* Desktop — full 14-column table */}
+        <div className="hidden lg:block rounded-xl border border-border bg-card overflow-x-auto">
           <table className="w-full text-[13px]">
             <thead>
               <tr className="border-b border-border text-left">
@@ -428,6 +466,7 @@ export function CoachRoster() {
             </tbody>
           </table>
         </div>
+        </>
         )}
       </div>
     </AppShell>

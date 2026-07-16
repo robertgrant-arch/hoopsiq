@@ -360,15 +360,19 @@ export default function AssignmentQueuePage(): React.ReactElement {
           </div>
         )}
 
-        {/* Filters */}
+        {/* Filters — single horizontally-scrollable chip row on mobile      */}
+        {/* (no wrapping), compact player select alongside/below. ≤96px tall. */}
         <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-          <div className="flex items-center gap-1 flex-wrap">
+          <div
+            className="flex items-center gap-1 flex-nowrap overflow-x-auto sm:flex-wrap sm:overflow-visible -mx-4 px-4 sm:mx-0 sm:px-0"
+            style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
+          >
             {FILTER_OPTIONS.map((o) => (
               <button
                 key={o.value}
                 type="button"
                 onClick={() => setFilter(o.value)}
-                className="text-[11px] px-2 py-1 rounded-full border transition-colors"
+                className="text-[11px] px-2 py-1 rounded-full border transition-colors shrink-0 whitespace-nowrap"
                 style={
                   filter === o.value
                     ? { color: ACCENT, borderColor: ACCENT, background: "oklch(0.72 0.18 290 / 0.12)" }
@@ -382,7 +386,7 @@ export default function AssignmentQueuePage(): React.ReactElement {
           <select
             value={playerFilter}
             onChange={(e) => setPlayerFilter(e.target.value)}
-            className="rounded-md border border-border bg-transparent px-2 py-1 text-[12px] outline-none"
+            className="rounded-md border border-border bg-transparent px-2 py-1 text-[12px] outline-none h-7 self-start sm:self-auto max-w-[180px]"
           >
             <option value="all">All players</option>
             {(rosterQuery.data ?? []).map((p) => (
@@ -454,29 +458,57 @@ export default function AssignmentQueuePage(): React.ReactElement {
                   <button
                     type="button"
                     onClick={() => setExpandedId(expanded ? null : row.id)}
-                    className={`w-full grid grid-cols-[minmax(0,1fr)_auto] lg:grid-cols-[minmax(0,1.1fr)_minmax(0,1.4fr)_auto_auto_auto] items-center gap-x-3 gap-y-0.5 px-3 py-2 text-left hover:bg-[oklch(0.19_0.01_260)] rounded-lg transition-colors ${
+                    className={`w-full px-3 py-2 text-left hover:bg-[oklch(0.19_0.01_260)] rounded-lg transition-colors ${
                       expanded ? "bg-[oklch(0.19_0.01_260)] rounded-b-none" : ""
                     }`}
                   >
-                    <span className="min-w-0">
-                      <span className="block text-[13px] font-medium truncate">
-                        {row.player.name}
-                        {row.player.position && (
-                          <span className="font-mono text-[10px] ml-1.5" style={{ color: MUTED }}>
-                            {row.player.position}
-                          </span>
-                        )}
+                    {/* Mobile — player primary, clip title secondary, session tertiary */}
+                    <span className="flex flex-col gap-0.5 lg:hidden">
+                      <span className="flex items-center gap-2 min-w-0">
+                        <span className="flex-1 min-w-0 text-[13px] font-medium truncate">
+                          {row.player.name}
+                          {row.player.position && (
+                            <span className="font-mono text-[10px] ml-1.5" style={{ color: MUTED }}>
+                              {row.player.position}
+                            </span>
+                          )}
+                        </span>
+                        <StatusPill kind="assignment" status={row.status} />
+                      </span>
+                      <span className="flex items-center gap-2 min-w-0">
+                        <span className="flex-1 min-w-0 text-[12px] truncate">{row.clip.title}</span>
+                        <DueChip dueAt={row.dueAt} done={!!row.completedAt} />
+                      </span>
+                      <span className="flex items-center gap-2 min-w-0">
+                        <span className="flex-1 min-w-0 text-[11px] truncate" style={{ color: MUTED }}>
+                          {row.sessionTitle}
+                        </span>
+                        <GlyphCluster row={row} />
                       </span>
                     </span>
-                    <span className="min-w-0 hidden lg:block">
-                      <span className="block text-[12px] truncate">{row.clip.title}</span>
-                      <span className="block text-[11px] truncate" style={{ color: MUTED }}>
-                        {row.sessionTitle}
+
+                    {/* Desktop — original 5-column grid */}
+                    <span className="hidden lg:grid grid-cols-[minmax(0,1.1fr)_minmax(0,1.4fr)_auto_auto_auto] items-center gap-x-3 gap-y-0.5">
+                      <span className="min-w-0">
+                        <span className="block text-[13px] font-medium truncate">
+                          {row.player.name}
+                          {row.player.position && (
+                            <span className="font-mono text-[10px] ml-1.5" style={{ color: MUTED }}>
+                              {row.player.position}
+                            </span>
+                          )}
+                        </span>
                       </span>
+                      <span className="min-w-0">
+                        <span className="block text-[12px] truncate">{row.clip.title}</span>
+                        <span className="block text-[11px] truncate" style={{ color: MUTED }}>
+                          {row.sessionTitle}
+                        </span>
+                      </span>
+                      <DueChip dueAt={row.dueAt} done={!!row.completedAt} />
+                      <GlyphCluster row={row} />
+                      <StatusPill kind="assignment" status={row.status} />
                     </span>
-                    <DueChip dueAt={row.dueAt} done={!!row.completedAt} />
-                    <GlyphCluster row={row} />
-                    <StatusPill kind="assignment" status={row.status} />
                   </button>
                   {expanded && <ExpandedRow row={row} onOpenIdp={openIdp} />}
                 </div>

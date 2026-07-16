@@ -53,6 +53,13 @@ import { roster, athleteUploads } from "@/lib/mock/data";
 import { computePlayerReadiness } from "@/features/readiness";
 import { useAssignmentQueue } from "@/features/film-room/hooks";
 import { ActionLanes } from "@/components/app/ActionLanes";
+import {
+  MOCK_ISSUES,
+  LANE_META,
+  LANE_PRIORITY_ORDER,
+  type LaneIssue,
+  type LaneId,
+} from "@/features/coach-hq/action-lanes";
 import { SkeletonCard } from "@/components/ui/SkeletonCard";
 import { useEvents, type Event } from "@/lib/api/hooks/useEvents";
 import { useRoster } from "@/lib/api/hooks/useRoster";
@@ -247,7 +254,7 @@ function CommandStrip({
               {eventIcon}
             </div>
             {todaySession ? (
-              <div>
+              <div className="min-w-0">
                 <div className="flex items-center gap-2 flex-wrap">
                   <span className="font-bold text-[15px]">{todaySession.title}</span>
                   <span
@@ -303,7 +310,7 @@ function CommandStrip({
             >
               <Swords className="w-4 h-4" />
             </div>
-            <div>
+            <div className="min-w-0 flex-1">
               <div className="flex items-center gap-2">
                 <span className="font-bold text-[14px]">Next Game</span>
                 {nextGameDaysOut !== null && (
@@ -576,6 +583,79 @@ function CoachingNeededToday() {
 /* Zone 2 — ActionLanes (imported from @/components/app/ActionLanes) */
 
 /* -------------------------------------------------------------------------- */
+/* Zone 2 (mobile) — MobileActionLanes                                         */
+/* Collapse-by-default accordions per lane, count badge in header. The first   */
+/* lane with a nonzero count defaults open. Desktop keeps full <ActionLanes>.  */
+/* -------------------------------------------------------------------------- */
+
+const MOBILE_SEVERITY_COLOR: Record<LaneIssue["severity"], string> = {
+  critical: "oklch(0.68 0.22 25)",
+  high: "oklch(0.78 0.16 75)",
+  medium: "oklch(0.72 0.18 290)",
+  low: "oklch(0.55 0.02 260)",
+};
+
+function MobileActionLanes() {
+  const laneOrder: readonly LaneId[] = LANE_PRIORITY_ORDER["practice"];
+
+  const issuesByLane = useMemo(() => {
+    const map = new Map<LaneId, LaneIssue[]>();
+    for (const issue of MOCK_ISSUES) {
+      map.set(issue.laneId, (map.get(issue.laneId) ?? []).concat(issue));
+    }
+    return map;
+  }, []);
+
+  const firstNonzeroLane = laneOrder.find(
+    (id) => (issuesByLane.get(id)?.length ?? 0) > 0,
+  );
+
+  return (
+    <div className="space-y-3">
+      {laneOrder.map((laneId) => {
+        const meta = LANE_META.find((l) => l.id === laneId);
+        if (!meta) return null;
+        const issues = issuesByLane.get(laneId) ?? [];
+        if (issues.length === 0) return null;
+        const playerCount = new Set(issues.map((i) => i.playerId)).size;
+        return (
+          <CollapsibleSection
+            key={laneId}
+            title={meta.title}
+            count={playerCount}
+            defaultOpen={laneId === firstNonzeroLane}
+            summary={`${playerCount} player${playerCount !== 1 ? "s" : ""}`}
+          >
+            <div className="divide-y divide-border/40">
+              {issues.map((issue) => (
+                <Link key={issue.id} href={`/app/coach/players/${issue.playerId}`} asChild>
+                  <a className="px-4 py-2.5 flex items-center gap-2.5 hover:bg-muted/30 transition block">
+                    <span
+                      className="w-2 h-2 rounded-full shrink-0"
+                      style={{ background: MOBILE_SEVERITY_COLOR[issue.severity] }}
+                      aria-label={issue.severity}
+                    />
+                    <span className="flex-1 min-w-0">
+                      <span className="block text-[13px] font-medium truncate">
+                        {issue.playerName}
+                      </span>
+                      <span className="block text-[11px] text-muted-foreground truncate">
+                        {issue.reason}
+                      </span>
+                    </span>
+                    <ChevronRight className="w-3.5 h-3.5 text-muted-foreground shrink-0" />
+                  </a>
+                </Link>
+              ))}
+            </div>
+          </CollapsibleSection>
+        );
+      })}
+    </div>
+  );
+}
+
+/* -------------------------------------------------------------------------- */
 /* Zone 3 — TeamSnapshotRow                                                    */
 /* Compact, not a table. Shows: check-in rate, readiness breakdown, WOD done  */
 /* -------------------------------------------------------------------------- */
@@ -694,7 +774,7 @@ function UpcomingEvents({
     );
   }
 
-  const upcoming = events.slice(0, 3);
+  const upcoming = events.slice(0, 2);
   const nextGame = upcoming.find((e) => e.type === "game");
 
   return (
@@ -702,7 +782,7 @@ function UpcomingEvents({
       title="Upcoming"
       count={upcoming.length}
       href="/app/team/schedule"
-      linkLabel="Full schedule"
+      linkLabel="View schedule"
       defaultOpen
       summary={
         nextGame
@@ -753,6 +833,45 @@ function UpcomingEvents({
 /* Top pending reviews — directly actionable                                  */
 /* -------------------------------------------------------------------------- */
 
+/**
+ * Compact single-line link row used on mobile in place of full sidebar cards
+ * whose contents duplicate the lanes / worklist.
+ */
+function SummaryLinkRow({
+  href,
+  icon,
+  label,
+  detail,
+  count,
+}: {
+  href: string;
+  icon: React.ReactNode;
+  label: string;
+  detail: string;
+  count: number;
+}) {
+  return (
+    <Link href={href} asChild>
+      <a className="lg:hidden rounded-xl border border-border bg-card px-4 py-3 flex items-center gap-3 hover:bg-muted/30 transition">
+        <span className="text-primary shrink-0">{icon}</span>
+        <span className="flex-1 min-w-0 flex items-baseline gap-2">
+          <span className="text-[13.5px] font-bold shrink-0">{label}</span>
+          <span className="text-[11.5px] text-muted-foreground truncate">{detail}</span>
+        </span>
+        {count > 0 && (
+          <span
+            className="text-[11px] font-mono font-bold px-2 py-0.5 rounded-full shrink-0"
+            style={{ background: "oklch(0.72 0.18 290 / 0.12)", color: "oklch(0.72 0.18 290)" }}
+          >
+            {count}
+          </span>
+        )}
+        <ChevronRight className="w-3.5 h-3.5 text-muted-foreground shrink-0" />
+      </a>
+    </Link>
+  );
+}
+
 function FilmQueue() {
   // Pending list has no API hook yet (mock); the count comes from the live
   // badge-counts endpoint when available.
@@ -761,7 +880,18 @@ function FilmQueue() {
   const pendingCount = badgeCounts?.filmPending ?? pending.length;
 
   return (
+    <>
+    {/* Mobile — single-line summary row (contents duplicate the lanes) */}
+    <SummaryLinkRow
+      href="/app/coach/queue"
+      icon={<Film className="w-4 h-4" />}
+      label="Film Queue"
+      detail={pendingCount > 0 ? `${pendingCount} need review` : "Queue clear"}
+      count={pendingCount}
+    />
+    {/* Desktop — full card */}
     <CollapsibleSection
+      className="hidden lg:block"
       title="Film Queue"
       count={pendingCount}
       href="/app/coach/queue"
@@ -796,6 +926,7 @@ function FilmQueue() {
         </div>
       )}
     </CollapsibleSection>
+    </>
   );
 }
 
@@ -806,7 +937,22 @@ function FilmQueue() {
 
 function DevelopmentAlerts() {
   return (
+    <>
+    {/* Mobile — single-line summary row (contents duplicate the worklist) */}
+    <SummaryLinkRow
+      href="/app/coach/roster"
+      icon={<TrendingUp className="w-4 h-4" />}
+      label="Development Gaps"
+      detail={
+        DEVELOPMENT_ALERTS.length > 0
+          ? `${DEVELOPMENT_ALERTS.length} player${DEVELOPMENT_ALERTS.length !== 1 ? "s" : ""} need attention`
+          : "No gaps"
+      }
+      count={DEVELOPMENT_ALERTS.length}
+    />
+    {/* Desktop — full card */}
     <CollapsibleSection
+      className="hidden lg:block"
       title="Development Gaps"
       count={DEVELOPMENT_ALERTS.length}
       href="/app/coach/roster"
@@ -841,6 +987,7 @@ function DevelopmentAlerts() {
         </div>
       )}
     </CollapsibleSection>
+    </>
   );
 }
 
@@ -880,7 +1027,7 @@ export function CoachDashboard() {
 
   return (
     <AppShell>
-      <div className="px-4 sm:px-6 lg:px-10 py-6 max-w-[1400px] mx-auto">
+      <div className="px-4 sm:px-6 lg:px-10 py-6 max-w-[1400px] mx-auto overflow-x-clip">
         <PageHeader
           eyebrow="Coach HQ · Varsity"
           title="Command Center"
@@ -917,8 +1064,14 @@ export function CoachDashboard() {
           {/* ---------------------------------------------------------------- */}
           <div className="lg:col-span-2 space-y-5">
 
-            {/* Zone 2 — Action Lanes */}
-            <ActionLanes />
+            {/* Zone 2 — Action Lanes: full board on desktop, collapse-by- */}
+            {/* default accordions on mobile                                */}
+            <div className="hidden lg:block">
+              <ActionLanes />
+            </div>
+            <div className="lg:hidden">
+              <MobileActionLanes />
+            </div>
 
             {/* Zone 3 — Team snapshot */}
             <TeamSnapshotRow />
@@ -942,8 +1095,25 @@ export function CoachDashboard() {
             {/* Development alerts */}
             <DevelopmentAlerts />
 
-            {/* Quick actions — condensed to 4 high-frequency items */}
-            <CollapsibleSection title="Quick Actions" defaultOpen>
+            {/* Quick actions — icon row on mobile, card list on desktop */}
+            <div className="lg:hidden flex gap-2">
+              {[
+                { href: "/app/coach/assignments", icon: <ClipboardList className="w-4 h-4" />, label: "Assign" },
+                { href: "/app/coach/film/upload", icon: <Film className="w-4 h-4" />, label: "Upload" },
+                { href: "/app/playbook", icon: <Sparkles className="w-4 h-4" />, label: "Plays" },
+                { href: "/app/coach/inbox", icon: <MessageSquare className="w-4 h-4" />, label: "Messages" },
+              ].map((qa) => (
+                <Link key={qa.href} href={qa.href} asChild>
+                  <a className="flex-1 min-w-0 flex flex-col items-center gap-1 py-2.5 rounded-xl border border-border bg-card hover:bg-muted/40 transition">
+                    <span className="text-primary">{qa.icon}</span>
+                    <span className="text-[10px] font-medium text-muted-foreground truncate max-w-full px-1">
+                      {qa.label}
+                    </span>
+                  </a>
+                </Link>
+              ))}
+            </div>
+            <CollapsibleSection className="hidden lg:block" title="Quick Actions" defaultOpen>
               <div className="p-3 space-y-0.5">
                 <QuickAction
                   href="/app/coach/assignments"
